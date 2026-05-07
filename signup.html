@@ -193,9 +193,23 @@ body {
   margin-bottom: 20px;
 }
 
+/* Brand wordmark — used on Screen 0 only as the first impression. Heavier
+   visual weight than .badge so "Welcome to MyGrind" reads as a brand intro,
+   not a category tag. */
+.wordmark {
+  display: block;
+  font-family: 'Bebas Neue', cursive;
+  font-size: 26px;
+  letter-spacing: 4px;
+  color: #C9A84C;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
 h1 {
   font-family: 'Bebas Neue', cursive;
-  font-size: 42px;
+  font-size: 46px;
   letter-spacing: 1px;
   line-height: 1.05;
   color: #F4F4F4;
@@ -215,8 +229,8 @@ h1 span {
 }
 
 .sub {
-  color: #A89880;
-  font-size: 15px;
+  color: #B8A78A;
+  font-size: 16px;
   line-height: 1.6;
   margin-bottom: 28px;
   max-width: 360px;
@@ -300,7 +314,7 @@ h1 span {
   font-weight: 700;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: #A89880;
+  color: #C5B59A;
   margin-bottom: 8px;
 }
 .field-label .req {
@@ -339,7 +353,7 @@ h1 span {
 .field-helper {
   margin-top: 6px;
   font-size: 12px;
-  color: #6B5E52;
+  color: #9A8A78;
   line-height: 1.4;
 }
 .field-helper.error {
@@ -1273,29 +1287,34 @@ select.field-input {
   word-break: break-word;
 }
 
-/* What's-next reminder block */
+/* What's-next reminder block — sits on Screen 7 ("You're Set"). Sized to
+   actually be seen, since the user only lands here once and this is where
+   we set the trial-end / promo-end expectation. */
 .next-block {
-  max-width: 360px;
-  margin: 12px auto 24px auto;
-  padding: 16px 20px;
-  background: rgba(201,168,76,0.04);
-  border: 1px solid rgba(201,168,76,0.2);
+  max-width: 380px;
+  margin: 18px auto 28px auto;
+  padding: 22px 24px;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.4);
   border-radius: 4px;
   text-align: left;
+  box-shadow: 0 2px 14px rgba(201,168,76,0.08);
 }
 .next-block-title {
   font-family: 'Bebas Neue', cursive;
-  font-size: 14px;
-  letter-spacing: 1.5px;
+  font-size: 18px;
+  letter-spacing: 2px;
   color: #C9A84C;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 .next-block-line {
-  font-size: 13px;
-  line-height: 1.5;
-  color: #A89880;
-  margin-bottom: 4px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: #D4C4A8;
+  margin-bottom: 8px;
 }
+.next-block-line strong { color: #F4F4F4; }
 .next-block-line:last-child { margin-bottom: 0; }
 .next-block-line strong { color: #D4C8B8; }
 
@@ -1587,6 +1606,13 @@ select.field-input {
 }
 .cta-primary:hover { box-shadow: 0 6px 24px rgba(201,168,76,0.4); }
 .cta-primary:active { transform: translateY(1px); }
+.cta-icon {
+  display: inline-block;
+  margin-right: 10px;
+  font-size: 20px;
+  vertical-align: -1px;
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25));
+}
 
 /* ═══════════════════════════════════════════════════════════
    DOTS (progress indicator at bottom)
@@ -1610,10 +1636,11 @@ select.field-input {
    MOBILE READABILITY (≤480px gets a small bump)
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
-  h1 { font-size: 38px; }
+  h1 { font-size: 44px; }
+  .wordmark { font-size: 24px; letter-spacing: 3.5px; }
   /* Body-text bumps for adult readability — kid funnel still reads fine,
      but adult self-signup users were reporting copy was too small to scan. */
-  .sub { font-size: 17px; line-height: 1.55; }
+  .sub { font-size: 18px; line-height: 1.55; }
   .step-text { font-size: 16px; }
   .tap-card-desc { font-size: 15px; line-height: 1.5; }
   .tap-card-title { font-size: 22px; }
@@ -1621,6 +1648,8 @@ select.field-input {
   .field-label { font-size: 13px; }
   .field-input { font-size: 16px; }    /* prevents iOS zoom-on-focus too */
   .field-helper { font-size: 14px; line-height: 1.5; }
+  .next-block-title { font-size: 19px; }
+  .next-block-line { font-size: 16px; }
   .footnote { font-size: 14px; }
   .screen-body { padding: 28px 20px 100px 20px; }
 }
@@ -1928,7 +1957,7 @@ select.field-input {
   </div>
 
   <div class="screen-body">
-    <div class="badge">Welcome to MyGrind</div>
+    <div class="wordmark">Welcome to MyGrind</div>
 
     <h1>
       Who's this for?
@@ -2004,8 +2033,6 @@ select.field-input {
   </div>
 
   <div class="screen-body">
-    <div class="badge">Welcome</div>
-
     <h1>
       Welcome.
       <span id="s1_h1_sub">Let's get your player on track.</span>
@@ -2034,7 +2061,7 @@ select.field-input {
     </div>
 
     <!-- Big CTA -->
-    <button class="cta-primary" onclick="goNext(1, 2)">Get Started &rarr;</button>
+    <button class="cta-primary" onclick="goNext(1, 2)"><span class="cta-icon">⚡</span>Get Started &rarr;</button>
 
     <!-- Trust strip -->
     <div class="trust-strip">
@@ -2071,8 +2098,6 @@ select.field-input {
   </div>
 
   <div class="screen-body">
-    <div class="badge">About You</div>
-
     <h1>
       First,
       <span>tell us about you.</span>
@@ -2181,8 +2206,6 @@ select.field-input {
   </div>
 
   <div class="screen-body">
-    <div class="badge">Your Family</div>
-
     <h1>
       Tell us about
       <span id="s3_h1_sub">your family.</span>
@@ -2279,8 +2302,6 @@ select.field-input {
   </div>
 
   <div class="screen-body">
-    <div class="badge">Your Why</div>
-
     <h1>
       What brings you
       <span>here?</span>
@@ -2363,8 +2384,6 @@ select.field-input {
   </div>
 
   <div class="screen-body">
-    <div class="badge">What It Costs</div>
-
     <h1>
       Straight up &mdash;
       <span>here's what it costs.</span>
@@ -2372,7 +2391,7 @@ select.field-input {
 
     <div class="gold-bar"></div>
 
-    <p class="sub">
+    <p class="sub" id="s5_sub">
       Not today. Not for 14 days. But you should know before we start.
     </p>
 
@@ -2413,7 +2432,11 @@ select.field-input {
          Stripe Payment Link `prefilled_promo_code` URL param. Accepts free
          text — Stripe silently rejects invalid codes on the checkout page
          so we don't need to validate against the API here.
-         Active codes (as of 2026-05-06): MYGRIND6 (6 months free, capped at 250). -->
+         Active codes (as of 2026-05-07): MYGRIND6 (6 months free, capped
+         at 250) and FOREVERYOUNG2026 (lifetime free, capped at 10). When a
+         known code is entered, applyPromoMessaging() also rewrites the
+         trial copy on this screen + Screen 7 so we don't promise a 14-day
+         trial when the user has 6 months / forever. -->
     <details class="promo-details" id="promo_details">
       <summary class="promo-summary">Have a promo code?</summary>
       <div class="promo-body">
@@ -2435,17 +2458,21 @@ select.field-input {
          Small, subtle two-line stack for the parent who's already convinced and
          doesn't want to wait 14 days. Question on top frames the moment;
          action line below is the actual link. Phase 5 wires to Stripe. -->
-    <button type="button" class="skip-trial-link" onclick="onSkipTrialClicked()">
+    <button type="button" class="skip-trial-link" id="s5_skip_trial" onclick="onSkipTrialClicked()">
       <span class="skip-line-question">Already convinced?</span>
       <span class="skip-line-action"><u>Pay now and skip the trial</u><span class="skip-link-arrow">&rarr;</span></span>
     </button>
 
-    <!-- Promise block — the trust contract -->
+    <!-- Promise block — the trust contract.
+         The title + first/third lines are rewritten by applyPromoMessaging()
+         when a recognized promo code is entered, so a parent on MYGRIND6 or
+         FOREVERYOUNG2026 sees their actual free window (6 months / forever)
+         instead of the default 14-day trial copy. -->
     <div class="promise-block">
-      <div class="promise-block-title">What happens at day 14?</div>
+      <div class="promise-block-title" id="s5_promise_title">What happens at day 14?</div>
       <div class="promise-block-line">
         <span class="bullet">→</span>
-        <div>We'll text you. We'll email you. <strong>Twice</strong> &mdash; on day 12, and again on day 14.</div>
+        <div id="s5_promise_notify">We'll text you. We'll email you. <strong>Twice</strong> &mdash; on day 12, and again on day 14.</div>
       </div>
       <div class="promise-block-line">
         <span class="bullet">→</span>
@@ -2453,7 +2480,7 @@ select.field-input {
       </div>
       <div class="promise-block-line">
         <span class="bullet">→</span>
-        <div>If not, you walk away. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.</div>
+        <div id="s5_promise_walkaway">If not, you walk away. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.</div>
       </div>
     </div>
 
@@ -2488,7 +2515,7 @@ select.field-input {
 
   <div class="screen-body">
     <div>
-      <span class="badge">Your Player</span><span class="slot-indicator" id="s6_slot" style="display:none;"></span>
+      <span class="slot-indicator" id="s6_slot" style="display:none;"></span>
     </div>
 
     <h1>
@@ -2639,10 +2666,13 @@ select.field-input {
     <!-- Status cards — populated dynamically by buildScreen7() -->
     <div id="status_cards"></div>
 
-    <!-- What's next reminder block -->
+    <!-- What's next reminder block.
+         The notify line is rewritten by applyPromoMessaging() when a known
+         promo code is applied so 6-month / lifetime users don't see the
+         default "Days 12 & 14" trial reminder copy. -->
     <div class="next-block">
       <div class="next-block-title">What's next</div>
-      <div class="next-block-line">
+      <div class="next-block-line" id="s7_notify_line">
         <strong>Days 12 & 14:</strong> we'll text and email a reminder before your trial ends.
       </div>
       <div class="next-block-line">
@@ -2910,6 +2940,12 @@ function loadState() {
 }
 
 /* ─── SCREEN NAVIGATION ───────────────────────────────────── */
+// History integration: each call to go() pushes a new history entry tagged
+// with { mgScreen: n } so the phone hardware back button navigates between
+// signup screens rather than bouncing out to index.html and losing all state.
+// _navFromPop suppresses the pushState side-effect when go() is invoked from
+// our own popstate handler (otherwise back → forward → back would loop).
+let _navFromPop = false;
 function go(n) {
   // Hide all screens
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -2921,10 +2957,34 @@ function go(n) {
     saveState();
     renderDots(n);
     window.scrollTo(0, 0);
+    // Sync browser history so phone back button rewinds through screens.
+    if (!_navFromPop) {
+      try {
+        const isFirstNav = !history.state || typeof history.state.mgScreen !== 'number';
+        if (isFirstNav) {
+          history.replaceState({ mgScreen: n }, '', '#s' + n);
+        } else if (history.state.mgScreen !== n) {
+          history.pushState({ mgScreen: n }, '', '#s' + n);
+        }
+      } catch (e) { /* old browser — fall through */ }
+    }
     // Per-screen activation hooks (each screen can register a restore fn)
     onScreenActivated(n);
   }
 }
+
+// Phone hardware / browser back button — read mgScreen from popped state and
+// rewind. If we're already at screen 0 and back is pressed again, the browser
+// will leave signup.html naturally (which is the right outcome — they really
+// do want to leave).
+window.addEventListener('popstate', (event) => {
+  const target = (event.state && typeof event.state.mgScreen === 'number')
+    ? event.state.mgScreen
+    : null;
+  if (target === null) return;
+  _navFromPop = true;
+  try { go(target); } finally { _navFromPop = false; }
+});
 
 // Screen activation dispatcher — restores form values, re-runs validators, etc.
 function onScreenActivated(n) {
@@ -4308,6 +4368,10 @@ function buildScreen7() {
       cta.innerHTML = 'Continue to Dashboard &rarr;';
     }
   }
+
+  // If a known promo code was applied on Screen 5, swap the "Days 12 & 14"
+  // notify line so 6-month / lifetime users don't see the wrong reminder copy.
+  applyPromoMessaging();
 }
 
 function onScreen7Continue() {
@@ -4641,6 +4705,80 @@ const STRIPE_PAYMENT_LINKS = {
   family_monthly: 'https://buy.stripe.com/8x26oJeam1Rr2Cu7aV4gg08'
 };
 
+// ─── PROMO MESSAGING (Screen 5 + Screen 7) ─────────────────
+// Some promo codes change the trial story significantly (lifetime free,
+// 6-month free, etc.) — when one of those is applied, the screens need
+// to swap the "14-day trial" copy so we don't promise something that
+// isn't true. Stripe is still the source of truth for what discount
+// applies; this table only controls what we PROMISE the user up front.
+//
+// Add new entries here when new promos go live. Unknown codes still get
+// passed through to Stripe (Stripe accepts/rejects them at checkout) but
+// the trial copy stays at the default 14-day promise.
+const PROMO_INFO = {
+  'MYGRIND6': {
+    kind: 'months',
+    durationLabel: '6 months',
+    summary: '✓ Code "MYGRIND6" applied — your first 6 months are free.'
+  },
+  'FOREVERYOUNG2026': {
+    kind: 'lifetime',
+    durationLabel: 'forever',
+    summary: '✓ Code "FOREVERYOUNG2026" applied — your account is free for life.'
+  }
+};
+
+function getPromoInfo(code) {
+  if (!code) return null;
+  return PROMO_INFO[code.trim().toUpperCase()] || null;
+}
+
+// Rewrites Screen 5 + Screen 7 trial copy based on whether a recognized
+// promo code is applied. Idempotent — safe to call from anywhere. Runs
+// from onPromoInput() (live) and from buildScreen7() (re-entry).
+function applyPromoMessaging() {
+  const info = getPromoInfo(state.promoCode);
+
+  const s5Sub      = document.getElementById('s5_sub');
+  const s5Title    = document.getElementById('s5_promise_title');
+  const s5Notify   = document.getElementById('s5_promise_notify');
+  const s5Walkaway = document.getElementById('s5_promise_walkaway');
+  const s5Skip     = document.getElementById('s5_skip_trial');
+  const s7Notify   = document.getElementById('s7_notify_line');
+
+  if (!info) {
+    // No (recognized) promo — restore the default 14-day trial copy.
+    if (s5Sub)      s5Sub.textContent      = 'Not today. Not for 14 days. But you should know before we start.';
+    if (s5Title)    s5Title.textContent    = 'What happens at day 14?';
+    if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Twice</strong> &mdash; on day 12, and again on day 14.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.";
+    if (s5Skip)     s5Skip.style.display   = '';
+    if (s7Notify)   s7Notify.innerHTML     = "<strong>Days 12 &amp; 14:</strong> we'll text and email a reminder before your trial ends.";
+    return;
+  }
+
+  if (info.kind === 'lifetime') {
+    if (s5Sub)      s5Sub.textContent      = "Not today. Not ever. You're locked in for life.";
+    if (s5Title)    s5Title.textContent    = "What happens after sign-up?";
+    if (s5Notify)   s5Notify.innerHTML     = "Nothing changes. <strong>No reminders. No charges. Ever.</strong> Your account stays free for life.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "Use it as long as you want. Your player's data stays with you — there's nothing to cancel.";
+    if (s5Skip)     s5Skip.style.display   = 'none';   // No trial to skip — there is no payment
+    if (s7Notify)   s7Notify.innerHTML     = "<strong>You're locked in for life.</strong> No reminders, no surprise charges &mdash; ever.";
+    return;
+  }
+
+  if (info.kind === 'months') {
+    const dur = info.durationLabel;        // e.g. "6 months"
+    if (s5Sub)      s5Sub.textContent      = "Not today. Not for " + dur + ". But you should know before we start.";
+    if (s5Title)    s5Title.textContent    = "What happens after your free " + dur + "?";
+    if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Two weeks before</strong> your free " + dur + " ends.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.";
+    if (s5Skip)     s5Skip.style.display   = '';       // Still relevant — eager parents can pay early
+    if (s7Notify)   s7Notify.innerHTML     = "<strong>Two weeks before " + dur + " is up:</strong> we'll text and email a reminder before your free period ends.";
+    return;
+  }
+}
+
 // ─── PROMO CODE INPUT (Screen 5) ────────────────────────────
 // Live-saves the entered code to state.promoCode. Stripe is the source
 // of truth — we don't validate the code locally. If invalid, the Stripe
@@ -4656,7 +4794,8 @@ function onPromoInput(el) {
   if (code) {
     el.classList.add('promo-applied');
     if (helper) {
-      helper.textContent = '✓ Code "' + code + '" will be applied on the checkout page.';
+      const info = getPromoInfo(code);
+      helper.textContent = info ? info.summary : '✓ Code "' + code + '" will be applied on the checkout page.';
       helper.classList.add('promo-helper-applied');
     }
   } else {
@@ -4666,6 +4805,7 @@ function onPromoInput(el) {
       helper.classList.remove('promo-helper-applied');
     }
   }
+  applyPromoMessaging();
 }
 
 // Restore promo code on Screen 5 entry (run from restorePlanSelection).
