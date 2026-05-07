@@ -45,7 +45,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Family plan** (2-3 players, locked 2026-05-02):
 - $14.99/month flat for the household
-- $149/year flat for the household
+- $149.99/year flat for the household
 - Hard-capped at 3 player slots
 - Slot-lock: once invites send (Screen 7 entry), player slots can no longer be swapped without contacting `coach@mygrindapp.com`
 - Phone uniqueness within a plan: no two players can share the same real phone (fallback / parent-device flag exempted)

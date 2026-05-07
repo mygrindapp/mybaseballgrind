@@ -71,6 +71,16 @@ html, body {
   font-family: 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
+  /* Belt-and-suspenders: even if a child element accidentally gets too wide,
+     the whole document can't scroll horizontally. */
+  max-width: 100vw;
+}
+
+/* Defensive: any media element that hasn't had explicit sizing applied
+   still can't blow out the viewport on narrow phones. */
+img, video, iframe, svg, canvas, table {
+  max-width: 100%;
+  height: auto;
 }
 
 body {
@@ -94,6 +104,21 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
+  /* min-width: 0 lets this flex child shrink below its intrinsic content
+     width — without this, a long word or wide child element on a narrow
+     phone (<480px) can force horizontal scroll. */
+  min-width: 0;
+  overflow-x: hidden;
+}
+
+/* Same min-width: 0 fix on screen + screen-body so flex content collapses
+   to viewport width instead of forcing horizontal scroll. */
+.screen {
+  min-width: 0;
+}
+.screen-body {
+  min-width: 0;
+  overflow-wrap: break-word;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -486,6 +511,37 @@ h1 span {
   color: #8A7E70;
   line-height: 1.4;
 }
+
+/* Phase 1F — "Coming soon for: Football · Volleyball · ..." strip on Screen 0.
+   Quiet typography so it doesn't compete with the audience-picker tiles, but
+   visible enough that parents searching for other sports see we're expanding. */
+.coming-soon-strip {
+  margin: 32px auto 0 auto;
+  max-width: 360px;
+  text-align: center;
+  padding-top: 18px;
+  border-top: 1px solid #232020;
+}
+.coming-soon-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #5A5048;
+  margin-bottom: 8px;
+}
+.coming-soon-sports {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 10px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14px;
+  color: #8A7E70;
+  line-height: 1.4;
+}
+.coming-soon-sports span:nth-child(even) { color: #3A332D; }   /* dim the · separators */
+
 .tap-card-check {
   flex-shrink: 0;
   width: 22px;
@@ -852,6 +908,80 @@ h1 span {
    weight intentionally light — discoverable for the eager, invisible for
    the undecided. Not a button. Doesn't undercut Decision #2 (free trial).
    Phase 5 will wire this to Stripe. */
+/* Promo-code <details> dropdown — collapsed by default, expands on tap.
+   Sits above the skip-trial-link on Screen 5. Visual weight is intentionally
+   quiet so non-promo users don't pause; users with a code see the affordance
+   and tap to expand. Form-input styling matches existing .field-input. */
+.promo-details {
+  max-width: 360px;
+  margin: 4px auto 18px auto;
+  text-align: center;
+}
+.promo-summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  color: #C9A84C;
+  background: rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.45);
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 12px 22px;
+  border-radius: 4px;
+  list-style: none;
+  user-select: none;
+  transition: all 0.2s ease;
+}
+.promo-summary::-webkit-details-marker { display: none; }
+.promo-summary::before {
+  content: "🎟️";
+  font-size: 17px;
+  line-height: 1;
+}
+.promo-summary::after {
+  content: "+";
+  color: #C9A84C;
+  font-size: 18px;
+  font-weight: 400;
+  margin-left: 4px;
+}
+.promo-details[open] .promo-summary {
+  background: rgba(201,168,76,0.16);
+  border-color: #C9A84C;
+}
+.promo-details[open] .promo-summary::after { content: "−"; }
+.promo-summary:hover {
+  background: rgba(201,168,76,0.16);
+  border-color: #C9A84C;
+}
+.promo-body {
+  margin-top: 10px;
+  text-align: left;
+}
+.promo-input {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.promo-input.promo-applied {
+  border-color: #C9A84C;
+  background: rgba(201,168,76,0.06);
+  color: #F4F4F4;
+}
+.promo-helper {
+  margin-top: 6px;
+  font-size: 13px;
+  text-align: center;
+  color: #8A7E70;
+}
+.promo-helper.promo-helper-applied {
+  color: #C9A84C;
+}
+
 .skip-trial-link {
   display: block;
   text-align: center;
@@ -1481,8 +1611,17 @@ select.field-input {
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 480px) {
   h1 { font-size: 38px; }
-  .sub { font-size: 16px; }
-  .step-text { font-size: 15px; }
+  /* Body-text bumps for adult readability — kid funnel still reads fine,
+     but adult self-signup users were reporting copy was too small to scan. */
+  .sub { font-size: 17px; line-height: 1.55; }
+  .step-text { font-size: 16px; }
+  .tap-card-desc { font-size: 15px; line-height: 1.5; }
+  .tap-card-title { font-size: 22px; }
+  .goal-toggle-text { font-size: 16px; line-height: 1.45; }
+  .field-label { font-size: 13px; }
+  .field-input { font-size: 16px; }    /* prevents iOS zoom-on-focus too */
+  .field-helper { font-size: 14px; line-height: 1.5; }
+  .footnote { font-size: 14px; }
   .screen-body { padding: 28px 20px 100px 20px; }
 }
 
@@ -1764,13 +1903,95 @@ select.field-input {
      About page (built in Phase 5+), not on every signup screen.
      ═══════════════════════════════════════════════════════════ -->
 <div class="logo-mark">
-  <img data-mg-img="logo" alt="MyGrind" style="height:96px; width:auto; max-width:80vw;">
+  <img data-mg-img="logo" alt="MyGrind" style="height:140px; width:auto; max-width:90vw;">
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SCREEN 0 — WHO'S THIS FOR?
+     ───────────────────────────────────────────────────────────
+     Audience picker — routes parent funnel ('kid') vs adult-self
+     funnel ('self'). Sets state.signupFor and bumps user into
+     Screen 1 (welcome). Self path forces playerCount=1, hides
+     Family tier, skips player-invite SMS step (handled in Step C).
+     This screen has no progress dots — it's the gate to the funnel.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="screen active" id="s0">
+
+  <div class="prog-wrap">
+    <div class="prog-track">
+      <div class="prog-fill" style="width: 0%"></div>
+    </div>
+    <div class="prog-label">
+      <span>Quick question first</span>
+      <span></span>
+    </div>
+  </div>
+
+  <div class="screen-body">
+    <div class="badge">Welcome to MyGrind</div>
+
+    <h1>
+      Who's this for?
+      <span>So we set up the right experience.</span>
+    </h1>
+
+    <div class="gold-bar"></div>
+
+    <div style="margin-top: 28px;">
+
+      <button type="button" class="tap-card" onclick="selectAudience('kid')">
+        <div class="tap-card-emoji">👨‍👧</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title">My athlete</div>
+          <div class="tap-card-desc">I'm signing up my kid (or kids). I'll create the account and they'll get a text invite.</div>
+        </div>
+      </button>
+
+      <button type="button" class="tap-card" onclick="selectAudience('self')">
+        <div class="tap-card-emoji">⚾</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title">Myself</div>
+          <div class="tap-card-desc">I'm 18 or older and signing up for my own training journal.</div>
+        </div>
+      </button>
+
+    </div>
+
+    <!-- Coming-soon marketing strip (Phase 1F, 2026-05-06).
+         Signals expansion plans without committing dates. SEO bonus: a parent
+         searching "football training app" finds us, sees we're growing, can
+         email coach@mygrindapp.com to express interest (we build a waitlist
+         BEFORE we build the content). Update this list when launching a new
+         sport — see docs/ADD_A_SPORT.md. -->
+    <div class="coming-soon-strip" id="coming-soon-strip">
+      <div class="coming-soon-label">Coming soon for</div>
+      <div class="coming-soon-sports">
+        <span>🏈 Football</span>
+        <span>·</span>
+        <span>🏐 Volleyball</span>
+        <span>·</span>
+        <span>🏀 Basketball</span>
+        <span>·</span>
+        <span>⚽ Soccer</span>
+        <span>·</span>
+        <span>more</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom nav (no back on screen 0; no dots) -->
+  <div class="bnav">
+    <div style="min-width: 80px;"></div>
+    <div class="dots" id="d0"></div>
+    <div style="min-width: 100px;"></div>
+  </div>
+
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
      SCREEN 1 — WELCOME
      ═══════════════════════════════════════════════════════════ -->
-<div class="screen active" id="s1">
+<div class="screen" id="s1">
 
   <div class="prog-wrap">
     <div class="prog-track">
@@ -1787,12 +2008,12 @@ select.field-input {
 
     <h1>
       Welcome.
-      <span>Let's get your player on track.</span>
+      <span id="s1_h1_sub">Let's get your player on track.</span>
     </h1>
 
     <div class="gold-bar"></div>
 
-    <p class="sub">
+    <p class="sub" id="s1_sub">
       This takes about 3 minutes. We'll set up your account, then send your player an invite to their phone.
     </p>
 
@@ -1800,15 +2021,15 @@ select.field-input {
     <div class="step-list">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text"><strong>You sign up</strong> &mdash; no card, no charge.</div>
+        <div class="step-text" id="s1_step1"><strong>You sign up</strong> &mdash; no card, no charge.</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
-        <div class="step-text"><strong>Your player gets a text</strong> with their personal link.</div>
+        <div class="step-text" id="s1_step2"><strong>Your player gets a text</strong> with their personal link.</div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
-        <div class="step-text"><strong>They set up their profile and start logging</strong> &mdash; you watch their progress.</div>
+        <div class="step-text" id="s1_step3"><strong>They set up their profile and start logging</strong> &mdash; you watch their progress.</div>
       </div>
     </div>
 
@@ -1859,7 +2080,7 @@ select.field-input {
 
     <div class="gold-bar"></div>
 
-    <p class="sub">
+    <p class="sub" id="s2_sub">
       This is your account. Your player gets their own profile in a minute.
     </p>
 
@@ -1964,17 +2185,17 @@ select.field-input {
 
     <h1>
       Tell us about
-      <span>your family.</span>
+      <span id="s3_h1_sub">your family.</span>
     </h1>
 
     <div class="gold-bar"></div>
 
-    <p class="sub">
+    <p class="sub" id="s3_sub">
       Two quick questions and we'll dial things in.
     </p>
 
     <!-- ─── QUESTION 1: Sport ──────────────────────────── -->
-    <div class="section-label">What sport(s) do you play?</div>
+    <div class="section-label" id="s3_sport_label">What sport(s) do you play?</div>
     <div class="sport-grid">
       <button type="button" class="sport-tile" id="sp_baseball" onclick="selectFamilySport('baseball')">
         <div class="sport-tile-icon">⚾</div>
@@ -1990,41 +2211,46 @@ select.field-input {
       </button>
     </div>
 
-    <div class="section-divider"></div>
+    <!-- Player-count block (hidden in self-funnel — adult is always 1 player) -->
+    <div id="s3_player_count_block">
 
-    <!-- ─── QUESTION 2: Player count ──────────────────── -->
-    <div class="section-label">How many players are you signing up?</div>
+      <div class="section-divider"></div>
 
-    <button type="button" class="tap-card" id="pc_1" onclick="selectPlayerCount(1)">
-      <div class="tap-card-emoji">👤</div>
-      <div class="tap-card-body">
-        <div class="tap-card-title">One Player</div>
-        <div class="tap-card-desc">Just my one.</div>
-      </div>
-      <div class="tap-card-check">✓</div>
-    </button>
+      <!-- ─── QUESTION 2: Player count ──────────────────── -->
+      <div class="section-label">How many players are you signing up?</div>
 
-    <button type="button" class="tap-card" id="pc_2" onclick="selectPlayerCount(2)">
-      <div class="tap-card-emoji">👥</div>
-      <div class="tap-card-body">
-        <div class="tap-card-title">Two Players</div>
-        <div class="tap-card-desc">Siblings — set them both up.</div>
-      </div>
-      <div class="tap-card-check">✓</div>
-    </button>
+      <button type="button" class="tap-card" id="pc_1" onclick="selectPlayerCount(1)">
+        <div class="tap-card-emoji">👤</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title">One Player</div>
+          <div class="tap-card-desc">Just my one.</div>
+        </div>
+        <div class="tap-card-check">✓</div>
+      </button>
 
-    <button type="button" class="tap-card" id="pc_3" onclick="selectPlayerCount(3)">
-      <div class="tap-card-emoji">👨‍👩‍👧‍👦</div>
-      <div class="tap-card-body">
-        <div class="tap-card-title">Three or More</div>
-        <div class="tap-card-desc">Big family.</div>
-      </div>
-      <div class="tap-card-check">✓</div>
-    </button>
+      <button type="button" class="tap-card" id="pc_2" onclick="selectPlayerCount(2)">
+        <div class="tap-card-emoji">👥</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title">Two Players</div>
+          <div class="tap-card-desc">Siblings — set them both up.</div>
+        </div>
+        <div class="tap-card-check">✓</div>
+      </button>
 
-    <p class="footnote">
-      <strong>Single $99/yr</strong> for 1 player. <strong>Family $149/yr</strong> covers 2 or 3 players in your household. Each player gets their own private journal and progress.
-    </p>
+      <button type="button" class="tap-card" id="pc_3" onclick="selectPlayerCount(3)">
+        <div class="tap-card-emoji">👨‍👩‍👧‍👦</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title">Three or More</div>
+          <div class="tap-card-desc">Big family.</div>
+        </div>
+        <div class="tap-card-check">✓</div>
+      </button>
+
+      <p class="footnote">
+        <strong>Single $99/yr</strong> for 1 player. <strong>Family $149.99/yr</strong> covers 2 or 3 players in your household. Each player gets their own private journal and progress.
+      </p>
+
+    </div>
 
   </div>
 
@@ -2070,37 +2296,37 @@ select.field-input {
 
     <button type="button" class="goal-toggle" id="g_see" onclick="toggleGoal('see')">
       <div class="goal-toggle-emoji">🎯</div>
-      <div class="goal-toggle-text">I want to see what my player is putting in</div>
+      <div class="goal-toggle-text" id="g_see_text">I want to see what my player is putting in</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_habits" onclick="toggleGoal('habits')">
       <div class="goal-toggle-emoji">📊</div>
-      <div class="goal-toggle-text">I want them building better daily habits</div>
+      <div class="goal-toggle-text" id="g_habits_text">I want them building better daily habits</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_recruit" onclick="toggleGoal('recruit')">
       <div class="goal-toggle-emoji">🏆</div>
-      <div class="goal-toggle-text">They're trying to make a team or get recruited</div>
+      <div class="goal-toggle-text" id="g_recruit_text">They're trying to make a team or get recruited</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_support" onclick="toggleGoal('support')">
       <div class="goal-toggle-emoji">🧠</div>
-      <div class="goal-toggle-text">I want to support them, not pressure them</div>
+      <div class="goal-toggle-text" id="g_support_text">I want to support them, not pressure them</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_accountable" onclick="toggleGoal('accountable')">
       <div class="goal-toggle-emoji">⏰</div>
-      <div class="goal-toggle-text">I want them more accountable for their own work</div>
+      <div class="goal-toggle-text" id="g_accountable_text">I want them more accountable for their own work</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
  <button type="button" class="goal-toggle" id="g_roadmap" onclick="toggleGoal('roadmap')">
       <div class="goal-toggle-emoji">🗺️</div>
-      <div class="goal-toggle-text">I want guidance on their journey</div>
+      <div class="goal-toggle-text" id="g_roadmap_text">I want guidance on their journey</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
@@ -2179,6 +2405,31 @@ select.field-input {
     <div class="switch-hint">
       Most parents pick annual &mdash; you can switch anytime
     </div>
+
+    <!-- Promo code entry (added 2026-05-06).
+         Discrete <details> dropdown — collapsed by default so it doesn't
+         distract users without a code. Codes auto-apply to both checkout
+         paths (skip-trial here AND "Pay early" on the dashboard) via the
+         Stripe Payment Link `prefilled_promo_code` URL param. Accepts free
+         text — Stripe silently rejects invalid codes on the checkout page
+         so we don't need to validate against the API here.
+         Active codes (as of 2026-05-06): MYGRIND6 (6 months free, capped at 250). -->
+    <details class="promo-details" id="promo_details">
+      <summary class="promo-summary">Have a promo code?</summary>
+      <div class="promo-body">
+        <input
+          type="text"
+          id="promo_input"
+          class="field-input promo-input"
+          placeholder="ENTER CODE"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          maxlength="40"
+          oninput="onPromoInput(this)" />
+        <div class="field-helper promo-helper" id="promo_helper">We'll apply it on the checkout page.</div>
+      </div>
+    </details>
 
     <!-- Eager-parent skip-trial option (Coach Young April 27 PM, refined April 28).
          Small, subtle two-line stack for the parent who's already convinced and
@@ -2431,14 +2682,14 @@ select.field-input {
 
   <div class="screen-body">
 
-    <!-- Persistent trial banner — always visible at top -->
-    <div class="trial-banner">
-      <div class="trial-banner-icon">⚾</div>
-      <div class="trial-banner-text">
-        <strong>14 Days Free</strong>
-        <span id="trial_days_text">14 days remaining · pay anytime from here</span>
-      </div>
-    </div>
+    <!-- Trial banner removed 2026-05-06 per Coach Young: parent already saw
+         "14 Days Free" on Screens 1 + 5; a third reminder on the dashboard
+         is redundant and risks displaying trial/billing info to a player
+         who picks up the parent's phone in fallback mode. The "Pay early"
+         link in dash-footer + the Day-12/14 SMS reminders cover any urgency.
+         The trial_days_text element is kept as a hidden no-op so existing
+         buildScreen8() trial-text writes don't error. -->
+    <span id="trial_days_text" style="display:none;"></span>
 
     <div class="badge">Your Dashboard</div>
 
@@ -2606,6 +2857,11 @@ const TOTAL_SCREENS = 8;
    to backend (Firebase + Twilio).
    ───────────────────────────────────────────────────────── */
 const state = {
+  // Screen 0 — Who's this for? (added 2026-05-06 for adult self-signup path)
+  // null  = user hasn't picked yet → init routes them to Screen 0
+  // 'kid' = parent signing up for their athlete (default funnel)
+  // 'self' = 18+ adult signing up for themselves (single-tier only, no SMS step)
+  signupFor: null,
   // Screen 2 — About You
   parent: {
     firstName: '',
@@ -2620,6 +2876,10 @@ const state = {
   goals: [],                // array of selected goal strings
   // Screen 5 — Pricing Preview (Decision #8 v2 — preferred plan selection)
   preferredPlan: 'annual',  // 'annual' | 'monthly' — Annual pre-selected by default
+  // Screen 5 — Promo code (added 2026-05-06).
+  // Free-text customer-facing code (e.g. "MYGRIND6"). Not validated client-side;
+  // Stripe applies or rejects it on the checkout page via prefilled_promo_code.
+  promoCode: '',
   // Screen 6 — Add Your Player (one entry per player)
   players: [],              // [{ firstName, relationship, phone, fallback, sport }]
                             // sport defaults to familySport, parent can override per-kid
@@ -2668,6 +2928,11 @@ function go(n) {
 
 // Screen activation dispatcher — restores form values, re-runs validators, etc.
 function onScreenActivated(n) {
+  // Self-funnel label swaps run first so any per-screen restore that reads
+  // text content sees the updated copy. Safe to call unconditionally — it
+  // no-ops when isSelfPath() is false.
+  applySelfLabels(n);
+
   if (n === 2) restoreParentFields();
   if (n === 3) restoreFamilyFields();
   if (n === 4) restoreGoals();
@@ -2677,9 +2942,70 @@ function onScreenActivated(n) {
   if (n === 8) buildScreen8();
 }
 
+// ─── SELF-FUNNEL COPY SWAPS ──────────────────────────────────
+// Targeted text swaps for the adult-self funnel. Each swap is keyed
+// by screen number and only fires when isSelfPath() is true. Kept
+// in one place so future copy tweaks don't drift across screens.
+function applySelfLabels(n) {
+  if (!isSelfPath()) return;
+
+  const setText = (id, text) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  };
+  const setHTML = (id, html) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = html;
+  };
+
+  if (n === 1) {
+    setText('s1_h1_sub', "Let's get your training on track.");
+    setText('s1_sub', "This takes about 3 minutes. We'll set up your account and you'll start logging today.");
+    setHTML('s1_step2', "<strong>You set up your profile</strong> &mdash; sport, position, goals.");
+    setHTML('s1_step3', "<strong>Start logging your training</strong> &mdash; daily journal, stats, progress.");
+  }
+  if (n === 2) {
+    setText('s2_sub', "This is your account. You'll start your training plan in a minute.");
+  }
+  if (n === 3) {
+    setText('s3_h1_sub', "your training.");
+    setText('s3_sub', "One quick question and we'll dial things in.");
+    setText('s3_sport_label', "What sport(s) do you play?");
+  }
+  if (n === 4) {
+    // Goal toggle copy — kid funnel uses third-person ("my player", "them",
+    // "they"); self funnel rewords each in first-person.
+    setText('g_see_text',         "I want to see my own work and progress");
+    setText('g_habits_text',      "I want to build better daily habits");
+    setText('g_recruit_text',     "I'm trying to make a team or get recruited");
+    setText('g_support_text',     "I want a healthy approach — not all pressure");
+    setText('g_accountable_text', "I want to be more accountable to myself");
+    setText('g_roadmap_text',     "I want guidance on my journey");
+    // g_explore ("I'm just exploring") already neutral — no swap needed.
+  }
+}
+
 function goNext(from, to) {
   // Optional hook for per-screen validation could go here later
   go(to);
+}
+
+// ─── SCREEN 0 — AUDIENCE PICKER ─────────────────────────────
+// Sets state.signupFor and proceeds. Self path also pre-locks
+// playerCount=1 so the rest of the funnel collapses correctly.
+function selectAudience(which) {
+  state.signupFor = which;
+  if (which === 'self') {
+    state.playerCount = 1;          // self path is always single-tier
+  }
+  saveState();
+  goNext(0, 1);
+}
+
+// Returns true if the active funnel is the adult-self funnel.
+// Used by Screen 1-3 label swaps and Screen 4-7 skip routing.
+function isSelfPath() {
+  return state.signupFor === 'self';
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -3009,9 +3335,14 @@ function restoreParentFields() {
    - Each selection clears the others in its group (single-select per group)
    ═══════════════════════════════════════════════════════════ */
 
-// ── Re-evaluate whether Next can be enabled (both questions answered)
+// ── Re-evaluate whether Next can be enabled.
+//   Kid funnel: requires both familySport AND playerCount.
+//   Self funnel: only requires familySport (playerCount is locked to 1
+//   in selectAudience, and the question itself is hidden on Screen 3).
 function checkScreen3Ready() {
-  const ready = !!state.familySport && !!state.playerCount;
+  const sportPicked = !!state.familySport;
+  const countPicked = isSelfPath() ? true : !!state.playerCount;
+  const ready = sportPicked && countPicked;
   const next = document.getElementById('n3');
   if (next) next.disabled = !ready;
 }
@@ -3019,6 +3350,12 @@ function checkScreen3Ready() {
 function selectFamilySport(sport) {
   state.familySport = sport;
   saveState();
+
+  // Phase 1D — also persist to mg_family_sport so softball.html (the
+  // unified dashboard) knows whether to surface the multi-sport toggle.
+  // Same-origin localStorage is shared across signup.html / onboarding.html /
+  // softball.html, so writing it here is enough; no URL handoff needed.
+  try { localStorage.setItem('mg_family_sport', sport); } catch (e) { /* no-op */ }
 
   // Visual: clear all sport tiles, then select the chosen one
   ['sp_baseball', 'sp_softball', 'sp_both'].forEach(id => {
@@ -3066,6 +3403,11 @@ function restoreFamilyFields() {
     const el = document.getElementById(id);
     if (el) el.classList.remove('selected');
   });
+
+  // Self funnel: hide the player-count question entirely (always 1 player).
+  // Kid funnel: ensure it's visible (in case user toggled audience earlier).
+  const pcBlock = document.getElementById('s3_player_count_block');
+  if (pcBlock) pcBlock.style.display = isSelfPath() ? 'none' : '';
 
   // Restore previous sport selection if there was one
   if (state.familySport) {
@@ -3176,13 +3518,17 @@ function restorePlanSelection() {
   // the actual total below the per-player rate so parents see what they'll
   // really pay (no surprise at billing time).
   updateMultiPlayerTotals();
+
+  // Restore any previously-entered promo code into the input + auto-expand
+  // the <details> dropdown so the user sees their saved code.
+  restorePromoCode();
 }
 
 /* Renders Screen 5 pricing cards for either the Single tier (1 player) or
    the Family tier (2-3 players). Pricing decision (locked 2026-05-02):
 
      Single (1 player):  $99/yr     · $9.99/mo
-     Family (2-3 kids):  $149/yr    · $14.99/mo  flat for the whole household
+     Family (2-3 kids):  $149.99/yr · $14.99/mo  flat for the whole household
 
    Family is hard-capped at 3 player slots (per Screen 3) — the price is
    flat regardless of whether the household has 2 or 3, so multi-kid
@@ -3202,8 +3548,8 @@ function renderPricingCards() {
   if (isFamily) {
     // Family tier — flat household pricing
     set('pc_annual_name',   'MyGrind Family Annual');
-    set('pc_annual_amount', '$149<span class="per"> / year &middot; up to 3 players</span>');
-    set('pc_annual_equiv',  '~ $12.42/mo &middot; save up to $148/yr');
+    set('pc_annual_amount', '$149.99<span class="per"> / year &middot; up to 3 players</span>');
+    set('pc_annual_equiv',  '~ $12.50/mo &middot; save up to $147/yr');
     set('pc_annual_tag',    'For 2-3 players in your household');
 
     set('pc_monthly_name',   'MyGrind Family Monthly');
@@ -3761,6 +4107,28 @@ function onPlayerBack() {
 }
 
 function restorePlayerScreen() {
+  // Self funnel: skip Screen 6 entirely. The "player" is the same person
+  // as the parent — auto-fill the player record with their parent info,
+  // mark fallback=true (no SMS to send to themselves), and jump straight
+  // to Screen 7's "all set" state which routes them into onboarding.html
+  // for PIN setup. We do this before loadPlayerSlot() so no form UI flashes.
+  if (isSelfPath()) {
+    state.playerCount = 1;
+    state.currentPlayerIndex = 0;
+    const p = (state.parent || {});
+    state.players = [{
+      firstName:    (p.firstName || '').trim() || 'Me',
+      relationship: 'Self',
+      phone:        '',                    // unused — fallback=true bypasses
+      fallback:     true,                  // skips SMS, uses on-device PIN
+      sport:        state.familySport || null
+    }];
+    if (!state.playersLockedAt) state.playersLockedAt = new Date().toISOString();
+    saveState();
+    go(7);
+    return;
+  }
+
   // Default currentPlayerIndex to 0 if missing (fresh entry from Screen 5)
   if (typeof state.currentPlayerIndex !== 'number') state.currentPlayerIndex = 0;
   // Defensive: never let index go past playerCount-1
@@ -3881,11 +4249,22 @@ function renderPlayerStatusCard(player, index) {
 }
 
 function buildScreen7() {
-  // Personalize headline with parent's first name
+  // Personalize headline with parent's (or self user's) first name
   const parentNameSpan = document.getElementById('s7_parent_name');
   if (parentNameSpan) {
     const pn = (state.parent && state.parent.firstName) ? state.parent.firstName.trim() : '';
     parentNameSpan.textContent = pn ? pn + '.' : 'Coach.';
+  }
+
+  // Self funnel: swap the subhead to first-person framing. The rest of the
+  // screen (status card, setup-required, CTA) is wired through the existing
+  // fallback path — onScreen7Continue() already routes fallback users to
+  // onboarding.html?fallback=1&name=[name] which is correct for self too.
+  const subhead = document.getElementById('s7_subhead');
+  if (subhead && isSelfPath()) {
+    subhead.textContent = "You're all set. One last step — pick a 4-digit PIN for your account, then start logging.";
+  } else if (subhead) {
+    subhead.textContent = "Here's what just happened.";
   }
 
   // Render-time slice: only show the first playerCount entries so stale
@@ -3938,8 +4317,15 @@ function onScreen7Continue() {
     // The kid-side flow in onboarding.html handles the PIN + sport selection.
     // After they finish, they (or the parent) can return to Screen 8 dashboard.
     // We pass the player's name and a flag so onboarding.html knows it's a fallback PIN setup.
+    // Self funnel also passes &self=1 + &sport=<x> so onboarding can swap the
+    // "your parent's phone" copy and skip the sport-selection screen.
     const firstFallback = fallbackNames[0];
-    window.location.href = 'onboarding.html?fallback=1&name=' + encodeURIComponent(firstFallback);
+    let url = 'onboarding.html?fallback=1&name=' + encodeURIComponent(firstFallback);
+    if (isSelfPath()) {
+      url += '&self=1';
+      if (state.familySport) url += '&sport=' + encodeURIComponent(state.familySport);
+    }
+    window.location.href = url;
   } else {
     // No fallback kids — go to parent dashboard (Screen 8)
     go(8);
@@ -4101,9 +4487,7 @@ function onDashboardPayClicked() {
     return;
   }
   saveState();
-  const email = (state.parent && state.parent.email) ? state.parent.email.trim() : '';
-  const url   = email ? baseUrl + '?prefilled_email=' + encodeURIComponent(email) : baseUrl;
-  window.location.href = url;
+  window.location.href = buildCheckoutUrl(baseUrl);
 }
 
 // Phase 5 Step 4 — query /api/get-subscription with the parent's email
@@ -4136,7 +4520,7 @@ function renderSubscriptionStatus(isPaid, sub) {
       single_monthly:  'Single Monthly ($9.99/mo)',
       single_annual:   'Single Annual ($99/yr)',
       family_monthly:  'Family Monthly ($14.99/mo)',
-      family_annual:   'Family Annual ($149/yr)',
+      family_annual:   'Family Annual ($149.99/yr)',
       team_coach:      'Team Coach ($29.99/yr)',
       team_sponsor:    'Team Sponsor ($300)',
     };
@@ -4257,6 +4641,61 @@ const STRIPE_PAYMENT_LINKS = {
   family_monthly: 'https://buy.stripe.com/8x26oJeam1Rr2Cu7aV4gg08'
 };
 
+// ─── PROMO CODE INPUT (Screen 5) ────────────────────────────
+// Live-saves the entered code to state.promoCode. Stripe is the source
+// of truth — we don't validate the code locally. If invalid, the Stripe
+// checkout page just doesn't show a discount; if valid, it pre-fills
+// applied. Code is uppercased + trimmed for consistent UX.
+function onPromoInput(el) {
+  const raw  = (el && el.value) ? el.value : '';
+  const code = raw.trim().toUpperCase();
+  state.promoCode = code;
+  saveState();
+  // Visual feedback: highlight when something is entered
+  const helper = document.getElementById('promo_helper');
+  if (code) {
+    el.classList.add('promo-applied');
+    if (helper) {
+      helper.textContent = '✓ Code "' + code + '" will be applied on the checkout page.';
+      helper.classList.add('promo-helper-applied');
+    }
+  } else {
+    el.classList.remove('promo-applied');
+    if (helper) {
+      helper.textContent = "We'll apply it on the checkout page.";
+      helper.classList.remove('promo-helper-applied');
+    }
+  }
+}
+
+// Restore promo code on Screen 5 entry (run from restorePlanSelection).
+function restorePromoCode() {
+  const input = document.getElementById('promo_input');
+  if (!input) return;
+  if (state.promoCode) {
+    input.value = state.promoCode;
+    onPromoInput(input);
+    // Auto-expand the <details> so the user sees their saved code.
+    const details = document.getElementById('promo_details');
+    if (details) details.open = true;
+  }
+}
+
+// Build a Stripe checkout URL with email + promo code prefills appended.
+// Stripe Payment Links accept `prefilled_email` and `prefilled_promo_code`
+// as URL params. Used by both onSkipTrialClicked() and onDashboardPayClicked()
+// so any future param changes only need to be made in one place.
+function buildCheckoutUrl(baseUrl) {
+  if (!baseUrl) return baseUrl;
+  const params = [];
+  const email = (state.parent && state.parent.email) ? state.parent.email.trim() : '';
+  if (email)            params.push('prefilled_email='      + encodeURIComponent(email));
+  if (state.promoCode)  params.push('prefilled_promo_code=' + encodeURIComponent(state.promoCode));
+  if (params.length === 0) return baseUrl;
+  const sep = baseUrl.indexOf('?') >= 0 ? '&' : '?';
+  return baseUrl + sep + params.join('&');
+}
+
 // Skip-trial / pay-now handler for the eager parent on Screen 5.
 // Per Coach Young April 27 PM: parent picks this when they're already
 // convinced and want to start their subscription immediately rather than
@@ -4278,15 +4717,10 @@ function onSkipTrialClicked() {
   // their work if they cancel out of Stripe and come back.
   saveState();
 
-  // Pre-fill the email so the parent doesn't retype it. Stripe also stores
-  // this on the customer object, which the webhook uses to match the
-  // subscription back to this signup record.
-  const email = (state.parent && state.parent.email) ? state.parent.email.trim() : '';
-  const url   = email
-    ? baseUrl + '?prefilled_email=' + encodeURIComponent(email)
-    : baseUrl;
-
-  window.location.href = url;
+  // buildCheckoutUrl handles prefilled_email + prefilled_promo_code so
+  // both checkout entry points (here + dashboard "Pay early →") share the
+  // same URL-construction logic.
+  window.location.href = buildCheckoutUrl(baseUrl);
 }
 
 // Historical note (April 27 PM): onPayNowClicked() was removed. The big
@@ -4438,7 +4872,7 @@ function populateSettings() {
 
   if (isFamily) {
     if (plan === 'monthly')     setText('set_plan', 'Family Monthly · $14.99/mo · up to 3 players');
-    else if (plan === 'annual') setText('set_plan', 'Family Annual · $149/yr · up to 3 players');
+    else if (plan === 'annual') setText('set_plan', 'Family Annual · $149.99/yr · up to 3 players');
     else                        setText('set_plan', '—');
   } else {
     if (plan === 'monthly')     setText('set_plan', 'Monthly · $9.99/mo per player');
@@ -4487,8 +4921,10 @@ window.addEventListener('DOMContentLoaded', () => {
     state.startedAt = new Date().toISOString();
     saveState();
   }
-  // Always start at Screen 1 for now (Phase 2 — no resume logic yet)
-  go(1);
+  // Always start at Screen 0 (audience picker) if user hasn't chosen yet,
+  // otherwise Screen 1. Phase 2 still has no mid-funnel resume — every
+  // session restarts from the top of the chosen funnel.
+  go(state.signupFor ? 1 : 0);
 
   // Dev console hint
   console.log('%c⚾ MyGrind Signup — Phase 2 (Round 8 — COMPLETE)', 'color: #C9A84C; font-weight: bold; font-size: 14px;');

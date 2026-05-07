@@ -34,15 +34,15 @@ export const config = {
 };
 
 // Map Stripe price IDs → human-readable plan labels.
-// Source: ~/.claude memory/stripe_ids.md (confirmed by phase5-preflight 2026-05-03).
+// Source: ~/.claude memory/stripe_ids.md (reconciled with live payment links 2026-05-06).
 // Keep this list in sync whenever Coach adds/changes prices in Stripe.
 const PRICE_TO_PLAN = {
-  'price_1TQTekPm4ermqky4w6cqMnzO': 'single_monthly',     // $9.99/mo
-  'price_1TQTDYPm4ermqky4TXgbfwFT': 'single_annual',      // $99/yr
-  'price_1TT61jPm4ermqky4GromT29o': 'family_annual',      // $149/yr
-  'price_1TT61mPm4ermqky40fD0nWFN': 'family_monthly',     // $14.99/mo
-  'price_1TOMMQPm4ermqky4inbGt7sY': 'team_coach',         // $29.99/yr
-  'price_1TOkRfPm4ermqky47OyyWvKB': 'team_sponsor',       // $300 one-time
+  'price_1TQTekPm4ermqky4w6cqMnzO': 'single_monthly',     // $9.99/mo  (prod_UPIFHJyfyTvBYy)
+  'price_1TQTDYPm4ermqky4TXgbfwFT': 'single_annual',      // $99.99/yr (prod_UN6Zzcas4NKeak)
+  'price_1TT68UPm4ermqky47QJZ8SnB': 'family_annual',      // $149.99/yr (prod_US08Tl9LglAWq7)
+  'price_1TT69tPm4ermqky4CYkbQcEf': 'family_monthly',     // $14.99/mo (prod_US0A0CbUborFoY)
+  'price_1TOMMQPm4ermqky4inbGt7sY': 'team_coach',         // $29.99/yr (prod_UN6Zzcas4NKeak)
+  'price_1TOkRfPm4ermqky47OyyWvKB': 'team_sponsor',       // $300 one-time (prod_UNVSgGdklou5Jd)
 };
 
 function planForSubscription(subscription) {
@@ -93,7 +93,10 @@ export default async function handler(req, res) {
         // but we capture the email + customer ID here so we can match.
         const session = event.data.object;
         const email = session.customer_details?.email || session.customer_email;
-        if (!email) break; // nothing to record without an email
+        if (!email) {
+          console.warn('[stripe-webhook] checkout.session.completed: no email on session', { sessionId: session.id, customerId: session.customer });
+          break;
+        }
         await upsertSubscription({
           email,
           customerId: session.customer,
@@ -118,7 +121,10 @@ export default async function handler(req, res) {
         } catch (e) {
           console.warn('[stripe-webhook] customer.retrieve failed:', e.message);
         }
-        if (!email) break;
+        if (!email) {
+          console.warn('[stripe-webhook] subscription.created/updated: no email (customer likely deleted)', { customerId: sub.customer, subId: sub.id, type: event.type });
+          break;
+        }
         await upsertSubscription({
           email,
           customerId:        sub.customer,
@@ -139,7 +145,10 @@ export default async function handler(req, res) {
           const customer = await stripe.customers.retrieve(sub.customer);
           email = customer.email;
         } catch (e) { /* fall through */ }
-        if (!email) break;
+        if (!email) {
+          console.warn('[stripe-webhook] subscription.deleted: no email (customer likely deleted)', { customerId: sub.customer, subId: sub.id });
+          break;
+        }
         await upsertSubscription({
           email,
           customerId:        sub.customer,
@@ -162,7 +171,10 @@ export default async function handler(req, res) {
             email = customer.email;
           } catch (e) { /* fall through */ }
         }
-        if (!email) break;
+        if (!email) {
+          console.warn('[stripe-webhook] invoice.payment_failed: no email', { invoiceId: invoice.id, customerId: invoice.customer });
+          break;
+        }
         // Don't overwrite plan info — just mark past_due so the app shows
         // a "your card failed" banner. Renewal recovery handles the rest.
         await upsertSubscription({

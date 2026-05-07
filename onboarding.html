@@ -309,6 +309,19 @@ h1 span { color: var(--gold); }
   color: #D4C8BC;
 }
 .parent-context strong { color: var(--gold); }
+
+/* ═══════════════════════════════════════════════════════════
+   PHONE BODY-TEXT BUMPS (≤480px)
+   ───────────────────────────────────────────────────────────
+   Adult self-signup users reported copy was too small to scan
+   comfortably. These are mobile-only bumps so desktop layout
+   stays as designed.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 480px) {
+  .sub { font-size: 17px; line-height: 1.55; }
+  .sport-desc { font-size: 15px; }
+  .parent-context { font-size: 16px; line-height: 1.55; }
+}
 </style>
 </head>
 <body>
@@ -320,7 +333,7 @@ h1 span { color: var(--gold); }
      April 30 — added so parent → player handoff feels continuous.
      ═══════════════════════════════════════════════════════════ -->
 <div class="logo-mark">
-  <img data-mg-img="logo" alt="MyGrind" style="height:96px; width:auto; max-width:80vw;">
+  <img data-mg-img="logo" alt="MyGrind" style="height:140px; width:auto; max-width:90vw;">
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -376,7 +389,7 @@ h1 span { color: var(--gold); }
     <h1>Pick a 4-digit PIN<br><span>just for you.</span></h1>
     <div class="gold-bar"></div>
 
-    <p class="sub">
+    <p class="sub" id="pin_sub">
       Since you're using your parent's phone, this PIN keeps your stuff yours. <strong style="color:var(--gold);">Don't share it.</strong>
     </p>
 
@@ -867,7 +880,8 @@ var TOTAL_STEPS = 11;
 // Player data accumulated through onboarding
 var d = {
   name:          '',           // pre-filled from ?name=Sofia
-  fallback:      false,        // true if ?fallback=1 (kid using parent's phone)
+  fallback:      false,        // true if ?fallback=1 (kid using parent's phone OR adult self-signup)
+  self:          false,        // true if ?self=1 — adult signing up for themselves
   pin:           '',           // 4-digit PIN if fallback
   sport:         '',           // baseball / softball / both
   age:           '',
@@ -896,8 +910,14 @@ function parseUrlParams() {
     var nameParam     = params.get('name');
     var fallbackParam = params.get('fallback');
     var sportParam    = params.get('sport');
+    var selfParam     = params.get('self');
     if (nameParam) d.name = decodeURIComponent(nameParam).trim();
     if (fallbackParam === '1' || fallbackParam === 'true') d.fallback = true;
+    // self=1 means the user is an 18+ adult who signed up for themselves
+    // via signup.html's adult funnel. Onboarding copy is swapped to first
+    // person ("your phone", not "your parent's phone"). Self users always
+    // ride the fallback path under the hood — d.fallback is also true.
+    if (selfParam === '1' || selfParam === 'true') d.self = true;
     // Parent already picked sport during signup — pre-fill so the kid skips
     // the sport-selection screen and the rest of the flow uses the right copy.
     // 'both' = a single multi-sport athlete (plays baseball AND softball).
@@ -919,7 +939,13 @@ function personalizeWelcome() {
 
   if (nameSpan) nameSpan.textContent = d.name || 'Player';
 
-  if (d.fallback) {
+  if (d.self) {
+    // Adult self-signup — they're on their own phone, not sharing with a kid.
+    if (subSpan) subSpan.textContent = "You're set up. Let's finish your profile.";
+    if (contextDiv) contextDiv.innerHTML =
+      'Your account is created. <strong>One quick PIN</strong> to lock down access on this device, ' +
+      'then we walk through your training plan.';
+  } else if (d.fallback) {
     if (subSpan) subSpan.textContent = "Your parent set you up on this phone. Let's finish your profile.";
     if (contextDiv) contextDiv.innerHTML =
       'Your parent already created your account. <strong>You\'re going to share this phone for now.</strong> ' +
@@ -1351,13 +1377,15 @@ function showFinalHoldingScreen() {
     '</div>' +
     '<h1 style="font-family:\'Bebas Neue\',Arial,sans-serif;font-size:34px;letter-spacing:1.5px;' +
         'line-height:1.1;color:#F5F0EB;margin-bottom:8px;">' +
-        'See you tomorrow,<br><span style="color:' + accent + ';">' + escapeForHtml(playerName) + '.</span>' +
+        'Let\'s grind,<br><span style="color:' + accent + ';">' + escapeForHtml(playerName) + '.</span>' +
     '</h1>' +
     '<div style="width:36px;height:3px;background:' + accent + ';margin:14px auto 22px;"></div>' +
     '<p style="font-size:15px;color:#A89880;line-height:1.7;max-width:340px;margin-bottom:24px;">' +
         'Your profile is saved. Your training plan is ready.<br><br>' +
         '<strong style="color:var(--gold);">The full dashboard is coming soon.</strong> ' +
-        'For now, your parent can see your progress from their side.' +
+        (d.self
+          ? 'You\'ll get your daily training prompts via text.'
+          : 'For now, your parent can see your progress from their side.') +
     '</p>' +
     '<div style="background:rgba(var(--accent-rgb),0.08);border:1px solid rgba(var(--accent-rgb),0.3);' +
         'border-radius:8px;padding:18px 22px;max-width:340px;color:#D4C8BC;font-size:14px;' +
@@ -1377,6 +1405,22 @@ function escapeForHtml(s) {
    .replace(/"/g, '&quot;');
 }
 
+/* ─── ADULT SELF-SIGNUP COPY SWAPS ──────────────────────
+   When d.self is true (adult signed up via signup.html's adult funnel),
+   any onboarding copy that frames the user as a kid borrowing their
+   parent's phone needs first-person rewording. Called once on load
+   from DOMContentLoaded.
+   ────────────────────────────────────────────────────── */
+function applySelfCopy() {
+  if (!d.self) return;
+  // PIN setup screen sub copy — "your parent's phone" → "your phone"
+  var pinSub = document.getElementById('pin_sub');
+  if (pinSub) {
+    pinSub.innerHTML = "This PIN locks your account on this device. " +
+      "<strong style=\"color:var(--gold);\">Don't share it.</strong>";
+  }
+}
+
 /* ─── INITIALIZATION ────────────────────────────────────
 
 ═══════════════════════════════════════════════════
@@ -1385,6 +1429,7 @@ function escapeForHtml(s) {
 window.addEventListener('DOMContentLoaded', function() {
   parseUrlParams();
   personalizeWelcome();
+  applySelfCopy();
   buildDots(0);
 
   // Dev console banner
