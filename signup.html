@@ -1502,30 +1502,29 @@ select.field-input {
    for trust reasons. Phase 5 will introduce a new pay surface elsewhere
    (likely tied to day 12/14 reminders per Decision #9). */
 
-/* Dashboard footer — small links for share, settings, etc.
-   Per Coach Young April 27 PM: original 11px / #6B5E52 was too small and
-   too low contrast to read comfortably. Bumped to 13px and #8A7E70 to
-   make it actually legible without making it grab attention away from
-   the player card above. */
+/* Dashboard footer — Share / Settings / Pay early.
+   Brightened + sized 2026-05-07 (Coach Young walkthrough): the original
+   13px / #8A7E70 was still too dim to feel tappable. Now 15px / #C5B59A
+   with bigger tap padding so the parent actually notices these options. */
 .dash-footer {
-  max-width: 360px;
+  max-width: 380px;
   margin: 0 auto 0 auto;
-  padding-top: 16px;
-  border-top: 1px solid #1A1A1A;
+  padding-top: 18px;
+  border-top: 1px solid #1F1F1F;
   display: flex;
   justify-content: center;
-  gap: 22px;
+  gap: 24px;
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
   text-transform: uppercase;
 }
 .dash-footer a {
-  color: #8A7E70;
+  color: #C5B59A;
   text-decoration: none;
   transition: color 0.2s ease;
-  padding: 4px 2px;
+  padding: 8px 4px;
 }
 .dash-footer a:hover { color: #C9A84C; }
 
@@ -1730,10 +1729,10 @@ select.field-input {
 }
 .phone-confirm-sub {
   font-family: 'Barlow', sans-serif;
-  font-size: 14px;
-  color: #A89880;
+  font-size: 16px;
+  color: #C5B59A;
   margin: 0 0 16px 0;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 .phone-confirm-list {
   background: rgba(201,168,76,0.06);
@@ -1820,34 +1819,34 @@ select.field-input {
    share input, share buttons, settings rows, and close button.
    ═══════════════════════════════════════════════════════════ */
 .modal-close-btn {
-  margin-top: 14px;
+  margin-top: 16px;
   background: transparent;
   border: 1px solid #3A332A;
-  color: #A89880;
-  padding: 11px 16px;
+  color: #C5B59A;
+  padding: 14px 18px;
   border-radius: 3px;
   font-family: 'Bebas Neue', cursive;
-  font-size: 13px;
-  letter-spacing: 1.5px;
+  font-size: 15px;
+  letter-spacing: 1.6px;
   cursor: pointer;
   width: 100%;
   transition: all 0.15s ease;
 }
-.modal-close-btn:hover { border-color: #6B5E52; color: #E8DCC4; }
+.modal-close-btn:hover { border-color: #6B5E52; color: #F4F4F4; }
 
 .share-link-row {
   display: flex;
   gap: 6px;
-  margin: 14px 0 12px 0;
+  margin: 16px 0 14px 0;
 }
 .share-link-input {
   flex: 1;
   background: rgba(201,168,76,0.06);
   border: 1px solid rgba(201,168,76,0.25);
   border-radius: 3px;
-  padding: 10px 12px;
+  padding: 12px 14px;
   font-family: 'Barlow', sans-serif;
-  font-size: 13px;
+  font-size: 15px;
   color: #F4F4F4;
   text-align: left;
   min-width: 0;
@@ -1856,11 +1855,11 @@ select.field-input {
 .share-actions { display: flex; gap: 10px; }
 .share-action-btn {
   flex: 1;
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-radius: 3px;
   font-family: 'Bebas Neue', cursive;
-  font-size: 13px;
-  letter-spacing: 1.5px;
+  font-size: 15px;
+  letter-spacing: 1.6px;
   cursor: pointer;
   border: none;
   transition: all 0.15s ease;
@@ -1873,14 +1872,48 @@ select.field-input {
   color: #E8DCC4;
 }
 .share-action-btn.secondary:hover { border-color: #6B5E52; }
-.share-toast {
+.share-action-btn.qr {
   margin-top: 10px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid rgba(201,168,76,0.45);
+  color: #C9A84C;
+}
+.share-action-btn.qr:hover { background: rgba(201,168,76,0.08); }
+.share-toast {
+  margin-top: 12px;
   font-family: 'Barlow', sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   color: #58D68D;
   display: none;
 }
 .share-toast.shown { display: block; }
+
+/* QR display panel — toggles open from the Share modal so a parent can
+   show their phone screen for another parent to scan in person. */
+.share-qr-display {
+  display: none;
+  margin: 14px auto 0 auto;
+  padding: 16px;
+  background: #FFFFFF;
+  border-radius: 6px;
+  max-width: 240px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+.share-qr-display.shown { display: block; }
+.share-qr-img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.share-qr-caption {
+  margin-top: 10px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: #555;
+  line-height: 1.4;
+}
 
 .settings-row-list {
   background: rgba(201,168,76,0.06);
@@ -1901,27 +1934,27 @@ select.field-input {
 .settings-row:last-child { border-bottom: none; }
 .settings-row-label {
   font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #8A7E70;
+  color: #C5B59A;
   flex-shrink: 0;
 }
 .settings-row-value {
   font-family: 'Barlow', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   color: #F4F4F4;
   text-align: right;
   word-break: break-all;
 }
 .settings-support-line {
   font-family: 'Barlow', sans-serif;
-  font-size: 13px;
-  color: #A89880;
-  line-height: 1.5;
-  margin: 12px 0;
+  font-size: 15px;
+  color: #D4C4A8;
+  line-height: 1.55;
+  margin: 14px 0;
 }
-.settings-support-line a { color: #C9A84C; text-decoration: none; }
+.settings-support-line a { color: #C9A84C; text-decoration: none; font-weight: 600; }
 .settings-support-line a:hover { text-decoration: underline; }
 </style>
 </head>
@@ -2823,6 +2856,13 @@ select.field-input {
       <button type="button" class="share-action-btn primary" onclick="onCopyShareLink()" id="share_copy_btn">Copy Link</button>
       <button type="button" class="share-action-btn secondary" onclick="onNativeShare()" id="share_native_btn" style="display:none;">Share…</button>
     </div>
+    <button type="button" class="share-action-btn qr" onclick="onToggleShareQR()" id="share_qr_btn">
+      <span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Show QR Code
+    </button>
+    <div class="share-qr-display" id="share_qr_display">
+      <img class="share-qr-img" id="share_qr_img" alt="QR code linking to MyGrind signup" />
+      <div class="share-qr-caption">Have them scan with their phone camera.</div>
+    </div>
     <div class="share-toast" id="share_toast">✓ Link copied to clipboard</div>
     <button type="button" class="modal-close-btn" onclick="closeShareModal()">Close</button>
   </div>
@@ -2865,7 +2905,7 @@ select.field-input {
     <p class="settings-support-line">
       Need to <strong>swap a player on your plan</strong>? Email <a href="mailto:support@mygrindapp.com?subject=Swap%20a%20player%20on%20my%20plan">support@mygrindapp.com</a> — player slots are locked once invites go out so households can't be silently rotated.
     </p>
-    <p class="settings-support-line" style="font-size:12px;color:#6B5E52;">
+    <p class="settings-support-line" style="font-size:13px;color:#9A8A78;">
       Self-serve account editing &amp; billing land in a future update.
     </p>
     <button type="button" class="modal-close-btn" onclick="closeSettingsModal()">Close</button>
@@ -4951,6 +4991,13 @@ function openShareModal() {
   // Reset toast state on each open
   const toast = document.getElementById('share_toast');
   if (toast) toast.classList.remove('shown');
+
+  // Reset QR display state — collapse on each open so it's not lingering
+  // from a previous session's "Show QR" toggle.
+  const qr      = document.getElementById('share_qr_display');
+  const qrBtn   = document.getElementById('share_qr_btn');
+  if (qr)    qr.classList.remove('shown');
+  if (qrBtn) qrBtn.innerHTML = '<span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Show QR Code';
 }
 
 function closeShareModal() {
@@ -4958,6 +5005,30 @@ function closeShareModal() {
   if (!overlay) return;
   overlay.classList.remove('shown');
   overlay.setAttribute('aria-hidden', 'true');
+}
+
+// Toggle the QR-code panel inside the Share modal. Lazy-loads the QR
+// image on first show so the modal opens instantly. Uses qrserver.com
+// (no API key, free) — degrades silently if blocked since the Copy
+// Link / native Share buttons still work.
+function onToggleShareQR() {
+  const qr    = document.getElementById('share_qr_display');
+  const img   = document.getElementById('share_qr_img');
+  const btn   = document.getElementById('share_qr_btn');
+  if (!qr || !img || !btn) return;
+
+  const isOpen = qr.classList.contains('shown');
+  if (isOpen) {
+    qr.classList.remove('shown');
+    btn.innerHTML = '<span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Show QR Code';
+  } else {
+    if (!img.src) {
+      const url = encodeURIComponent(SHARE_URL);
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' + url;
+    }
+    qr.classList.add('shown');
+    btn.innerHTML = '<span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Hide QR Code';
+  }
 }
 
 function onCopyShareLink() {
