@@ -4443,20 +4443,48 @@ function renderDashPlayerCard(player, index) {
         '<div class="dash-player-name">' + escapeHtml(name) + '</div>' +
         '<span class="dash-player-status">' + escapeHtml(statusText) + '</span>' +
       '</div>' +
-      // Greyed-out placeholder sections — locked until kid onboards
+      // Greyed-out placeholder sections — locked until kid onboards. Each
+      // row teases something the parent will see once their player is
+      // logging often. The tease is the conversion lever for daily
+      // input — parents who see "coach feedback" + "season stats" coming
+      // are the ones who push their kid to log every practice.
       '<div class="dash-section">' +
         '<div class="dash-section-icon">🔥</div>' +
         '<div class="dash-section-body">' +
           '<div class="dash-section-label">Current streak</div>' +
-          '<div class="dash-section-value">— days</div>' +
+          '<div class="dash-section-value">— days in a row</div>' +
         '</div>' +
         '<div class="dash-section-lock">🔒</div>' +
       '</div>' +
       '<div class="dash-section">' +
-        '<div class="dash-section-icon">📊</div>' +
+        '<div class="dash-section-icon">🎮</div>' +
         '<div class="dash-section-body">' +
-          '<div class="dash-section-label">Sessions logged</div>' +
-          '<div class="dash-section-value">0 sessions</div>' +
+          '<div class="dash-section-label">Games logged</div>' +
+          '<div class="dash-section-value">0 this season</div>' +
+        '</div>' +
+        '<div class="dash-section-lock">🔒</div>' +
+      '</div>' +
+      '<div class="dash-section">' +
+        '<div class="dash-section-icon">🏟️</div>' +
+        '<div class="dash-section-body">' +
+          '<div class="dash-section-label">Practices logged</div>' +
+          '<div class="dash-section-value">0 this season</div>' +
+        '</div>' +
+        '<div class="dash-section-lock">🔒</div>' +
+      '</div>' +
+      '<div class="dash-section">' +
+        '<div class="dash-section-icon">💬</div>' +
+        '<div class="dash-section-body">' +
+          '<div class="dash-section-label">Coach feedback</div>' +
+          '<div class="dash-section-value">Direct notes from coach + instructor</div>' +
+        '</div>' +
+        '<div class="dash-section-lock">🔒</div>' +
+      '</div>' +
+      '<div class="dash-section">' +
+        '<div class="dash-section-icon">📈</div>' +
+        '<div class="dash-section-body">' +
+          '<div class="dash-section-label">Season stats</div>' +
+          '<div class="dash-section-value">Game-by-game trends</div>' +
         '</div>' +
         '<div class="dash-section-lock">🔒</div>' +
       '</div>' +
