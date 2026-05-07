@@ -4014,10 +4014,13 @@ function refreshPlayerContinue() {
   // it's effectively a "next" through the locked view rather than a save.
   next.disabled = !(firstOk && relOk && phoneOk && sportOk);
 
-  // Button label changes based on whether this is the last player
+  // Button label changes based on whether this is the last player. We say
+  // "Continue to Dashboard" rather than "Back to Dashboard" — it reads as
+  // forward motion regardless of whether the user is on their first pass
+  // or returning to a locked review (Coach Young, 2026-05-07).
   const isLast = (idx + 1 >= total);
   if (state.playersLockedAt) {
-    next.innerHTML = isLast ? 'Back to Dashboard &rarr;' : 'Continue &rarr;';
+    next.innerHTML = isLast ? 'Continue to Dashboard &rarr;' : 'Continue &rarr;';
     next.disabled = false;
   } else if (isLast) {
     next.innerHTML = 'Send All Invites &rarr;';
