@@ -3,25 +3,125 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>MyGrind — A Daily Accountability Journal for Serious Players</title>
-<meta name="description" content="MyGrind is a daily accountability journal — built for serious players and the parents walking the road with them. Join the early list.">
+<title>MyGrind — Baseball &amp; Softball Training Journal App</title>
+<meta name="description" content="MyGrind is a daily training journal app for serious baseball and softball players. Track stats, set goals, log practices and games, and stay accountable to the grind.">
+<meta name="keywords" content="MyGrind, MyGrind app, baseball journal app, softball journal app, baseball training app, softball training app, player development, daily training journal, baseball stats tracker, softball stats tracker">
+<meta name="author" content="MyGrind">
 <meta name="theme-color" content="#0A0A0A">
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
+<!-- Open Graph (Facebook, LinkedIn, iMessage previews) -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="MyGrind — Coming Soon">
-<meta property="og:description" content="The Player's Journey. The Parent's Journey. One Journal.">
-<meta property="og:url" content="https://mygrindapp.com">
+<meta property="og:title" content="MyGrind — Baseball &amp; Softball Training Journal App">
+<meta property="og:description" content="The daily training journal app for serious baseball and softball players. Track stats, set goals, stay accountable to the grind.">
+<meta property="og:url" content="https://www.mygrindapp.com/">
 <meta property="og:site_name" content="MyGrind">
-<meta property="og:image" content="https://mygrindapp.com/assets/logo-web.png">
+<meta property="og:image" content="https://www.mygrindapp.com/assets/logo-web.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MyGrind — Baseball &amp; Softball Training Journal App">
+<meta property="og:locale" content="en_US">
+
+<!-- Twitter Card (X / Twitter previews) -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MyGrind — Baseball &amp; Softball Training Journal App">
+<meta name="twitter:description" content="The daily training journal app for serious baseball and softball players. Track stats, set goals, stay accountable to the grind.">
+<meta name="twitter:image" content="https://www.mygrindapp.com/assets/logo-web.png">
+<meta name="twitter:image:alt" content="MyGrind — Baseball &amp; Softball Training Journal App">
 
 <link rel="canonical" href="https://www.mygrindapp.com/">
 
 <link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
 <link rel="apple-touch-icon" href="https://www.mygrindapp.com/assets/apple-touch-icon.png">
 
+<!-- JSON-LD structured data: helps Google build a knowledge panel for
+     branded "MyGrind" searches and lets us claim rich-result eligibility
+     for the app. Three graphs:
+       1. Organization — entity behind mygrindapp.com
+       2. WebSite — site-level identity + sitelinks search box
+       3. SoftwareApplication — the app itself (category + audience) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://www.mygrindapp.com/#organization",
+      "name": "MyGrind",
+      "alternateName": "MyGrind App",
+      "url": "https://www.mygrindapp.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.mygrindapp.com/assets/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "email": "support@mygrindapp.com",
+      "sameAs": [
+        "https://www.instagram.com/mygrindapp/",
+        "https://www.instagram.com/youngsbaseball/"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.mygrindapp.com/#website",
+      "url": "https://www.mygrindapp.com/",
+      "name": "MyGrind",
+      "description": "Daily training journal app for baseball and softball players.",
+      "publisher": { "@id": "https://www.mygrindapp.com/#organization" },
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "MyGrind",
+      "alternateName": "MyGrind App",
+      "url": "https://www.mygrindapp.com/",
+      "applicationCategory": "SportsApplication",
+      "applicationSubCategory": "Training Journal",
+      "operatingSystem": "Web, iOS Safari, Android Chrome",
+      "audience": {
+        "@type": "Audience",
+        "audienceType": "Baseball and softball players, ages 9-22, and their parents/coaches"
+      },
+      "description": "MyGrind is a daily training journal for serious baseball and softball players. Log games, practices, and reps; set goals; track stats; receive coach feedback; and build daily accountability streaks.",
+      "publisher": { "@id": "https://www.mygrindapp.com/#organization" },
+      "offers": [
+        {
+          "@type": "Offer",
+          "name": "MyGrind Annual",
+          "price": "99.00",
+          "priceCurrency": "USD",
+          "description": "Annual plan, single player. 14-day free trial."
+        },
+        {
+          "@type": "Offer",
+          "name": "MyGrind Monthly",
+          "price": "9.99",
+          "priceCurrency": "USD",
+          "description": "Monthly plan, single player. Cancel anytime."
+        },
+        {
+          "@type": "Offer",
+          "name": "MyGrind Family Annual",
+          "price": "149.99",
+          "priceCurrency": "USD",
+          "description": "Annual plan, up to 3 players in one household."
+        }
+      ]
+    }
+  ]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+
+<!-- Vercel Web Analytics — privacy-first, cookieless, no PII. Free up
+     to 2.5k events/month. Aligns with privacy.html §11 ("no third-party
+     behavioral tracking"). Must also be enabled in the Vercel project
+     dashboard (Project → Analytics → Enable). -->
+<script defer src="/_vercel/insights/script.js"></script>
 
 <style>
   :root {
