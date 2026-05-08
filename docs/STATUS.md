@@ -91,14 +91,14 @@
 ### Tabs (in order)
 1. ⚾ Dashboard
 2. 📓 Daily Journal
-3. 📊 My Stats
-4. 🏆 Goals
+3. 📊 My Stats (now includes Training Volume + arm-load tier card)
+4. 🏆 Goals (lives on Dashboard now — old standalone tab removed earlier)
 5. 📚 Academics
 6. 📅 Training Calendar
 7. 👥 Team
 8. 👤 My Profile
-9. 📲 Share
-10. ⚙️ Settings (now includes Backup & Restore)
+9. ⚙️ Settings (now includes Backup & Restore)
+- ~~📲 Share~~ — REMOVED 2026-05-08. Share modal still works for milestones; the dedicated Share tab and panel-share div were retired (panel kept hidden in DOM for future restore, More-menu entry deleted).
 
 ### Active beta users
 - ~7 (per last count — verify in Firebase Auth dashboard if you need a fresh number)
