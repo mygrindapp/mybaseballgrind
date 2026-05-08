@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v9';
+    const CACHE = 'ybg-mygrind-v10';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1678,9 +1678,7 @@ function dismissIosBanner() {
   <button onclick="mgTab('coach-feedback',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">💬</span> Coach Feedback
   </button>
-  <button onclick="mgTab('share',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center;">📲</span> Share
-  </button>
+  <!-- Share tab removed 2026-05-08 — milestone share modal still works via shareMilestone(). -->
   <button onclick="mgTab('settings',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">⚙️</span> Settings
   </button>
@@ -2320,6 +2318,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            uploader so it reads as part of the throwing-session ritual. -->
       <div class="card" id="j-armcare-section" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
         <div class="card-title">💪 Arm & Shoulder Care — Today</div>
+        <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
+             Wired into renderTrainingVolume(): when last-7-day arm load crosses a
+             threshold, this strip becomes the "why this matters today" prompt right
+             above the checklist. Hidden in green / unknown-age states. -->
+        <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
         <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
           Non-negotiable daily. Pitchers especially — your arm is your career. Check each one off. <strong style="color:var(--gold);">Resets at midnight.</strong>
         </div>
@@ -3321,7 +3324,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div><label>Pop Time (Catchers)</label><input type="text" id="st-pop" placeholder="e.g. 1.95s"></div>
         <div><label>60-Yard Dash</label><input type="text" id="st-sixty" placeholder="e.g. 6.8 sec"></div>
         <div><label>Velocity (MPH)</label><input type="text" id="st-velo" placeholder="e.g. 78 mph"></div>
-        <div><label>GameChanger Team</label><input type="text" id="st-gc" placeholder="e.g. Canyon HS Comets"></div>
+        <!-- GameChanger Team input removed 2026-05-08 — Coach: stats can be wrong via GC. -->
       </div>
     </div>
 
@@ -3340,34 +3343,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div style="flex:1; height:1px; background:linear-gradient(90deg, var(--border), transparent);"></div>
     </div>
 
-    <!-- ── GAMECHANGER IMPORT ── -->
-    <div class="card" style="margin-bottom:16px; border-color:#2471A3;">
-      <div class="card-title" style="color:#5DADE2;">📊 Import from GameChanger</div>
-
-      <!-- Option 1: Screenshot OCR — TEMPORARILY DISABLED
-           The screenshot reader called the Anthropic API directly from the
-           browser, which is blocked by CORS and has no API key. Coming back
-           in a future phase via a backend proxy. For now, route users to
-           Option 2 (manual entry) so they don't hit a dead end. -->
-      <div style="background:rgba(93,173,226,0.04); border:1px dashed #2471A3; border-radius:3px; padding:16px; margin-bottom:12px; opacity:0.75;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#5DADE2; margin-bottom:8px;">📸 Option 1 — Screenshot Import (Coming Soon)</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.7;">
-          Auto-import from a GameChanger screenshot is being upgraded. For now, please use <strong style="color:#5DADE2;">Option 2 — Copy &amp; Paste</strong> below.
-        </div>
-      </div>
-
-      <!-- Option 2: Copy & Paste -->
-      <div style="background:rgba(93,173,226,0.04); border:1px solid #1A3A4A; border-radius:3px; padding:16px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#5DADE2; margin-bottom:10px;">📋 Option 2 — Copy & Paste (Manual)</div>
-        <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.9;">
-          <strong style="color:#5DADE2;">Step 1</strong> — Open the <strong>GameChanger</strong> app on your phone<br>
-          <strong style="color:#5DADE2;">Step 2</strong> — Tap <strong>My Teams</strong> → select your team<br>
-          <strong style="color:#5DADE2;">Step 3</strong> — Tap <strong>Stats</strong> at the top<br>
-          <strong style="color:#5DADE2;">Step 4</strong> — Find your name in the list<br>
-          <strong style="color:#5DADE2;">Step 5</strong> — Type your numbers into the stat fields above
-        </div>
-      </div>
-    </div>
+    <!-- GameChanger Import card removed 2026-05-08 — Coach decision: stats
+         imported from GameChanger can be wrong (lineup errors, scorer
+         disagreements, missed at-bats). Players type their own numbers
+         from the on-screen stat fields. MaxPreps card remains as a
+         reference path. -->
 
     <!-- ── MAXPREPS ── -->
     <div class="card" style="margin-bottom:16px; border-color:var(--gold-dark);">
@@ -3465,7 +3445,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   </div>
 
   <!-- ══════════════════════════════════════════ SHARE ══ -->
-  <div class="panel" id="panel-share">
+  <!-- Share TAB removed 2026-05-08 — Coach decision during walkthrough.
+       The dedicated tab was a sales surface (QR code + invite copy) and
+       did not earn its place in the bottom-nav More menu. The share MODAL
+       (line ~1115, fired by shareMilestone() and similar) remains intact
+       for sharing specific wins. To restore: revert this commit + restore
+       the panel-share div + add the More-menu button back. -->
+  <div class="panel" id="panel-share" style="display:none !important;">
     <div class="section-header">
       <div class="section-title">📲 <span>SHARE</span></div>
       <div class="section-sub">Spread the Grind · Help a Player Level Up</div>
@@ -5177,18 +5163,17 @@ function showPanel(id) {
       b.classList.add('active');
     }
   });
-  // Show social footer only on My Profile (first) and My Stats (last) tabs
+  // Show social footer only on My Profile, My Stats, and Settings tabs.
+  // 'share' removed 2026-05-08 — Share tab no longer in the More menu.
   const footer = document.getElementById('social-share-footer');
   if (footer) {
-    const showOn = ['players', 'stats', 'settings', 'share'];
+    const showOn = ['players', 'stats', 'settings'];
     footer.style.display = showOn.includes(id) ? 'block' : 'none';
   }
   // Refresh subscription card when My Profile opens
   if (id === 'players') { updateSubscriptionCard(); updateSettingsAccountInfo(); }
   // Refresh settings when settings tab opens
   if (id === 'settings') { updateSettingsAccountInfo(); loadSettings(); updateLastBackupDisplay(); }
-  // Generate QR when share tab opens
-  if (id === 'share') { setTimeout(initQR, 100); }
   // Scroll back to top on tab switch
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
@@ -6707,7 +6692,7 @@ function saveAllStats() {
     er:   s('st-er'),   pk:   s('st-pk'),   pbb:  s('st-pbb'),
     ph:   s('st-ph'),   sv:   s('st-sv'),   cg:   s('st-cg'),
     po:   s('st-po'),   a:    s('st-a'),    e:    s('st-e'),
-    pop:  s('st-pop'),  mp:   s('st-mp'),   gc:   s('st-gc'),
+    pop:  s('st-pop'),  mp:   s('st-mp'),
     sixty: s('st-sixty'), velo: s('st-velo'),
     savedAt: new Date().toLocaleString()
   };
@@ -6972,6 +6957,32 @@ function renderTrainingVolume() {
   } else {
     if (dashNum)  dashNum.style.color = 'var(--white)';
     if (dashTier) { dashTier.textContent = 'No reps logged this week'; dashTier.style.color = 'var(--grey)'; }
+  }
+
+  // ── Arm Care card — tier-aware strip + border (Coach Young 2026-05-08) ──
+  // The Daily Journal Arm Care checklist now reflects the player's current
+  // arm-load tier so the prompt scales with risk: green = standard reminder,
+  // gold = "heavy week, don't skip these," red = "overuse risk, today is
+  // critical." Border color also flips so the visual signal is unmissable.
+  const armSec   = document.getElementById('j-armcare-section');
+  const armStrip = document.getElementById('armcare-tier-strip');
+  if (tier === 'gold' && armStrip) {
+    armStrip.style.display    = 'block';
+    armStrip.style.background = 'rgba(201, 168, 76, 0.12)';
+    armStrip.style.border     = '1px solid var(--gold-dark)';
+    armStrip.style.color      = 'var(--gold)';
+    armStrip.innerHTML        = '⚠️ HEAVY WEEK · ' + t.armLoad7d.toLocaleString() + ' THROWS+PITCHES (LAST 7) · DON\'T SKIP THESE TODAY';
+    if (armSec) armSec.style.borderLeftColor = TIER_STYLE.gold.color;
+  } else if (tier === 'red' && armStrip) {
+    armStrip.style.display    = 'block';
+    armStrip.style.background = 'rgba(231, 76, 60, 0.12)';
+    armStrip.style.border     = '1px solid #C0392B';
+    armStrip.style.color      = '#E74C3C';
+    armStrip.innerHTML        = '🚨 OVERUSE RISK · ' + t.armLoad7d.toLocaleString() + ' THROWS+PITCHES (LAST 7) · ARM CARE IS CRITICAL TODAY — CONSIDER REST';
+    if (armSec) armSec.style.borderLeftColor = TIER_STYLE.red.color;
+  } else {
+    if (armStrip) armStrip.style.display = 'none';
+    if (armSec) armSec.style.borderLeftColor = 'var(--gold)'; // green / unknown / no-load → default
   }
 }
 
