@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v1';
+    const CACHE = 'ybg-mygrind-v2';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -9863,18 +9863,37 @@ window.addEventListener('load', function() {
   }, 900);
 });
 
-// Also make journal the default panel on load
+// Default panel on load — Profile-first for new players, Journal for everyone else.
+// Coach Young 2026-05-08: a freshly-onboarded player should land on Profile so
+// they identify themselves before the daily-action surface. Once name + position
+// + age are filled, every subsequent load defaults to Journal. No flag needed —
+// the existing ybg_softball_profile localStorage record is the source of truth.
+function isProfileComplete() {
+  try {
+    var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    return !!(p.name && p.pos && p.age);
+  } catch (e) { return false; }
+}
 window.addEventListener('load', function() {
   setTimeout(function() {
-    // Set journal as active panel (replaces the default 'players' active state)
+    var targetPanel = isProfileComplete() ? 'journal' : 'players';
     document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-    var journal = document.getElementById('panel-journal');
-    if (journal) journal.classList.add('active');
-    // Update nav label
+    var el = document.getElementById('panel-' + targetPanel);
+    if (el) el.classList.add('active');
+    // Sync bottom-nav active state so the highlighted tab matches the visible panel
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    var tabEl = document.getElementById('tab-' + targetPanel);
+    if (tabEl) tabEl.classList.add('active');
+    // Update top nav label
     var iconEl  = document.getElementById('mg-nav-icon');
     var labelEl = document.getElementById('mg-nav-label');
-    if (iconEl)  iconEl.textContent  = '📓';
-    if (labelEl) labelEl.textContent = 'Daily Journal';
+    if (targetPanel === 'players') {
+      if (iconEl)  iconEl.textContent  = '👤';
+      if (labelEl) labelEl.textContent = 'My Profile';
+    } else {
+      if (iconEl)  iconEl.textContent  = '📓';
+      if (labelEl) labelEl.textContent = 'Daily Journal';
+    }
   }, 200);
 });
 </script>
