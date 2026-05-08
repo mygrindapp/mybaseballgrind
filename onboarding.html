@@ -852,12 +852,11 @@ h1 span { color: var(--gold); }
     </div>
 
     <div class="exit-coming-soon">
-      <strong>Your dashboard is being prepared.</strong><br>
-      The full player dashboard (journal, streaks, stats, your training plan) is shipping soon.<br><br>
-      For now, your profile is saved on this device. Your parent will see updates from their dashboard.
+      <strong>Your journal is ready.</strong><br>
+      Open it now to log your first session, set your streak, and start tracking. Your parent sees your progress from their dashboard.
     </div>
 
-    <button class="cta" onclick="onFinalExit()">Got It &mdash; I'll Be Back &rarr;</button>
+    <button class="cta" onclick="onFinalExit()">Open My Journal &rarr;</button>
   </div>
 
   <div class="bnav">
@@ -1343,16 +1342,21 @@ function saveProfile() {
 }
 
 /* ─── FINAL EXIT BUTTON ─────────────────────────────────
-   "Got It — I'll Be Back" button on S14. For now just
-   shows a confirmation alert. Phase 7 will route to the
-   real player dashboard.
+   "Open My Journal" button on S14. Routes the freshly-onboarded
+   player into softball.html (the live journal) — they keep the
+   sport theme, profile, and PIN they just set up since softball.html
+   reads from the same localStorage keys onboarding wrote.
+   Coach Young 2026-05-07 — replaced the old "shipping soon" holding
+   overlay since softball.html went live a while back.
    ────────────────────────────────────────────────────────── */
 function onFinalExit() {
-  // Stage 2 (Player Dashboard) is in development. Until it ships, show a
-  // styled holding screen that matches onboarding's visual language instead
-  // of a jarring JS alert at the highest-engagement moment of the flow.
-  showFinalHoldingScreen();
-  // In Phase 7: window.location.href = 'player-dashboard.html';
+  try {
+    // Tag the localStorage with a flag the journal can read so the first
+    // load can show a brief welcome state ("Welcome, [name]!") instead of
+    // dropping the player straight into a cold dashboard.
+    localStorage.setItem('mg_first_journal_open', '1');
+  } catch (_) { /* private browsing — no-op */ }
+  window.location.href = 'softball.html';
 }
 
 function showFinalHoldingScreen() {
