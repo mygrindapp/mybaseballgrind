@@ -1165,11 +1165,14 @@ function disableNext(el) {
 /* ─── SPORT-AWARE LABELS & ACCENT COLORS ────────────────
    Updates sport label badge and shifts accent color from
    gold (baseball) to pink (softball) across the UI.
+   2026-05-07 — Coach Young: kill the "⚾ Baseball" / "🥎 Softball"
+   text label in the progress bar across all screens. Once the
+   sport is picked, the gold-vs-pink accent color is enough — the
+   text label is just noise. The sportLabel spans stay in the DOM
+   (empty) so this stays a one-line revert if we change our mind.
    ────────────────────────────────────────────────────────── */
 function updateSportLabels() {
-  var label = d.sport === 'softball' ? '🥎 Softball' :
-              d.sport === 'both'     ? '⚾🥎 Both' :
-              d.sport === 'baseball' ? '⚾ Baseball' : '';
+  var label = ''; // suppressed (Coach 2026-05-07)
   var accent = d.sport === 'softball' ? '#D4547A' : 'var(--gold)';
 
   // Update each per-screen sport label
