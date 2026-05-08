@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v5';
+    const CACHE = 'ybg-mygrind-v6';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2045,31 +2045,31 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           .rep-chip-exact { font-style:italic; opacity:0.8; flex:0 0 auto; }
           .rep-chip-exact.selected { opacity:1; }
         </style>
-        <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">🔢 Rep Counter — Today's Practice</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:14px; line-height:1.5;">Tap the range that matches your day. Don't know exact? Don't worry — <strong style="color:var(--light);">just commit a range</strong>.</div>
+        <div id="rep-counter-title" style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">🔢 Rep Counter — Today's Practice</div>
+        <div id="rep-counter-subtitle" style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:14px; line-height:1.5;">Tap the range that matches your day. Don't know exact? Don't worry — <strong style="color:var(--light);">just commit a range</strong>.</div>
         <div style="display:grid; grid-template-columns:1fr; gap:14px;">
-          <div>
+          <div id="rep-cat-swings">
             <label style="font-size:10px; letter-spacing:1px;">🏏 SWINGS</label>
             <div id="rep-chip-row-swings" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
             <input type="number" id="jr-swings-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('swings')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
             <input type="hidden" id="jr-swings-value" value="0">
             <input type="hidden" id="jr-swings-label" value="">
           </div>
-          <div>
+          <div id="rep-cat-gb">
             <label style="font-size:10px; letter-spacing:1px;">⚾ GROUND BALLS</label>
             <div id="rep-chip-row-gb" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
             <input type="number" id="jr-gb-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('gb')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
             <input type="hidden" id="jr-gb-value" value="0">
             <input type="hidden" id="jr-gb-label" value="">
           </div>
-          <div>
+          <div id="rep-cat-throws">
             <label style="font-size:10px; letter-spacing:1px;">🎯 THROWS</label>
             <div id="rep-chip-row-throws" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
             <input type="number" id="jr-throws-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('throws')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
             <input type="hidden" id="jr-throws-value" value="0">
             <input type="hidden" id="jr-throws-label" value="">
           </div>
-          <div>
+          <div id="rep-cat-pitches">
             <label style="font-size:10px; letter-spacing:1px;">⚾ PITCHES</label>
             <div id="rep-chip-row-pitches" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
             <input type="number" id="jr-pitches-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('pitches')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
@@ -2235,7 +2235,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </div>
           <div>
             <label>Focus Area</label>
-            <select id="j-inst-focus" style="margin-bottom:0;">
+            <select id="j-inst-focus" onchange="onInstructorFocusChange()" style="margin-bottom:0;">
               <option value="">-- Select --</option>
               <option value="hitting">🏏 Hitting</option>
               <option value="pitching">⚾ Pitching</option>
@@ -5513,8 +5513,12 @@ function toggleGameStats() {
 
   // When Instructor is selected, hide everything except the Instructor card
   // to keep the form focused on just the instructor session.
+  // NOTE 2026-05-08: j-reps-section is NO LONGER in this list — Coach asked
+  // for the rep counter to surface on Instructor entries too, scoped to the
+  // selected Focus Area (e.g. hitting → swings only). The instructor branch
+  // below routes through onInstructorFocusChange() to apply that scoping.
   const hideOthers = isInstructor;
-  const fieldsToHide = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-reps-section', 'j-grade-row'];
+  const fieldsToHide = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
   fieldsToHide.forEach(function(fid) {
     const el = document.getElementById(fid);
     if (!el) return;
@@ -5532,9 +5536,19 @@ function toggleGameStats() {
   // Reflection extra field
   if (extraEl) extraEl.style.display = isReflect ? 'block' : 'none';
 
-  // Practice rep counter — only for practice entries
+  // Rep counter visibility — Practice (all 4 cats) / Instructor (focus-scoped) / hide.
   const repsSec = document.getElementById('j-reps-section');
-  if (repsSec && !isInstructor) repsSec.style.display = isPrac ? 'block' : 'none';
+  if (isPrac) {
+    if (repsSec) repsSec.style.display = 'block';
+    applyRepCategoryVisibility(REP_CATEGORIES);
+    updateRepCounterHeader('practice');
+  } else if (isInstructor) {
+    // Defer to the instructor-focus-aware handler — it reads the current
+    // Focus Area dropdown value and scopes the rep counter accordingly.
+    onInstructorFocusChange();
+  } else {
+    if (repsSec) repsSec.style.display = 'none';
+  }
 
   if (isGame) {
     if (titleLb) titleLb.textContent = 'Title / Opponent';
@@ -5720,6 +5734,80 @@ function calcReps() {
   const out = document.getElementById('jr-total-num');
   if (out) out.textContent = total;
   return total;
+}
+
+// ─── INSTRUCTOR-AWARE REP COUNTER (Coach Young 2026-05-08) ─────────────
+// Map an Instructor session's Focus Area to the rep categories that make
+// sense to count. Coach asked for the rep counter to surface on Instructor
+// entries based on what was worked on (a hitting lesson tracks swings; a
+// pitching lesson tracks pitches; etc.). Returning [] hides the rep
+// section entirely (e.g. baserunning / mental — no reps to count).
+function getRepCategoriesForInstructor(focus) {
+  switch (focus) {
+    case 'hitting':   return ['swings'];
+    case 'pitching':  return ['pitches'];
+    case 'fielding':  return ['gb', 'throws'];
+    case 'catching':  return ['throws'];
+    case 'other':     return ['swings', 'gb', 'throws', 'pitches'];
+    case 'baserunning':
+    case 'speed':
+    case 'strength':
+    case 'mental':
+    default:          return [];
+  }
+}
+
+// Show / hide each rep category div based on a list of cats to keep visible.
+// Hidden categories also get their hidden value+label cleared and any chip
+// selection / exact input wiped — otherwise they would silently inflate
+// the running total when the scope shifts (e.g. a hitting lesson should
+// not still be summing the swings count from a previous fielding view).
+function applyRepCategoryVisibility(cats) {
+  REP_CATEGORIES.forEach(function(c) {
+    const div = document.getElementById('rep-cat-' + c);
+    const show = cats.indexOf(c) !== -1;
+    if (div) div.style.display = show ? '' : 'none';
+    if (!show) {
+      const valEl = document.getElementById('jr-' + c + '-value');
+      const labEl = document.getElementById('jr-' + c + '-label');
+      if (valEl) valEl.value = '0';
+      if (labEl) labEl.value = '';
+      const row = document.getElementById('rep-chip-row-' + c);
+      if (row) row.querySelectorAll('.rep-chip').forEach(function(b) { b.classList.remove('selected'); });
+      const exactInput = document.getElementById('jr-' + c + '-exact');
+      if (exactInput) { exactInput.style.display = 'none'; exactInput.value = ''; }
+    }
+  });
+  calcReps();
+}
+
+// Update the rep-counter header text + subtitle to reflect the current
+// context — practice day vs. instructor lesson. Lets the same UI serve
+// both flows without confusing the player about what they're logging.
+function updateRepCounterHeader(mode) {
+  const titleEl = document.getElementById('rep-counter-title');
+  const subEl   = document.getElementById('rep-counter-subtitle');
+  if (mode === 'instructor') {
+    if (titleEl) titleEl.textContent = '🔢 Lesson Reps';
+    if (subEl)   subEl.innerHTML     = 'Tap the range that matches what you did in <strong style="color:var(--light);">this lesson</strong>.';
+  } else {
+    if (titleEl) titleEl.textContent = "🔢 Rep Counter — Today's Practice";
+    if (subEl)   subEl.innerHTML     = 'Tap the range that matches your day. Don’t know exact? Don’t worry — <strong style="color:var(--light);">just commit a range</strong>.';
+  }
+}
+
+// Fired when the Instructor "Focus Area" dropdown changes. Reads the
+// active focus, maps it to relevant rep categories, and reveals/hides
+// the rep-counter section + individual category rows accordingly.
+function onInstructorFocusChange() {
+  const type = document.getElementById('j-type')?.value;
+  if (type !== 'instructor') return; // defensive — should not run in other modes
+  const focus = document.getElementById('j-inst-focus')?.value || '';
+  const cats = getRepCategoriesForInstructor(focus);
+  const repsSec = document.getElementById('j-reps-section');
+  if (repsSec) repsSec.style.display = cats.length ? 'block' : 'none';
+  applyRepCategoryVisibility(cats);
+  updateRepCounterHeader('instructor');
 }
 
 function calcGameStats() {
