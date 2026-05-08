@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v4';
+    const CACHE = 'ybg-mygrind-v5';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2031,28 +2031,53 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <!-- ══ PRACTICE REP COUNTER — shows when type = Practice ══ -->
+      <!-- Range-chip selector (Coach Young 2026-05-08): players know the range they
+           hit in, not the exact count. Each category shows tap-to-select range chips
+           plus an "✏️ Exact" chip for power users (especially pitchers tracking
+           formal pitch counts). Selected chip stores its midpoint as the value used
+           by calcReps()/totals + a label for display fidelity. Built dynamically by
+           buildRepChips() from REP_RANGES — change ranges in one place, no HTML edits. -->
       <div id="j-reps-section" style="display:block; margin-top:4px; margin-bottom:20px; padding:14px 16px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px;">
+        <style>
+          .rep-chip { background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:7px 10px; border-radius:3px; cursor:pointer; transition:all 0.15s; flex:1 1 auto; min-width:48px; }
+          .rep-chip:hover { background:rgba(var(--accent-rgb), 0.1); }
+          .rep-chip.selected { background:var(--gold); color:var(--dark); border-color:var(--gold); }
+          .rep-chip-exact { font-style:italic; opacity:0.8; flex:0 0 auto; }
+          .rep-chip-exact.selected { opacity:1; }
+        </style>
         <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">🔢 Rep Counter — Today's Practice</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:14px; line-height:1.5;">Track your volume. Nobody counts it for you. <strong style="color:var(--light);">You count it.</strong></div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:14px; line-height:1.5;">Tap the range that matches your day. Don't know exact? Don't worry — <strong style="color:var(--light);">just commit a range</strong>.</div>
+        <div style="display:grid; grid-template-columns:1fr; gap:14px;">
           <div>
             <label style="font-size:10px; letter-spacing:1px;">🏏 SWINGS</label>
-            <input type="number" id="jr-swings" min="0" placeholder="0" inputmode="numeric" oninput="calcReps()" style="width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px;">
+            <div id="rep-chip-row-swings" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
+            <input type="number" id="jr-swings-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('swings')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <input type="hidden" id="jr-swings-value" value="0">
+            <input type="hidden" id="jr-swings-label" value="">
           </div>
           <div>
             <label style="font-size:10px; letter-spacing:1px;">⚾ GROUND BALLS</label>
-            <input type="number" id="jr-gb" min="0" placeholder="0" inputmode="numeric" oninput="calcReps()" style="width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px;">
+            <div id="rep-chip-row-gb" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
+            <input type="number" id="jr-gb-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('gb')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <input type="hidden" id="jr-gb-value" value="0">
+            <input type="hidden" id="jr-gb-label" value="">
           </div>
           <div>
             <label style="font-size:10px; letter-spacing:1px;">🎯 THROWS</label>
-            <input type="number" id="jr-throws" min="0" placeholder="0" inputmode="numeric" oninput="calcReps()" style="width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px;">
+            <div id="rep-chip-row-throws" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
+            <input type="number" id="jr-throws-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('throws')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <input type="hidden" id="jr-throws-value" value="0">
+            <input type="hidden" id="jr-throws-label" value="">
           </div>
           <div>
             <label style="font-size:10px; letter-spacing:1px;">⚾ PITCHES</label>
-            <input type="number" id="jr-pitches" min="0" placeholder="0" inputmode="numeric" oninput="calcReps()" style="width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px;">
+            <div id="rep-chip-row-pitches" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
+            <input type="number" id="jr-pitches-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('pitches')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <input type="hidden" id="jr-pitches-value" value="0">
+            <input type="hidden" id="jr-pitches-label" value="">
           </div>
         </div>
-        <div style="margin-top:12px; text-align:center; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Total reps: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">0</span></div>
+        <div style="margin-top:14px; text-align:center; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Total reps: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">0</span></div>
       </div>
 
       <div class="form-row" id="j-grade-row">
@@ -5021,6 +5046,10 @@ function init() {
   // the user manually changes the dropdown.
   try { toggleGameStats(); } catch(e) { console.warn('[MG] init toggleGameStats:', e); }
 
+  // Build the practice rep-counter range chips. Pure DOM-injection — safe to
+  // run on every load; later renders just overwrite the rows' innerHTML.
+  try { buildRepChips(); } catch(e) { console.warn('[MG] init buildRepChips:', e); }
+
   // ── CREATOR ACCESS & OLD FLAG CLEANUP ──────────────
   try {
     const _acc = JSON.parse(localStorage.getItem('ybg_softball_access') || '{}');
@@ -5315,19 +5344,30 @@ function saveEntry() {
     comments:  []
   };
 
-  // Capture Practice rep counter values when entry type is 'practice'
+  // Capture Practice rep counter values when entry type is 'practice'.
+  // Values come from the hidden inputs that selectRep / onRepExactInput keep
+  // in sync. Labels are saved alongside numbers so display shows "26-50" etc.
+  // instead of just the midpoint number.
   if (type === 'practice') {
-    const swings  = parseInt(document.getElementById('jr-swings')?.value)  || 0;
-    const gb      = parseInt(document.getElementById('jr-gb')?.value)      || 0;
-    const throws  = parseInt(document.getElementById('jr-throws')?.value)  || 0;
-    const pitches = parseInt(document.getElementById('jr-pitches')?.value) || 0;
+    const swings  = parseInt(document.getElementById('jr-swings-value')?.value)  || 0;
+    const gb      = parseInt(document.getElementById('jr-gb-value')?.value)      || 0;
+    const throws  = parseInt(document.getElementById('jr-throws-value')?.value)  || 0;
+    const pitches = parseInt(document.getElementById('jr-pitches-value')?.value) || 0;
+    const swingsLabel  = document.getElementById('jr-swings-label')?.value  || '';
+    const gbLabel      = document.getElementById('jr-gb-label')?.value      || '';
+    const throwsLabel  = document.getElementById('jr-throws-label')?.value  || '';
+    const pitchesLabel = document.getElementById('jr-pitches-label')?.value || '';
     if (swings > 0 || gb > 0 || throws > 0 || pitches > 0) {
       entry.reps = {
         swings:  swings,
         gb:      gb,
         throws:  throws,
         pitches: pitches,
-        total:   swings + gb + throws + pitches
+        total:   swings + gb + throws + pitches,
+        swingsLabel:  swingsLabel,
+        gbLabel:      gbLabel,
+        throwsLabel:  throwsLabel,
+        pitchesLabel: pitchesLabel
       };
     }
   }
@@ -5379,13 +5419,8 @@ function saveEntry() {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
-  // Reset Rep Counter inputs and total
-  ['jr-swings','jr-gb','jr-throws','jr-pitches'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.value = '';
-  });
-  const repsTotal = document.getElementById('jr-total-num');
-  if (repsTotal) repsTotal.textContent = '0';
+  // Reset Rep Counter — clear chip selections, hidden values, exact inputs, total
+  try { resetRepChips(); } catch(e) {}
   // Reset game stats safely
   ['gs-ab','gs-h','gs-hr','gs-rbi','gs-r','gs-bb','gs-k','gs-sb','gs-ip','gs-er','gs-pk','gs-pbb'].forEach(id => {
     const el = document.getElementById(id);
@@ -5562,12 +5597,124 @@ function updateArmCareVisibility() {
   sec.style.display = (isThrowingType || hasThrowingEntryToday()) ? 'block' : 'none';
 }
 
-// Sum the four rep-counter inputs and update the "Total reps" display.
+// ─── PRACTICE REP COUNTER — RANGE CHIP SELECTOR (Coach Young 2026-05-08) ───
+// Players know the range, not the exact count. Each category gets a row of
+// tap-to-select range chips plus an "✏️ Exact" chip that reveals a number
+// input for power users (especially pitchers tracking formal pitch counts).
+// Stored values: midpoint number for totals + label string for display fidelity.
+// To change the buckets: edit REP_RANGES — no HTML edits needed.
+const REP_RANGES = {
+  swings:  [
+    { label: '0',       value: 0   },
+    { label: '1-25',    value: 13  },
+    { label: '26-50',   value: 38  },
+    { label: '51-100',  value: 75  },
+    { label: '100+',    value: 150 }
+  ],
+  gb: [
+    { label: '0',       value: 0  },
+    { label: '1-10',    value: 5  },
+    { label: '11-25',   value: 18 },
+    { label: '26-50',   value: 38 },
+    { label: '50+',     value: 75 }
+  ],
+  throws: [
+    { label: '0',       value: 0   },
+    { label: '1-25',    value: 13  },
+    { label: '26-50',   value: 38  },
+    { label: '51-100',  value: 75  },
+    { label: '100+',    value: 150 }
+  ],
+  pitches: [
+    { label: '0',       value: 0  },
+    { label: '1-25',    value: 13 },
+    { label: '26-50',   value: 38 },
+    { label: '51-75',   value: 63 },
+    { label: '75+',     value: 100 }
+  ]
+};
+
+const REP_CATEGORIES = ['swings','gb','throws','pitches'];
+
+// Build chip rows for each category. Called once from init().
+function buildRepChips() {
+  REP_CATEGORIES.forEach(function(cat) {
+    const row = document.getElementById('rep-chip-row-' + cat);
+    if (!row) return;
+    const ranges = REP_RANGES[cat] || [];
+    let html = '';
+    ranges.forEach(function(r) {
+      // Use String() + escape for safety (labels are static config so low risk)
+      html += '<button type="button" class="rep-chip" data-cat="' + cat + '" data-val="' + r.value + '" data-label="' + r.label + '" onclick="selectRep(\'' + cat + '\', this)">' + r.label + '</button>';
+    });
+    html += '<button type="button" class="rep-chip rep-chip-exact" data-cat="' + cat + '" onclick="toggleRepExact(\'' + cat + '\', this)">✏️ Exact</button>';
+    row.innerHTML = html;
+  });
+}
+
+// Select a range chip — gold-highlight it, hide the exact input, store
+// the chosen value+label in the hidden inputs, refresh the total.
+function selectRep(cat, btnEl) {
+  const row = document.getElementById('rep-chip-row-' + cat);
+  if (row) row.querySelectorAll('.rep-chip').forEach(function(b) { b.classList.remove('selected'); });
+  if (btnEl) btnEl.classList.add('selected');
+  const exactInput = document.getElementById('jr-' + cat + '-exact');
+  if (exactInput) { exactInput.style.display = 'none'; exactInput.value = ''; }
+  const valEl = document.getElementById('jr-' + cat + '-value');
+  const labEl = document.getElementById('jr-' + cat + '-label');
+  if (valEl) valEl.value = btnEl?.dataset?.val || '0';
+  if (labEl) labEl.value = btnEl?.dataset?.label || '';
+  calcReps();
+}
+
+// Switch a category to "Exact" mode — shows the number input. The chip
+// stays highlighted; the input drives value/label until another chip is tapped.
+function toggleRepExact(cat, btnEl) {
+  const row = document.getElementById('rep-chip-row-' + cat);
+  if (row) row.querySelectorAll('.rep-chip').forEach(function(b) { b.classList.remove('selected'); });
+  if (btnEl) btnEl.classList.add('selected');
+  const input = document.getElementById('jr-' + cat + '-exact');
+  if (input) { input.style.display = 'block'; setTimeout(function() { input.focus(); }, 50); }
+  const valEl = document.getElementById('jr-' + cat + '-value');
+  const labEl = document.getElementById('jr-' + cat + '-label');
+  if (valEl) valEl.value = '0';
+  if (labEl) labEl.value = '';
+  calcReps();
+}
+
+// Fired on every keystroke in an exact input. Stores the typed number
+// as both value and label.
+function onRepExactInput(cat) {
+  const input = document.getElementById('jr-' + cat + '-exact');
+  const v = parseInt(input?.value) || 0;
+  const valEl = document.getElementById('jr-' + cat + '-value');
+  const labEl = document.getElementById('jr-' + cat + '-label');
+  if (valEl) valEl.value = v;
+  if (labEl) labEl.value = v > 0 ? String(v) : '';
+  calcReps();
+}
+
+// Reset all rep-chip selections + hidden values + exact inputs after save.
+function resetRepChips() {
+  REP_CATEGORIES.forEach(function(cat) {
+    const row = document.getElementById('rep-chip-row-' + cat);
+    if (row) row.querySelectorAll('.rep-chip').forEach(function(b) { b.classList.remove('selected'); });
+    const exactInput = document.getElementById('jr-' + cat + '-exact');
+    if (exactInput) { exactInput.style.display = 'none'; exactInput.value = ''; }
+    const valEl = document.getElementById('jr-' + cat + '-value');
+    const labEl = document.getElementById('jr-' + cat + '-label');
+    if (valEl) valEl.value = '0';
+    if (labEl) labEl.value = '';
+  });
+  calcReps();
+}
+
+// Sum the four rep-counter values and update the "Total reps" display.
+// Reads from the hidden value inputs (which selectRep / onRepExactInput keep in sync).
 function calcReps() {
-  const ids = ['jr-swings','jr-gb','jr-throws','jr-pitches'];
   let total = 0;
-  ids.forEach(function(id) {
-    const v = parseInt(document.getElementById(id)?.value) || 0;
+  REP_CATEGORIES.forEach(function(cat) {
+    const v = parseInt(document.getElementById('jr-' + cat + '-value')?.value) || 0;
     if (v > 0) total += v;
   });
   const out = document.getElementById('jr-total-num');
@@ -5708,13 +5855,13 @@ function renderEntries() {
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">🔢 Practice Reps</div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:3px;">
             ${[
-              ['🏏 SWINGS', e.reps.swings],
-              ['⚾ GBs',    e.reps.gb],
-              ['🎯 THROWS', e.reps.throws],
-              ['⚾ PITCHES', e.reps.pitches]
-            ].map(([label, val]) => `
+              ['🏏 SWINGS', e.reps.swingsLabel  || e.reps.swings,  e.reps.swings],
+              ['⚾ GBs',    e.reps.gbLabel      || e.reps.gb,      e.reps.gb],
+              ['🎯 THROWS', e.reps.throwsLabel  || e.reps.throws,  e.reps.throws],
+              ['⚾ PITCHES', e.reps.pitchesLabel || e.reps.pitches, e.reps.pitches]
+            ].map(([label, display, val]) => `
               <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
-                <div style="font-family:'Bebas Neue'; font-size:22px; color:${val > 0 ? 'var(--white)' : 'var(--border)'}; line-height:1;">${val || '-'}</div>
+                <div style="font-family:'Bebas Neue'; font-size:${String(display).length > 4 ? '16px' : '22px'}; color:${val > 0 ? 'var(--white)' : 'var(--border)'}; line-height:1;">${val > 0 ? display : '-'}</div>
                 <div style="font-family:'Barlow Condensed'; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">${label}</div>
               </div>
             `).join('')}
