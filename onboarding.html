@@ -1359,6 +1359,25 @@ function onFinalExit() {
     // load can show a brief welcome state ("Welcome, [name]!") instead of
     // dropping the player straight into a cold dashboard.
     localStorage.setItem('mg_first_journal_open', '1');
+
+    // Grant trial access so softball.html's validateSession() returns
+    // 'trial' instead of 'no_trial' (which would bounce the freshly-
+    // onboarded player to signup.html — bug Coach Young hit on
+    // 2026-05-07). The journal reads ybg_softball_access; we set
+    // trialStart=now so elapsed=0 and the trial countdown UI shows the
+    // full window. Skip if user is already paid or has an active trial.
+    var acc = {};
+    try { acc = JSON.parse(localStorage.getItem('ybg_softball_access') || '{}'); } catch(_){}
+    var elapsedDays = acc.trialStart
+      ? (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24)
+      : null;
+    var trialActive = elapsedDays !== null && elapsedDays <= 14;
+    if (!acc.paid && !trialActive) {
+      acc.trialStart = Date.now();
+      acc.mode       = acc.mode || 'onboarded';
+      acc.email      = acc.email || (d && d.email ? d.email : '');
+      localStorage.setItem('ybg_softball_access', JSON.stringify(acc));
+    }
   } catch (_) { /* private browsing — no-op */ }
   window.location.href = 'softball.html';
 }
