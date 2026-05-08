@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v8';
+    const CACHE = 'ybg-mygrind-v9';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5429,11 +5429,15 @@ function saveEntry() {
     comments:  []
   };
 
-  // Capture Practice rep counter values when entry type is 'practice'.
-  // Values come from the hidden inputs that selectRep / onRepExactInput keep
-  // in sync. Labels are saved alongside numbers so display shows "26-50" etc.
-  // instead of just the midpoint number.
-  if (type === 'practice') {
+  // Capture rep counter values for Practice + Instructor entries.
+  // No type gate (was previously 'practice' only — bug fixed 2026-05-08:
+  // Instructor entries surfaced reps via commit f0ace16 but the save path
+  // never picked them up, so taps disappeared on save). Game and Reflection
+  // entries have the rep section hidden, so their jr-*-value inputs stay
+  // at 0 and the > 0 guard naturally skips attaching entry.reps. Values
+  // come from the hidden inputs that selectRep / onRepExactInput keep in
+  // sync. Labels saved alongside numbers so display shows "26-50" etc.
+  {
     const swings  = parseInt(document.getElementById('jr-swings-value')?.value)  || 0;
     const gb      = parseInt(document.getElementById('jr-gb-value')?.value)      || 0;
     const throws  = parseInt(document.getElementById('jr-throws-value')?.value)  || 0;
