@@ -476,15 +476,19 @@
 
   .section-title span { color: var(--gold); }
 
+  /* Section sub-titles — Coach Young 2026-05-07: bigger and easier to read.
+     Was 13px / #A89880 / Barlow Condensed (also had a triplicate color
+     declaration bug). Bumped to 16px and brighter cream so it reads as
+     a real subhead, not a gray micro-label. */
   .section-sub {
-    color: #A89880;
-    color: #A89880;
+    color: #D4C4A8;
     font-family: 'Barlow Condensed', sans-serif;
-    color: #A89880;
-    font-size: 13px;
-    letter-spacing: 2px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 2.2px;
     text-transform: uppercase;
-    margin-top: 4px;
+    margin-top: 6px;
+    line-height: 1.4;
   }
 
   .gold-line {
@@ -1202,8 +1206,12 @@ function dismissIosBanner() {
 
 <header>
   <div class="logo">
-    <img class="logo-badge" data-mg-img="mark" alt="MyGrind" style="width:44px; height:44px; clip-path:none; background:transparent;">
-    <img class="logo-text" data-mg-img="logo" alt="MyGrind" style="height:32px; width:auto;">
+    <!-- Mark inverted to white via CSS filter — Coach Young 2026-05-07: "the
+         icon should be the white mygrind icon." Pure white reads better
+         against the dark header than the gold mark. The wordmark below
+         stays gold per brand. -->
+    <img class="logo-badge" data-mg-img="mark" alt="MyGrind" style="width:60px; height:60px; clip-path:none; background:transparent; filter:brightness(0) invert(1);">
+    <img class="logo-text" data-mg-img="logo" alt="MyGrind" style="height:42px; width:auto;">
   </div>
   <!-- Phase 1D — Multi-sport toggle. Hidden by default; CSS reveals it only
        when html[data-family-sport="both"]. setActiveSport() (defined in the
