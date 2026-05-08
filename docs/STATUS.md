@@ -1,6 +1,6 @@
 # 📊 My Grind — Current Status
 
-*Last updated: 2026-05-06. Update this file at the end of every coding session.*
+*Last updated: 2026-05-08. Update this file at the end of every coding session.*
 
 ---
 
@@ -40,14 +40,15 @@
 - **Phase 5 — Stripe wiring** — COMPLETE (2026-05-05). Step 1 (skip-trial Stripe redirect) shipped 2026-05-03. Steps 2-4 shipped 2026-05-05: webhook (`api/stripe-webhook.js`) verifies signatures and updates Redis subscription store on subscription events; Pay button on signup.html Screen 8 redirects to live Payment Links; softball.html syncs paid status from `/api/get-subscription` on every load. Stripe webhook destination "fascinating-oasis" live in Workbench listening to 5 events. Real subscriptions now flip `isPaid` automatically.
 - **Phase 6 — Share + Settings buttons on signup dashboard** — COMPLETE (2026-05-02). Real modals replace the placeholder alerts. Share modal has copy-link + Web Share API + pre-written caption. Settings modal shows read-only account summary (name, email, phone, plan, players) + a support-email link for changes (self-serve editing lands when Phase 5 backend account management ships).
 - **Family pricing tier** — COMPLETE (2026-05-02; price reconciled 2026-05-06 to match live Stripe link). $149.99/yr · $14.99/mo flat for 2-3 players in one household, alongside the existing Single tier ($99/yr · $9.99/mo per player). Anti-abuse stack: hard cap at 3 slots, slot-lock at first SMS-send, per-plan phone uniqueness, single-parent invite path (already in place).
-- **Phase 7 — Player dashboard** — pending; onboarding S14 currently shows a holding-screen overlay
+- **Phase 7 — Player dashboard** — softball.html IS the live player dashboard; the old onboarding S14 holding-screen overlay was deleted 2026-05-07. Dashboard walkthrough STARTED — Dashboard tab + Daily Journal tab header partially narrated. Tomorrow's queue: first-time profile-then-journal flow, hide-pay-on-player-profile, then narrate remaining tabs.
 - **Phase 7b V1 — Coach feedback loop** — COMPLETE (2026-05-04). End-to-end: player → SMS magic link → coach-reply.html → SMS player + parent dashboard card. Redis-backed `lib/feedback-store.js`, 4 API endpoints, 32-hex token auth, 90-day TTL. SMS via Twilio (DRY_RUN until TFV approves).
 - **Phase 7b V1.5 — Parent weekly email digest** — COMPLETE in TEST MODE (2026-05-05). Vercel cron `/api/cron/weekly-digest` fires Mondays at 14:00 UTC (~7am PDT), scans Redis for active parent emails, sends warm-dark branded HTML digest via Resend. All emails redirected to youngsbaseball@gmail.com via `WEEKLY_DIGEST_TEST_EMAIL` env until `mygrindapp.com` is verified in Resend (DNS migration deferred). Sender: `onboarding@resend.dev`.
 - **Adult self-signup funnel (Scope X)** — COMPLETE (2026-05-06). `signup.html` now opens with a Screen 0 audience picker ("My Athlete" / "Myself"). Self path branches via `state.signupFor='self'`: relabeled copy on Screens 1-4 (`applySelfLabels(n)`), playerCount question hidden on Screen 3, Screen 6 auto-fills + skips to Screen 7. URL handoff `?self=1` to `onboarding.html` triggers self-aware PIN screen + welcome + end-of-flow copy. Scope Y polish (Screen 8 dashboard + S14 deeper kid-coded copy) deferred.
 - **Multi-sport platform Phase 1** — COMPLETE (2026-05-06). `softball.html` refactored into a sport-aware shell themed per `data-sport`. Central `SPORTS` config object (baseball/softball/both) with `getSportConfig()` helper. 165 hardcoded pink color refs → `var(--gold)` family. 16 hardcoded 🥎 → ⚾ HTML defaults (DOM walker swaps per sport). Bidirectional `applyBallEmoji()`. New `window.setActiveSport(s)` global re-themes live. Multi-sport toggle UI in dashboard header for `family=both` users (live ⚾↔🥎 swap, no reload). Recipe doc `docs/ADD_A_SPORT.md` makes adding football/volleyball/etc. a ~15-minute job. Phase 2 (sport-specific drill content) + Phase 3 (per-sport landing pages) deferred.
 - **Promo code system** — COMPLETE (2026-05-06). Collapsible "Have a promo code?" gold-pilled button on Screen 5 of `signup.html`. Persists to `state.promoCode`. New `buildCheckoutUrl()` helper appends `prefilled_promo_code=` + `prefilled_email=` to Stripe Payment Link URL. Both checkout entry points (skip-trial + dashboard pay-early) use it.
+- **SEO foundation** — COMPLETE (2026-05-07 PM). Title rewritten "MyGrind — Baseball & Softball Training Journal App" (51 chars, brand + sport keywords). Description, Open Graph, Twitter Card all wired with explicit width/height/alt/type/locale. JSON-LD `@graph` on `index.html` with 3 nodes — Organization, WebSite, SoftwareApplication (with 3 Offer prices). 1200×630 OG card at `/assets/og-card.png` (Canva-generated, brand-kit aligned, LinkedIn preview verified). Vercel Web Analytics live + collecting on all 6 public pages (cookieless, privacy.html §11 compliant). Google Search Console URL-prefix property verified via `/google826fc67b2dde2efa.html`; sitemap submitted with **Success** status. Indexation timeline: 2-7 days first crawls, 2-4 weeks branded "MyGrind app" surfaces, 4-8 weeks full maturity. Single-reference doc lives at `docs/ANALYTICS.md`.
 - **Business Plan** — 14/14 sections COMPLETE
-- **22 Locked Decisions** (3 added 2026-05-06: #20 multi-sport architecture, #21 Family Annual = $149.99, #22 self-signup is a branch in signup.html) — source of truth in Notion
+- **23 Locked Decisions** (1 added 2026-05-07: #23 onboarding completion auto-grants softball.html trial access; previous 3 added 2026-05-06: #20 multi-sport architecture, #21 Family Annual = $149.99, #22 self-signup is a branch in signup.html) — source of truth in Notion
 
 ## ✅ Features Shipped (`softball.html` — the journal app)
 
@@ -126,4 +127,4 @@
 - Backup adoption % (count of `ybg_last_backup` keys via cloud-sync if/when we wire that)
 - Trial → paid conversion rate (Stripe dashboard)
 
-No analytics service is wired up yet. Add Plausible or Posthog when you have time.
+**Vercel Web Analytics** is now live (2026-05-07) — see `docs/ANALYTICS.md` for the full reference doc covering visitors, free trials, paid subscribers, and Search Console indexation. Weekly + monthly review checklists included.
