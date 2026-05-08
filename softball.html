@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v7';
+    const CACHE = 'ybg-mygrind-v8';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5696,6 +5696,21 @@ function updateArmCareVisibility() {
   sec.style.display = (isThrowingType || hasThrowingEntryToday()) ? 'block' : 'none';
 }
 
+// Returns the active sport's ball emoji (⚾ or 🥎) at call time. Use this
+// for any ball-emoji string that gets injected via innerHTML AFTER initial
+// DOM load — the page's emoji walker (applyBallEmoji) only runs once on
+// DOMContentLoaded, so dynamically-injected content needs to read sport
+// state itself or it ends up frozen as ⚾ even in softball mode.
+// (Coach Young 2026-05-08 — caught when saved entries showed ⚾ GBs in
+// softball mode while the rest of the page correctly showed 🥎.)
+function getBallEmoji() {
+  const e = window.mgSportConfig && window.mgSportConfig.emoji;
+  if (e === '🥎' || e === '⚾') return e;
+  // 'both' resolves to ⚾🥎 — pick a single emoji for single-cell contexts.
+  try { return localStorage.getItem('mg_sport') === 'softball' ? '🥎' : '⚾'; }
+  catch (_) { return '⚾'; }
+}
+
 // ─── PRACTICE REP COUNTER — RANGE CHIP SELECTOR (Coach Young 2026-05-08) ───
 // Players know the range, not the exact count. Each category gets a row of
 // tap-to-select range chips plus an "✏️ Exact" chip that reveals a number
@@ -6023,15 +6038,20 @@ function renderEntries() {
       ` : ''}
 
       <!-- PRACTICE REP COUNTER BOX -->
-      ${e.reps ? `
+      <!-- Sport-aware ball emoji: getBallEmoji() reads the active sport at
+           render time so saved entries flip ⚾↔🥎 when the player switches
+           between baseball and softball mode. The page's emoji walker only
+           runs once on DOMContentLoaded — anything injected by renderAll()
+           after that needs to read sport state itself. (Coach Young 2026-05-08.) -->
+      ${e.reps ? (() => { const _ball = getBallEmoji(); return `
         <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px;">
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">🔢 Practice Reps</div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:3px;">
             ${[
-              ['🏏 SWINGS', e.reps.swingsLabel  || e.reps.swings,  e.reps.swings],
-              ['⚾ GBs',    e.reps.gbLabel      || e.reps.gb,      e.reps.gb],
-              ['🎯 THROWS', e.reps.throwsLabel  || e.reps.throws,  e.reps.throws],
-              ['⚾ PITCHES', e.reps.pitchesLabel || e.reps.pitches, e.reps.pitches]
+              ['🏏 SWINGS',           e.reps.swingsLabel  || e.reps.swings,  e.reps.swings],
+              [_ball + ' GBs',        e.reps.gbLabel      || e.reps.gb,      e.reps.gb],
+              ['🎯 THROWS',           e.reps.throwsLabel  || e.reps.throws,  e.reps.throws],
+              [_ball + ' PITCHES',    e.reps.pitchesLabel || e.reps.pitches, e.reps.pitches]
             ].map(([label, display, val]) => `
               <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
                 <div style="font-family:'Bebas Neue'; font-size:${String(display).length > 4 ? '16px' : '22px'}; color:${val > 0 ? 'var(--white)' : 'var(--border)'}; line-height:1;">${val > 0 ? display : '-'}</div>
@@ -6043,7 +6063,7 @@ function renderEntries() {
             Total reps: <span style="color:var(--gold); font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">${e.reps.total}</span>
           </div>
         </div>
-      ` : ''}
+      `; })() : ''}
 
       <!-- INSTRUCTOR SESSION BOX -->
       ${e.instructor ? `
