@@ -4145,6 +4145,24 @@ function checkAccess() {
   const overlay = document.getElementById('trial-overlay');
   if (overlay) overlay.style.display = 'none';
 
+  // ── ?unlock=1 URL param shortcut — Coach Young dev/test bypass.
+  //    Lets us flip ybg_creator=true without DevTools or email entry,
+  //    then strips the param and reloads on a clean URL. Only Coach
+  //    knows the param so it's effectively security-by-obscurity for
+  //    a non-sensitive surface (no money flows on softball.html). Safe
+  //    to leave in long-term since toggling creator only affects the
+  //    user's own browser. ──
+  try {
+    var qs = new URLSearchParams(window.location.search);
+    if (qs.get('unlock') === '1') {
+      localStorage.setItem('ybg_creator', 'true');
+      qs.delete('unlock');
+      var clean = window.location.pathname + (qs.toString() ? '?' + qs.toString() : '');
+      window.location.replace(clean);
+      return;
+    }
+  } catch (_) { /* old browser — fall through */ }
+
   // Creator always gets in
   if (isCreator()) { removeBanner(); return; }
 
