@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v6';
+    const CACHE = 'ybg-mygrind-v7';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1747,6 +1747,25 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div class="stat-num" id="dash-goals">0</div>
         <div class="stat-label">Goals Active</div>
       </div>
+    </div>
+
+    <!-- ── ARM LOAD (last 7 days) — visible at-a-glance health check ──
+         Coach Young 2026-05-08: arm health is the high-priority parent/coach
+         signal. Surfaces 7-day combined throws + pitches with tier-coded
+         color (green / gold / red) once age is set in Profile. Auto-refreshes
+         from renderAll() → renderTrainingVolume(). Tap to scroll to the full
+         Training Volume card on My Stats. -->
+    <div class="card" id="dash-arm-load-card" onclick="showPanel('stats'); setTimeout(function(){var el=document.getElementById('training-volume-card'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});}, 100);" style="margin-bottom:18px; padding:0; border:1px solid var(--border); background:#0E0006; overflow:hidden; cursor:pointer;">
+      <div style="background:linear-gradient(135deg,#1F0018,#15000A); border-bottom:1px solid var(--gold-dark); padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div>
+          <div style="font-family:'Bebas Neue',cursive; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1;">💪 ARM LOAD</div>
+          <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Last 7 Days · Throws + Pitches</div>
+        </div>
+        <div style="text-align:right;">
+          <div id="dash-arm-load-num" style="font-family:'Bebas Neue'; font-size:36px; line-height:1; color:var(--white);">0</div>
+        </div>
+      </div>
+      <div id="dash-arm-load-tier" style="padding:10px 18px; font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center;">No reps logged this week</div>
     </div>
 
     <!-- ── MILESTONE CELEBRATION (hidden by default, shown when hit) ── -->
@@ -3376,6 +3395,72 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     </div>
 
     </div><!-- end stats-entry-section -->
+
+    <!-- ══ TRAINING VOLUME — auto-aggregated from journal reps ══
+         Coach Young 2026-05-08: aggregates state.entries[].reps into season /
+         30-day / 7-day buckets per category, plus a tier-coded "arm load"
+         (throws + pitches in last 7 days) read against age-bracketed
+         thresholds (Pitch Smart + ASMI + Yang 2021 derived). Updates via
+         renderTrainingVolume() called from renderAll(). -->
+    <div class="card" id="training-volume-card" style="margin-top:16px; margin-bottom:16px;">
+      <div class="card-title">🔢 TRAINING VOLUME</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.5;">
+        Auto-totaled from your Daily Journal reps. <strong style="color:var(--light);">Guidance, not medical advice</strong> — based on Pitch Smart, ASMI, and Yang 2021 research.
+      </div>
+
+      <!-- ARM LOAD HEADLINE — tier-coded -->
+      <div id="arm-load-headline" style="background:var(--card2); border-left:4px solid var(--border); padding:14px 16px; border-radius:3px; margin-bottom:14px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">ARM LOAD — LAST 7 DAYS</div>
+        <div style="display:flex; align-items:baseline; gap:12px;">
+          <div id="arm-load-num" style="font-family:'Bebas Neue'; font-size:48px; line-height:1; color:var(--white);">0</div>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey);">throws + pitches</div>
+        </div>
+        <div id="arm-load-tier" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--grey); margin-top:6px;">⚙️ Set your age in My Profile to see arm-health guidance</div>
+        <div id="arm-load-bracket" style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:4px; display:none;"></div>
+      </div>
+
+      <!-- VOLUME GRID — Season / Last 30 / Last 7 × 4 categories -->
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--white);">
+          <thead>
+            <tr style="background:var(--card2);">
+              <th style="text-align:left; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Window</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🏏 Sw</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ GB</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🎯 Th</th>
+              <th style="text-align:right; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ Pi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">Last 7 days</td>
+              <td id="vol-7d-swings"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-7d-gb"      style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-7d-throws"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-7d-pitches" style="text-align:right; padding:10px 12px;">0</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--light);">Last 30 days</td>
+              <td id="vol-30d-swings"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-30d-gb"      style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-30d-throws"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-30d-pitches" style="text-align:right; padding:10px 12px;">0</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Season total</td>
+              <td id="vol-season-swings"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-season-gb"      style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-season-throws"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-season-pitches" style="text-align:right; padding:10px 12px;">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
+        Sw = Swings · GB = Ground Balls · Th = Throws · Pi = Pitches. Reps from Practice + Instructor entries roll up automatically. Game-day pitches still come from your Game Stats fields.
+      </div>
+    </div>
 
   </div>
 
@@ -6343,6 +6428,8 @@ function renderAll() {
   // Refresh Arm Care visibility — covers the case where a quick-log save
   // logged a throwing entry without changing the j-type dropdown.
   try { updateArmCareVisibility(); } catch(e) {}
+  // Refresh Training Volume aggregates + arm-load tier on Dashboard + My Stats.
+  try { renderTrainingVolume(); } catch(e) { console.warn('[MG] training volume:', e); }
 }
 
 // ───────────────────────────────────────────────────────
@@ -6690,6 +6777,178 @@ function accumulateGameStats() {
 
     calcStats();
   } catch(err) {}
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// TRAINING VOLUME — rep aggregation + arm-load thresholds
+// Coach Young 2026-05-08. Sums state.entries[].reps into season / 30-day /
+// 7-day buckets per category. The 7-day combined throws+pitches number is
+// rendered against age-bracketed thresholds derived from MLB Pitch Smart,
+// ASMI position statement, Fleisig 2011, and Yang 2021. See
+// docs/ROADMAP.md for the future-features queue (rest-day tracking,
+// daily fatigue self-report, annual innings cap).
+// ═══════════════════════════════════════════════════════════════════════
+const ARM_LOAD_THRESHOLDS = {
+  // Bracket → { greenMax: top of green band, goldMax: top of gold band }
+  '13-14': { greenMax: 150, goldMax: 250 },
+  '15-16': { greenMax: 220, goldMax: 360 },
+  '17-18': { greenMax: 250, goldMax: 400 },
+  '19-22': { greenMax: 300, goldMax: 450 } // college
+};
+
+// Map a player's age (string from profile.age) to one of our four brackets.
+// Returns null if age is missing or out-of-range — the UI then prompts the
+// player to set their age in Profile before showing tier colors.
+function getAgeBracket(ageStr) {
+  const a = parseInt(ageStr) || 0;
+  if (a >= 13 && a <= 14) return '13-14';
+  if (a >= 15 && a <= 16) return '15-16';
+  if (a >= 17 && a <= 18) return '17-18';
+  if (a >= 19 && a <= 22) return '19-22';
+  return null;
+}
+
+// Decide tier from arm-load number + age. Returns null when age unknown.
+function getArmLoadTier(armLoad7d, ageStr) {
+  const bracket = getAgeBracket(ageStr);
+  if (!bracket) return null;
+  const t = ARM_LOAD_THRESHOLDS[bracket];
+  if (armLoad7d <= t.greenMax) return 'green';
+  if (armLoad7d <= t.goldMax)  return 'gold';
+  return 'red';
+}
+
+// Parse the entry.date string back to a Date object. Entries store date as
+// 'May 8, 2026' (toLocaleDateString en-US, month: 'short'). Quick logs may
+// also be 'Today' (defensive) or empty (very old entries).
+function parseEntryDate(s) {
+  if (!s || s === 'Today') return new Date();
+  const d = new Date(s);
+  return isNaN(d.getTime()) ? null : d;
+}
+
+// Sum entry.reps across all entries into season / last30 / last7 buckets.
+// Date filtering uses calendar days (start-of-day boundaries) so today
+// always counts as last-7. Returns null if no state available.
+function accumulateRepStats() {
+  if (!window.state || !Array.isArray(state.entries)) return null;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const sevenStart  = new Date(today); sevenStart.setDate(today.getDate()  - 6);  // last 7 days INCLUDING today
+  const thirtyStart = new Date(today); thirtyStart.setDate(today.getDate() - 29); // last 30 days INCLUDING today
+
+  const totals = {
+    season: { swings: 0, gb: 0, throws: 0, pitches: 0 },
+    last30: { swings: 0, gb: 0, throws: 0, pitches: 0 },
+    last7:  { swings: 0, gb: 0, throws: 0, pitches: 0 }
+  };
+
+  state.entries.forEach(function(e) {
+    if (!e || !e.reps) return;
+    const swings  = parseInt(e.reps.swings)  || 0;
+    const gb      = parseInt(e.reps.gb)      || 0;
+    const throws  = parseInt(e.reps.throws)  || 0;
+    const pitches = parseInt(e.reps.pitches) || 0;
+    totals.season.swings  += swings;
+    totals.season.gb      += gb;
+    totals.season.throws  += throws;
+    totals.season.pitches += pitches;
+    const d = parseEntryDate(e.date);
+    if (d && d >= thirtyStart) {
+      totals.last30.swings  += swings;
+      totals.last30.gb      += gb;
+      totals.last30.throws  += throws;
+      totals.last30.pitches += pitches;
+    }
+    if (d && d >= sevenStart) {
+      totals.last7.swings  += swings;
+      totals.last7.gb      += gb;
+      totals.last7.throws  += throws;
+      totals.last7.pitches += pitches;
+    }
+  });
+
+  totals.armLoad7d     = totals.last7.throws  + totals.last7.pitches;
+  totals.armLoad30d    = totals.last30.throws + totals.last30.pitches;
+  totals.armLoadSeason = totals.season.throws + totals.season.pitches;
+  return totals;
+}
+
+// Push aggregated totals + arm-load tier into the My Stats Training Volume
+// card AND the Dashboard quick card. Idempotent / null-safe — works even
+// when both panels are present, only one is, or none are.
+function renderTrainingVolume() {
+  const t = accumulateRepStats();
+  if (!t) return;
+
+  let age = '';
+  try {
+    const profile = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    age = profile.age || '';
+  } catch (e) {}
+
+  const tier    = getArmLoadTier(t.armLoad7d, age);
+  const bracket = getAgeBracket(age);
+
+  const TIER_STYLE = {
+    green: { color: '#27AE60',     label: '✅ Normal training week' },
+    gold:  { color: 'var(--gold)', label: '⚠️ Heavy week — watch fatigue' },
+    red:   { color: '#E74C3C',     label: '🚨 Overuse risk — prioritize rest' }
+  };
+
+  // ── My Stats — full Training Volume card ──
+  const setText = function(id, val) {
+    const el = document.getElementById(id);
+    if (el) el.textContent = (typeof val === 'number') ? val.toLocaleString() : val;
+  };
+  setText('vol-season-swings',  t.season.swings);
+  setText('vol-season-gb',      t.season.gb);
+  setText('vol-season-throws',  t.season.throws);
+  setText('vol-season-pitches', t.season.pitches);
+  setText('vol-30d-swings',     t.last30.swings);
+  setText('vol-30d-gb',         t.last30.gb);
+  setText('vol-30d-throws',     t.last30.throws);
+  setText('vol-30d-pitches',    t.last30.pitches);
+  setText('vol-7d-swings',      t.last7.swings);
+  setText('vol-7d-gb',          t.last7.gb);
+  setText('vol-7d-throws',      t.last7.throws);
+  setText('vol-7d-pitches',     t.last7.pitches);
+
+  const armNum     = document.getElementById('arm-load-num');
+  const armTier    = document.getElementById('arm-load-tier');
+  const armBracket = document.getElementById('arm-load-bracket');
+  const armHead    = document.getElementById('arm-load-headline');
+  if (armNum) armNum.textContent = t.armLoad7d.toLocaleString();
+  if (tier && TIER_STYLE[tier]) {
+    if (armNum)  armNum.style.color = TIER_STYLE[tier].color;
+    if (armTier) { armTier.textContent = TIER_STYLE[tier].label; armTier.style.color = TIER_STYLE[tier].color; }
+    if (armHead) armHead.style.borderLeftColor = TIER_STYLE[tier].color;
+    if (armBracket) {
+      const th = ARM_LOAD_THRESHOLDS[bracket];
+      armBracket.textContent = 'Age ' + bracket + ' thresholds: ≤' + th.greenMax + ' normal · ' + (th.greenMax + 1) + '–' + th.goldMax + ' heavy · ' + (th.goldMax + 1) + '+ overuse';
+      armBracket.style.display = '';
+    }
+  } else {
+    if (armNum)  armNum.style.color = 'var(--white)';
+    if (armTier) { armTier.textContent = '⚙️ Set your age in My Profile to see arm-health guidance'; armTier.style.color = 'var(--grey)'; }
+    if (armHead) armHead.style.borderLeftColor = 'var(--border)';
+    if (armBracket) armBracket.style.display = 'none';
+  }
+
+  // ── Dashboard quick card ──
+  const dashNum  = document.getElementById('dash-arm-load-num');
+  const dashTier = document.getElementById('dash-arm-load-tier');
+  if (dashNum) dashNum.textContent = t.armLoad7d.toLocaleString();
+  if (tier && TIER_STYLE[tier]) {
+    if (dashNum)  dashNum.style.color = TIER_STYLE[tier].color;
+    if (dashTier) { dashTier.textContent = TIER_STYLE[tier].label; dashTier.style.color = TIER_STYLE[tier].color; }
+  } else if (t.armLoad7d > 0) {
+    if (dashNum)  dashNum.style.color = 'var(--white)';
+    if (dashTier) { dashTier.textContent = 'Set age in profile for arm-health tier'; dashTier.style.color = 'var(--grey)'; }
+  } else {
+    if (dashNum)  dashNum.style.color = 'var(--white)';
+    if (dashTier) { dashTier.textContent = 'No reps logged this week'; dashTier.style.color = 'var(--grey)'; }
+  }
 }
 
 // ═══════════════════════════════════════════════════════
