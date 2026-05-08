@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v10';
+    const CACHE = 'ybg-mygrind-v11';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5962,7 +5962,10 @@ function renderEntries() {
   }
 
   const roleColors = { coach: 'var(--gold)', parent: '#5DADE2', instructor: '#27AE60', teammate: '#A569BD' };
-  const roleIcons  = { coach: '⚾', parent: '👨‍👩‍👧', instructor: '📋', teammate: '🤝' };
+  // Coach icon needs sport-awareness — the other roles use sport-neutral emoji.
+  // Reading getBallEmoji() inside renderEntries means the icon flips ⚾↔🥎 on
+  // every render so saved comments don't freeze ⚾ in softball mode. (2026-05-08 audit.)
+  const roleIcons  = { coach: getBallEmoji(), parent: '👨‍👩‍👧', instructor: '📋', teammate: '🤝' };
 
   container.innerHTML = state.entries.map(e => `
     <div class="entry-card">
@@ -6032,9 +6035,9 @@ function renderEntries() {
            between baseball and softball mode. The page's emoji walker only
            runs once on DOMContentLoaded — anything injected by renderAll()
            after that needs to read sport state itself. (Coach Young 2026-05-08.) -->
-      ${e.reps ? (() => { const _ball = getBallEmoji(); return `
+      ${e.reps ? (() => { const _ball = getBallEmoji(); const _repsHeader = e.instructor ? '🔢 Lesson Reps' : '🔢 Practice Reps'; return `
         <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px;">
-          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">🔢 Practice Reps</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">${_repsHeader}</div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:3px;">
             ${[
               ['🏏 SWINGS',           e.reps.swingsLabel  || e.reps.swings,  e.reps.swings],
@@ -6453,8 +6456,12 @@ function renderDashboardSnapshots() {
     if (!state.entries || state.entries.length === 0) {
       recentEl.innerHTML = '<em style="color:var(--grey);">No entries yet — tap the button below to log your first one.</em>';
     } else {
+      // Sport-aware ball emoji on Game label — read at render time so this
+      // re-injection path doesn't freeze ⚾ in softball mode. The other type
+      // emojis (🏏 bat / 🎓 cap / 🧠 brain) are sport-neutral. (2026-05-08 audit.)
+      const _ball = getBallEmoji();
       const labelFor = function(t) {
-        if (t === 'game')       return '⚾ Game';
+        if (t === 'game')       return _ball + ' Game';
         if (t === 'practice')   return '🏏 Practice';
         if (t === 'instructor') return '🎓 Instructor';
         if (t === 'reflection') return '🧠 Reflection';
@@ -8309,11 +8316,16 @@ function shareMilestone() {
   })();
   const name = profile.firstName || profile.name || 'I';
   const says = (name === 'I') ? 'I just hit' : name + ' just hit';
+  // Share-text payloads bypass the DOM walker entirely (they go straight to the
+  // OS share sheet). Read sport emoji at call time + use the canonical
+  // mygrindapp.com URL — the legacy github.io link is now a stale GitHub Pages
+  // mirror per docs/STATUS.md. (2026-05-08 audit fix.)
+  const _ball = getBallEmoji();
   const msg =
-    says + ' a ' + streak + '-day streak on MY GRIND ⚾🔥\n\n' +
+    says + ' a ' + streak + '-day streak on MY GRIND ' + _ball + '🔥\n\n' +
     'Journaling every game, tracking every stat. Built for the grind.\n\n' +
     'Get it free for 7 days 👇\n' +
-    'https://youngsbaseball.github.io/mybaseballgrind/?trial=1';
+    'https://www.mygrindapp.com/signup.html?trial=1';
 
   if (navigator.share) {
     navigator.share({ title: 'My Grind Streak', text: msg })
@@ -8350,8 +8362,10 @@ function buildWeeklyRecap() {
 
   let games = 0, practices = 0, reflections = 0, total = 0;
   state.entries.forEach(function(e) {
-    const d = new Date(e.date);
-    if (isNaN(d.getTime())) return;
+    // Use parseEntryDate so 'Today' literals from quick-log path don't get
+    // NaN'd out of the count. (2026-05-08 audit fix.)
+    const d = parseEntryDate(e.date);
+    if (!d || isNaN(d.getTime())) return;
     if (d >= weekAgo && d <= now) {
       total++;
       if (e.type === 'game') games++;
@@ -8362,6 +8376,11 @@ function buildWeeklyRecap() {
 
   const streak = calculateStreak();
   const goalsActive = (state.goals && state.goals.length) || 0;
+
+  // Sport-aware ball emoji — read at call time so HTML + plain payloads
+  // both reflect the active sport (DOM walker doesn't run on innerHTML
+  // re-injections or on plain-text payloads sent to the OS share sheet).
+  const _ball = getBallEmoji();
 
   const html =
     '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">' +
@@ -8375,7 +8394,7 @@ function buildWeeklyRecap() {
       '</div>' +
     '</div>' +
     '<div style="font-size:13px; color:var(--light);">' +
-      '⚾ Games: <strong style="color:var(--gold);">' + games + '</strong> &nbsp;·&nbsp; ' +
+      _ball + ' Games: <strong style="color:var(--gold);">' + games + '</strong> &nbsp;·&nbsp; ' +
       '🏏 Practices: <strong style="color:var(--gold);">' + practices + '</strong> &nbsp;·&nbsp; ' +
       '💭 Reflections: <strong style="color:var(--gold);">' + reflections + '</strong>' +
     '</div>' +
@@ -8389,8 +8408,10 @@ function buildWeeklyRecap() {
   })();
   const name = profile.firstName || profile.name || 'Player';
 
+  // Plain-text payload for the OS share sheet — uses canonical mygrindapp.com
+  // (legacy youngsbaseball.github.io link replaced 2026-05-08 audit fix).
   const plain =
-    name + "'s Week — MY GRIND Recap ⚾\n\n" +
+    name + "'s Week — MY GRIND Recap " + _ball + "\n\n" +
     "Entries this week: " + total + "\n" +
     "Games logged: " + games + "\n" +
     "Practices logged: " + practices + "\n" +
@@ -8398,7 +8419,7 @@ function buildWeeklyRecap() {
     "Current streak: " + streak + " days 🔥\n" +
     "Active goals: " + goalsActive + "\n\n" +
     "Tracked on MY GRIND\n" +
-    "https://youngsbaseball.github.io/mybaseballgrind/";
+    "https://www.mygrindapp.com/signup.html?trial=1";
 
   return { html: html, plain: plain };
 }
