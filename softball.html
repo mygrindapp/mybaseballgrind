@@ -4145,23 +4145,9 @@ function checkAccess() {
   const overlay = document.getElementById('trial-overlay');
   if (overlay) overlay.style.display = 'none';
 
-  // ── ?unlock=1 URL param shortcut — Coach Young dev/test bypass.
-  //    Lets us flip ybg_creator=true without DevTools or email entry,
-  //    then strips the param and reloads on a clean URL. Only Coach
-  //    knows the param so it's effectively security-by-obscurity for
-  //    a non-sensitive surface (no money flows on softball.html). Safe
-  //    to leave in long-term since toggling creator only affects the
-  //    user's own browser. ──
-  try {
-    var qs = new URLSearchParams(window.location.search);
-    if (qs.get('unlock') === '1') {
-      localStorage.setItem('ybg_creator', 'true');
-      qs.delete('unlock');
-      var clean = window.location.pathname + (qs.toString() ? '?' + qs.toString() : '');
-      window.location.replace(clean);
-      return;
-    }
-  } catch (_) { /* old browser — fall through */ }
+  // Note: ?unlock=1 dev bypass is handled at the top of init() — has to
+  // fire BEFORE the creator-flag cleanup further down init(), so checking
+  // it again here is redundant.
 
   // Creator always gets in
   if (isCreator()) { removeBanner(); return; }
@@ -4984,6 +4970,23 @@ function flagTampered() { showBlocked('Storage tampering detected. Contact suppo
 
 // ── INIT ────────────────────────────────────────────────
 function init() {
+  // ── ?unlock=1 dev/test bypass — Coach Young 2026-05-07 ──
+  //    Has to fire BEFORE the creator-flag cleanup below (which would
+  //    otherwise strip ybg_creator on the next load). Sets BOTH
+  //    ybg_creator AND ybg_pin_unlocked so the cleanup spares it. Then
+  //    strips the param and reloads on a clean URL.
+  try {
+    var _qs = new URLSearchParams(window.location.search);
+    if (_qs.get('unlock') === '1') {
+      localStorage.setItem('ybg_creator', 'true');
+      localStorage.setItem('ybg_pin_unlocked', 'true');
+      _qs.delete('unlock');
+      var _clean = window.location.pathname + (_qs.toString() ? '?' + _qs.toString() : '');
+      window.location.replace(_clean);
+      return;
+    }
+  } catch (_) { /* old browser — fall through */ }
+
   const today = new Date();
   document.getElementById('headerDate').textContent = today.toLocaleDateString('en-US', {
     weekday:'long', month:'long', day:'numeric', year:'numeric'
@@ -5002,8 +5005,10 @@ function init() {
   // ── CREATOR ACCESS & OLD FLAG CLEANUP ──────────────
   try {
     const _acc = JSON.parse(localStorage.getItem('ybg_softball_access') || '{}');
-    const _creators = ['support@mygrindapp.com','papamike@youngsbaseball.com','michael@youngsbaseball.com'];
-    const _isCreatorEmail = _acc.email && _creators.includes(_acc.email.toLowerCase());
+    // Pull creator allowlist from the canonical CREATOR_EMAILS const so it
+    // stays in sync with isCreator() and beginTrial(). 2026-05-07 — was
+    // hardcoded + drifted from the canonical list, dropping youngsbaseball@.
+    const _isCreatorEmail = _acc.email && CREATOR_EMAILS.indexOf(_acc.email.toLowerCase()) !== -1;
     const _usedPin = localStorage.getItem('ybg_pin_unlocked') === 'true';
 
     if (localStorage.getItem('ybg_creator') === 'true' && !_isCreatorEmail && !_usedPin) {
