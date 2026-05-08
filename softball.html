@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v2';
+    const CACHE = 'ybg-mygrind-v3';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1901,7 +1901,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="font-size:14px; color:var(--light); line-height:1.8;">
           <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Compete — One Game at a Time</div>
           <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Team First — not stats, not scouts</div>
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">💪 Arm & Shoulder Care — non-negotiable daily</div>
+          <!-- Arm & Shoulder Care moved to Daily Journal panel where the interactive
+               checklist lives — removed redundant static reminder here. (2026-05-08) -->
           <div style="padding:6px 0; border-bottom:1px solid var(--border);">📓 Post-Game Journal — every game</div>
           <div style="padding:6px 0; border-bottom:1px solid var(--border);">🗣️ Talk to your coaches weekly</div>
           <div data-mg-text="📚 GPA check — No Grades, No {Sport}" style="padding:6px 0;">📚 GPA check — No Grades, No Baseball</div>
@@ -2334,7 +2335,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     </div>
 
     <!-- ── ARM CARE DAILY CHECKLIST ── -->
-    <div class="card" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
+    <!-- Smart visibility (Coach Young 2026-05-08): shown when active entry type is
+         a throwing session (practice/game/instructor) OR when a throwing entry has
+         already been logged today. Hidden only when type=reflection AND no throwing
+         logged today. Toggled by updateArmCareVisibility(). -->
+    <div class="card" id="j-armcare-section" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
       <div class="card-title">💪 Arm & Shoulder Care — Today</div>
       <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
         Non-negotiable daily. Pitchers especially — your arm is your career. Check each one off. <strong style="color:var(--gold);">Resets at midnight.</strong>
@@ -5523,6 +5528,35 @@ function toggleGameStats() {
     const resultEl = document.getElementById('j-result');
     if (resultEl) resultEl.value = '';
   }
+
+  // Re-evaluate Arm Care visibility on every entry-type change.
+  try { updateArmCareVisibility(); } catch(e) {}
+}
+
+// Returns true if any of today's logged entries is a throwing session.
+// Used by updateArmCareVisibility() so the Arm Care card stays visible
+// after a player has thrown today, even if they later switch the entry
+// type to reflection. State source: state.entries[] in localStorage.
+function hasThrowingEntryToday() {
+  try {
+    if (!state || !Array.isArray(state.entries)) return false;
+    const todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return state.entries.some(function(e) {
+      if (!e || e.date !== todayStr) return false;
+      return e.type === 'practice' || e.type === 'game' || e.type === 'instructor';
+    });
+  } catch (e) { return false; }
+}
+
+// Show the Arm Care card when the player is logging or has logged a
+// throwing session today. Hidden during reflection-only days. Called
+// from toggleGameStats() (entry-type change) and renderAll() (state change).
+function updateArmCareVisibility() {
+  const sec = document.getElementById('j-armcare-section');
+  if (!sec) return;
+  const type = document.getElementById('j-type')?.value || '';
+  const isThrowingType = (type === 'practice' || type === 'game' || type === 'instructor');
+  sec.style.display = (isThrowingType || hasThrowingEntryToday()) ? 'block' : 'none';
 }
 
 // Sum the four rep-counter inputs and update the "Total reps" display.
@@ -6068,6 +6102,9 @@ function renderAll() {
   accumulateGameStats();
   // Refresh the dashboard snapshot cards (Recent Entries, Hitting Stats)
   try { renderDashboardSnapshots(); } catch(e) { console.warn('[MG] dashboard snapshot:', e); }
+  // Refresh Arm Care visibility — covers the case where a quick-log save
+  // logged a throwing entry without changing the j-type dropdown.
+  try { updateArmCareVisibility(); } catch(e) {}
 }
 
 // ───────────────────────────────────────────────────────
