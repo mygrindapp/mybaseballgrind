@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v45';
+    const CACHE = 'ybg-mygrind-v46';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1835,10 +1835,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <thead>
             <tr style="background:var(--card2);">
               <th style="text-align:left; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Window</th>
-              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🏏 Sw</th>
-              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ GB</th>
-              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🎯 Th</th>
-              <th style="text-align:right; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ Pi</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Swings</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Ground Balls</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Throws</th>
+              <th style="text-align:right; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Pitches</th>
             </tr>
           </thead>
           <tbody>
@@ -1875,7 +1875,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <div style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
-        Sw = Swings · GB = Ground Balls · Th = Throws · Pi = Pitches. Reps from Practice, Game, and Instructor entries roll up automatically.
+        Reps from Practice, Game, and Instructor entries roll up automatically.
       </div>
     </div>
 
@@ -2070,19 +2070,19 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
         <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
           <div id="dash-fld-fp" style="font-family:'Bebas Neue'; font-size:24px; color:#5DADE2; line-height:1;">.000</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">FP</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Fielding %</div>
         </div>
         <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
           <div id="dash-fld-po" style="font-family:'Bebas Neue'; font-size:24px; color:var(--white); line-height:1;">0</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">PO</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Putouts</div>
         </div>
         <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
           <div id="dash-fld-a" style="font-family:'Bebas Neue'; font-size:24px; color:var(--white); line-height:1;">0</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">A</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Assists</div>
         </div>
         <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
           <div id="dash-fld-e" style="font-family:'Bebas Neue'; font-size:24px; color:var(--white); line-height:1;">0</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">E</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Errors</div>
         </div>
       </div>
     </div>
@@ -8878,7 +8878,7 @@ function getArmCareItems() {
   }
 
   items.push(
-    { id: 'bands',    label: 'J-Bands routine — rotator cuff + scap (8 min)', icon: '💪' },
+    { id: 'bands',    label: 'J-Bands routine — rotator cuff + shoulder blades (8 min)', icon: '💪' },
     { id: 'toss',     label: 'Warm-up toss — build to full distance',         icon: '🎯' }
   );
 
@@ -8896,7 +8896,7 @@ function getArmCareItems() {
   // the journal entry form alongside Performance Grade, not here.
   items.push(
     { id: 'cooldown', label: 'Cool-down toss (50% effort) + 10 min walk',         icon: '🚶' },
-    { id: 'mobility', label: 'Mobility — shoulder circles + sleeper stretch (5 min)', icon: '🤸' }
+    { id: 'mobility', label: 'Shoulder mobility — circles + back-of-shoulder stretch (5 min)', icon: '🤸' }
   );
 
   if (tier === 'red') {
@@ -8913,8 +8913,8 @@ function getArmCareItems() {
 const ARM_CARE_REFS = {
   bands: {
     title: 'Band Work — Jaeger J-Bands Routine',
-    desc: "Alan Jaeger's J-Bands routine is the industry-standard arm care program — used by MLB and college pitchers for decades. The 11-step sequence balances and strengthens the rotator cuff and surrounding muscles that decelerate your arm. This is the #1 protector against shoulder injuries.",
-    proTip: "Slow and controlled — never fast. Stand tall, elbow tucked, full range of motion. 2 sets of 15 reps per arm. Quality of every rep matters more than load.",
+    desc: "Alan Jaeger's J-Bands routine is the standard arm care program used by MLB and college pitchers for decades. The 11-step sequence builds the small muscles around your shoulder — the rotator cuff and shoulder blades — that slow your arm down after each throw. This is the #1 protector against shoulder injuries.",
+    proTip: "Slow and controlled — never fast. Stand tall, elbow tucked at your side, full range of motion. 2 sets of 15 reps per arm. Every rep matters more than how hard you pull.",
     video: 'Rnc4J1vodmE',
     credit: 'Demo: Jaeger Sports — official J-Bands routine'
   },
@@ -8941,9 +8941,9 @@ const ARM_CARE_REFS = {
     credit: 'Demo: ARM Pitching · Source: MLB Pitch Smart'
   },
   mobility: {
-    title: 'Mobility — Shoulder Circles + Sleeper Stretch',
-    desc: "Throwing tightens the back of your shoulder. Mobility work counteracts that tightness so your arm stays at full range tomorrow. 5 minutes daily prevents the slow loss of range that wrecks mechanics.",
-    proTip: "Sleeper stretch warning: stop the moment you feel pinching in the FRONT of your shoulder. You should feel the stretch in the BACK of the joint only. Done wrong, this stretch causes impingement — done right, it's gold.",
+    title: 'Shoulder Mobility — Circles + Back-of-Shoulder Stretch',
+    desc: "Throwing tightens the back of your shoulder. Stretching it back out keeps your arm moving through full range tomorrow. 5 minutes daily prevents the slow stiffness that wrecks throwing mechanics.",
+    proTip: "Important: when you stretch the back of your shoulder (lying on your throwing side, arm bent), STOP the moment you feel pinching in the FRONT. You should only feel the stretch in the BACK of the shoulder. Done wrong, it can cause impingement — done right, it's gold.",
     video: 'l5O4-D246Os',
     credit: 'Demo: Ultimate Baseball Training'
   },
