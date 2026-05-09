@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v61';
+    const CACHE = 'ybg-mygrind-v62';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6720,17 +6720,17 @@ function renderEntries() {
            after that needs to read sport state itself. (Coach Young 2026-05-08.) -->
       ${e.reps ? (() => { const _ball = getBallEmoji(); const _repsHeader = e.instructor ? '🔢 Lesson Reps' : '🔢 Practice Reps'; return `
         <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px;">
-          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">${_repsHeader}</div>
-          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:3px;">
+          <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">${_repsHeader}</div>
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
             ${[
               ['🏏 SWINGS',           e.reps.swingsLabel  || e.reps.swings,  e.reps.swings],
               [_ball + ' GBs',        e.reps.gbLabel      || e.reps.gb,      e.reps.gb],
               ['🎯 THROWS',           e.reps.throwsLabel  || e.reps.throws,  e.reps.throws],
               [_ball + ' PITCHES',    e.reps.pitchesLabel || e.reps.pitches, e.reps.pitches]
             ].map(([label, display, val]) => `
-              <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
-                <div style="font-family:'Bebas Neue'; font-size:${String(display).length > 4 ? '16px' : '22px'}; color:${val > 0 ? 'var(--white)' : 'var(--border)'}; line-height:1;">${val > 0 ? display : '-'}</div>
-                <div style="font-family:'Barlow Condensed'; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">${label}</div>
+              <div style="background:var(--card2); padding:12px 6px; text-align:center; border-radius:3px;">
+                <div style="font-family:'Bebas Neue'; font-size:${String(display).length > 4 ? '22px' : '28px'}; color:${val > 0 ? 'var(--white)' : '#5A5A5A'}; line-height:1;">${val > 0 ? display : '—'}</div>
+                <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:${val > 0 ? '#BBB' : 'var(--grey)'}; margin-top:6px; line-height:1.2;">${label}</div>
               </div>
             `).join('')}
           </div>
