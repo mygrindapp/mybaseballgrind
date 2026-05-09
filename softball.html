@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v59';
+    const CACHE = 'ybg-mygrind-v60';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2271,26 +2271,54 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <textarea id="j-prepare" inputmode="text" placeholder="What do I need to work on? What is my focus going into the next practice, game, or week?"></textarea>
       </div>
 
-      <div class="form-row" id="j-grade-row">
-        <div>
-          <label>Performance Grade (A–F)</label>
-          <select id="j-grade">
-            <option value="">-- Select --</option>
-            <option value="A">A — Excellent</option>
-            <option value="B">B — Good</option>
-            <option value="C">C — Average</option>
-            <option value="D">D — Below Average</option>
-            <option value="F">F — Struggled</option>
-          </select>
+      <!-- Grade + Result selectors — replaced <select> dropdowns with chip
+           rows 2026-05-10 (Coach Young walkthrough: "the letters need
+           context so the player is clear what those letters mean").
+           Chips keep the full label always visible — no tap-to-open dance,
+           no orphaned single-letter values. Hidden inputs preserve the
+           existing IDs (j-grade / j-result) so saveEntry() / editEntry()
+           don't need migration. -->
+      <style>
+        .grade-chip, .result-chip {
+          background: transparent;
+          border: 1px solid var(--gold-dark);
+          color: var(--light);
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          padding: 9px 14px;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .grade-chip:hover, .result-chip:hover { background: rgba(var(--accent-rgb), 0.1); }
+        .grade-chip.selected, .result-chip.selected {
+          background: var(--gold);
+          color: var(--dark);
+          border-color: var(--gold);
+        }
+      </style>
+      <div id="j-grade-row" style="margin-bottom:14px;">
+        <label>How did I perform today?</label>
+        <input type="hidden" id="j-grade" value="">
+        <div id="j-grade-chips" style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button type="button" class="grade-chip" data-val="A" onclick="selectGradeChip('A', this)">A — Excellent</button>
+          <button type="button" class="grade-chip" data-val="B" onclick="selectGradeChip('B', this)">B — Good</button>
+          <button type="button" class="grade-chip" data-val="C" onclick="selectGradeChip('C', this)">C — Average</button>
+          <button type="button" class="grade-chip" data-val="D" onclick="selectGradeChip('D', this)">D — Below Avg</button>
+          <button type="button" class="grade-chip" data-val="F" onclick="selectGradeChip('F', this)">F — Struggled</button>
         </div>
-        <div id="j-result-wrapper" style="display:none;">
-          <label>Result</label>
-          <select id="j-result">
-            <option value="">-- W / L / T --</option>
-            <option value="W">W — Win</option>
-            <option value="L">L — Loss</option>
-            <option value="T">T — Tie</option>
-          </select>
+      </div>
+
+      <div id="j-result-wrapper" style="display:none; margin-bottom:14px;">
+        <label>How did the game end?</label>
+        <input type="hidden" id="j-result" value="">
+        <div id="j-result-chips" style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button type="button" class="result-chip" data-val="W" onclick="selectResultChip('W', this)">W — Win</button>
+          <button type="button" class="result-chip" data-val="L" onclick="selectResultChip('L', this)">L — Loss</button>
+          <button type="button" class="result-chip" data-val="T" onclick="selectResultChip('T', this)">T — Tie</button>
         </div>
       </div>
 
@@ -5689,6 +5717,10 @@ function editEntry(id) {
   setVal('j-prepare',  entry.prepare);
   setVal('j-grade',    entry.grade);
   setVal('j-result',   entry.result);
+  // Restore the chip visual selection — the hidden input value is set
+  // above, but the chips don't auto-watch their associated input.
+  setSelectedChipByValue('j-grade-chips',  entry.grade  || '');
+  setSelectedChipByValue('j-result-chips', entry.result || '');
 
   // Game stats — restore each gs-* field
   if (entry.gameStats) {
@@ -5762,6 +5794,7 @@ function cancelEdit() {
     if (el) el.value = '';
   });
   try { resetRepChips(); } catch (e) {}
+  try { resetGradeResultChips(); } catch (e) {}
   pendingMedia = [];
   renderMediaPreview();
 
@@ -5965,6 +5998,8 @@ function saveEntry() {
   document.getElementById('j-grade').value    = '';
   const resultEl = document.getElementById('j-result');
   if (resultEl) resultEl.value = '';
+  // Clear chip visual selections after wiping the hidden inputs above.
+  try { resetGradeResultChips(); } catch (_) {}
   document.getElementById('j-comment-name').value = '';
   document.getElementById('j-comment-role').value = '';
   document.getElementById('j-comment-text').value = '';
@@ -6328,6 +6363,44 @@ function resetRepChips() {
     if (labEl) labEl.value = '';
   });
   calcReps();
+}
+
+// ── GRADE + RESULT CHIPS ─────────────────────────────────
+// Coach Young 2026-05-10 walkthrough: replaced single-letter <select>
+// dropdowns with always-visible chip rows. selectGradeChip() and
+// selectResultChip() write the chosen letter to the hidden inputs
+// (j-grade / j-result) so saveEntry() / editEntry() / setVal() all work
+// with no migration. setSelectedChipByValue() restores the visual
+// selection when editEntry loads a saved entry. resetGradeResultChips()
+// clears both selections after save / cancel.
+function selectGradeChip(val, btnEl) {
+  const row = document.getElementById('j-grade-chips');
+  if (row) row.querySelectorAll('.grade-chip').forEach(function(b) { b.classList.remove('selected'); });
+  if (btnEl) btnEl.classList.add('selected');
+  const hidden = document.getElementById('j-grade');
+  if (hidden) hidden.value = val || '';
+}
+function selectResultChip(val, btnEl) {
+  const row = document.getElementById('j-result-chips');
+  if (row) row.querySelectorAll('.result-chip').forEach(function(b) { b.classList.remove('selected'); });
+  if (btnEl) btnEl.classList.add('selected');
+  const hidden = document.getElementById('j-result');
+  if (hidden) hidden.value = val || '';
+}
+// Restore the chip visual state from a saved value (used by editEntry).
+function setSelectedChipByValue(rowId, val) {
+  const row = document.getElementById(rowId);
+  if (!row) return;
+  row.querySelectorAll('button').forEach(function(b) {
+    if (b.dataset && b.dataset.val === val) b.classList.add('selected');
+    else b.classList.remove('selected');
+  });
+}
+function resetGradeResultChips() {
+  ['j-grade-chips', 'j-result-chips'].forEach(function(id) {
+    const row = document.getElementById(id);
+    if (row) row.querySelectorAll('button').forEach(function(b) { b.classList.remove('selected'); });
+  });
 }
 
 // Sum the four rep-counter values and update the "Total reps" display.
