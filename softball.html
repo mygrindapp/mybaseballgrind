@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v44';
+    const CACHE = 'ybg-mygrind-v45';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7066,7 +7066,12 @@ function parseEntryDate(s) {
 // Date filtering uses calendar days (start-of-day boundaries) so today
 // always counts as last-7. Returns null if no state available.
 function accumulateRepStats() {
-  if (!window.state || !Array.isArray(state.entries)) return null;
+  // BUG FIX 2026-05-09: previously checked `window.state` but state is
+  // declared `let state = loadState()...` — `let` does NOT attach to
+  // window (unlike `var`). The check was returning null on every call,
+  // so Training Volume always showed 0 even with real entry data. The
+  // `state` identifier resolves correctly in scope without the window prefix.
+  if (typeof state === 'undefined' || !state || !Array.isArray(state.entries)) return null;
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const sevenStart  = new Date(today); sevenStart.setDate(today.getDate()  - 6);  // last 7 days INCLUDING today
