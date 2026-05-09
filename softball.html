@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v20';
+    const CACHE = 'ybg-mygrind-v22';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1213,7 +1213,6 @@ function dismissIosBanner() {
          against the dark header than the gold mark. The wordmark below
          stays gold per brand. -->
     <img class="logo-badge" data-mg-img="mark_white" alt="MyGrind" style="width:60px; height:60px; clip-path:none; background:transparent;">
-    <img class="logo-text" data-mg-img="logo" alt="MyGrind" style="height:42px; width:auto;">
   </div>
   <!-- Phase 1D — Multi-sport toggle. Hidden by default; CSS reveals it only
        when html[data-family-sport="both"]. setActiveSport() (defined in the
@@ -7034,6 +7033,11 @@ function renderTrainingVolume() {
     if (armStrip) armStrip.style.display = 'none';
     if (armSec) armSec.style.borderLeftColor = 'var(--gold)'; // green / unknown / no-load → default
   }
+
+  // Re-render the arm-care checklist whenever the tier refreshes — the list
+  // is tier-aware (drops wrist/spin work in red, adds 'rest' item) so it
+  // needs to rebuild when load crosses a threshold mid-day.
+  try { if (typeof renderArmCare === 'function') renderArmCare(); } catch (_) {}
 }
 
 // ═══════════════════════════════════════════════════════
@@ -8574,14 +8578,165 @@ function updateQuickPromptHint() {
   };
 })();
 
-// ─── ARM CARE DAILY CHECKLIST (#5) ───────────────────────
-const ARM_CARE_ITEMS = [
-  { id: 'bands',    label: 'Band work — external rotation (10 min)', icon: '💪' },
-  { id: 'toss',     label: 'Warm-up toss — build to full distance',  icon: '🎯' },
-  { id: 'wrist',    label: 'Wrist snaps & spin work (5 min)',        icon: (window.mgSportConfig && window.mgSportConfig.emoji) || '⚾' },
-  { id: 'recovery', label: 'Ice shoulder / forearm after pitching',  icon: '🧊' },
-  { id: 'sleep',    label: 'Sleep 8+ hours last night',              icon: '😴' },
-];
+// ─── ARM CARE DAILY CHECKLIST ────────────────────────────
+// Evidence-based + tier-coordinated (Coach Young 2026-05-09). The list is
+// derived per-render from age bracket + current arm-load tier so it stays
+// in sync with the throwing-volume thresholds in ARM_LOAD_THRESHOLDS:
+//   - Sleep target scales by age (younger players need more recovery)
+//   - "Wrist snaps & spin work" drops in red tier (skill-load that shouldn't
+//     stack on top of an over-threshold throwing week)
+//   - Red tier adds an explicit "Active rest — no throwing today" item
+//
+// Sources:
+//   MLB Pitch Smart guidelines (cool-down at 50% effort after throwing)
+//   Driveline Youth Arm Care (post-throw active recovery > immediate ice)
+//   ArmCare.com / blog.armcare.com — modern shift away from routine post-
+//     pitching ice for healthy players (slows healing, reduces blood flow)
+//   PMC PMC7990975 — structured arm care reduces medial elbow injuries ~50%
+function getArmCareItems() {
+  var ageStr = null, tier = null;
+  try {
+    var profile = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    ageStr = profile.age;
+    if (typeof accumulateRepStats === 'function' && typeof getArmLoadTier === 'function') {
+      var stats = accumulateRepStats();
+      if (stats) tier = getArmLoadTier(stats.armLoad7d, ageStr);
+    }
+  } catch (e) {}
+
+  var ballEmoji = (typeof getBallEmoji === 'function') ? getBallEmoji() : '⚾';
+
+  var items = [
+    { id: 'bands',    label: 'Band work — external rotation + scap (8 min)', icon: '💪' },
+    { id: 'toss',     label: 'Warm-up toss — build to full distance',         icon: '🎯' }
+  ];
+
+  // Skill-load work — drop in red tier so we're not stacking intensity on
+  // top of an already over-threshold week.
+  if (tier !== 'red') {
+    items.push({ id: 'wrist', label: 'Wrist snaps & spin work (5 min)', icon: ballEmoji });
+  }
+
+  // Modern post-throw protocol: active cool-down, NOT immediate ice. The
+  // 'cooldown' id replaces the legacy 'recovery' (ice) id — older
+  // localStorage entries keyed on 'recovery' just become inert (no harm).
+  // Sleep was removed 2026-05-09 — it's a "did I get this last night"
+  // measurement, not an active "did I do this today" task. Belongs on
+  // the journal entry form alongside Performance Grade, not here.
+  items.push(
+    { id: 'cooldown', label: 'Cool-down toss (50% effort) + 10 min walk',         icon: '🚶' },
+    { id: 'mobility', label: 'Mobility — shoulder circles + sleeper stretch (5 min)', icon: '🤸' }
+  );
+
+  if (tier === 'red') {
+    items.push({ id: 'rest', label: 'Active rest — no throwing today', icon: '⛔' });
+  }
+
+  return items;
+}
+
+// Reference data for the "ⓘ How to" detail modal — one entry per arm-care
+// item id. Each holds: title, what + why description, pro tip, optional
+// YouTube video id (embedded inline), and source credit. Sport-aware:
+// wrist snaps swaps to a softball-specific demo when mg_sport === 'softball'.
+const ARM_CARE_REFS = {
+  bands: {
+    title: 'Band Work — External Rotation + Scap',
+    desc: "Your rotator cuff stabilizes your shoulder during every throw. External rotation builds the small muscles (infraspinatus + teres minor) that decelerate your arm — the #1 protector against shoulder injuries.",
+    proTip: "Keep your elbow tucked at your side and move slowly — control beats speed. Aim for 2 sets of 15 reps per arm.",
+    video: 'djm7uruuDSU',
+    credit: 'Demo: ShapeFit · Source: ASMI evidence-based arm care'
+  },
+  toss: {
+    title: 'Warm-up Toss — Build to Full Distance',
+    desc: "Long toss progressively warms up your shoulder, stretches the throwing motion, and reads how your arm feels today. Start at 30 ft, build out by 15–20 ft, end with 5–8 throws at your max comfortable distance.",
+    proTip: "If your arm feels tight or sore beyond 75% effort, stop early. Pain is data — listen to it.",
+    video: 'Dako4zqyN2Y',
+    credit: 'Demo: Pro pitcher Craig Stem'
+  },
+  wrist: {
+    title: 'Wrist Snaps & Spin Work',
+    desc: "Sharpens the release point and trains finger pressure on the ball. 3–5 minutes of focused wrist snaps tunes your spin axis and feel for the ball before high-effort throwing.",
+    proTip: "Quality over quantity. 50 controlled snaps beats 200 sloppy ones. Keep the ball on your fingertips — never on the heel of your hand.",
+    video: 'Xy9q87s6RoA',         // baseball
+    videoSoftball: 'DEIMeDMzIo4', // softball — fastpitch wrist snap drill
+    credit: 'Demo: Coach Madden (baseball) · FastPitchPower (softball)'
+  },
+  cooldown: {
+    title: 'Cool-down Toss + 10 min Walk',
+    desc: "Modern recovery beats immediate icing. 5 minutes of light tossing at 50% effort plus a 10-minute walk pumps fresh blood through tired muscles and clears waste — the first 20 minutes after throwing influence how your arm feels tomorrow.",
+    proTip: "Skip routine post-pitching ice (slows healing for healthy arms). Save cold for acute injuries or between-innings cooling, not as your daily recovery.",
+    video: 'bDEXVfchUGg',
+    credit: 'Demo: ARM Pitching · Source: MLB Pitch Smart'
+  },
+  mobility: {
+    title: 'Mobility — Shoulder Circles + Sleeper Stretch',
+    desc: "Throwing tightens the back of your shoulder. Mobility work counteracts that tightness so your arm stays at full range tomorrow. 5 minutes daily prevents the slow loss of range that wrecks mechanics.",
+    proTip: "Sleeper stretch warning: stop the moment you feel pinching in the FRONT of your shoulder. You should feel the stretch in the BACK of the joint only. Done wrong, this stretch causes impingement — done right, it's gold.",
+    video: 'l5O4-D246Os',
+    credit: 'Demo: Ultimate Baseball Training'
+  },
+  rest: {
+    title: 'Active Rest — No Throwing Today',
+    desc: "Your throws + pitches are above the safe weekly threshold for your age bracket. Rest now prevents bigger problems later — most arm injuries come from accumulated overuse, not single-game blowouts.",
+    proTip: "Active rest ≠ couch. Walk, stretch, hydrate, sleep 9+ hours. Skip the bullpen today. Your arm is repairing — let it.",
+    video: null,
+    credit: 'Source: MLB Pitch Smart age-bracketed thresholds'
+  }
+};
+
+function openArmCareDetail(id) {
+  var ref = ARM_CARE_REFS[id];
+  if (!ref) return;
+  var overlay = document.getElementById('armcare-detail-overlay');
+  if (!overlay) return;
+
+  document.getElementById('acd-title').textContent = ref.title;
+  document.getElementById('acd-description').textContent = ref.desc;
+
+  // Sport-aware video swap for wrist snaps (and any future per-sport demos).
+  var videoId = ref.video;
+  if (ref.videoSoftball) {
+    try { if (localStorage.getItem('mg_sport') === 'softball') videoId = ref.videoSoftball; } catch (e) {}
+  }
+
+  var videoWrap = document.getElementById('acd-video-wrap');
+  var iframe    = document.getElementById('acd-video');
+  if (videoId && videoWrap && iframe) {
+    videoWrap.style.display = 'block';
+    iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1';
+  } else if (videoWrap) {
+    videoWrap.style.display = 'none';
+    if (iframe) iframe.src = '';
+  }
+
+  var protipWrap = document.getElementById('acd-protip-wrap');
+  if (ref.proTip && protipWrap) {
+    protipWrap.style.display = 'block';
+    document.getElementById('acd-protip').textContent = ref.proTip;
+  } else if (protipWrap) {
+    protipWrap.style.display = 'none';
+  }
+
+  var creditEl = document.getElementById('acd-credit');
+  if (creditEl) {
+    creditEl.textContent = ref.credit || '';
+    creditEl.style.display = ref.credit ? 'block' : 'none';
+  }
+
+  overlay.style.display = 'flex';
+  ybgHaptic(10);
+}
+
+function closeArmCareDetail(event) {
+  // Backdrop click closes; panel click does not (panel onclick stops bubbling).
+  if (event && event.target && event.target.id !== 'armcare-detail-overlay') return;
+  var overlay = document.getElementById('armcare-detail-overlay');
+  if (overlay) overlay.style.display = 'none';
+  // Stop video playback so audio doesn't keep going after close
+  var iframe = document.getElementById('acd-video');
+  if (iframe) iframe.src = '';
+}
 
 function armCareKey() {
   const d = new Date();
@@ -8603,13 +8758,14 @@ function renderArmCare() {
     const prog = document.getElementById('arm-care-progress');
     if (!list) return; // DOM not ready yet — skip silently
 
+    const items = getArmCareItems();
     const state = getArmCareState();
     let done = 0;
-    list.innerHTML = ARM_CARE_ITEMS.map(function(item) {
+    list.innerHTML = items.map(function(item) {
       const isDone = !!state[item.id];
       if (isDone) done++;
       return '<label onclick="toggleArmCare(\'' + item.id + '\')" style="' +
-             'display:flex; align-items:center; gap:12px; padding:10px 12px; margin-bottom:6px; ' +
+             'display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; ' +
              'background:' + (isDone ? 'rgba(39,174,96,0.12)' : 'var(--card2)') + '; ' +
              'border:1px solid ' + (isDone ? '#27AE60' : 'var(--border)') + '; ' +
              'border-radius:4px; cursor:pointer; transition:all 0.15s; user-select:none;">' +
@@ -8620,11 +8776,15 @@ function renderArmCare() {
                  'text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' +
                  '<span style="margin-right:6px;">' + item.icon + '</span>' + item.label +
                '</div>' +
+               '<button type="button" onclick="event.stopPropagation(); openArmCareDetail(\'' + item.id + '\')" style="' +
+                 'background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:28px; height:28px; ' +
+                 'border-radius:50%; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0; padding:0; line-height:1;" ' +
+                 'aria-label="How to do this exercise" title="How to do this">ⓘ</button>' +
              '</label>';
     }).join('');
 
     if (prog) {
-      const total = ARM_CARE_ITEMS.length;
+      const total = items.length;
       if (done === total) {
         prog.innerHTML = '✅ ALL DONE — ARM CARE COMPLETE';
         prog.style.color = '#27AE60';
@@ -8646,7 +8806,7 @@ function toggleArmCare(id) {
   renderArmCare();
 
   // Celebrate first full completion of the day
-  const allDone = ARM_CARE_ITEMS.every(function(it) { return state[it.id]; });
+  const allDone = getArmCareItems().every(function(it) { return state[it.id]; });
   const celebKey = armCareKey() + '_celebrated';
   if (allDone && !localStorage.getItem(celebKey)) {
     localStorage.setItem(celebKey, '1');
@@ -10204,6 +10364,30 @@ setTimeout(function() {
   try { refreshTeamPanel(); } catch(e) {}
 }, 300);
 </script>
+
+<!-- ══ ARM CARE EXERCISE DETAIL MODAL ═══════════════════════════════════
+     Tapping the ⓘ next to any arm-care item opens this overlay with a
+     "what + why" intro, an embedded video demo (sport-aware for wrist
+     snaps), and a pro tip. Backdrop click or close button dismisses;
+     iframe.src is cleared on close so audio doesn't keep playing. -->
+<div id="armcare-detail-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.93); z-index:9991; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(8px); overflow-y:auto;" onclick="closeArmCareDetail(event)">
+  <div id="armcare-detail-panel" style="background:#161210; border:2px solid var(--gold-dark); border-radius:6px; max-width:480px; width:100%; padding:22px 22px 26px; max-height:94vh; overflow-y:auto; margin:auto;" onclick="event.stopPropagation()">
+    <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; margin-bottom:14px;">
+      <div id="acd-title" style="font-family:'Bebas Neue'; font-size:22px; letter-spacing:1.5px; line-height:1.1; color:var(--gold);"></div>
+      <button onclick="closeArmCareDetail()" style="background:rgba(255,255,255,0.06); border:none; color:#A89880; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; flex-shrink:0; line-height:1;">✕</button>
+    </div>
+    <div id="acd-description" style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.65; margin-bottom:14px;"></div>
+    <div id="acd-video-wrap" style="display:none; position:relative; width:100%; padding-bottom:56.25%; background:#000; border-radius:4px; overflow:hidden; margin-bottom:14px;">
+      <iframe id="acd-video" src="" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="encrypted-media; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div id="acd-protip-wrap" style="display:none; background:rgba(var(--accent-rgb), 0.06); border-left:3px solid var(--gold); padding:12px 14px; border-radius:3px; margin-bottom:14px;">
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">⚡ Pro tip</div>
+      <div id="acd-protip" style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6;"></div>
+    </div>
+    <div id="acd-credit" style="font-family:'Barlow'; font-size:11px; color:var(--grey); text-align:center; margin-bottom:14px;"></div>
+    <button onclick="closeArmCareDetail()" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:14px; border:none; border-radius:2px; cursor:pointer;">Got it ✓</button>
+  </div>
+</div>
 
 <!-- ══ QUOTE OF THE DAY POPUP ══════════════════════════════════════════ -->
 <div id="qotd-overlay" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(14,11,9,0.96);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
