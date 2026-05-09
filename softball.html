@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v43';
+    const CACHE = 'ybg-mygrind-v44';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7118,30 +7118,44 @@ function accumulateRepStats() {
     // Game entries: derive arm-load contributions from box-score stats so
     // we don't double-count via a redundant rep counter (Coach Young
     // 2026-05-09: dropped Game from rep counter UI). Mappings:
-    //   pitches  ≈ IP × 15  (~15 pitches per inning is a reasonable youth/HS avg)
-    //   swings   ≈ AB × 3   (~3 pitches per at-bat seen on average; some are swings)
-    // GBs and throws are NOT derived from box-score stats — fielding
-    // chances exist (PO/A/E) but they're attempts, not reps. We keep
-    // those out of the rep aggregation; they live in Fielding totals.
+    //   pitches ≈ IP × 15            (~15 pitches per inning, youth/HS avg)
+    //   swings  ≈ AB × 3             (~3 pitches seen per at-bat avg)
+    //   throws  ≈ (PO + A + E)×1.5 + 20  (defensive chances + warmup
+    //           baseline; position players make 20-30 warmup + between-
+    //           innings throws even with zero fielding chances)
+    // The +20 baseline kicks in for any game where the player participated
+    // (any stat > 0), so a position player with 4 ABs and 0 fielding
+    // chances still contributes ~20 throws to arm load — matching Coach's
+    // "anywhere they throw should reflect in arm-load total."
     if (e.gameStats) {
-      const gIp  = parseFloat(e.gameStats.ip) || 0;
-      const gAb  = parseInt(e.gameStats.ab)   || 0;
+      const gs = e.gameStats;
+      const gIp = parseFloat(gs.ip) || 0;
+      const gAb = parseInt(gs.ab)   || 0;
+      const gPo = parseInt(gs.po)   || 0;
+      const gA  = parseInt(gs.a)    || 0;
+      const gE  = parseInt(gs.e)    || 0;
+      const playedGame = gAb > 0 || gIp > 0 || gPo > 0 || gA > 0 || gE > 0;
       const gamePitches = Math.round(gIp * 15);
       const gameSwings  = Math.round(gAb * 3);
-      if (gamePitches > 0 || gameSwings > 0) {
+      const gameThrows  = playedGame ? Math.round((gPo + gA + gE) * 1.5 + 20) : 0;
+      if (gamePitches > 0 || gameSwings > 0 || gameThrows > 0) {
         totals.season.pitches += gamePitches;
         totals.season.swings  += gameSwings;
+        totals.season.throws  += gameThrows;
         if (d && d >= thirtyStart) {
           totals.last30.pitches += gamePitches;
           totals.last30.swings  += gameSwings;
+          totals.last30.throws  += gameThrows;
         }
         if (d && d >= sevenStart) {
           totals.last7.pitches += gamePitches;
           totals.last7.swings  += gameSwings;
+          totals.last7.throws  += gameThrows;
         }
         if (d && d >= today) {
           totals.today.pitches += gamePitches;
           totals.today.swings  += gameSwings;
+          totals.today.throws  += gameThrows;
         }
       }
     }
