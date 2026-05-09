@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v60';
+    const CACHE = 'ybg-mygrind-v61';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6523,6 +6523,45 @@ function calcGameStats() {
 // alerted "No stats found." Removed along with the button at the journal's
 // game-stats-section header.
 
+// ── ENTRY META PILLS ──────────────────────────────────
+// Coach Young 2026-05-10 walkthrough: bare "L" / "F" badges left
+// players guessing what the letter meant. resultPill() and gradePill()
+// expand each badge to "L · LOSS" / "F · STRUGGLED" so the meaning is
+// visible at a glance — same descriptors used in the form chip rows
+// for consistency across the journal.
+const RESULT_LABELS = { W: 'WIN', L: 'LOSS', T: 'TIE' };
+const RESULT_COLORS = {
+  W: { fg: '#27AE60',     bg: 'rgba(39,174,96,0.12)' },
+  L: { fg: '#C0392B',     bg: 'rgba(192,57,43,0.12)' },
+  T: { fg: 'var(--grey)', bg: 'rgba(100,100,100,0.12)' }
+};
+const GRADE_LABELS = { A: 'EXCELLENT', B: 'GOOD', C: 'AVERAGE', D: 'BELOW AVG', F: 'STRUGGLED' };
+const GRADE_COLORS = {
+  A: { fg: 'var(--green)', bg: 'rgba(39,174,96,0.2)' },
+  B: { fg: 'var(--gold)',  bg: 'rgba(228,179,73,0.18)' },
+  C: { fg: '#E67E22',      bg: 'rgba(230,126,34,0.18)' },
+  D: { fg: 'var(--red)',   bg: 'rgba(192,57,43,0.2)' },
+  F: { fg: 'var(--red)',   bg: 'rgba(192,57,43,0.3)' }
+};
+function _metaPill(letter, label, c) {
+  return '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:' + c.fg + '; background:' + c.bg + '; padding:5px 10px; border-radius:3px; display:inline-flex; align-items:center; gap:6px; line-height:1;">' +
+           '<span style="font-family:\'Bebas Neue\'; font-size:15px; letter-spacing:1px;">' + letter + '</span>' +
+           '<span>' + label + '</span>' +
+         '</div>';
+}
+function resultPill(r) {
+  if (!r) return '';
+  const label = RESULT_LABELS[r]; const color = RESULT_COLORS[r];
+  if (!label || !color) return '';
+  return _metaPill(r, label, color);
+}
+function gradePill(g) {
+  if (!g) return '';
+  const label = GRADE_LABELS[g]; const color = GRADE_COLORS[g];
+  if (!label || !color) return '';
+  return _metaPill(g, label, color);
+}
+
 // ── RENDER ENTRIES ────────────────────────────────────
 function renderEntries() {
   const container = document.getElementById('entries-list');
@@ -6612,11 +6651,13 @@ function renderEntries() {
     <div class="entry-card">
 
       <!-- META ROW — date moved to the day header above so it's not
-           repeated on every same-day entry -->
+           repeated on every same-day entry. flex-wrap lets the result/grade
+           pills drop to a new line on narrow screens instead of clipping
+           the edit/delete buttons off the right edge. -->
       <div class="entry-meta" style="justify-content:flex-end;">
-        <div style="display:flex; align-items:center; gap:8px;">
-          ${e.result ? `<div style="font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:${e.result === 'W' ? '#27AE60' : e.result === 'L' ? '#C0392B' : 'var(--grey)'}; background:${e.result === 'W' ? 'rgba(39,174,96,0.1)' : e.result === 'L' ? 'rgba(192,57,43,0.1)' : 'rgba(100,100,100,0.1)'}; padding:2px 10px; border-radius:2px;">${e.result}</div>` : ''}
-          ${e.grade ? `<div class="grade-badge grade-${e.grade}" style="font-size:16px; width:30px; height:30px;">${e.grade}</div>` : ''}
+        <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
+          ${resultPill(e.result)}
+          ${gradePill(e.grade)}
           <div class="entry-type type-${e.type}">${e.type}</div>
           <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:2px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="Edit this entry">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})">✕</button>
