@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v56';
+    const CACHE = 'ybg-mygrind-v57';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2219,7 +2219,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <!-- Expanded state — the full checklist. Hidden when 5/5 complete
              unless the user taps the compressed pill to re-open it. -->
         <div id="arm-care-expanded">
-          <div class="card-title">💪 Arm & Shoulder Care — Today</div>
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
+            <div class="card-title" style="margin-bottom:0;">💪 Arm & Shoulder Care — Today</div>
+            <!-- Collapse button — only visible when all 5 are checked AND
+                 the user has expanded the pill back open. Lets them re-hide
+                 the list manually instead of having to uncheck/recheck. -->
+            <button type="button" id="arm-care-collapse-btn" onclick="collapseArmCare()" style="display:none; background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer; flex-shrink:0;">
+              ▲ Hide
+            </button>
+          </div>
           <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
                Wired into renderTrainingVolume(): when last-7-day arm load crosses a
                threshold, this strip becomes the "why this matters today" prompt right
@@ -9515,6 +9523,10 @@ function expandArmCare() {
   _armCareExpandedOverride = true;
   renderArmCare();
 }
+function collapseArmCare() {
+  _armCareExpandedOverride = false;
+  renderArmCare();
+}
 
 function renderArmCare() {
   try {
@@ -9570,10 +9582,11 @@ function renderArmCare() {
     // green pill instead. Saves vertical real estate on mobile so the entry
     // form below is more reachable. If they uncheck anything later, count
     // drops below total and we naturally fall back to the expanded view.
-    const expanded = document.getElementById('arm-care-expanded');
-    const pill     = document.getElementById('arm-care-pill');
-    const pillSub  = document.getElementById('arm-care-pill-sub');
-    const allDone  = total > 0 && done === total;
+    const expanded   = document.getElementById('arm-care-expanded');
+    const pill       = document.getElementById('arm-care-pill');
+    const pillSub    = document.getElementById('arm-care-pill-sub');
+    const collapseBtn = document.getElementById('arm-care-collapse-btn');
+    const allDone    = total > 0 && done === total;
     if (allDone && !_armCareExpandedOverride) {
       if (expanded) expanded.style.display = 'none';
       if (pill)     pill.style.display     = 'flex';
@@ -9585,6 +9598,10 @@ function renderArmCare() {
       // it so a fresh re-completion next time auto-compresses again.
       if (!allDone) _armCareExpandedOverride = false;
     }
+    // The "▲ Hide" button only makes sense when the user has manually
+    // expanded a fully-complete list — otherwise hiding does nothing
+    // (the pill swap only kicks in at allDone). Show it only in that state.
+    if (collapseBtn) collapseBtn.style.display = (allDone && _armCareExpandedOverride) ? 'inline-block' : 'none';
   } catch(err) {
     try { console.warn('[renderArmCare]', err); } catch(e) {}
   }
