@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v48';
+    const CACHE = 'ybg-mygrind-v49';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6032,12 +6032,21 @@ function hasThrowingEntryToday() {
 }
 
 // Show the Arm Care card when the player is logging or has logged a
-// throwing session today. Hidden during reflection-only days. Called
-// from toggleGameStats() (entry-type change) and renderAll() (state change).
+// throwing session today. Hidden during reflection-only or workout
+// entries — even if there was an earlier throwing session today, the
+// arm-care prompt belongs to the throwing context, not the gym/recovery
+// context. Coach Young 2026-05-09: "in workout section we can remove
+// arms." Called from toggleGameStats() (entry-type change) and renderAll().
 function updateArmCareVisibility() {
   const sec = document.getElementById('j-armcare-section');
   if (!sec) return;
   const type = document.getElementById('j-type')?.value || '';
+  // Workout + reflection entries explicitly suppress the arm-care card
+  // regardless of earlier throwing activity today.
+  if (type === 'workout' || type === 'reflection') {
+    sec.style.display = 'none';
+    return;
+  }
   const isThrowingType = (type === 'practice' || type === 'game' || type === 'instructor');
   sec.style.display = (isThrowingType || hasThrowingEntryToday()) ? 'block' : 'none';
 }
