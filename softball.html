@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v52';
+    const CACHE = 'ybg-mygrind-v53';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2286,11 +2286,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <!-- ══ GAME STATS SECTION — shows when type = Game ══ -->
       <div id="game-stats-section" style="display:none; margin-top:4px; margin-bottom:20px;">
         <div style="border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:4px;">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
+          <div style="margin-bottom:12px;">
             <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold);">⚾ Today's Game Stats</div>
-            <button type="button" onclick="pullSeasonStats()" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:5px 12px; border-radius:2px; cursor:pointer;">
-              Pull from My Stats
-            </button>
           </div>
           <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.5;">
             Single-game numbers. Sync to My Stats automatically — AVG, OBP, SLG, ERA, WHIP update on their own.
@@ -2391,28 +2388,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             </div>
           </div>
 
-          <!-- SEASON TOTALS PULLED FROM MY STATS -->
-          <div id="season-totals-display" style="display:none; padding-top:12px; border-top:1px solid var(--border);">
-            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">📊 Season Totals (from My Stats)</div>
-            <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:3px;">
-              <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
-                <div style="font-family:'Bebas Neue'; font-size:22px; color:var(--gold); line-height:1;" id="gs-season-avg">---</div>
-                <div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">AVG</div>
-              </div>
-              <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
-                <div style="font-family:'Bebas Neue'; font-size:22px; color:var(--gold); line-height:1;" id="gs-season-obp">---</div>
-                <div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">OBP</div>
-              </div>
-              <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
-                <div style="font-family:'Bebas Neue'; font-size:22px; color:var(--gold); line-height:1;" id="gs-season-ops">---</div>
-                <div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">OPS</div>
-              </div>
-              <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
-                <div style="font-family:'Bebas Neue'; font-size:22px; color:var(--white); line-height:1;" id="gs-season-hr">-</div>
-                <div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">HR</div>
-              </div>
-            </div>
-          </div>
+          <!-- Season totals display removed 2026-05-10 — was only populated by
+               pullSeasonStats() reading the legacy ybg_softball_stats key,
+               which is no longer written to since manual stat entry was
+               removed. Season totals now live exclusively in My Stats tab,
+               auto-populated from journal entries by accumulateGameStats(). -->
         </div>
       </div>
 
@@ -3528,8 +3508,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
     <!-- Manual Save My Stats removed 2026-05-09 — stats now source purely
          from Daily Journal entries (Coach Young: "Stats should only work
-         based on entry in journal"). The saveAllStats() function is kept
-         for backward compatibility with auto-rendering paths. -->
+         based on entry in journal"). saveAllStats() function + the
+         ybg_softball_stats localStorage key fully removed 2026-05-10
+         since nothing wrote them. -->
 
     <!-- ═══ OPTIONAL IMPORT HELPERS — moved to bottom to keep entry area clean ════ -->
     <div style="display:flex; align-items:center; gap:10px; margin:28px 0 16px;">
@@ -4460,20 +4441,9 @@ function showExpired() {
   if (overlay) overlay.style.display = 'flex';
 }
 
-function showPaywall() {
-  // Trial expired — send back to onboarding to repurchase
-  // Clear old trial so onboarding starts fresh
-  try {
-    var ak = 'ybg_softball_access';
-    var ok = 'ybg_softball_onboarded';
-    var acc = JSON.parse(localStorage.getItem(ak) || '{}');
-    acc.trialExpired = true;
-    acc.trialStart = null;
-    localStorage.setItem(ak, JSON.stringify(acc));
-    localStorage.removeItem(ok);
-  } catch(e) {}
-  window.location.href = 'https://mygrindapp.com/signup.html';
-}
+// showPaywall() removed 2026-05-10 — was the legacy bounce-to-signup function
+// from the pre-9d58578 trial-expired flow. Replaced by showExpired() (the
+// in-app overlay with payer/dependent CTA split). No callers — removed.
 
 function showBlocked(msg) {
   document.getElementById('trial-screen-welcome').style.display = 'none';
@@ -5936,8 +5906,6 @@ function saveEntry() {
   });
   const avgDisp = document.getElementById('game-avg-display');
   if (avgDisp) avgDisp.style.display = 'none';
-  const seasonDisp = document.getElementById('season-totals-display');
-  if (seasonDisp) seasonDisp.style.display = 'none';
   pendingMedia = [];
   renderMediaPreview();
   renderAll();
@@ -6098,9 +6066,7 @@ function toggleGameStats() {
   // Reset game displays when not game
   if (!isGame) {
     const avgDisp    = document.getElementById('game-avg-display');
-    const seasonDisp = document.getElementById('season-totals-display');
     if (avgDisp)    avgDisp.style.display    = 'none';
-    if (seasonDisp) seasonDisp.style.display = 'none';
     const resultEl = document.getElementById('j-result');
     if (resultEl) resultEl.value = '';
   }
@@ -6397,36 +6363,11 @@ function calcGameStats() {
   if (dispBox) dispBox.style.display = ab > 0 ? 'block' : 'none';
 }
 
-function pullSeasonStats() {
-  try {
-    const saved = localStorage.getItem('ybg_softball_stats');
-    if (!saved) { alert('No stats found in My Stats tab yet. Enter your season stats there first.'); return; }
-    const d = JSON.parse(saved);
-    const ab  = parseFloat(d.ab)  || 0;
-    const h   = parseFloat(d.h)   || 0;
-    const bb  = parseFloat(d.bb)  || 0;
-    const hbp = parseFloat(d.hbp) || 0;
-    const hr  = parseFloat(d.hr)  || 0;
-    const tb  = h + (parseFloat(d['2b'])||0) + 2*(parseFloat(d['3b'])||0) + 3*hr;
-    const pa  = ab + bb + hbp;
-
-    const avg = ab > 0 ? (h / ab).toFixed(3)                    : '---';
-    const obp = pa > 0 ? ((h + bb + hbp) / pa).toFixed(3)       : '---';
-    const slg = ab > 0 ? (tb / ab).toFixed(3)                    : '---';
-    const ops = (avg !== '---' && slg !== '---') ? (parseFloat(obp) + parseFloat(slg)).toFixed(3) : '---';
-
-    const el = (id, val) => { const e = document.getElementById(id); if (e) e.textContent = val; };
-    el('gs-season-avg', avg);
-    el('gs-season-obp', obp);
-    el('gs-season-ops', ops);
-    el('gs-season-hr',  d.hr || '-');
-
-    const box = document.getElementById('season-totals-display');
-    if (box) box.style.display = 'block';
-  } catch(e) {
-    alert('Could not load season stats. Make sure your stats are saved in the My Stats tab.');
-  }
-}
+// pullSeasonStats() removed 2026-05-10. Read from the legacy
+// ybg_softball_stats localStorage key (manual stats), which hasn't been
+// written to since manual entry was removed in commit 7027234. Button always
+// alerted "No stats found." Removed along with the button at the journal's
+// game-stats-section header.
 
 // ── RENDER ENTRIES ────────────────────────────────────
 function renderEntries() {
@@ -7031,63 +6972,17 @@ function renderAll() {
 }
 
 // ───────────────────────────────────────────────────────
-// DASHBOARD SNAPSHOTS — Recent Entries + Hitting Stats
+// DASHBOARD SNAPSHOTS — Hitting Stats
 // Pulls from state.entries to give an at-a-glance view
 // without requiring a separate data store.
+//
+// Recent Entries snapshot block removed 2026-05-10 — the
+// #dash-recent-entries DOM element was deleted in commit 5c7aa7c when the
+// dashboard restructure replaced it with daily/weekly/monthly rep totals.
+// Populator was a no-op since (getElementById returned null and the whole
+// branch silently skipped).
 // ───────────────────────────────────────────────────────
 function renderDashboardSnapshots() {
-  // ── Recent Entries (last 3) ──
-  const recentEl = document.getElementById('dash-recent-entries');
-  if (recentEl) {
-    if (!state.entries || state.entries.length === 0) {
-      recentEl.innerHTML = '<em style="color:var(--grey);">No entries yet — tap the button below to log your first one.</em>';
-    } else {
-      // Sport-aware ball emoji on Game label — read at render time so this
-      // re-injection path doesn't freeze ⚾ in softball mode. The other type
-      // emojis (🏏 bat / 🎓 cap / 🧠 brain) are sport-neutral. (2026-05-08 audit.)
-      const _ball = getBallEmoji();
-      const labelFor = function(t) {
-        if (t === 'game')       return _ball + ' Game';
-        if (t === 'practice')   return '🏏 Practice';
-        if (t === 'instructor') return '🎓 Instructor';
-        if (t === 'reflection') return '🧠 Reflection';
-        return '📓 Entry';
-      };
-      const colorFor = function(t) {
-        if (t === 'game')       return 'var(--gold)';
-        if (t === 'practice')   return '#A8D97B';
-        if (t === 'instructor') return '#7BC8D9';
-        if (t === 'reflection') return '#D9A87B';
-        return 'var(--gold)';
-      };
-      const escapeHtml = function(s) {
-        return String(s || '').replace(/[&<>"']/g, function(c) {
-          return { '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c];
-        });
-      };
-      const rows = state.entries.slice(0, 3).map(function(e) {
-        const label = labelFor(e.type);
-        const color = colorFor(e.type);
-        const dateStr = escapeHtml(e.date || '');
-        const titleStr = escapeHtml(e.title || (e.type === 'practice' ? 'Practice' : (e.type === 'instructor' ? 'Lesson' : 'Entry')));
-        const preview = escapeHtml((e.what || '').substring(0, 80)) + ((e.what || '').length > 80 ? '…' : '');
-        return '' +
-          '<div style="padding:10px 0; border-bottom:1px solid var(--border);">' +
-            '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:4px;">' +
-              '<span style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:' + color + ';">' + label + '</span>' +
-              '<span style="font-family:\'Barlow\'; font-size:11px; color:var(--grey);">' + dateStr + '</span>' +
-            '</div>' +
-            '<div style="font-family:\'Barlow\'; font-size:13px; font-weight:600; color:var(--light); margin-bottom:2px;">' + titleStr + '</div>' +
-            (preview ? '<div style="font-family:\'Barlow\'; font-size:12px; color:var(--grey); line-height:1.5;">' + preview + '</div>' : '') +
-          '</div>';
-      }).join('');
-      recentEl.innerHTML = rows;
-      // Clean up the trailing border on the last row
-      const last = recentEl.lastElementChild;
-      if (last && last.style) last.style.borderBottom = 'none';
-    }
-  }
-
   // ── Hitting Stats Snapshot (only if game entries with stats exist) ──
   const statsCard = document.getElementById('dash-stats-card');
   if (statsCard) {
@@ -7291,41 +7186,15 @@ function colorStat(id, val, thresholds, lower) {
   el.style.color = color;
 }
 
-function saveAllStats() {
-  // Note: name/pos/team/year no longer saved here — they live in Profile as the single source of truth.
-  const data = {
-    g:    s('st-g'),    ab:   s('st-ab'),   h:    s('st-h'),
-    '2b': s('st-2b'),  '3b': s('st-3b'),   hr:   s('st-hr'),
-    rbi:  s('st-rbi'),  r:    s('st-r'),    bb:   s('st-bb'),
-    k:    s('st-k'),    sb:   s('st-sb'),   hbp:  s('st-hbp'),
-    ip:   s('st-ip'),   w:    s('st-w'),    l:    s('st-l'),
-    er:   s('st-er'),   pk:   s('st-pk'),   pbb:  s('st-pbb'),
-    ph:   s('st-ph'),   sv:   s('st-sv'),   cg:   s('st-cg'),
-    po:   s('st-po'),   a:    s('st-a'),    e:    s('st-e'),
-    pop:  s('st-pop'),
-    sixty: s('st-sixty'), velo: s('st-velo'),
-    savedAt: new Date().toLocaleString()
-  };
-  try { localStorage.setItem('ybg_softball_stats', JSON.stringify(data)); } catch(e) {}
-  const msg = document.getElementById('stats-saved-msg');
-  if (msg) { msg.style.display = 'block'; setTimeout(() => { msg.style.display = 'none'; }, 3000); }
-  calcStats();
-}
+// saveAllStats() + ybg_softball_stats localStorage key removed 2026-05-10.
+// Manual stat entry was removed in commit 7027234 (2026-05-09) — the 27 st-*
+// inputs are now read-only displays auto-populated from journal game entries
+// via accumulateGameStats(). Nothing called saveAllStats() and nothing wrote
+// the localStorage key, so the initStats() read of it was a no-op that always
+// got overwritten by accumulateGameStats() one line later.
 
 function initStats() {
-  try {
-    const saved = localStorage.getItem('ybg_softball_stats');
-    if (!saved) return;
-    const d = JSON.parse(saved);
-    // Note: name/pos/team/year removed — those now live in Profile (pl-name, pl-pos, pl-school, pl-season).
-    const fields = ['g','ab','h','2b','3b','hr','rbi','r','bb','k','sb','hbp','ip','w','l','er','pk','pbb','ph','sv','cg','po','a','e','pop','sixty','velo'];
-    fields.forEach(f => {
-      const el = document.getElementById('st-' + f);
-      if (el && d[f]) el.value = d[f];
-    });
-    calcStats();
-  } catch(e) {}
-  // Also pull accumulated game stats from journal
+  // Stats source = journal game entries only (Coach Young 2026-05-09).
   accumulateGameStats();
 }
 
@@ -9022,8 +8891,25 @@ function exportJournalPDF() {
   })();
   const name = profile.firstName ? (profile.firstName + (profile.lastName ? ' ' + profile.lastName : '')) : 'Player';
 
-  let stats = null;
-  try { stats = JSON.parse(localStorage.getItem('ybg_softball_stats') || 'null'); } catch(e) {}
+  // Season totals — derived from journal game entries on the fly.
+  // Was reading the legacy ybg_softball_stats key (manual stats) until
+  // 2026-05-10 dead-UI cleanup; that key is no longer written so the
+  // export was silently dropping the Season Stats section.
+  const stats = (function() {
+    const out = { ab:0, h:0, hr:0, rbi:0, ip:0, er:0, pk:0 };
+    (state.entries || []).forEach(function(e) {
+      if (e.type !== 'game' || !e.gameStats) return;
+      const gs = e.gameStats;
+      out.ab  += parseInt(gs.ab)  || 0;
+      out.h   += parseInt(gs.h)   || 0;
+      out.hr  += parseInt(gs.hr)  || 0;
+      out.rbi += parseInt(gs.rbi) || 0;
+      out.ip  += parseFloat(gs.ip) || 0;
+      out.er  += parseInt(gs.er)  || 0;
+      out.pk  += parseInt(gs.pk)  || 0;
+    });
+    return out;
+  })();
 
   const streak = calculateStreak();
   const totalEntries = state.entries.length;
