@@ -47,11 +47,12 @@
 <script defer src="/_vercel/insights/script.js"></script>
 
 <!-- ── PWA MANIFEST ── -->
-<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22My%20Grind%22%2C%22short_name%22%3A%22My%20Grind%22%2C%22start_url%22%3A%22.%2F%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait-primary%22%2C%22background_color%22%3A%22%230D0D0D%22%2C%22theme_color%22%3A%22%23C9A84C%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A%2F%2Fwww.mygrindapp.com%2Fassets%2Fapple-touch-icon.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image%2Fpng%22%2C%22purpose%22%3A%22any%20maskable%22%7D%5D%7D">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22My%20Grind%22%2C%22short_name%22%3A%22My%20Grind%22%2C%22start_url%22%3A%22./%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait-primary%22%2C%22background_color%22%3A%22%230D0D0D%22%2C%22theme_color%22%3A%22%23C9A84C%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/apple-touch-icon.png%22%2C%22sizes%22%3A%22180x180%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-192.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%5D%7D">
 
 <!-- ── APP ICONS — embedded as base64 ── -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://www.mygrindapp.com/assets/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="192x192" href="https://www.mygrindapp.com/assets/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="https://www.mygrindapp.com/assets/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="https://www.mygrindapp.com/assets/icon-512.png">
 <link rel="icon" type="image/x-icon" href="https://www.mygrindapp.com/assets/favicon.png">
 <link rel="shortcut icon" href="https://www.mygrindapp.com/assets/favicon.png">
 
@@ -1018,7 +1019,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v16';
+    const CACHE = 'ybg-mygrind-v17';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1272,7 +1273,7 @@ function dismissIosBanner() {
 
     <div id="tc-preview" style="margin-bottom:16px; padding:20px; text-align:center; background:#222630; border-radius:6px; border:1px solid #2A2A2A; position:relative; overflow:hidden;">
       <div id="tc-preview-strip" style="position:absolute; top:0; left:0; right:0; height:4px; background:var(--gold);"></div>
-      <div id="tc-preview-logo" style="width:64px; height:64px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:22px; font-weight:900; background:var(--gold); color:#161210; box-shadow:0 0 0 2px #161210, 0 0 0 4px var(--gold);">MG</div>
+      <div id="tc-preview-logo" style="width:64px; height:64px; border-radius:50%; margin:0 auto 10px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:22px; font-weight:900; background:var(--gold); color:#161210; box-shadow:0 0 0 2px #161210, 0 0 0 4px var(--gold);">T</div>
       <div id="tc-preview-name" style="font-family:'Bebas Neue'; font-size:22px; letter-spacing:2px; color:#F4F4F4;">TEAM NAME</div>
       <div id="tc-preview-loc" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:2px; color:#A89880; text-transform:uppercase; margin-top:2px;">City · State</div>
     </div>
@@ -1346,7 +1347,7 @@ function dismissIosBanner() {
 <div id="team-join-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.93); z-index:1001; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(12px);">
   <div style="background:#161210; border:2px solid var(--gold); border-radius:6px; max-width:420px; width:100%; padding:24px 20px;">
     <div style="text-align:center; margin-bottom:16px;">
-      <div id="tj-logo" style="width:72px; height:72px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:24px; font-weight:900;">MG</div>
+      <div id="tj-logo" style="width:72px; height:72px; border-radius:50%; margin:0 auto 12px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:24px; font-weight:900;">T</div>
       <div id="tj-name" style="font-family:'Bebas Neue'; font-size:24px; letter-spacing:2px; color:#F4F4F4;">TEAM NAME</div>
       <div id="tj-loc" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:2px; color:#A89880; text-transform:uppercase; margin-top:2px;"></div>
       <div id="tj-coach" style="font-family:'Barlow'; font-size:13px; color:var(--gold); margin-top:10px;"></div>
@@ -1491,7 +1492,7 @@ function dismissIosBanner() {
 
     <!-- HEADER -->
     <div style="background:linear-gradient(135deg,#1A0012,#140008); border-bottom:1px solid #2A0018; padding:24px 28px; text-align:center;">
-      <div style="width:56px; height:56px; background:var(--gold); clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',cursive; font-size:22px; color:#080808; margin:0 auto 12px;">MG</div>
+      <img data-mg-img="mark" alt="MyGrind" style="width:56px; height:56px; display:block; margin:0 auto 12px;">
       <div style="font-family:'Bebas Neue',cursive; font-size:34px; letter-spacing:3px; color:#F4F4F4; line-height:1;">MY <span style="color:var(--gold);">GRIND</span></div>
       <div data-mg-text="2026 Annual {Sport} Journal" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#555; margin-top:4px;">2026 Annual Baseball Journal</div>
     </div>
@@ -2887,7 +2888,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div id="team-color-strip-top" style="position:absolute; top:0; left:0; right:0; height:5px;"></div>
 
         <!-- Logo circle -->
-        <div id="team-logo-circle" style="width:90px; height:90px; border-radius:50%; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:32px; font-weight:900; box-shadow:0 0 0 3px #161210, 0 0 0 5px var(--gold);">MG</div>
+        <div id="team-logo-circle" style="width:90px; height:90px; border-radius:50%; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:32px; font-weight:900; box-shadow:0 0 0 3px #161210, 0 0 0 5px var(--gold);">T</div>
 
         <div id="team-name-display" style="font-family:'Bebas Neue',cursive; font-size:30px; letter-spacing:2px; line-height:1; margin-bottom:6px;">YOUR TEAM</div>
         <div id="team-location-display" style="font-family:'Barlow Condensed'; font-size:12px; letter-spacing:2px; color:var(--grey); text-transform:uppercase; margin-bottom:14px;">— · —</div>
@@ -2936,7 +2937,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <!-- Coach's team hero -->
       <div class="card" style="margin-bottom:16px; text-align:center; padding:28px 20px; position:relative; overflow:hidden;">
         <div id="coach-color-strip-top" style="position:absolute; top:0; left:0; right:0; height:5px;"></div>
-        <div id="coach-team-logo" style="width:90px; height:90px; border-radius:50%; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:32px; font-weight:900; box-shadow:0 0 0 3px #161210, 0 0 0 5px var(--gold);">MG</div>
+        <div id="coach-team-logo" style="width:90px; height:90px; border-radius:50%; margin:0 auto 14px; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue'; font-size:32px; font-weight:900; box-shadow:0 0 0 3px #161210, 0 0 0 5px var(--gold);">T</div>
         <div id="coach-team-name" style="font-family:'Bebas Neue',cursive; font-size:30px; letter-spacing:2px; line-height:1; margin-bottom:6px;">YOUR TEAM</div>
         <div id="coach-team-location" style="font-family:'Barlow Condensed'; font-size:12px; letter-spacing:2px; color:var(--grey); text-transform:uppercase; margin-bottom:14px;">— · —</div>
         <div style="display:inline-block; background:var(--card2); padding:6px 14px; border-radius:20px; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); border:1px solid var(--gold-dark);">
@@ -9017,7 +9018,7 @@ function openJoinModal(teamId) {
     logo.style.background = team.primaryColor || 'var(--gold)';
     logo.style.color      = team.accentColor  || '#161210';
     logo.style.boxShadow  = '0 0 0 2px #161210, 0 0 0 4px ' + (team.primaryColor || 'var(--gold)');
-    logo.textContent      = team.abbr || 'T';
+    logo.textContent      = team.abbr || getTeamInitials(team.name);
   }
   if (name) name.textContent = team.name || '—';
   if (loc)  loc.textContent  = [team.city, team.state].filter(Boolean).join(', ');
@@ -9062,7 +9063,7 @@ function renderJoinedView() {
     logo.style.background = primary;
     logo.style.color      = accent;
     logo.style.boxShadow  = '0 0 0 3px #161210, 0 0 0 5px ' + primary;
-    logo.textContent      = t.abbr || (t.name || 'T').substring(0,3).toUpperCase();
+    logo.textContent      = t.abbr || getTeamInitials(t.name);
   }
   if (strip) strip.style.background = primary;
   if (name)  {
@@ -9168,7 +9169,7 @@ function renderCoachView() {
     logo.style.background = primary;
     logo.style.color      = accent;
     logo.style.boxShadow  = '0 0 0 3px #161210, 0 0 0 5px ' + primary;
-    logo.textContent      = t.abbr || 'T';
+    logo.textContent      = t.abbr || getTeamInitials(t.name);
   }
   if (strip) strip.style.background = primary;
   if (name)  { name.style.color = '#F4F4F4'; name.textContent = t.name || '—'; }
@@ -9263,6 +9264,21 @@ function closeTeamCreateModal() {
   editingTeamId = null;
 }
 
+// Generate up to 3-letter initials from a team name. Used as the fallback
+// when a team hasn't set their own abbreviation — replaces the old "MG"
+// default which made third-party teams look MyGrind-branded. Skips numeric
+// tokens so "Lions Travel 14U" -> "LT", not "LT1".
+function getTeamInitials(name) {
+  if (!name) return 'T';
+  var words = String(name).trim().split(/\s+/);
+  var letters = '';
+  for (var i = 0; i < words.length && letters.length < 3; i++) {
+    var ch = words[i].charAt(0);
+    if (/[A-Za-z]/.test(ch)) letters += ch.toUpperCase();
+  }
+  return letters || 'T';
+}
+
 function updateTeamPreview() {
   try {
     const name    = document.getElementById('tc-name').value.trim();
@@ -9279,7 +9295,7 @@ function updateTeamPreview() {
     logo.style.background = primary;
     logo.style.color      = accent;
     logo.style.boxShadow  = '0 0 0 2px #161210, 0 0 0 4px ' + primary;
-    logo.textContent      = abbr || 'MG';
+    logo.textContent      = abbr || getTeamInitials(name);
 
     document.getElementById('tc-preview-strip').style.background = primary;
     document.getElementById('tc-primary-hex').textContent = primary.toUpperCase();
@@ -10192,8 +10208,8 @@ setTimeout(function() {
 <div id="qotd-overlay" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(14,11,9,0.96);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
   <div style="max-width:400px;width:100%;text-align:center;">
 
-    <!-- MG badge -->
-    <div style="width:56px;height:56px;background:var(--gold);clip-path:polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',cursive;font-size:20px;color:#080808;margin:0 auto 20px;">MG</div>
+    <!-- MyGrind compass mark -->
+    <img data-mg-img="mark" alt="MyGrind" style="width:56px;height:56px;display:block;margin:0 auto 20px;">
 
     <!-- Label -->
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Today's Grind</div>
