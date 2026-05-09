@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v62';
+    const CACHE = 'ybg-mygrind-v63';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1661,6 +1661,30 @@ function dismissIosBanner() {
     </div>
   </div>
 
+</div>
+
+<!-- ── EDIT-PIN OVERLAY — protects edits/deletes on entries >24h old.
+     Coach Young 2026-05-10 walkthrough: keeps the journal honest by
+     adding friction to revisionist edits. First-time setup prompts
+     for a 4-digit PIN; subsequent attempts verify against the stored
+     hash. 3 wrong tries → 30 min lockout. ── -->
+<div id="edit-pin-overlay" style="display:none; position:fixed; inset:0; background:rgba(14,11,9,0.96); z-index:1004; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(12px);">
+  <div style="max-width:400px; width:100%; background:#222630; border:1px solid var(--gold-dark); border-radius:4px; padding:28px;">
+    <div style="font-family:'Bebas Neue',cursive; font-size:24px; letter-spacing:2px; color:var(--gold); margin-bottom:6px; line-height:1;">🔒 <span id="edit-pin-title">OLD ENTRIES LOCKED</span></div>
+    <div id="edit-pin-prompt-text" style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin:14px 0 18px;"></div>
+
+    <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="4" id="edit-pin-input" placeholder="• • • •" autocomplete="off" style="width:100%; text-align:center; font-family:'Bebas Neue',cursive; font-size:32px; letter-spacing:12px; padding:14px; box-sizing:border-box; background:#1A1A1A; border:1px solid var(--border); color:var(--white); border-radius:3px; margin-bottom:12px;">
+
+    <div id="edit-pin-error" style="display:none; font-family:'Barlow'; font-size:13px; color:#E74C3C; margin-bottom:12px; text-align:center;"></div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-gold" onclick="submitEditPin()" style="flex:1;">Unlock</button>
+      <button class="btn btn-outline" onclick="cancelEditPin()" style="flex:0 0 auto;">Cancel</button>
+    </div>
+    <div style="text-align:center; margin-top:14px; font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5;">
+      Forgot your PIN? Ask your parent — or clear app data to reset.
+    </div>
+  </div>
 </div>
 
 <!-- ── BOTTOM TAB BAR ── -->
@@ -4406,6 +4430,153 @@ function getDeviceFingerprint() {
 function getAccessState() { return retrieve('access') || {}; }
 function saveAccessState(s) { store('access', s); }
 
+// ── EDIT-PIN PROTECTION ──────────────────────────────
+// Coach Young 2026-05-10 walkthrough: protect the integrity of an
+// honest journal. Entries older than 24 hours require a 4-digit PIN
+// to edit or delete — a player can't go back next week and rewrite
+// the day they had a rough game. Today's entry stays free-edit since
+// you're still living that day. Creator (admin) bypass via isCreator().
+const EDIT_PIN_GRACE_MS    = 24 * 60 * 60 * 1000; // 24 hours
+const EDIT_PIN_MAX_ATTEMPTS = 3;
+const EDIT_PIN_LOCKOUT_MS   = 30 * 60 * 1000;     // 30 min lockout
+
+function _hashPin(pin) {
+  // Non-crypto hash, just enough to avoid plaintext storage. PIN is
+  // 4 digits so brute force is trivial regardless — the rate limit is
+  // the actual protection.
+  let h = 0;
+  for (let i = 0; i < pin.length; i++) h = ((h << 5) - h + pin.charCodeAt(i)) | 0;
+  return 'p' + Math.abs(h).toString(36);
+}
+function isEntryProtected(entry) {
+  if (!entry || !entry.id) return false;
+  // entry.id is set to Date.now() at creation and preserved across edits
+  return (Date.now() - entry.id) > EDIT_PIN_GRACE_MS;
+}
+function getEditPinHash() {
+  try { return localStorage.getItem('ybg_edit_pin') || ''; }
+  catch (e) { return ''; }
+}
+function saveEditPin(pin) {
+  try { localStorage.setItem('ybg_edit_pin', _hashPin(pin)); } catch (e) {}
+}
+function getEditPinLockoutUntil() {
+  try {
+    const until = parseInt(localStorage.getItem('ybg_edit_pin_lockout') || '0');
+    return until > Date.now() ? until : 0;
+  } catch (e) { return 0; }
+}
+function recordEditPinWrongAttempt() {
+  try {
+    const raw = localStorage.getItem('ybg_edit_pin_attempts') || '{}';
+    const a = JSON.parse(raw);
+    const now = Date.now();
+    // Window for "burst" attempts is 5 min — older counts reset
+    if (!a.first || (now - a.first) > 5 * 60 * 1000) {
+      a.count = 1;
+      a.first = now;
+    } else {
+      a.count = (a.count || 0) + 1;
+    }
+    localStorage.setItem('ybg_edit_pin_attempts', JSON.stringify(a));
+    if (a.count >= EDIT_PIN_MAX_ATTEMPTS) {
+      localStorage.setItem('ybg_edit_pin_lockout', String(now + EDIT_PIN_LOCKOUT_MS));
+      localStorage.removeItem('ybg_edit_pin_attempts');
+      return true; // locked
+    }
+    return false;
+  } catch (e) { return false; }
+}
+function clearEditPinAttempts() {
+  try { localStorage.removeItem('ybg_edit_pin_attempts'); } catch (e) {}
+}
+
+// ── EDIT-PIN MODAL FLOW ──────────────────────────────
+// Single entry point for "I want to edit/delete a protected entry."
+// Caller passes the action to run after PIN clears + the entry being
+// gated. The modal handles first-time setup vs. verify and keeps the
+// pending action out of the rendered HTML (no string-escaping risk).
+let _editPinPendingAction = null;
+function requestEditPinAccess(actionFn, entry) {
+  // Creator always bypasses — Coach Young needs to fix data during testing
+  if (typeof isCreator === 'function' && isCreator()) {
+    actionFn();
+    return;
+  }
+  // Hard lockout — refuse outright with remaining time
+  const lockoutUntil = getEditPinLockoutUntil();
+  if (lockoutUntil) {
+    const minsLeft = Math.ceil((lockoutUntil - Date.now()) / 60000);
+    alert('Too many wrong attempts. Edit access locked for ' + minsLeft + ' more minute(s).');
+    return;
+  }
+  _editPinPendingAction = actionFn;
+  const overlay = document.getElementById('edit-pin-overlay');
+  const text    = document.getElementById('edit-pin-prompt-text');
+  const title   = document.getElementById('edit-pin-title');
+  const input   = document.getElementById('edit-pin-input');
+  const error   = document.getElementById('edit-pin-error');
+  if (input) input.value = '';
+  if (error) error.style.display = 'none';
+
+  if (!getEditPinHash()) {
+    if (title) title.textContent = 'SET YOUR PIN';
+    if (text) text.innerHTML = 'Set a <strong>4-digit PIN</strong> to protect your old entries. Write it down — you\'ll need it any time you want to edit something from a previous day.';
+  } else {
+    if (title) title.textContent = 'OLD ENTRIES LOCKED';
+    const dateStr = entry && entry.date ? entry.date : 'this entry';
+    if (text) text.innerHTML = 'Enter your 4-digit PIN to edit the entry from <strong>' + dateStr + '</strong>.';
+  }
+  if (overlay) overlay.style.display = 'flex';
+  if (input) setTimeout(function() { try { input.focus(); } catch (e) {} }, 100);
+}
+function submitEditPin() {
+  const input = document.getElementById('edit-pin-input');
+  const error = document.getElementById('edit-pin-error');
+  const pin = (input && input.value || '').trim();
+  if (!/^\d{4}$/.test(pin)) {
+    if (error) { error.textContent = 'PIN must be exactly 4 digits.'; error.style.display = 'block'; }
+    return;
+  }
+  const stored = getEditPinHash();
+  if (!stored) {
+    // First-time setup — save the PIN and proceed
+    saveEditPin(pin);
+    closeEditPinOverlay();
+    if (typeof showShareToast === 'function') showShareToast('🔒 PIN saved. Old entries are now protected.');
+    if (_editPinPendingAction) { const fn = _editPinPendingAction; _editPinPendingAction = null; fn(); }
+    return;
+  }
+  if (_hashPin(pin) === stored) {
+    clearEditPinAttempts();
+    closeEditPinOverlay();
+    if (_editPinPendingAction) { const fn = _editPinPendingAction; _editPinPendingAction = null; fn(); }
+  } else {
+    const locked = recordEditPinWrongAttempt();
+    if (locked) {
+      alert('Too many wrong attempts. Edit access locked for 30 minutes.');
+      _editPinPendingAction = null;
+      closeEditPinOverlay();
+    } else if (error) {
+      error.textContent = 'Wrong PIN. Try again.';
+      error.style.display = 'block';
+      if (input) { input.value = ''; try { input.focus(); } catch (e) {} }
+    }
+  }
+}
+function cancelEditPin() {
+  _editPinPendingAction = null;
+  closeEditPinOverlay();
+}
+function closeEditPinOverlay() {
+  const overlay = document.getElementById('edit-pin-overlay');
+  if (overlay) overlay.style.display = 'none';
+  const input = document.getElementById('edit-pin-input');
+  if (input) input.value = '';
+  const error = document.getElementById('edit-pin-error');
+  if (error) error.style.display = 'none';
+}
+
 // Phase 5 Step 4 — sync paid/trial state from the server. Stripe webhooks
 // keep the canonical record; we cache the answer in localStorage so the app
 // keeps working offline and validateSession() can read state.paid synchronously.
@@ -5684,6 +5855,18 @@ function editEntry(id) {
   const entry = state.entries.find(function(e) { return e.id === id; });
   if (!entry) return;
 
+  // PIN gate — entries older than 24 hours need PIN to edit. Today's
+  // entry stays free-edit since you're still living that day.
+  if (isEntryProtected(entry)) {
+    requestEditPinAccess(function() { _doEditEntry(id); }, entry);
+    return;
+  }
+  _doEditEntry(id);
+}
+function _doEditEntry(id) {
+  const entry = state.entries.find(function(e) { return e.id === id; });
+  if (!entry) return;
+
   editingEntryId = id;
 
   // Date — convert "May 9, 2026" back to YYYY-MM-DD for the input
@@ -5969,6 +6152,9 @@ function saveEntry() {
     if (idx !== -1) {
       const original = state.entries[idx];
       entry.id = original.id; // keep original id so comment links etc. still resolve
+      // Stamp editedAt so the entry-meta row can show an "edited" badge —
+      // gives the player visibility into what's been retroactively changed.
+      entry.editedAt = Date.now();
       // Merge comments: in-form comment was already pushed above; combine
       // with any post-hoc comments from the original (dedupe by id).
       const existingIds = new Set(entry.comments.map(function(c) { return c.id; }));
@@ -6028,6 +6214,17 @@ function saveEntry() {
 }
 
 function deleteEntry(id) {
+  const entry = state.entries.find(function(e) { return e.id === id; });
+  if (!entry) return;
+  // PIN gate — same rule as editEntry. Deleting a bad-day entry to
+  // erase the record is the same revisionist move as rewriting it.
+  if (isEntryProtected(entry)) {
+    requestEditPinAccess(function() { _doDeleteEntry(id); }, entry);
+    return;
+  }
+  _doDeleteEntry(id);
+}
+function _doDeleteEntry(id) {
   if (!confirm('Delete this entry?')) return;
   state.entries = state.entries.filter(e => e.id !== id);
   renderAll();
@@ -6561,6 +6758,21 @@ function gradePill(g) {
   if (!label || !color) return '';
   return _metaPill(g, label, color);
 }
+// Compact "edited" badge timestamp. <1 min: "just now"; <1 hr: "Nm ago";
+// <24 hr: "Nh ago"; otherwise: short date like "May 10".
+function formatEditedDate(ts) {
+  try {
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return '';
+    const diffMs  = Date.now() - ts;
+    const diffMin = Math.floor(diffMs / 60000);
+    if (diffMin < 1)  return 'just now';
+    if (diffMin < 60) return diffMin + 'm ago';
+    const diffHr  = Math.floor(diffMin / 60);
+    if (diffHr < 24) return diffHr + 'h ago';
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  } catch (e) { return ''; }
+}
 
 // ── RENDER ENTRIES ────────────────────────────────────
 function renderEntries() {
@@ -6658,9 +6870,11 @@ function renderEntries() {
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
           ${resultPill(e.result)}
           ${gradePill(e.grade)}
+          ${e.editedAt ? `<div title="This entry was edited after the original day" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey); background:rgba(100,100,100,0.12); padding:4px 8px; border-radius:3px;">✏️ edited ${formatEditedDate(e.editedAt)}</div>` : ''}
           <div class="entry-type type-${e.type}">${e.type}</div>
-          <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:2px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="Edit this entry">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})">✕</button>
+          ${isEntryProtected(e) && !isCreator() ? `<span title="PIN required to edit — older than 24h" style="font-size:11px; color:var(--gold-dark); margin-right:-2px;">🔒</span>` : ''}
+          <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:2px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="${isEntryProtected(e) && !isCreator() ? 'Edit this entry — PIN required' : 'Edit this entry'}">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})" title="${isEntryProtected(e) && !isCreator() ? 'Delete — PIN required' : 'Delete'}">✕</button>
         </div>
       </div>
 
