@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v22';
+    const CACHE = 'ybg-mygrind-v23';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8607,7 +8607,7 @@ function getArmCareItems() {
   var ballEmoji = (typeof getBallEmoji === 'function') ? getBallEmoji() : '⚾';
 
   var items = [
-    { id: 'bands',    label: 'Band work — external rotation + scap (8 min)', icon: '💪' },
+    { id: 'bands',    label: 'J-Bands routine — rotator cuff + scap (8 min)', icon: '💪' },
     { id: 'toss',     label: 'Warm-up toss — build to full distance',         icon: '🎯' }
   ];
 
@@ -8641,11 +8641,11 @@ function getArmCareItems() {
 // wrist snaps swaps to a softball-specific demo when mg_sport === 'softball'.
 const ARM_CARE_REFS = {
   bands: {
-    title: 'Band Work — External Rotation + Scap',
-    desc: "Your rotator cuff stabilizes your shoulder during every throw. External rotation builds the small muscles (infraspinatus + teres minor) that decelerate your arm — the #1 protector against shoulder injuries.",
-    proTip: "Keep your elbow tucked at your side and move slowly — control beats speed. Aim for 2 sets of 15 reps per arm.",
-    video: 'djm7uruuDSU',
-    credit: 'Demo: ShapeFit · Source: ASMI evidence-based arm care'
+    title: 'Band Work — Jaeger J-Bands Routine',
+    desc: "Alan Jaeger's J-Bands routine is the industry-standard arm care program — used by MLB and college pitchers for decades. The 11-step sequence balances and strengthens the rotator cuff and surrounding muscles that decelerate your arm. This is the #1 protector against shoulder injuries.",
+    proTip: "Slow and controlled — never fast. Stand tall, elbow tucked, full range of motion. 2 sets of 15 reps per arm. Quality of every rep matters more than load.",
+    video: 'Rnc4J1vodmE',
+    credit: 'Demo: Jaeger Sports — official J-Bands routine'
   },
   toss: {
     title: 'Warm-up Toss — Build to Full Distance',
