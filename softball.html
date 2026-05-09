@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v63';
+    const CACHE = 'ybg-mygrind-v64';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5495,6 +5495,7 @@ function init() {
   });
   const dateInput = document.getElementById('j-date');
   if (dateInput) dateInput.valueAsDate = today;
+  setJDateMaxToToday();
 
   buildCalendar();
   renderAll();
@@ -5570,6 +5571,12 @@ function showPanel(id) {
     try { renderDashboardSnapshots(); } catch (e) {}
     try { renderMonthFocus();     } catch (e) {}
     try { renderTodayPlan();      } catch (e) {}
+  }
+  // Roll the date-picker cap forward when the journal becomes active —
+  // covers the case of an app left open across midnight where init()'s
+  // initial cap is now yesterday.
+  if (id === 'journal') {
+    try { setJDateMaxToToday(); } catch (e) {}
   }
   // Scroll back to top on tab switch
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -6002,6 +6009,19 @@ function saveEntry() {
   }, 500);
   // Original saveEntry below
   const date     = document.getElementById('j-date').value;
+  // Future-date guard — the input's max attr is a soft UI hint that
+  // some desktop browsers ignore on manual typing/paste. Hard-stop
+  // here so saved entries are always real history.
+  if (date) {
+    try {
+      const picked = new Date(date + 'T00:00:00');
+      const nowEnd = new Date(); nowEnd.setHours(23, 59, 59, 999);
+      if (!isNaN(picked.getTime()) && picked > nowEnd) {
+        alert('Date is in the future. The journal records what happened — pick today or earlier.');
+        return;
+      }
+    } catch (_) {}
+  }
   const type     = document.getElementById('j-type').value;
   const title    = document.getElementById('j-title').value.trim();
   const what     = document.getElementById('j-what').value.trim();
@@ -6719,6 +6739,25 @@ function calcGameStats() {
 // written to since manual entry was removed in commit 7027234. Button always
 // alerted "No stats found." Removed along with the button at the journal's
 // game-stats-section header.
+
+// ── J-DATE FUTURE BLOCKER ─────────────────────────────
+// Coach Young 2026-05-10 walkthrough: the journal records what
+// happened, not what will happen. Block future dates outright at the
+// HTML5 validation layer — the native date picker grays out future
+// days so the player can't even tap them. Re-set every time the
+// journal becomes active so an app left open across midnight rolls
+// the cap forward to the new "today."
+function setJDateMaxToToday() {
+  try {
+    const el = document.getElementById('j-date');
+    if (!el) return;
+    const d = new Date();
+    const yyyy = d.getFullYear();
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    el.max = yyyy + '-' + mm + '-' + dd;
+  } catch (e) {}
+}
 
 // ── ENTRY META PILLS ──────────────────────────────────
 // Coach Young 2026-05-10 walkthrough: bare "L" / "F" badges left
