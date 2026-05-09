@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v14';
+    const CACHE = 'ybg-mygrind-v15';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1405,27 +1405,44 @@ function dismissIosBanner() {
         Your coach's team sponsorship no longer covers your seat. <strong style="color:#F4F4F4;">All your journal entries, stats, goals, and profile are safe</strong> — just pick a plan below to keep using My Grind.
       </div>
 
-      <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#555; margin-bottom:8px; text-align:center;">Keep Your Grind Going</div>
+      <!-- Payer CTA — pricing cards. Hidden for dependents (kids); shown to
+           creators/payers via showRemovedFromTeamScreen(). -->
+      <div id="removed-payer-cta">
+        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#555; margin-bottom:8px; text-align:center;">Keep Your Grind Going</div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
-        <div style="background:#1E1A17; border:1px solid #3D3530; border-radius:3px; padding:16px; text-align:center;">
-          <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:6px;">Monthly</div>
-          <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$4<span style="font-size:20px;">.99</span></div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; color:#555; margin-bottom:12px;">per month</div>
-          <button onclick="goToPurchase('monthly')" style="width:100%; background:transparent; color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:9px; border:1px solid var(--gold); border-radius:2px; cursor:pointer;">Subscribe →</button>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
+          <div style="background:#1E1A17; border:1px solid #3D3530; border-radius:3px; padding:16px; text-align:center;">
+            <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:6px;">Monthly</div>
+            <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$4<span style="font-size:20px;">.99</span></div>
+            <div style="font-family:'Barlow Condensed'; font-size:10px; color:#555; margin-bottom:12px;">per month</div>
+            <button onclick="goToPurchase('monthly')" style="width:100%; background:transparent; color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:9px; border:1px solid var(--gold); border-radius:2px; cursor:pointer;">Subscribe →</button>
+          </div>
+          <div style="background:linear-gradient(160deg,#1E1A0E,#1A1A0A); border:1px solid var(--gold-dark); border-radius:3px; padding:16px; text-align:center; position:relative;">
+            <div style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:3px 9px; border-radius:1px; white-space:nowrap;">Best Value</div>
+            <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:6px;">Annual</div>
+            <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$49<span style="font-size:20px;">.99</span></div>
+            <div style="font-family:'Barlow Condensed'; font-size:10px; color:#555; margin-bottom:12px;">per year</div>
+            <button onclick="goToPurchase('annual')" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:9px; border:none; border-radius:2px; cursor:pointer;">⚾ Get Annual →</button>
+          </div>
         </div>
-        <div style="background:linear-gradient(160deg,#1E1A0E,#1A1A0A); border:1px solid var(--gold-dark); border-radius:3px; padding:16px; text-align:center; position:relative;">
-          <div style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:3px 9px; border-radius:1px; white-space:nowrap;">Best Value</div>
-          <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:6px;">Annual</div>
-          <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$49<span style="font-size:20px;">.99</span></div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; color:#555; margin-bottom:12px;">per year</div>
-          <button onclick="goToPurchase('annual')" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:9px; border:none; border-radius:2px; cursor:pointer;">⚾ Get Annual →</button>
+
+        <div style="text-align:center; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:#444; line-height:1.7;">
+          Secure checkout via Stripe<br>
+          Questions? <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a>
         </div>
       </div>
 
-      <div style="text-align:center; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:#444; line-height:1.7;">
-        Secure checkout via Stripe<br>
-        Questions? <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a>
+      <!-- Dependent CTA — kids on a parent-managed plan can't pay; route them
+           to text their parent with a pre-filled message. Shown only when
+           getBillingRole().role === 'dependent'. -->
+      <div id="removed-dependent-cta" style="display:none;">
+        <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px; margin-bottom:16px; font-family:'Barlow'; font-size:13px; color:#BBBBBB; line-height:1.7; text-align:center;">
+          Your parent set up your MyGrind account. Tap below to send them a quick text — your account stays paused until they get you back on a plan.
+        </div>
+        <button onclick="textParentForBilling('removed')" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:14px; border:none; border-radius:2px; cursor:pointer; margin-bottom:10px;">📱 &nbsp;Text My Parent</button>
+        <div style="text-align:center; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:#444; line-height:1.7;">
+          Opens your messages with a note already typed.
+        </div>
       </div>
     </div>
   </div>
@@ -9813,7 +9830,32 @@ function showRemovedFromTeamScreen(team) {
   const overlay = document.getElementById('removed-team-overlay');
   const nameEl  = document.getElementById('removed-team-name');
   if (nameEl && team && team.name) nameEl.textContent = (team.name || 'YOUR TEAM').toUpperCase();
+  // Swap the CTA based on who's looking — kids see "Text My Parent" instead
+  // of pricing buttons they can't act on.
+  try {
+    const isDependent = getBillingRole().role === 'dependent';
+    const payerCta     = document.getElementById('removed-payer-cta');
+    const dependentCta = document.getElementById('removed-dependent-cta');
+    if (payerCta)     payerCta.style.display     = isDependent ? 'none'  : '';
+    if (dependentCta) dependentCta.style.display = isDependent ? 'block' : 'none';
+  } catch (e) {}
   if (overlay) overlay.style.display = 'flex';
+}
+
+// Open the kid's messages app with a pre-filled note to send to their parent.
+// Used by the kid-blocked overlays (#removed-team-overlay today; future:
+// expired-trial when that flow is rebuilt). No recipient is set — the kid
+// picks their parent from contacts. iOS uses & after `sms:` when there's a
+// body, Android uses ?
+function textParentForBilling(scenario) {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const sep = isIOS ? '&' : '?';
+  const messages = {
+    removed: 'Hey, I got removed from my team on MyGrind and lost access. Can you help me get back in? https://mygrindapp.com/signup.html',
+    expired: 'Hey, my MyGrind app trial just ended. Can you set up the subscription so I can keep tracking my grind? https://mygrindapp.com/signup.html'
+  };
+  const body = encodeURIComponent(messages[scenario] || messages.removed);
+  window.open('sms:' + sep + 'body=' + body);
 }
 
 // ─── ANNIVERSARY + MANUAL SEASON-END TRIGGER ──────────────────────────
