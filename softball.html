@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v29';
+    const CACHE = 'ybg-mygrind-v30';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2082,8 +2082,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
              threshold, this strip becomes the "why this matters today" prompt right
              above the checklist. Hidden in green / unknown-age states. -->
         <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
-          Non-negotiable daily. Pitchers especially — your arm is your career. Check each one off. <strong style="color:var(--gold);">Resets at midnight.</strong>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
+          Non-negotiable daily. <strong style="color:var(--gold);">Resets at midnight.</strong>
         </div>
         <div id="arm-care-list"></div>
         <div id="arm-care-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
@@ -2133,7 +2133,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            formal pitch counts). Selected chip stores its midpoint as the value used
            by calcReps()/totals + a label for display fidelity. Built dynamically by
            buildRepChips() from REP_RANGES — change ranges in one place, no HTML edits. -->
-      <div id="j-reps-section" style="display:block; margin-top:4px; margin-bottom:20px; padding:14px 16px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px;">
+      <div id="j-reps-section" style="display:block; margin-top:4px; margin-bottom:20px; padding:16px; border:1px solid var(--border); border-radius:3px;">
         <style>
           .rep-chip { background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:7px 10px; border-radius:3px; cursor:pointer; transition:all 0.15s; flex:1 1 auto; min-width:48px; }
           .rep-chip:hover { background:rgba(var(--accent-rgb), 0.1); }
@@ -2178,22 +2178,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
       <!-- ══ GAME STATS SECTION — shows when type = Game ══ -->
       <div id="game-stats-section" style="display:none; margin-top:4px; margin-bottom:20px;">
-        <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px; padding:16px 18px; margin-bottom:4px;">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:8px;">
+        <div style="border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:4px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; flex-wrap:wrap; gap:8px;">
             <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold);">⚾ Today's Game Stats</div>
-            <button type="button" onclick="pullSeasonStats()" style="background:rgba(var(--accent-rgb), 0.1); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:5px 12px; border-radius:2px; cursor:pointer;">
-              📊 Pull from My Stats
+            <button type="button" onclick="pullSeasonStats()" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:5px 12px; border-radius:2px; cursor:pointer;">
+              Pull from My Stats
             </button>
           </div>
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:14px; line-height:1.5;">
-            Enter what you did <strong style="color:var(--light);">in this game</strong>. These are your single-game numbers — not your season totals.
-          </div>
-          <!-- Journal → Stats note -->
-          <div style="background:rgba(39,174,96,0.06); border:1px solid #1A4A1A; border-radius:2px; padding:10px 12px; margin-bottom:14px; display:flex; align-items:flex-start; gap:8px;">
-            <span style="font-size:14px; flex-shrink:0;">📊</span>
-            <div style="font-family:'Barlow'; font-size:12px; color:#58D68D; line-height:1.6;">
-              <strong>Stats go to My Stats automatically.</strong> Every game you log here adds to your season totals in the <strong>My Stats tab</strong> — your AVG, OBP, SLG, ERA, and WHIP all update on their own.
-            </div>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.5;">
+            Single-game numbers. Sync to My Stats automatically — AVG, OBP, SLG, ERA, WHIP update on their own.
           </div>
 
           <!-- BATTING GAME STATS -->
@@ -2298,9 +2291,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <!-- ── INSTRUCTOR SESSION ── -->
-      <div id="j-instructor-section" style="display:none; background:rgba(168,217,123,0.05); border:1px solid #2A3A2A; border-radius:3px; padding:16px; margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:6px;">🎓 &nbsp;Instructor Session</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.6;">Had a private lesson today? Log it here so you can track what you worked on over time.</div>
+      <div id="j-instructor-section" style="display:none; border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:6px;">🎓 Instructor Session</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Track what you worked on with your instructor.</div>
         <div class="form-row" style="margin-bottom:0;">
           <div>
             <label>Instructor Name</label>
@@ -2339,9 +2332,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <!-- ── COACH / PARENT COMMENT ── -->
-      <div id="j-coach-section" style="background:rgba(var(--accent-rgb), 0.05); border:1px solid #2A0018; border-radius:3px; padding:16px; margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">💬 &nbsp;What Did My Coach or Parent Say?</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.6;">Did your coach, parent, or instructor give you feedback after this game or practice? Log it here so you never forget it.</div>
+      <div id="j-coach-section" style="border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">💬 What Did My Coach or Parent Say?</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Feedback from coach, parent, or instructor — log it before you forget.</div>
         <div class="form-row" style="margin-bottom:0;">
           <div>
             <label>Who said it?</label>
@@ -2362,7 +2355,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <label>What did they tell me?</label>
           <textarea id="j-comment-text" placeholder="e.g. Coach told me to stay back on off-speed pitches. Mom said she was proud of how I handled the strikeout..." style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-top:6px; line-height:1.5;">💡 This is your space to capture feedback from the people coaching you. Write it in their words so you can come back to it.</div>
       </div>
 
       <!-- ── MEDIA UPLOAD (entry-specific photos/videos) ── -->
@@ -2370,7 +2362,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            or game being logged. They belong adjacent to the entry data they
            document, BEFORE the daily Arm Care ritual. Coach Young 2026-05-09. -->
       <div style="margin-bottom:20px;">
-        <label>📸 &nbsp;Photos & 🎥 Videos</label>
+        <label>📸 Photos & Videos</label>
         <div id="media-drop-zone" style="
           border: 2px dashed var(--border);
           border-radius: 4px;
