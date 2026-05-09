@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v28';
+    const CACHE = 'ybg-mygrind-v29';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2173,7 +2173,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <input type="hidden" id="jr-pitches-label" value="">
           </div>
         </div>
-        <div style="margin-top:14px; text-align:center; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Total reps: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">0</span></div>
+        <div style="margin-top:14px; text-align:center; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">This session: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">0</span> reps</div>
       </div>
 
       <!-- ══ GAME STATS SECTION — shows when type = Game ══ -->
@@ -5939,15 +5939,19 @@ function applyRepCategoryVisibility(cats) {
 function updateRepCounterHeader(mode) {
   const titleEl = document.getElementById('rep-counter-title');
   const subEl   = document.getElementById('rep-counter-subtitle');
+  // Header copy is intentionally session-scoped (NOT day-scoped) so players
+  // don't conflate "this session" with "today's total." Daily total lives
+  // OUTSIDE this form on the Dashboard arm-load card + Training Volume
+  // "Today" row. Coach Young 2026-05-09.
   if (mode === 'instructor') {
-    if (titleEl) titleEl.textContent = '🔢 Lesson Reps';
-    if (subEl)   subEl.innerHTML     = 'Tap the range that matches what you did in <strong style="color:var(--light);">this lesson</strong>.';
+    if (titleEl) titleEl.textContent = '🔢 This Lesson’s Reps';
+    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this lesson</strong> — your daily total updates on the Dashboard.';
   } else if (mode === 'game') {
-    if (titleEl) titleEl.textContent = '🔢 Game Reps';
-    if (subEl)   subEl.innerHTML     = 'Tap the range that matches what you did in <strong style="color:var(--light);">this game</strong>. Rolls into your weekly + monthly training volume.';
+    if (titleEl) titleEl.textContent = '🔢 This Game’s Reps';
+    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this game</strong> — your daily total updates on the Dashboard.';
   } else {
-    if (titleEl) titleEl.textContent = "🔢 Rep Counter — Today's Practice";
-    if (subEl)   subEl.innerHTML     = 'Tap the range that matches your day. Don’t know exact? Don’t worry — <strong style="color:var(--light);">just commit a range</strong>.';
+    if (titleEl) titleEl.textContent = '🔢 This Session’s Reps';
+    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this practice</strong> — your daily total updates on the Dashboard.';
   }
 }
 
