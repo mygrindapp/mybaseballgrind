@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v15';
+    const CACHE = 'ybg-mygrind-v16';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1242,10 +1242,10 @@ function dismissIosBanner() {
   </div>
   <div style="display:flex; gap:8px; flex-wrap:wrap;">
     <button onclick="goToPurchase('monthly')" style="background:transparent; color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:8px 16px; border:1px solid var(--gold); border-radius:2px; cursor:pointer; white-space:nowrap;">
-      $8.99 / mo
+      $9.99 / mo
     </button>
     <button onclick="goToPurchase('annual')" style="background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:8px 16px; border:none; border-radius:2px; cursor:pointer; white-space:nowrap;">
-      ⚾ &nbsp;$59.99 / yr — Best Value
+      ⚾ &nbsp;$99.99 / yr — Best Value
     </button>
   </div>
 </div>
@@ -1413,15 +1413,15 @@ function dismissIosBanner() {
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;">
           <div style="background:#1E1A17; border:1px solid #3D3530; border-radius:3px; padding:16px; text-align:center;">
             <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:6px;">Monthly</div>
-            <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$4<span style="font-size:20px;">.99</span></div>
+            <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$9<span style="font-size:20px;">.99</span></div>
             <div style="font-family:'Barlow Condensed'; font-size:10px; color:#555; margin-bottom:12px;">per month</div>
             <button onclick="goToPurchase('monthly')" style="width:100%; background:transparent; color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:9px; border:1px solid var(--gold); border-radius:2px; cursor:pointer;">Subscribe →</button>
           </div>
           <div style="background:linear-gradient(160deg,#1E1A0E,#1A1A0A); border:1px solid var(--gold-dark); border-radius:3px; padding:16px; text-align:center; position:relative;">
             <div style="position:absolute; top:-9px; left:50%; transform:translateX(-50%); background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:9px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:3px 9px; border-radius:1px; white-space:nowrap;">Best Value</div>
             <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:6px;">Annual</div>
-            <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$49<span style="font-size:20px;">.99</span></div>
-            <div style="font-family:'Barlow Condensed'; font-size:10px; color:#555; margin-bottom:12px;">per year</div>
+            <div style="font-family:'Bebas Neue'; font-size:38px; color:var(--gold); line-height:1;">$99<span style="font-size:20px;">.99</span></div>
+            <div style="font-family:'Barlow Condensed'; font-size:10px; color:#555; margin-bottom:12px;">per year · save $20</div>
             <button onclick="goToPurchase('annual')" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:9px; border:none; border-radius:2px; cursor:pointer;">⚾ Get Annual →</button>
           </div>
         </div>
@@ -1576,39 +1576,54 @@ function dismissIosBanner() {
     </div>
 
     <div style="padding:28px;">
-      <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid #2A0018; border-radius:2px; padding:14px 16px; margin-bottom:20px; font-size:13px; color:#BBBBBB; line-height:1.7; text-align:center;">
-        You've experienced My Grind. Choose the plan that works for you and keep all your progress going.
-      </div>
-
-      <!-- PLAN CARDS -->
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
-
-        <!-- MONTHLY -->
-        <div style="background:#1E1A17; border:1px solid #3D3530; border-radius:3px; padding:18px; text-align:center;">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:8px;">Monthly</div>
-          <div style="font-family:'Bebas Neue',cursive; font-size:44px; color:var(--gold); line-height:1;">$4<span style="font-size:22px;">.99</span></div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; color:#555; margin-bottom:14px;">$8.99/mo · cancel anytime</div>
-          <button onclick="goToPurchase('monthly')" style="width:100%; background:transparent; color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px; border:1px solid var(--gold); border-radius:2px; cursor:pointer;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.1)'" onmouseout="this.style.background='transparent'">
-            Subscribe →
-          </button>
+      <!-- Payer CTA — pricing cards. Hidden for dependents. -->
+      <div id="expired-payer-cta">
+        <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid #2A0018; border-radius:2px; padding:14px 16px; margin-bottom:20px; font-size:13px; color:#BBBBBB; line-height:1.7; text-align:center;">
+          You've experienced My Grind. Choose the plan that works for you and keep all your progress going.
         </div>
 
-        <!-- ANNUAL -->
-        <div style="background:linear-gradient(160deg,#1E1A0E,#1A1A0A); border:1px solid var(--gold-dark); border-radius:3px; padding:18px; text-align:center; position:relative;">
-          <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:3px 10px; border-radius:1px; white-space:nowrap;">Best Value</div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:8px;">Annual</div>
-          <div style="font-family:'Bebas Neue',cursive; font-size:44px; color:var(--gold); line-height:1;">$49<span style="font-size:22px;">.99</span></div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; color:#555; margin-bottom:14px;">$59.99/yr · save 40%</div>
-          <button onclick="goToPurchase('annual')" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px; border:none; border-radius:2px; cursor:pointer;" onmouseover="this.style.background='var(--gold-light)'" onmouseout="this.style.background='var(--gold)'">
-            ⚾ Get Annual →
-          </button>
+        <!-- PLAN CARDS -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:16px;">
+
+          <!-- MONTHLY -->
+          <div style="background:#1E1A17; border:1px solid #3D3530; border-radius:3px; padding:18px; text-align:center;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:8px;">Monthly</div>
+            <div style="font-family:'Bebas Neue',cursive; font-size:44px; color:var(--gold); line-height:1;">$9<span style="font-size:22px;">.99</span></div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; color:#555; margin-bottom:14px;">per month · cancel anytime</div>
+            <button onclick="goToPurchase('monthly')" style="width:100%; background:transparent; color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px; border:1px solid var(--gold); border-radius:2px; cursor:pointer;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.1)'" onmouseout="this.style.background='transparent'">
+              Subscribe →
+            </button>
+          </div>
+
+          <!-- ANNUAL -->
+          <div style="background:linear-gradient(160deg,#1E1A0E,#1A1A0A); border:1px solid var(--gold-dark); border-radius:3px; padding:18px; text-align:center; position:relative;">
+            <div style="position:absolute; top:-10px; left:50%; transform:translateX(-50%); background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:3px 10px; border-radius:1px; white-space:nowrap;">Best Value</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#777; margin-bottom:8px;">Annual</div>
+            <div style="font-family:'Bebas Neue',cursive; font-size:44px; color:var(--gold); line-height:1;">$99<span style="font-size:22px;">.99</span></div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; color:#555; margin-bottom:14px;">per year · save $20 vs monthly</div>
+            <button onclick="goToPurchase('annual')" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px; border:none; border-radius:2px; cursor:pointer;" onmouseover="this.style.background='var(--gold-light)'" onmouseout="this.style.background='var(--gold)'">
+              ⚾ Get Annual →
+            </button>
+          </div>
+
         </div>
 
+        <div style="text-align:center; font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1px; color:#444; line-height:1.8;">
+          Secure checkout via Stripe · Instant access after payment<br>
+          Questions? <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a>
+        </div>
       </div>
 
-      <div style="text-align:center; font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1px; color:#444; line-height:1.8;">
-        Secure checkout via Stripe · Instant access after payment<br>
-        Questions? <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a>
+      <!-- Dependent CTA — kid on a parent-managed plan; route to text the
+           parent. Shown only when getBillingRole().role === 'dependent'. -->
+      <div id="expired-dependent-cta" style="display:none;">
+        <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:2px; padding:14px 16px; margin-bottom:20px; font-family:'Barlow'; font-size:13px; color:#BBBBBB; line-height:1.7; text-align:center;">
+          Your free trial just ended. Your parent set up your MyGrind account — tap below to send them a quick text. Your journal entries, stats, and goals stay safe while they get you back on a plan.
+        </div>
+        <button onclick="textParentForBilling('expired')" style="width:100%; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:14px; border:none; border-radius:2px; cursor:pointer; margin-bottom:10px;">📱 &nbsp;Text My Parent</button>
+        <div style="text-align:center; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:#444; line-height:1.7;">
+          Opens your messages with a note already typed.
+        </div>
       </div>
     </div>
 
@@ -2753,8 +2768,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div id="sub-trial-days" style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.5; margin-bottom:12px;"></div>
         <!-- Buttons in a grid so they're always side-by-side at equal width, never push out of card -->
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-          <button onclick="goToPurchase('monthly')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">$8.99 / mo</button>
-          <button onclick="goToPurchase('annual')" style="background:var(--gold); border:none; color:#080808; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">⚾ $59.99 / yr</button>
+          <button onclick="goToPurchase('monthly')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">$9.99 / mo</button>
+          <button onclick="goToPurchase('annual')" style="background:var(--gold); border:none; color:#080808; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">⚾ $99.99 / yr</button>
         </div>
       </div>
 
@@ -3494,7 +3509,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
       <div style="margin-top:14px; text-align:center; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1px; color:var(--grey);">
-        $8.99 / month &nbsp;·&nbsp; $59.99 / year &nbsp;·&nbsp; Cancel anytime
+        $9.99 / month &nbsp;·&nbsp; $99.99 / year &nbsp;·&nbsp; Cancel anytime
       </div>
     </div>
 
@@ -4299,7 +4314,7 @@ function checkAccess() {
   if (status === 'creator')      { removeBanner(); return; }
   if (status === 'paid')         { removeBanner(); return; }
   if (status === 'trial')        { showTrialBanner(); return; }
-  if (status === 'expired')      { window.location.href = 'https://mygrindapp.com/signup.html'; return; }
+  if (status === 'expired')      { showExpired(); return; }
   // wrong_device check disabled
   // No trial found — send to onboarding instead of showing old in-app welcome
   window.location.href = 'https://mygrindapp.com/signup.html';
@@ -4316,6 +4331,29 @@ function showTrialWelcome() {
   document.getElementById('trial-screen-expired').style.display = 'none';
   document.getElementById('trial-screen-blocked').style.display = 'none';
   document.getElementById('trial-overlay').style.display = 'flex';
+}
+
+// Trial-expired in-app paywall. Replaces the old "redirect to signup.html"
+// bounce — keeps the user IN the journal app so their data stays visible
+// behind the overlay and the right CTA renders for who they are. Payers see
+// pricing buttons; dependents see the "Text My Parent" CTA so a kid never
+// hits a paywall they can't act on.
+function showExpired() {
+  try {
+    const isDependent = getBillingRole().role === 'dependent';
+    const payerCta     = document.getElementById('expired-payer-cta');
+    const dependentCta = document.getElementById('expired-dependent-cta');
+    if (payerCta)     payerCta.style.display     = isDependent ? 'none'  : '';
+    if (dependentCta) dependentCta.style.display = isDependent ? 'block' : 'none';
+  } catch (e) {}
+  const welcome = document.getElementById('trial-screen-welcome');
+  const expired = document.getElementById('trial-screen-expired');
+  const blocked = document.getElementById('trial-screen-blocked');
+  const overlay = document.getElementById('trial-overlay');
+  if (welcome) welcome.style.display = 'none';
+  if (expired) expired.style.display = 'block';
+  if (blocked) blocked.style.display = 'none';
+  if (overlay) overlay.style.display = 'flex';
 }
 
 function showPaywall() {
@@ -4611,7 +4649,7 @@ function updateGiftTotal() {
       if (countLabel) countLabel.textContent = count + ' players';
       // We can't know which plan until they click — show annual as the visible benchmark
       // since it's what the "Get Annual" button will charge.
-      if (planLabel) planLabel.textContent = '$59.99/yr each';
+      if (planLabel) planLabel.textContent = '$99.99/yr each';
       if (totalEl) {
         const total = 59.99 * count;
         totalEl.textContent = '$' + total.toFixed(2);
@@ -4860,7 +4898,7 @@ function goToPurchase(plan) {
 }
 
 // ── COACH / TEAM PURCHASE ────────────────────────────
-// Coach buys the $59.99/yr annual plan (same Stripe product as individual annual),
+// Coach buys the $99.99/yr annual plan (same Stripe product as individual annual),
 // but we tag their access state with pendingCoachSetup so after payment
 // activation, they're auto-prompted to create their team.
 function goToCoachPurchase() {
@@ -4997,7 +5035,7 @@ function goToTeamSponsorPurchase() {
 // the team code up-front and save it so after they activate, they're
 // auto-joined to their coach's roster.
 function showJoinTeamFromSignup() {
-  const code = prompt('Enter your coach\'s team code to join their roster.\n\nYou will still need to start your own player subscription ($8.99/month or $59.99/year).\n\nTeam code:');
+  const code = prompt('Enter your coach\'s team code to join their roster.\n\nYou will still need to start your own player subscription ($9.99/month or $99.99/year).\n\nTeam code:');
   if (!code) return;
   const cleanCode = code.trim().toUpperCase();
   if (cleanCode.length < 2) {
@@ -5078,7 +5116,7 @@ function startCountdown() {
   setInterval(() => {
     if (isCreator()) return;
     const status = validateSession();
-    if (status === 'expired')           { window.location.href = 'https://mygrindapp.com/signup.html'; }
+    if (status === 'expired')           { showExpired(); }
     // wrong_device check disabled
     else if (status === 'trial')        showTrialBanner();
   }, 1000 * 60 * 60);
