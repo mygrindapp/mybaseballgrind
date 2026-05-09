@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v40';
+    const CACHE = 'ybg-mygrind-v41';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2049,6 +2049,32 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="dash-last-game" style="font-family:'Barlow'; font-size:14px; color:var(--grey); padding-top:12px; border-top:1px solid var(--border); line-height:1.6;"></div>
     </div>
 
+    <!-- ── FIELDING SNAPSHOT (only shows if game entries with fielding data exist) ── -->
+    <div id="dash-fielding-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div class="card-title" style="margin:0;">🧤 Fielding — Season</div>
+        <button onclick="showPanel('stats')" style="background:transparent; border:1px solid var(--border); color:#5DADE2; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer;">Full Stats</button>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-fld-fp" style="font-family:'Bebas Neue'; font-size:24px; color:#5DADE2; line-height:1;">.000</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">FP</div>
+        </div>
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-fld-po" style="font-family:'Bebas Neue'; font-size:24px; color:var(--white); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">PO</div>
+        </div>
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-fld-a" style="font-family:'Bebas Neue'; font-size:24px; color:var(--white); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">A</div>
+        </div>
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-fld-e" style="font-family:'Bebas Neue'; font-size:24px; color:var(--white); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">E</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ── WEEKLY RECAP ── -->
     <div class="card" style="margin-top:16px;">
       <div class="card-title">📅 This Week's Grind</div>
@@ -2305,6 +2331,25 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <div>
               <label style="font-size:10px; letter-spacing:1px;">BB</label>
               <input type="number" id="gs-pbb" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px;" oninput="calcGameStats()">
+            </div>
+          </div>
+
+          <!-- FIELDING GAME STATS — added 2026-05-09 (Coach Young: dashboard
+               needs fielding totals). PO/A/E feed the season-totals fielding
+               pile in My Stats and the new dash-fielding-card. -->
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Fielding</div>
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:14px;">
+            <div>
+              <label style="font-size:10px; letter-spacing:1px;">PO</label>
+              <input type="number" id="gs-po" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px;" oninput="calcGameStats()">
+            </div>
+            <div>
+              <label style="font-size:10px; letter-spacing:1px;">A</label>
+              <input type="number" id="gs-a" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px;" oninput="calcGameStats()">
+            </div>
+            <div>
+              <label style="font-size:10px; letter-spacing:1px;">E</label>
+              <input type="number" id="gs-e" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px;" oninput="calcGameStats()">
             </div>
           </div>
 
@@ -5411,18 +5456,25 @@ function saveEntry() {
     const gsEr  = parseInt(document.getElementById('gs-er').value)  || 0;
     const gsPk  = parseInt(document.getElementById('gs-pk').value)  || 0;
     const gsPbb = parseInt(document.getElementById('gs-pbb').value) || 0;
+    // Fielding (added 2026-05-09)
+    const gsPo  = parseInt(document.getElementById('gs-po')?.value) || 0;
+    const gsA   = parseInt(document.getElementById('gs-a')?.value)  || 0;
+    const gsE   = parseInt(document.getElementById('gs-e')?.value)  || 0;
 
-    if (gsAb > 0 || gsIp > 0) {
+    if (gsAb > 0 || gsIp > 0 || gsPo > 0 || gsA > 0 || gsE > 0) {
       const tb  = gsH + gsHr * 2; // simplified TB
       const pa  = gsAb + gsBb;
+      const tc  = gsPo + gsA + gsE; // total chances
       gameStats = {
         ab: gsAb, h: gsH, hr: gsHr, rbi: gsRbi,
         r: gsR, bb: gsBb, k: gsK, sb: gsSb,
         ip: gsIp, er: gsEr, pk: gsPk, pbb: gsPbb,
+        po: gsPo, a: gsA, e: gsE,
         avg: gsAb > 0 ? (gsH / gsAb).toFixed(3) : null,
         obp: pa  > 0 ? ((gsH + gsBb) / pa).toFixed(3) : null,
         slg: gsAb > 0 ? (tb / gsAb).toFixed(3) : null,
-        era: gsIp > 0 ? ((gsEr / gsIp) * 9).toFixed(2) : null
+        era: gsIp > 0 ? ((gsEr / gsIp) * 9).toFixed(2) : null,
+        fp:  tc   > 0 ? ((gsPo + gsA) / tc).toFixed(3) : null
       };
     }
   }
@@ -5518,7 +5570,7 @@ function saveEntry() {
   // Reset Rep Counter — clear chip selections, hidden values, exact inputs, total
   try { resetRepChips(); } catch(e) {}
   // Reset game stats safely
-  ['gs-ab','gs-h','gs-hr','gs-rbi','gs-r','gs-bb','gs-k','gs-sb','gs-ip','gs-er','gs-pk','gs-pbb'].forEach(id => {
+  ['gs-ab','gs-h','gs-hr','gs-rbi','gs-r','gs-bb','gs-k','gs-sb','gs-ip','gs-er','gs-pk','gs-pbb','gs-po','gs-a','gs-e'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -6682,6 +6734,35 @@ function renderDashboardSnapshots() {
       statsCard.style.display = 'block';
     }
   }
+
+  // ── Fielding Snapshot — only shows if game entries with fielding data exist ──
+  // Coach Young 2026-05-09: Dashboard needs fielding totals.
+  const fldCard = document.getElementById('dash-fielding-card');
+  if (fldCard) {
+    const fldEntries = (state.entries || []).filter(function(en) {
+      return en.type === 'game' && en.gameStats &&
+             ((parseInt(en.gameStats.po) || 0) + (parseInt(en.gameStats.a) || 0) + (parseInt(en.gameStats.e) || 0)) > 0;
+    });
+    if (fldEntries.length === 0) {
+      fldCard.style.display = 'none';
+    } else {
+      let po = 0, a = 0, e_ = 0;
+      fldEntries.forEach(function(en) {
+        const gs = en.gameStats;
+        po += parseInt(gs.po) || 0;
+        a  += parseInt(gs.a)  || 0;
+        e_ += parseInt(gs.e)  || 0;
+      });
+      const tc = po + a + e_;
+      const fp = tc > 0 ? ((po + a) / tc).toFixed(3) : '.000';
+      const setText2 = function(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; };
+      setText2('dash-fld-fp', fp);
+      setText2('dash-fld-po', po);
+      setText2('dash-fld-a',  a);
+      setText2('dash-fld-e',  e_);
+      fldCard.style.display = 'block';
+    }
+  }
 }
 
 // ═══════════════════════════════════════════════════════
@@ -6865,10 +6946,11 @@ function accumulateGameStats() {
     // Accumulate totals from all game entries
     let ab=0, h=0, hr=0, rbi=0, r=0, bb=0, k=0, sb=0;
     let ip=0, er=0, pk=0, pbb=0, ph=0;
+    let po=0, a=0, e_=0; // fielding (e_ to avoid shadowing the catch param)
     let games = 0;
 
-    gameEntries.forEach(e => {
-      const gs = e.gameStats;
+    gameEntries.forEach(en => {
+      const gs = en.gameStats;
       games += 1;
       ab  += parseInt(gs.ab)  || 0;
       h   += parseInt(gs.h)   || 0;
@@ -6883,6 +6965,9 @@ function accumulateGameStats() {
       pk  += parseInt(gs.pk)  || 0;
       pbb += parseInt(gs.pbb) || 0;
       ph  += parseInt(gs.ph)  || 0;
+      po  += parseInt(gs.po)  || 0;
+      a   += parseInt(gs.a)   || 0;
+      e_  += parseInt(gs.e)   || 0;
     });
 
     // Populate My Stats fields
@@ -6906,12 +6991,16 @@ function accumulateGameStats() {
       set('st-pbb', pbb);
       set('st-ph',  ph);
     }
+    // Fielding (added 2026-05-09)
+    set('st-po', po);
+    set('st-a',  a);
+    set('st-e',  e_);
 
     // Show a notice that stats were pulled from journal
     const notice = document.getElementById('stats-journal-notice');
     if (notice && games > 0) {
       notice.style.display = 'block';
-      notice.innerHTML = `📓 Stats auto-populated from <strong>${games} game ${games === 1 ? 'entry' : 'entries'}</strong> in your Daily Journal. Edit any field or tap Save to lock them in.`;
+      notice.innerHTML = `📓 Stats auto-populated from <strong>${games} game ${games === 1 ? 'entry' : 'entries'}</strong> in your Daily Journal.`;
     }
 
     calcStats();
