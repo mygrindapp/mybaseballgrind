@@ -51,8 +51,8 @@ If beta users aren't logging entries daily:
 - Multi-player accounts (one parent buys, multiple kids use)
 - Coach dashboard — see all players' progress in one view
 - Photo/video attachments (currently disabled, needs cloud storage)
-- GameChanger import via backend proxy (Option 1 currently disabled — Anthropic API blocked by browser CORS, needs server-side endpoint)
-- MaxPreps integration (waiting on API access)
+- GameChanger import via backend proxy — deferred to post-launch upgrade tier (UI removed 2026-05-08, dead JS removed 2026-05-09; Option 1 was disabled because Anthropic API is blocked by browser CORS, would need a server-side endpoint)
+- MaxPreps integration — deferred to post-launch upgrade tier (UI removed 2026-05-09; revisit once initial app is running and API partnership lands)
 - Affirmation push notifications via SMS (Twilio integration)
 - Internationalization (Spanish version for the Latino baseball community)
 

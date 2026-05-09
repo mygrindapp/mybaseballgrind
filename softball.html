@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v11';
+    const CACHE = 'ybg-mygrind-v12';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3255,12 +3255,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ══ MAXPREPS LINK ══ -->
-    <div id="st-mp-card" style="display:none; margin-bottom:16px;" class="card">
-      <div class="card-title">🏆 My MaxPreps Profile</div>
-      <div id="st-mp-display"></div>
-    </div>
-
     <!-- ══ DIVIDER ══ -->
     <hr class="divider">
 
@@ -3343,36 +3337,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div style="flex:1; height:1px; background:linear-gradient(90deg, var(--border), transparent);"></div>
     </div>
 
-    <!-- GameChanger Import card removed 2026-05-08 — Coach decision: stats
-         imported from GameChanger can be wrong (lineup errors, scorer
-         disagreements, missed at-bats). Players type their own numbers
-         from the on-screen stat fields. MaxPreps card remains as a
-         reference path. -->
-
-    <!-- ── MAXPREPS ── -->
-    <div class="card" style="margin-bottom:16px; border-color:var(--gold-dark);">
-      <div class="card-title">🏆 MaxPreps</div>
-      <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px; margin-bottom:14px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">📋 Copy & Paste from MaxPreps</div>
-        <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.9;">
-          <strong style="color:var(--gold);">Step 1</strong> — Go to <strong>maxpreps.com</strong> on your phone or computer<br>
-          <strong style="color:var(--gold);">Step 2</strong> — Search your <strong>school name</strong><br>
-          <strong style="color:var(--gold);">Step 3</strong> — Tap <strong>Baseball → Stats</strong><br>
-          <strong style="color:var(--gold);">Step 4</strong> — Find your name in the stats table<br>
-          <strong style="color:var(--gold);">Step 5</strong> — Type your numbers into the fields above
-        </div>
-      </div>
-      <div style="background:rgba(var(--accent-rgb), 0.03); border:1px solid #1E1A00; border-radius:2px; padding:12px 14px;">
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); line-height:1.7;">
-          🔧 <strong style="color:var(--light);">Automatic MaxPreps sync is coming.</strong> We are currently working on API partnership approval with MaxPreps. Once approved, your season stats will import automatically with one tap.
-        </div>
-      </div>
-      <div style="margin-top:14px;">
-        <label style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; display:block;">Your MaxPreps Profile URL <span style="color:var(--grey); font-weight:400; font-size:11px; letter-spacing:1px;">(optional — save for when sync launches)</span></label>
-        <input type="url" id="st-mp" placeholder="https://www.maxpreps.com/athlete/..." oninput="calcStats()" style="width:100%; box-sizing:border-box; padding:14px 16px; font-size:15px; font-family:'Barlow',sans-serif; background:var(--card2); border:1px solid var(--gold-dark); color:var(--light); border-radius:4px; letter-spacing:0.3px; transition:border-color 0.15s;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--gold-dark)'">
-        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:6px; line-height:1.5;">Paste the full URL from your MaxPreps athlete page — we'll save it and auto-sync once the API partnership is live.</div>
-      </div>
-    </div>
+    <!-- GameChanger Import card removed 2026-05-08 — stats imported from GC
+         can be wrong (lineup errors, scorer disagreements, missed at-bats).
+         Players type their own numbers from the on-screen stat fields.
+         MaxPreps card removed 2026-05-09 — deferred to post-launch upgrade. -->
 
     </div><!-- end stats-entry-section -->
 
@@ -3601,19 +3569,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-
-    <!-- ── MAXPREPS ── -->
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">📊 MaxPreps Integration</div>
-      <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.7; margin-bottom:16px;">
-        Enter your MaxPreps profile URL and we'll guide you on syncing your season stats. Full automatic import coming when MaxPreps API access is approved.
-      </div>
-      <label style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:6px; display:block;">Your MaxPreps Profile URL</label>
-      <input type="url" id="settings-mp-url" placeholder="https://www.maxpreps.com/athlete/..." style="width:100%; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow'; font-size:14px; padding:11px 14px; border-radius:2px; outline:none; box-sizing:border-box; margin-bottom:10px;" oninput="saveSettings()">
-      <div style="background:rgba(var(--accent-rgb), 0.05); border:1px solid var(--gold-dark); border-radius:2px; padding:12px 14px; font-family:'Barlow'; font-size:14px; color:var(--grey); line-height:1.7;">
-        🔧 Automatic MaxPreps sync is coming — API partnership approval in progress. For now, copy your stats from MaxPreps and enter them in the <strong style="color:var(--light);">My Stats tab</strong>. Your MaxPreps URL is saved there too.
-      </div>
-    </div>
 
     <!-- ── APP PREFERENCES ── -->
     <div class="card" style="margin-bottom:16px;">
@@ -6655,18 +6610,6 @@ function calcStats() {
     spEl.textContent = parts.length ? parts.join(' · ') : 'Set your info in the Profile tab';
   }
 
-  // ── MAXPREPS LINK ──
-  const mpUrl  = s('st-mp');
-  const mpCard = document.getElementById('st-mp-card');
-  if (mpCard) {
-    if (mpUrl) {
-      mpCard.style.display = 'block';
-      document.getElementById('st-mp-display').innerHTML =
-        `<a href="${mpUrl}" target="_blank" class="btn btn-outline btn-sm" style="display:inline-block;">View My MaxPreps Profile →</a>`;
-    } else {
-      mpCard.style.display = 'none';
-    }
-  }
 }
 
 function colorStat(id, val, thresholds, lower) {
@@ -6699,7 +6642,7 @@ function saveAllStats() {
     er:   s('st-er'),   pk:   s('st-pk'),   pbb:  s('st-pbb'),
     ph:   s('st-ph'),   sv:   s('st-sv'),   cg:   s('st-cg'),
     po:   s('st-po'),   a:    s('st-a'),    e:    s('st-e'),
-    pop:  s('st-pop'),  mp:   s('st-mp'),
+    pop:  s('st-pop'),
     sixty: s('st-sixty'), velo: s('st-velo'),
     savedAt: new Date().toLocaleString()
   };
@@ -6715,7 +6658,7 @@ function initStats() {
     if (!saved) return;
     const d = JSON.parse(saved);
     // Note: name/pos/team/year removed — those now live in Profile (pl-name, pl-pos, pl-school, pl-season).
-    const fields = ['g','ab','h','2b','3b','hr','rbi','r','bb','k','sb','hbp','ip','w','l','er','pk','pbb','ph','sv','cg','po','a','e','pop','mp','gc','sixty','velo'];
+    const fields = ['g','ab','h','2b','3b','hr','rbi','r','bb','k','sb','hbp','ip','w','l','er','pk','pbb','ph','sv','cg','po','a','e','pop','sixty','velo'];
     fields.forEach(f => {
       const el = document.getElementById('st-' + f);
       if (el && d[f]) el.value = d[f];
@@ -7937,174 +7880,9 @@ function showShareToast(msg) {
   setTimeout(() => { toast.style.display = 'none'; }, 2800);
 }
 
-// ═══════════════════════════════════════════════════════
-// GAMECHANGER OCR — SCREENSHOT STAT IMPORT
-// Uses Claude Vision API to read box score stats
-// ═══════════════════════════════════════════════════════
-
-let gcExtractedStats = null;
-
-
-function displayGCStats(parsed, status, errEl, statsGrid, grid) {
-  if (!parsed || (!parsed.batting && !parsed.pitching)) {
-    if (status) status.style.display = 'none';
-    if (errEl)  { errEl.style.display = 'block'; errEl.textContent = '⚠️ No stats found in this screenshot. Make sure the box score is clearly visible.'; }
-    return;
-  }
-
-  if (status) { status.style.display = 'block'; status.style.color = '#58D68D'; status.style.borderColor = '#27AE60'; status.style.background = 'rgba(39,174,96,0.08)'; status.textContent = `✅ Stats read successfully${parsed.playerName ? ' for ' + parsed.playerName : ''}! Review below and tap Import to save.`; }
-  if (errEl)  errEl.style.display = 'none';
-
-  // Build stats grid
-  if (grid) {
-    grid.innerHTML = '';
-    const allStats = [];
-
-    if (parsed.batting) {
-      const b = parsed.batting;
-      if (b.ab  !== null) allStats.push(['AB',  b.ab]);
-      if (b.h   !== null) allStats.push(['H',   b.h]);
-      if (b.hr  !== null) allStats.push(['HR',  b.hr]);
-      if (b.rbi !== null) allStats.push(['RBI', b.rbi]);
-      if (b.r   !== null) allStats.push(['R',   b.r]);
-      if (b.bb  !== null) allStats.push(['BB',  b.bb]);
-      if (b.k   !== null) allStats.push(['K',   b.k]);
-      if (b.sb  !== null) allStats.push(['SB',  b.sb]);
-      if (b.avg !== null) allStats.push(['AVG', b.avg]);
-    }
-    if (parsed.pitching) {
-      const p = parsed.pitching;
-      if (p.ip  !== null) allStats.push(['IP',  p.ip]);
-      if (p.er  !== null) allStats.push(['ER',  p.er]);
-      if (p.k   !== null) allStats.push(['P-K', p.k]);
-      if (p.bb  !== null) allStats.push(['P-BB',p.bb]);
-      if (p.era !== null) allStats.push(['ERA', p.era]);
-    }
-
-    allStats.forEach(([label, val]) => {
-      const cell = document.createElement('div');
-      cell.style.cssText = 'background:var(--card2); padding:10px 4px; text-align:center; border-radius:2px; border:1px solid var(--border);';
-      cell.innerHTML = `<div style="font-family:'Bebas Neue',cursive; font-size:22px; color:var(--gold); line-height:1;">${val}</div><div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">${label}</div>`;
-      grid.appendChild(cell);
-    });
-  }
-
-  if (statsGrid) statsGrid.style.display = 'block';
-}
-
-function importGCStats() {
-  if (!gcExtractedStats) return;
-  const b = gcExtractedStats.batting   || {};
-  const p = gcExtractedStats.pitching  || {};
-
-  const setVal = (id, val) => { if (val !== null && val !== undefined) { const el = document.getElementById(id); if (el) { el.value = val; } } };
-
-  // Batting
-  setVal('st-ab',  b.ab);
-  setVal('st-h',   b.h);
-  setVal('st-hr',  b.hr);
-  setVal('st-rbi', b.rbi);
-  setVal('st-r',   b.r);
-  setVal('st-bb',  b.bb);
-  setVal('st-k',   b.k);
-  setVal('st-sb',  b.sb);
-
-  // Pitching
-  setVal('st-ip',  p.ip);
-  setVal('st-er',  p.er);
-  setVal('st-pk',  p.k);
-  setVal('st-pbb', p.bb);
-
-  // Recalculate
-  if (typeof calcStats === 'function') calcStats();
-
-  // Navigate to My Stats
-  showPanel('stats');
-  showShareToast('✅ Stats imported to My Stats!');
-
-  // Reset GC upload
-  const input = document.getElementById('gc-screenshot-input');
-  if (input) input.value = '';
-  gcExtractedStats = null;
-}
-
-// ═══════════════════════════════════════════════════════
-// INIT ALL NEW FEATURES
-// ═══════════════════════════════════════════════════════
-// ── GAMECHANGER — STATS TAB VERSION ──────────────────
-let gcExtractedStatsTab = null;
-
-async function processGCScreenshotStats(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-  const preview    = document.getElementById('gc-preview-stats');
-  const previewImg = document.getElementById('gc-preview-img-stats');
-  const status     = document.getElementById('gc-status-stats');
-  const gridWrap   = document.getElementById('gc-stats-grid-stats');
-  const grid       = document.getElementById('gc-grid-inner-stats');
-  gcExtractedStatsTab = null;
-  if (gridWrap) gridWrap.style.display = 'none';
-
-  const reader = new FileReader();
-  reader.onload = async (e) => {
-    const dataUrl = e.target.result;
-    if (previewImg) previewImg.src = dataUrl;
-    if (preview) preview.style.display = 'block';
-    if (status) {
-      status.style.cssText = 'display:block; padding:12px 14px; border-radius:2px; font-family:Barlow,sans-serif; font-size:13px; line-height:1.6; margin-bottom:10px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); color:var(--gold);';
-      status.textContent = '🔍 Reading your GameChanger box score... give it a few seconds.';
-    }
-    try {
-      const base64 = dataUrl.split(',')[1];
-      const response = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          model: 'claude-sonnet-4-20250514', max_tokens: 1000,
-          messages: [{ role: 'user', content: [
-            { type: 'image', source: { type: 'base64', media_type: file.type || 'image/jpeg', data: base64 } },
-            { type: 'text', text: 'You are a baseball stats reader. Extract stats from this GameChanger box score.\n\nReturn ONLY JSON:\n{"playerName":"string or null","batting":{"ab":null,"h":null,"r":null,"rbi":null,"hr":null,"bb":null,"k":null,"sb":null,"avg":null},"pitching":{"ip":null,"er":null,"k":null,"bb":null,"h":null,"era":null}}\n\nNo markdown, no backticks.' }
-          ]}]
-        })
-      });
-      const data   = await response.json();
-      const parsed = JSON.parse((data.content?.[0]?.text || '{}').replace(/```json|```/g,'').trim());
-      gcExtractedStatsTab = parsed;
-      if (status) { status.style.background='rgba(39,174,96,0.08)'; status.style.borderColor='#27AE60'; status.style.color='#58D68D'; status.textContent=`✅ Stats found${parsed.playerName?' for '+parsed.playerName:''}! Review and tap Import.`; }
-      if (grid) {
-        grid.innerHTML = '';
-        const b=parsed.batting||{}, p=parsed.pitching||{};
-        [['AB',b.ab],['H',b.h],['HR',b.hr],['RBI',b.rbi],['R',b.r],['BB',b.bb],['K',b.k],['SB',b.sb],['AVG',b.avg],['IP',p.ip],['ER',p.er],['ERA',p.era]]
-          .filter(([,v]) => v!=null)
-          .forEach(([l,v]) => {
-            const c=document.createElement('div');
-            c.style.cssText='background:var(--card2);padding:10px 4px;text-align:center;border-radius:2px;border:1px solid var(--border);';
-            c.innerHTML=`<div style="font-family:'Bebas Neue',cursive;font-size:22px;color:var(--gold);line-height:1;">${v}</div><div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--grey);">${l}</div>`;
-            grid.appendChild(c);
-          });
-      }
-      if (gridWrap) gridWrap.style.display = 'block';
-    } catch(err) {
-      if (status) { status.style.background='rgba(192,57,43,0.08)'; status.style.borderColor='#C0392B'; status.style.color='#E57373'; status.textContent='⚠️ Could not read this screenshot. Make sure it is a clear, well-lit GameChanger box score. Try cropping closer to the stats.'; }
-    }
-  };
-  reader.readAsDataURL(file);
-}
-
-function importGCStatsFromStats() {
-  if (!gcExtractedStatsTab) return;
-  const b=gcExtractedStatsTab.batting||{}, p=gcExtractedStatsTab.pitching||{};
-  const set=(id,v) => { if (v!=null) { const el=document.getElementById(id); if (el) el.value=v; } };
-  set('st-ab',b.ab); set('st-h',b.h);   set('st-hr',b.hr);  set('st-rbi',b.rbi);
-  set('st-r',b.r);   set('st-bb',b.bb); set('st-k',b.k);    set('st-sb',b.sb);
-  set('st-ip',p.ip); set('st-er',p.er); set('st-pk',p.k);   set('st-pbb',p.bb);
-  if (typeof calcStats === 'function') calcStats();
-  showShareToast('✅ Stats imported!');
-  document.getElementById('stats-entry-section')?.scrollIntoView({ behavior:'smooth' });
-  gcExtractedStatsTab = null;
-  const inp = document.getElementById('gc-screenshot-input-stats');
-  if (inp) inp.value = '';
-}
+// GameChanger OCR import (displayGCStats / importGCStats / processGCScreenshotStats /
+// importGCStatsFromStats / gcExtractedStats / gcExtractedStatsTab) removed 2026-05-09 —
+// UI cards were retired 2026-05-08; deferred to post-launch upgrade tier.
 
 loadSettings();
 initNotifications();
