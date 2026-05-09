@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v64';
+    const CACHE = 'ybg-mygrind-v65';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6036,6 +6036,36 @@ function saveEntry() {
   const commentText = document.getElementById('j-comment-text').value.trim();
 
   if (!title && type !== 'practice' && type !== 'instructor') { alert('Please add a title or opponent.'); return; }
+
+  // Reps-without-context guard — Coach Young 2026-05-10 walkthrough.
+  // A practice entry with rep chips tapped but no reflection / grade /
+  // photos / coach comment is streak-padding, not journaling. Block
+  // save with a nudge that names specific things the player can add.
+  // Practice-only for now; other types have their own meaningful
+  // content (game stats, lifts log, instructor notes) so reps-only
+  // is less of a problem there.
+  if (type === 'practice') {
+    const _repsLogged =
+         (parseInt(document.getElementById('jr-swings-value')?.value)  || 0) > 0
+      || (parseInt(document.getElementById('jr-gb-value')?.value)      || 0) > 0
+      || (parseInt(document.getElementById('jr-throws-value')?.value)  || 0) > 0
+      || (parseInt(document.getElementById('jr-pitches-value')?.value) || 0) > 0;
+    const _hasContext = !!what
+                     || !!grade
+                     || (Array.isArray(pendingMedia) && pendingMedia.length > 0)
+                     || (!!commentText && !!commentName);
+    if (_repsLogged && !_hasContext) {
+      alert(
+        'Reps without context is not journaling.\n\n' +
+        'Add at least one:\n' +
+        '  • A note in "What did I work on today?"\n' +
+        '  • A grade (A–F)\n' +
+        '  • A photo or video\n' +
+        '  • A coach or parent comment'
+      );
+      return;
+    }
+  }
 
   // Game stats (only if type = game)
   let gameStats = null;
