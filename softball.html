@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v34';
+    const CACHE = 'ybg-mygrind-v35';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5761,32 +5761,42 @@ function getBallEmoji() {
 // input for power users (especially pitchers tracking formal pitch counts).
 // Stored values: midpoint number for totals + label string for display fidelity.
 // To change the buckets: edit REP_RANGES — no HTML edits needed.
+// Tightened ranges 2026-05-09 (Coach Young: 25-50 buckets were too broad,
+// kids couldn't tell whether a session was light or heavy). New increments
+// are 10-15 at the low end, scaling up at the top. Midpoints calibrated so
+// the arm-load math (greenMax/goldMax thresholds) still maps cleanly.
+// Older saved entries display their original label (stored with the entry)
+// so historical data isn't disrupted.
 const REP_RANGES = {
   swings:  [
     { label: '0',       value: 0   },
-    { label: '1-25',    value: 13  },
-    { label: '26-50',   value: 38  },
-    { label: '51-100',  value: 75  },
-    { label: '100+',    value: 150 }
+    { label: '1-15',    value: 8   },
+    { label: '16-30',   value: 23  },
+    { label: '31-50',   value: 40  },
+    { label: '51-75',   value: 63  },
+    { label: '75+',     value: 100 }
   ],
   gb: [
     { label: '0',       value: 0  },
     { label: '1-10',    value: 5  },
-    { label: '11-25',   value: 18 },
-    { label: '26-50',   value: 38 },
-    { label: '50+',     value: 75 }
+    { label: '11-20',   value: 15 },
+    { label: '21-35',   value: 28 },
+    { label: '36-60',   value: 48 },
+    { label: '60+',     value: 80 }
   ],
   throws: [
     { label: '0',       value: 0   },
-    { label: '1-25',    value: 13  },
-    { label: '26-50',   value: 38  },
-    { label: '51-100',  value: 75  },
-    { label: '100+',    value: 150 }
+    { label: '1-15',    value: 8   },
+    { label: '16-30',   value: 23  },
+    { label: '31-50',   value: 40  },
+    { label: '51-75',   value: 63  },
+    { label: '75+',     value: 100 }
   ],
   pitches: [
     { label: '0',       value: 0  },
-    { label: '1-25',    value: 13 },
-    { label: '26-50',   value: 38 },
+    { label: '1-15',    value: 8  },
+    { label: '16-30',   value: 23 },
+    { label: '31-50',   value: 40 },
     { label: '51-75',   value: 63 },
     { label: '75+',     value: 100 }
   ]
@@ -6182,9 +6192,6 @@ function renderEntries() {
                 <div style="font-family:'Barlow Condensed'; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">${label}</div>
               </div>
             `).join('')}
-          </div>
-          <div style="margin-top:10px; padding-top:8px; border-top:1px solid var(--border); text-align:center; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">
-            Session total: <span style="color:var(--gold); font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">${e.reps.total}</span> reps
           </div>
         </div>
       `; })() : ''}
