@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v33';
+    const CACHE = 'ybg-mygrind-v34';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6051,8 +6051,14 @@ function renderEntries() {
   // historical days).
   const todayDateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
+  // Pull today + last-7 totals so we can append a volume summary at the
+  // end of today's entries. Coach Young 2026-05-09: "there should be a
+  // total daily and weekly of reps showing down in today's grind."
+  const repStats = (typeof accumulateRepStats === 'function') ? accumulateRepStats() : null;
+  const week7Total = repStats ? (repStats.last7.swings + repStats.last7.gb + repStats.last7.throws + repStats.last7.pitches) : 0;
+
   let lastDate = null;
-  container.innerHTML = state.entries.map(function(e) {
+  container.innerHTML = state.entries.map(function(e, idx) {
     const dateChanged = e.date !== lastDate;
     const dayCount    = dateCounts[e.date] || 1;
     const isToday     = e.date === todayDateStr;
@@ -6070,6 +6076,29 @@ function renderEntries() {
     ) : '';
     lastDate = e.date;
     const displayTitle = e.title || titleFallback[e.type] || "Today's Grind";
+
+    // Today's totals card — appended after the LAST today entry (entries
+    // are sorted newest-first, so today's entries cluster at the top of
+    // the list; this entry is the last today one when the next entry's
+    // date is different or doesn't exist).
+    const nextEntry = state.entries[idx + 1];
+    const isLastTodayEntry = e.date === todayDateStr && (!nextEntry || nextEntry.date !== todayDateStr);
+    const todayTotalsCard = (isLastTodayEntry && repStats && repStats.todayTotal > 0) ? (
+      '<div style="margin:14px 0 24px; padding:16px 18px; border:1px solid var(--gold-dark); border-radius:3px; background:linear-gradient(135deg,#1A0012,#0E0006);">' +
+        '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">📊 Today\'s Grind — Training Volume</div>' +
+        '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">' +
+          '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:3px;">' +
+            '<div style="font-family:\'Bebas Neue\'; font-size:32px; line-height:1; color:var(--white);">' + repStats.todayTotal.toLocaleString() + '</div>' +
+            '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Reps Today</div>' +
+          '</div>' +
+          '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:3px;">' +
+            '<div style="font-family:\'Bebas Neue\'; font-size:32px; line-height:1; color:var(--gold);">' + week7Total.toLocaleString() + '</div>' +
+            '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Reps Last 7 Days</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    ) : '';
+
     return dayHeader + `
     <div class="entry-card">
 
@@ -6232,7 +6261,7 @@ function renderEntries() {
       ` : ''}
 
     </div>
-  `;
+  ` + todayTotalsCard;
   }).join('');
 }
 
@@ -8698,10 +8727,23 @@ function getArmCareItems() {
 
   var ballEmoji = (typeof getBallEmoji === 'function') ? getBallEmoji() : '⚾';
 
-  var items = [
+  var items = [];
+
+  // Second-session warm-up — surfaces ONLY when there's already a throwing
+  // entry logged today. If the player did a morning practice and is now
+  // logging an evening instructor session (or vice versa), the daily
+  // J-Bands routine is already done — but a short re-warmup is still
+  // required before throwing again. Coach Young 2026-05-09.
+  var alreadyThrewToday = false;
+  try { alreadyThrewToday = (typeof hasThrowingEntryToday === 'function') && hasThrowingEntryToday(); } catch (e) {}
+  if (alreadyThrewToday) {
+    items.push({ id: 'modwarm', label: 'Modified warm-up — 5 min light bands + short toss', icon: '🔁' });
+  }
+
+  items.push(
     { id: 'bands',    label: 'J-Bands routine — rotator cuff + scap (8 min)', icon: '💪' },
     { id: 'toss',     label: 'Warm-up toss — build to full distance',         icon: '🎯' }
-  ];
+  );
 
   // Skill-load work — drop in red tier so we're not stacking intensity on
   // top of an already over-threshold week.
@@ -8774,6 +8816,13 @@ const ARM_CARE_REFS = {
     proTip: "Active rest ≠ couch. Walk, stretch, hydrate, sleep 9+ hours. Skip the bullpen today. Your arm is repairing — let it.",
     video: null,
     credit: 'Source: MLB Pitch Smart age-bracketed thresholds'
+  },
+  modwarm: {
+    title: 'Modified Warm-up — Second Session',
+    desc: "Already did your full warm-up earlier today? When you're throwing again later (morning practice + evening lesson, or game + practice the same day), you still need a SHORT warm-up before throwing — but not the full routine.",
+    proTip: "5 minutes of light bands (lower volume than your morning routine) + warm-up toss building to about half your max distance. Your arm is already activated; you're just re-priming it. NEVER skip the second-session warm-up — it's where same-day-multi-session injuries happen.",
+    video: null,
+    credit: 'Source: MLB Pitch Smart + Driveline second-session protocol'
   }
 };
 
