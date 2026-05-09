@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v31';
+    const CACHE = 'ybg-mygrind-v32';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6029,12 +6029,53 @@ function renderEntries() {
   // every render so saved comments don't freeze ⚾ in softball mode. (2026-05-08 audit.)
   const roleIcons  = { coach: getBallEmoji(), parent: '👨‍👩‍👧', instructor: '📋', teammate: '🤝' };
 
-  container.innerHTML = state.entries.map(e => `
+  // Pre-count entries per date so multi-entry days surface a "N entries"
+  // subtitle in the day header. Coach Young 2026-05-09: practice + game +
+  // instructor on the same day should group visually so the user sees the
+  // whole day's grind as one unit.
+  const dateCounts = {};
+  state.entries.forEach(function(en) { dateCounts[en.date] = (dateCounts[en.date] || 0) + 1; });
+
+  // Type-specific fallback when the user didn't title the entry. Replaces
+  // the old generic "Entry" — too vague when the type was instructor/game/
+  // reflection. Coach Young 2026-05-09.
+  const titleFallback = {
+    practice:   'Practice',
+    game:       'Game',
+    instructor: 'Instructor Session',
+    reflection: 'Reflection'
+  };
+
+  // Today's date in the same format entries are stored in, so we can show
+  // a "TODAY'S GRIND" tag on today's day header (vs just "N entries" for
+  // historical days).
+  const todayDateStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+  let lastDate = null;
+  container.innerHTML = state.entries.map(function(e) {
+    const dateChanged = e.date !== lastDate;
+    const dayCount    = dateCounts[e.date] || 1;
+    const isToday     = e.date === todayDateStr;
+    const dayHeader   = dateChanged ? (
+      '<div style="margin-top:24px; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--border); display:flex; align-items:baseline; justify-content:space-between; gap:10px; flex-wrap:wrap;">' +
+        '<div style="font-family:\'Bebas Neue\'; font-size:22px; letter-spacing:2px; color:var(--gold);">' + (e.date || '').toUpperCase() + '</div>' +
+        (dayCount > 1 || isToday
+          ? '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">' +
+              (dayCount > 1 ? dayCount + ' entries' : '') +
+              (dayCount > 1 && isToday ? ' · ' : '') +
+              (isToday ? "Today's Grind" : '') +
+            '</div>'
+          : '') +
+      '</div>'
+    ) : '';
+    lastDate = e.date;
+    const displayTitle = e.title || titleFallback[e.type] || "Today's Grind";
+    return dayHeader + `
     <div class="entry-card">
 
-      <!-- META ROW -->
-      <div class="entry-meta">
-        <div class="entry-date">${e.date}</div>
+      <!-- META ROW — date moved to the day header above so it's not
+           repeated on every same-day entry -->
+      <div class="entry-meta" style="justify-content:flex-end;">
         <div style="display:flex; align-items:center; gap:8px;">
           ${e.result ? `<div style="font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:${e.result === 'W' ? '#27AE60' : e.result === 'L' ? '#C0392B' : 'var(--grey)'}; background:${e.result === 'W' ? 'rgba(39,174,96,0.1)' : e.result === 'L' ? 'rgba(192,57,43,0.1)' : 'rgba(100,100,100,0.1)'}; padding:2px 10px; border-radius:2px;">${e.result}</div>` : ''}
           ${e.grade ? `<div class="grade-badge grade-${e.grade}" style="font-size:16px; width:30px; height:30px;">${e.grade}</div>` : ''}
@@ -6044,7 +6085,7 @@ function renderEntries() {
       </div>
 
       <!-- TITLE -->
-      <div class="entry-title">${e.title || (e.type === 'practice' ? 'Practice' : 'Entry')}</div>
+      <div class="entry-title">${displayTitle}</div>
 
       <!-- GAME STATS BOX -->
       ${e.gameStats ? `
@@ -6114,7 +6155,7 @@ function renderEntries() {
             `).join('')}
           </div>
           <div style="margin-top:10px; padding-top:8px; border-top:1px solid var(--border); text-align:center; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">
-            Total reps: <span style="color:var(--gold); font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">${e.reps.total}</span>
+            Session total: <span style="color:var(--gold); font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">${e.reps.total}</span> reps
           </div>
         </div>
       `; })() : ''}
