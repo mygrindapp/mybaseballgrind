@@ -3104,6 +3104,10 @@ function selectAudience(which) {
   if (which === 'self') {
     state.playerCount = 1;          // self path is always single-tier
   }
+  // Persist to localStorage so onboarding.html and softball.html can read it
+  // after navigation. softball.html hides trial banner + Profile-tab pay CTAs
+  // when this is not 'self' (kids on a parent-managed plan don't manage billing).
+  try { localStorage.setItem('mg_signup_for', which); } catch (e) {}
   saveState();
   goNext(0, 1);
 }

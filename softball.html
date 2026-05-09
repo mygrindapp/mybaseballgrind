@@ -1018,7 +1018,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v12';
+    const CACHE = 'ybg-mygrind-v14';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4147,6 +4147,35 @@ function isCreator() {
   return false;
 }
 
+// ── BILLING ROLE ─────────────────────────────────────
+// Single predicate every payment surface reads from. Two axes:
+//   role   — 'payer' (the adult on the hook for the bill) | 'dependent' (a kid
+//            on a parent-managed plan, who can't and shouldn't pay) | 'creator'
+//   paid   — whether the active subscription is in good standing
+//
+// UI rules across the app:
+//   payer  + unpaid  → show upgrade CTAs (trial banner, Profile pricing)
+//   payer  + paid    → hide upgrade CTAs, keep "Manage Billing" link
+//   dependent (any)  → no payment UI at all on player surfaces
+//   creator          → see everything (testing)
+//
+// Default for a missing `mg_signup_for` key is 'payer'. Revenue-safe — better
+// to show a payment option to someone who might need it than hide it from
+// someone who does. Coach Young 2026-05-09: "We can't let any payment fall
+// in between the cracks." signup.html Screen 0 + onboarding.html URL parser
+// write the key authoritatively the moment a real signup/onboarding flows.
+function getBillingRole() {
+  if (isCreator()) {
+    const acc = (typeof getAccessState === 'function') ? getAccessState() : {};
+    return { role: 'creator', paid: !!acc.paid };
+  }
+  let stored = null;
+  try { stored = localStorage.getItem('mg_signup_for'); } catch (e) {}
+  const role = stored === 'kid' ? 'dependent' : 'payer';
+  const acc = (typeof getAccessState === 'function') ? getAccessState() : {};
+  return { role: role, paid: !!acc.paid };
+}
+
 // ── DEVICE FINGERPRINT ───────────────────────────────
 function getDeviceFingerprint() {
   const nav = window.navigator;
@@ -4296,6 +4325,9 @@ function showBlocked(msg) {
 }
 
 function showTrialBanner() {
+  // Dependents (kids on a parent-managed plan) never see the trial countdown
+  // or upgrade pricing — those are payer surfaces. Creator + payer see it.
+  if (getBillingRole().role === 'dependent') { removeBanner(); return; }
   const state = getAccessState();
   const elapsed = (Date.now() - (state.trialStart || Date.now())) / (1000 * 60 * 60 * 24);
   const days = Math.max(0, Math.ceil(TRIAL_DAYS - elapsed));
@@ -6128,11 +6160,22 @@ function renderGrades() {
 function updateSubscriptionCard() {
   try {
     const acc         = getAccessState();
+    const card        = document.getElementById('subscription-card');
     const emailEl     = document.getElementById('sub-email-display');
     const planEl      = document.getElementById('sub-plan-display');
     const trialInfo   = document.getElementById('sub-trial-info');
     const paidInfo    = document.getElementById('sub-paid-info');
     const trialDaysEl = document.getElementById('sub-trial-days');
+
+    // Dependents (kids) never see the Manage Subscription card — billing
+    // belongs to the payer. Payers + creators see the card; whether they
+    // see upgrade pricing or just the Manage Billing link is decided by
+    // acc.paid below (existing logic — paid hides #sub-trial-info).
+    if (getBillingRole().role === 'dependent') {
+      if (card) card.style.display = 'none';
+      return;
+    }
+    if (card) card.style.display = '';
 
     if (emailEl) emailEl.textContent = acc.email || '—';
 

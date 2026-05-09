@@ -927,6 +927,11 @@ function parseUrlParams() {
     if (sportParam === 'baseball' || sportParam === 'softball' || sportParam === 'both') {
       d.sport = sportParam;
     }
+    // Mirror the audience picker into localStorage so softball.html can read it
+    // after onFinalExit() navigates. signup.html already writes this on Screen 0
+    // for fresh signups, but onboarding may also be entered via fallback URL —
+    // in either case d.self is the source of truth at this point.
+    try { localStorage.setItem('mg_signup_for', d.self ? 'self' : 'kid'); } catch (e) {}
   } catch(e) {
     // URLSearchParams not supported (very old browsers) — ignore
   }
