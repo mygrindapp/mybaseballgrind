@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v24';
+    const CACHE = 'ybg-mygrind-v25';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2342,28 +2342,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-top:6px; line-height:1.5;">💡 This is your space to capture feedback from the people coaching you. Write it in their words so you can come back to it.</div>
       </div>
 
-      <!-- ── ARM CARE DAILY CHECKLIST ── -->
-      <!-- Smart visibility (Coach Young 2026-05-08): shown when active entry type is
-           a throwing session (practice/game/instructor) OR when a throwing entry has
-           already been logged today. Hidden only when type=reflection AND no throwing
-           logged today. Toggled by updateArmCareVisibility(). Lives inside the entry
-           form for natural flow — sits between the coach-feedback card and the photos
-           uploader so it reads as part of the throwing-session ritual. -->
-      <div class="card" id="j-armcare-section" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
-        <div class="card-title">💪 Arm & Shoulder Care — Today</div>
-        <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
-             Wired into renderTrainingVolume(): when last-7-day arm load crosses a
-             threshold, this strip becomes the "why this matters today" prompt right
-             above the checklist. Hidden in green / unknown-age states. -->
-        <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
-          Non-negotiable daily. Pitchers especially — your arm is your career. Check each one off. <strong style="color:var(--gold);">Resets at midnight.</strong>
-        </div>
-        <div id="arm-care-list"></div>
-        <div id="arm-care-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
-      </div>
-
-      <!-- ── MEDIA UPLOAD (moved to bottom of form) ── -->
+      <!-- ── MEDIA UPLOAD (entry-specific photos/videos) ── -->
+      <!-- Photos & Videos are tied to THIS entry — they document the practice
+           or game being logged. They belong adjacent to the entry data they
+           document, BEFORE the daily Arm Care ritual. Coach Young 2026-05-09. -->
       <div style="margin-bottom:20px;">
         <label>📸 &nbsp;Photos & 🎥 Videos</label>
         <div id="media-drop-zone" style="
@@ -2387,6 +2369,28 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
         <!-- Media Preview Grid -->
         <div id="media-preview-grid" style="display:none; margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill, minmax(90px,1fr)); gap:8px;"></div>
+      </div>
+
+      <!-- ── ARM CARE DAILY CHECKLIST ── -->
+      <!-- Smart visibility (Coach Young 2026-05-08): shown when active entry type is
+           a throwing session (practice/game/instructor) OR when a throwing entry has
+           already been logged today. Hidden only when type=reflection AND no throwing
+           logged today. Toggled by updateArmCareVisibility(). Last item before Save
+           on purpose — Arm Care is a DAILY ritual (keyed by date, not entry), so it
+           sits as the closing nudge right before the user commits the entry: "Did
+           you take care of your arm today?" Coach Young 2026-05-09. -->
+      <div class="card" id="j-armcare-section" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
+        <div class="card-title">💪 Arm & Shoulder Care — Today</div>
+        <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
+             Wired into renderTrainingVolume(): when last-7-day arm load crosses a
+             threshold, this strip becomes the "why this matters today" prompt right
+             above the checklist. Hidden in green / unknown-age states. -->
+        <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
+          Non-negotiable daily. Pitchers especially — your arm is your career. Check each one off. <strong style="color:var(--gold);">Resets at midnight.</strong>
+        </div>
+        <div id="arm-care-list"></div>
+        <div id="arm-care-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
       </div>
 
       <button class="btn btn-gold" onclick="saveEntry()">📓 &nbsp;Save Entry</button>
