@@ -2066,6 +2066,28 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </select>
         </div>
       </div>
+      <!-- ── ARM CARE DAILY CHECKLIST ── -->
+      <!-- Smart visibility (Coach Young 2026-05-08): shown when active entry type is
+           a throwing session (practice/game/instructor) OR when a throwing entry has
+           already been logged today. Hidden only when type=reflection AND no throwing
+           logged today. Toggled by updateArmCareVisibility(). Last item before Save
+           on purpose — Arm Care is a DAILY ritual (keyed by date, not entry), so it
+           sits as the closing nudge right before the user commits the entry: "Did
+           you take care of your arm today?" Coach Young 2026-05-09. -->
+      <div class="card" id="j-armcare-section" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
+        <div class="card-title">💪 Arm & Shoulder Care — Today</div>
+        <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
+             Wired into renderTrainingVolume(): when last-7-day arm load crosses a
+             threshold, this strip becomes the "why this matters today" prompt right
+             above the checklist. Hidden in green / unknown-age states. -->
+        <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
+          Non-negotiable daily. Pitchers especially — your arm is your career. Check each one off. <strong style="color:var(--gold);">Resets at midnight.</strong>
+        </div>
+        <div id="arm-care-list"></div>
+        <div id="arm-care-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
+      </div>
+
       <div id="j-title-wrapper" style="display:none;">
         <label id="j-title-label">Title</label>
         <input type="text" id="j-title" placeholder="e.g. End of Week Reflection">
@@ -2078,6 +2100,29 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="j-reflect-extra" style="display:none;">
         <label>How do I need to prepare for next week?</label>
         <textarea id="j-prepare" inputmode="text" placeholder="What do I need to work on? What is my focus going into next practice or game?"></textarea>
+      </div>
+
+      <div class="form-row" id="j-grade-row">
+        <div>
+          <label>Performance Grade (A–F)</label>
+          <select id="j-grade">
+            <option value="">-- Select --</option>
+            <option value="A">A — Excellent</option>
+            <option value="B">B — Good</option>
+            <option value="C">C — Average</option>
+            <option value="D">D — Below Average</option>
+            <option value="F">F — Struggled</option>
+          </select>
+        </div>
+        <div id="j-result-wrapper" style="display:none;">
+          <label>Result</label>
+          <select id="j-result">
+            <option value="">-- W / L / T --</option>
+            <option value="W">W — Win</option>
+            <option value="L">L — Loss</option>
+            <option value="T">T — Tie</option>
+          </select>
+        </div>
       </div>
 
       <!-- ══ PRACTICE REP COUNTER — shows when type = Practice ══ -->
@@ -2130,27 +2175,31 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="margin-top:14px; text-align:center; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Total reps: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">0</span></div>
       </div>
 
-      <div class="form-row" id="j-grade-row">
-        <div>
-          <label>Performance Grade (A–F)</label>
-          <select id="j-grade">
-            <option value="">-- Select --</option>
-            <option value="A">A — Excellent</option>
-            <option value="B">B — Good</option>
-            <option value="C">C — Average</option>
-            <option value="D">D — Below Average</option>
-            <option value="F">F — Struggled</option>
-          </select>
+      <!-- ── COACH / PARENT COMMENT ── -->
+      <div id="j-coach-section" style="background:rgba(var(--accent-rgb), 0.05); border:1px solid #2A0018; border-radius:3px; padding:16px; margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">💬 &nbsp;What Did My Coach or Parent Say?</div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.6;">Did your coach, parent, or instructor give you feedback after this game or practice? Log it here so you never forget it.</div>
+        <div class="form-row" style="margin-bottom:0;">
+          <div>
+            <label>Who said it?</label>
+            <input type="text" id="j-comment-name" placeholder="e.g. Coach, Mom, Dad" style="margin-bottom:0;">
+          </div>
+          <div>
+            <label>Their Role</label>
+            <select id="j-comment-role" style="margin-bottom:0;">
+              <option value="">-- Select --</option>
+              <option value="coach">Coach</option>
+              <option value="parent">Parent</option>
+              <option value="instructor">Instructor</option>
+              <option value="teammate">Teammate</option>
+            </select>
+          </div>
         </div>
-        <div id="j-result-wrapper" style="display:none;">
-          <label>Result</label>
-          <select id="j-result">
-            <option value="">-- W / L / T --</option>
-            <option value="W">W — Win</option>
-            <option value="L">L — Loss</option>
-            <option value="T">T — Tie</option>
-          </select>
+        <div style="margin-top:12px;">
+          <label>What did they tell me?</label>
+          <textarea id="j-comment-text" placeholder="e.g. Coach told me to stay back on off-speed pitches. Mom said she was proud of how I handled the strikeout..." style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-top:6px; line-height:1.5;">💡 This is your space to capture feedback from the people coaching you. Write it in their words so you can come back to it.</div>
       </div>
 
       <!-- ══ GAME STATS SECTION — shows when type = Game ══ -->
@@ -2315,33 +2364,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
 
-      <!-- ── COACH / PARENT COMMENT ── -->
-      <div id="j-coach-section" style="background:rgba(var(--accent-rgb), 0.05); border:1px solid #2A0018; border-radius:3px; padding:16px; margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">💬 &nbsp;What Did My Coach or Parent Say?</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.6;">Did your coach, parent, or instructor give you feedback after this game or practice? Log it here so you never forget it.</div>
-        <div class="form-row" style="margin-bottom:0;">
-          <div>
-            <label>Who said it?</label>
-            <input type="text" id="j-comment-name" placeholder="e.g. Coach, Mom, Dad" style="margin-bottom:0;">
-          </div>
-          <div>
-            <label>Their Role</label>
-            <select id="j-comment-role" style="margin-bottom:0;">
-              <option value="">-- Select --</option>
-              <option value="coach">Coach</option>
-              <option value="parent">Parent</option>
-              <option value="instructor">Instructor</option>
-              <option value="teammate">Teammate</option>
-            </select>
-          </div>
-        </div>
-        <div style="margin-top:12px;">
-          <label>What did they tell me?</label>
-          <textarea id="j-comment-text" placeholder="e.g. Coach told me to stay back on off-speed pitches. Mom said she was proud of how I handled the strikeout..." style="min-height:80px; margin-bottom:0;"></textarea>
-        </div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-top:6px; line-height:1.5;">💡 This is your space to capture feedback from the people coaching you. Write it in their words so you can come back to it.</div>
-      </div>
-
       <!-- ── MEDIA UPLOAD (entry-specific photos/videos) ── -->
       <!-- Photos & Videos are tied to THIS entry — they document the practice
            or game being logged. They belong adjacent to the entry data they
@@ -2369,28 +2391,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
         <!-- Media Preview Grid -->
         <div id="media-preview-grid" style="display:none; margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill, minmax(90px,1fr)); gap:8px;"></div>
-      </div>
-
-      <!-- ── ARM CARE DAILY CHECKLIST ── -->
-      <!-- Smart visibility (Coach Young 2026-05-08): shown when active entry type is
-           a throwing session (practice/game/instructor) OR when a throwing entry has
-           already been logged today. Hidden only when type=reflection AND no throwing
-           logged today. Toggled by updateArmCareVisibility(). Last item before Save
-           on purpose — Arm Care is a DAILY ritual (keyed by date, not entry), so it
-           sits as the closing nudge right before the user commits the entry: "Did
-           you take care of your arm today?" Coach Young 2026-05-09. -->
-      <div class="card" id="j-armcare-section" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
-        <div class="card-title">💪 Arm & Shoulder Care — Today</div>
-        <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
-             Wired into renderTrainingVolume(): when last-7-day arm load crosses a
-             threshold, this strip becomes the "why this matters today" prompt right
-             above the checklist. Hidden in green / unknown-age states. -->
-        <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
-          Non-negotiable daily. Pitchers especially — your arm is your career. Check each one off. <strong style="color:var(--gold);">Resets at midnight.</strong>
-        </div>
-        <div id="arm-care-list"></div>
-        <div id="arm-care-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
       </div>
 
       <button class="btn btn-gold" onclick="saveEntry()">📓 &nbsp;Save Entry</button>
