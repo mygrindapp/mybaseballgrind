@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v53';
+    const CACHE = 'ybg-mygrind-v54';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1885,6 +1885,33 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
       <div style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
         Reps from Practice, Game, and Instructor entries roll up automatically.
+      </div>
+    </div>
+
+    <!-- ══ WORKOUT VOLUME — counts workout-type journal entries ══
+         Coach Young 2026-05-10: symmetric with Training Volume's arm-load
+         headline. Workouts logged via the Daily Journal "Workout / Weight
+         Room" entry type (added in commit e9fc66f) get counted here so the
+         player can see weight-room consistency at a glance. Hidden until
+         the player has logged at least one workout. -->
+    <div id="dash-workout-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #E67E22;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div class="card-title" style="margin:0;">🏋️ Workouts</div>
+        <div id="dash-workout-last" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-workout-7d" style="font-family:'Bebas Neue'; font-size:28px; color:#E67E22; line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Last 7 Days</div>
+        </div>
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-workout-month" style="font-family:'Bebas Neue'; font-size:28px; color:#E67E22; line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">This Month</div>
+        </div>
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-workout-season" style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Season</div>
+        </div>
       </div>
     </div>
 
@@ -5295,6 +5322,7 @@ function showPanel(id) {
   // wasn't always showing latest totals after saving an entry from Journal.
   if (id === 'dashboard') {
     try { renderTrainingVolume(); } catch (e) {}
+    try { renderWorkoutVolume();  } catch (e) {}
     try { renderDashboardSnapshots(); } catch (e) {}
     try { renderMonthFocus();     } catch (e) {}
     try { renderTodayPlan();      } catch (e) {}
@@ -6969,6 +6997,8 @@ function renderAll() {
   try { updateWarmupVisibility(); } catch(e) {}
   // Refresh Training Volume aggregates + arm-load tier on Dashboard + My Stats.
   try { renderTrainingVolume(); } catch(e) { console.warn('[MG] training volume:', e); }
+  // Refresh Workout Volume counter on Dashboard.
+  try { renderWorkoutVolume(); } catch(e) { console.warn('[MG] workout volume:', e); }
 }
 
 // ───────────────────────────────────────────────────────
@@ -7555,6 +7585,69 @@ function renderTrainingVolume() {
   // is tier-aware (drops wrist/spin work in red, adds 'rest' item) so it
   // needs to rebuild when load crosses a threshold mid-day.
   try { if (typeof renderArmCare === 'function') renderArmCare(); } catch (_) {}
+}
+
+// ═══════════════════════════════════════════════════════
+// WORKOUT VOLUME — counts workout-type journal entries
+// Coach Young 2026-05-10. Symmetric with Training Volume's arm-load
+// headline. Workouts logged via the Daily Journal "Workout / Weight Room"
+// entry type (added in commit e9fc66f) get counted into 7-day / month-
+// to-date / season buckets so the player can see weight-room consistency
+// at a glance. Card stays hidden until at least one workout has been
+// logged so a fresh user doesn't see an empty zero card.
+// ═══════════════════════════════════════════════════════
+function renderWorkoutVolume() {
+  try {
+    const card = document.getElementById('dash-workout-card');
+    if (!card) return;
+    const entries = (state && state.entries) || [];
+    const workouts = entries.filter(function(e) { return e && e.type === 'workout'; });
+
+    if (workouts.length === 0) {
+      card.style.display = 'none';
+      return;
+    }
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const sevenStart = new Date(today); sevenStart.setDate(today.getDate() - 6);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    let last7 = 0, monthToDate = 0;
+    let mostRecent = null;
+    workouts.forEach(function(e) {
+      const d = parseEntryDate(e.date);
+      if (!d || isNaN(d.getTime())) return;
+      if (d >= sevenStart) last7++;
+      if (d >= monthStart) monthToDate++;
+      if (!mostRecent || d > mostRecent) mostRecent = d;
+    });
+
+    const set = function(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val);
+    };
+    set('dash-workout-7d',     last7);
+    set('dash-workout-month',  monthToDate);
+    set('dash-workout-season', workouts.length);
+
+    // "Last: 3 days ago" hint — keeps the consistency story honest. If
+    // mostRecent is today (or future-dated entry), show "Today".
+    const lastEl = document.getElementById('dash-workout-last');
+    if (lastEl) {
+      if (!mostRecent) {
+        lastEl.textContent = '';
+      } else {
+        const diffMs = today - new Date(mostRecent.getFullYear(), mostRecent.getMonth(), mostRecent.getDate());
+        const days   = Math.round(diffMs / (1000 * 60 * 60 * 24));
+        if (days <= 0)      lastEl.textContent = 'Last: Today';
+        else if (days === 1) lastEl.textContent = 'Last: Yesterday';
+        else                 lastEl.textContent = 'Last: ' + days + ' days ago';
+      }
+    }
+
+    card.style.display = '';
+  } catch (err) { try { console.warn('[workout vol]', err); } catch (e) {} }
 }
 
 // ═══════════════════════════════════════════════════════
