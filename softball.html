@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v27';
+    const CACHE = 'ybg-mygrind-v28';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1797,6 +1797,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
       <div id="dash-arm-load-tier" style="padding:10px 18px; font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center;">No reps logged this week</div>
+      <div id="dash-today-reps" style="padding:8px 18px 12px; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); text-align:center; border-top:1px solid var(--border);">No reps logged today yet</div>
     </div>
 
     <!-- ── MILESTONE CELEBRATION (hidden by default, shown when hit) ── -->
@@ -3417,6 +3418,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             </tr>
           </thead>
           <tbody>
+            <tr style="border-bottom:1px solid var(--border); background:rgba(var(--accent-rgb), 0.04);">
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--white);">Today</td>
+              <td id="vol-today-swings"  style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
+              <td id="vol-today-gb"      style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
+              <td id="vol-today-throws"  style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
+              <td id="vol-today-pitches" style="text-align:right; padding:10px 12px; color:var(--white);">0</td>
+            </tr>
             <tr style="border-bottom:1px solid var(--border);">
               <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">Last 7 days</td>
               <td id="vol-7d-swings"  style="text-align:right; padding:10px 8px;">0</td>
@@ -3443,7 +3451,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <div style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
-        Sw = Swings · GB = Ground Balls · Th = Throws · Pi = Pitches. Reps from Practice + Instructor entries roll up automatically. Game-day pitches still come from your Game Stats fields.
+        Sw = Swings · GB = Ground Balls · Th = Throws · Pi = Pitches. Reps from Practice, Game, and Instructor entries roll up automatically.
       </div>
     </div>
 
@@ -5657,12 +5665,20 @@ function toggleGameStats() {
   // Reflection extra field
   if (extraEl) extraEl.style.display = isReflect ? 'block' : 'none';
 
-  // Rep counter visibility — Practice (all 4 cats) / Instructor (focus-scoped) / hide.
+  // Rep counter visibility — Practice (all 4 cats) / Game (all 4 cats) /
+  // Instructor (focus-scoped) / hide. Game added 2026-05-09 so game-day
+  // reps roll into the Training Volume aggregation alongside practice +
+  // instructor reps. Coach Young: "today's total should show in weekly
+  // and monthly" — game day is the biggest single rep contributor.
   const repsSec = document.getElementById('j-reps-section');
   if (isPrac) {
     if (repsSec) repsSec.style.display = 'block';
     applyRepCategoryVisibility(REP_CATEGORIES);
     updateRepCounterHeader('practice');
+  } else if (isGame) {
+    if (repsSec) repsSec.style.display = 'block';
+    applyRepCategoryVisibility(REP_CATEGORIES);
+    updateRepCounterHeader('game');
   } else if (isInstructor) {
     // Defer to the instructor-focus-aware handler — it reads the current
     // Focus Area dropdown value and scopes the rep counter accordingly.
@@ -5926,6 +5942,9 @@ function updateRepCounterHeader(mode) {
   if (mode === 'instructor') {
     if (titleEl) titleEl.textContent = '🔢 Lesson Reps';
     if (subEl)   subEl.innerHTML     = 'Tap the range that matches what you did in <strong style="color:var(--light);">this lesson</strong>.';
+  } else if (mode === 'game') {
+    if (titleEl) titleEl.textContent = '🔢 Game Reps';
+    if (subEl)   subEl.innerHTML     = 'Tap the range that matches what you did in <strong style="color:var(--light);">this game</strong>. Rolls into your weekly + monthly training volume.';
   } else {
     if (titleEl) titleEl.textContent = "🔢 Rep Counter — Today's Practice";
     if (subEl)   subEl.innerHTML     = 'Tap the range that matches your day. Don’t know exact? Don’t worry — <strong style="color:var(--light);">just commit a range</strong>.';
@@ -6902,7 +6921,8 @@ function accumulateRepStats() {
   const totals = {
     season: { swings: 0, gb: 0, throws: 0, pitches: 0 },
     last30: { swings: 0, gb: 0, throws: 0, pitches: 0 },
-    last7:  { swings: 0, gb: 0, throws: 0, pitches: 0 }
+    last7:  { swings: 0, gb: 0, throws: 0, pitches: 0 },
+    today:  { swings: 0, gb: 0, throws: 0, pitches: 0 }
   };
 
   state.entries.forEach(function(e) {
@@ -6928,11 +6948,20 @@ function accumulateRepStats() {
       totals.last7.throws  += throws;
       totals.last7.pitches += pitches;
     }
+    // Today bucket — entries dated today (start-of-day boundary). Used by
+    // the Dashboard "Today's Reps" line and the Training Volume "Today" row.
+    if (d && d >= today) {
+      totals.today.swings  += swings;
+      totals.today.gb      += gb;
+      totals.today.throws  += throws;
+      totals.today.pitches += pitches;
+    }
   });
 
   totals.armLoad7d     = totals.last7.throws  + totals.last7.pitches;
   totals.armLoad30d    = totals.last30.throws + totals.last30.pitches;
   totals.armLoadSeason = totals.season.throws + totals.season.pitches;
+  totals.todayTotal    = totals.today.swings + totals.today.gb + totals.today.throws + totals.today.pitches;
   return totals;
 }
 
@@ -6975,6 +7004,18 @@ function renderTrainingVolume() {
   setText('vol-7d-gb',          t.last7.gb);
   setText('vol-7d-throws',      t.last7.throws);
   setText('vol-7d-pitches',     t.last7.pitches);
+  setText('vol-today-swings',   t.today.swings);
+  setText('vol-today-gb',       t.today.gb);
+  setText('vol-today-throws',   t.today.throws);
+  setText('vol-today-pitches',  t.today.pitches);
+  // Dashboard today line — surfaces "Today: N reps" beneath the 7-day arm
+  // load so Coach can monitor today's contribution at a glance.
+  const dashToday = document.getElementById('dash-today-reps');
+  if (dashToday) {
+    dashToday.textContent = t.todayTotal > 0
+      ? 'Today: ' + t.todayTotal.toLocaleString() + ' reps logged'
+      : 'No reps logged today yet';
+  }
 
   const armNum     = document.getElementById('arm-load-num');
   const armTier    = document.getElementById('arm-load-tier');
