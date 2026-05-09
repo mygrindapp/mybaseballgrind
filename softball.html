@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v49';
+    const CACHE = 'ybg-mygrind-v50';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2151,6 +2151,22 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </select>
         </div>
       </div>
+      <!-- ── WORKOUT WARM-UP CHECKLIST ── -->
+      <!-- Shown ONLY when entry type = workout. Mirrors the arm-care
+           pattern (per-day state in localStorage, ⓘ button per item)
+           so players have a familiar interaction model. Coach Young
+           2026-05-09: "add workout warm up checklists." Items are
+           evidence-based pre-lift protocol (RAMP — Raise · Activate ·
+           Mobilize · Potentiate). -->
+      <div class="card" id="j-warmup-section" style="display:none; margin-top:20px; margin-bottom:16px; border-left:3px solid #E67E22;">
+        <div class="card-title">🏋️ Pre-Workout Warm-up</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
+          Prime the body before lifting. Skip this and you risk pulls. <strong style="color:#E67E22;">Resets at midnight.</strong>
+        </div>
+        <div id="warmup-list"></div>
+        <div id="warmup-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
+      </div>
+
       <!-- ── ARM CARE DAILY CHECKLIST ── -->
       <!-- Smart visibility (Coach Young 2026-05-08): shown when active entry type is
            a throwing session (practice/game/instructor) OR when a throwing entry has
@@ -6014,6 +6030,8 @@ function toggleGameStats() {
 
   // Re-evaluate Arm Care visibility on every entry-type change.
   try { updateArmCareVisibility(); } catch(e) {}
+  // Workout warm-up visibility — shown only when type === 'workout'.
+  try { updateWarmupVisibility(); } catch(e) {}
 }
 
 // Returns true if any of today's logged entries is a throwing session.
@@ -6929,6 +6947,8 @@ function renderAll() {
   // Refresh Arm Care visibility — covers the case where a quick-log save
   // logged a throwing entry without changing the j-type dropdown.
   try { updateArmCareVisibility(); } catch(e) {}
+  // Refresh Workout warm-up visibility for the same reason.
+  try { updateWarmupVisibility(); } catch(e) {}
   // Refresh Training Volume aggregates + arm-load tier on Dashboard + My Stats.
   try { renderTrainingVolume(); } catch(e) { console.warn('[MG] training volume:', e); }
 }
@@ -9019,6 +9039,7 @@ if (_originalRenderAll) {
     try { updateStreakDisplay();  } catch(e) { try { console.warn('[streak]', e); } catch(err) {} }
     try { renderWeeklyRecap();    } catch(e) { try { console.warn('[recap]', e); } catch(err) {} }
     try { renderArmCare();        } catch(e) { try { console.warn('[armcare]', e); } catch(err) {} }
+    try { renderWarmup();         } catch(e) { try { console.warn('[warmup]', e); } catch(err) {} }
     // Persist state to localStorage so nothing is lost when the browser closes
     try { if (typeof saveState === 'function') saveState(); } catch(e) {}
   };
@@ -9461,6 +9482,98 @@ function toggleArmCare(id) {
     ybgHaptic([40, 60, 40, 60, 40]);
     if (typeof showShareToast === 'function') showShareToast('✅ Arm & Shoulder Care Complete — That\'s the standard.');
   }
+}
+
+// ─── WORKOUT WARM-UP CHECKLIST ────────────────────────────
+// Same per-day-state pattern as arm care. Shown only when entry type
+// is workout. Items follow the RAMP protocol — Raise (light cardio /
+// foam roll), Activate (band + glute), Mobilize (dynamic stretches),
+// Potentiate (warm-up sets ramping to working weight).
+// Coach Young 2026-05-09: "add workout warm up checklists."
+const WORKOUT_WARMUP_ITEMS = [
+  { id: 'foamroll', label: 'Foam roll tight spots (3-5 min)',                       icon: '🟦' },
+  { id: 'dynamic',  label: 'Dynamic warm-up — leg swings, hip & arm circles',       icon: '🤸' },
+  { id: 'activate', label: 'Activation — glute bridges + scap pulls + band pull-aparts', icon: '⚡' },
+  { id: 'rampup',   label: 'Light warm-up sets (2 sets at 50–70% of working weight)', icon: '🏋️' },
+  { id: 'hydrate',  label: 'Hydration check — water bottle on the rack',             icon: '💧' }
+];
+
+function warmupKey() {
+  const d = new Date();
+  return 'ybg_warmup_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getWarmupState() {
+  try { return JSON.parse(localStorage.getItem(warmupKey()) || '{}'); }
+  catch(e) { return {}; }
+}
+function setWarmupState(s) {
+  try { localStorage.setItem(warmupKey(), JSON.stringify(s)); } catch(e) {}
+}
+
+function renderWarmup() {
+  try {
+    const list = document.getElementById('warmup-list');
+    const prog = document.getElementById('warmup-progress');
+    if (!list) return;
+
+    const state = getWarmupState();
+    let done = 0;
+    list.innerHTML = WORKOUT_WARMUP_ITEMS.map(function(item) {
+      const isDone = !!state[item.id];
+      if (isDone) done++;
+      return '<div style="display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; ' +
+             'background:' + (isDone ? 'rgba(39,174,96,0.12)' : 'var(--card2)') + '; ' +
+             'border:1px solid ' + (isDone ? '#27AE60' : 'var(--border)') + '; ' +
+             'border-radius:4px; transition:all 0.15s; user-select:none;">' +
+               '<div onclick="toggleWarmup(\'' + item.id + '\')" style="display:flex; align-items:center; gap:10px; flex:1; cursor:pointer; min-width:0;">' +
+                 '<div style="width:22px; height:22px; border-radius:50%; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; ' +
+                   'background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; ' +
+                   'color:white; font-size:13px; font-weight:800; flex-shrink:0;">' + (isDone ? '✓' : '') + '</div>' +
+                 '<div style="flex:1; font-family:\'Barlow\'; font-size:13px; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; ' +
+                   'text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' +
+                   '<span style="margin-right:6px;">' + item.icon + '</span>' + item.label +
+                 '</div>' +
+               '</div>' +
+             '</div>';
+    }).join('');
+
+    if (prog) {
+      const total = WORKOUT_WARMUP_ITEMS.length;
+      if (done === total) {
+        prog.innerHTML = '✅ ALL DONE — READY TO LIFT';
+        prog.style.color = '#27AE60';
+      } else {
+        prog.innerHTML = done + ' of ' + total + ' complete';
+        prog.style.color = 'var(--grey)';
+      }
+    }
+  } catch(err) {
+    try { console.warn('[renderWarmup]', err); } catch(e) {}
+  }
+}
+
+function toggleWarmup(id) {
+  const state = getWarmupState();
+  state[id] = !state[id];
+  setWarmupState(state);
+  ybgHaptic(15);
+  renderWarmup();
+
+  const allDone = WORKOUT_WARMUP_ITEMS.every(function(it) { return state[it.id]; });
+  const celebKey = warmupKey() + '_celebrated';
+  if (allDone && !localStorage.getItem(celebKey)) {
+    localStorage.setItem(celebKey, '1');
+    ybgHaptic([40, 60, 40, 60, 40]);
+    if (typeof showShareToast === 'function') showShareToast('✅ Warm-up complete — go lift.');
+  }
+}
+
+function updateWarmupVisibility() {
+  const sec = document.getElementById('j-warmup-section');
+  if (!sec) return;
+  const type = document.getElementById('j-type')?.value || '';
+  sec.style.display = (type === 'workout') ? 'block' : 'none';
+  if (type === 'workout') renderWarmup();
 }
 
 // ─── PRACTICE REP COUNTER (#8) ───────────────────────────
