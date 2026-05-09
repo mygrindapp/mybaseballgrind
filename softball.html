@@ -5576,6 +5576,14 @@ let editingEntryId = null;
 
 // Set the rep counter chip selection (or exact-mode value) from saved
 // entry data. Used by editEntry() to restore rep counter state.
+//
+// Legacy-range behavior (verified 2026-05-10): when the saved label is
+// from the pre-2026-05-09 broader buckets (e.g. "1-25" / "26-50" / "51-100"
+// / "100+") it won't match any current chip's data-label, so we fall back
+// to Exact mode showing the saved midpoint value. The hidden jr-*-label
+// input still holds the legacy label string, so saving without modifying
+// the rep counter preserves the original label unchanged. Same path
+// covers entries with missing/undefined labels.
 function setRepFromSavedValue(cat, val, label) {
   const valEl = document.getElementById('jr-' + cat + '-value');
   const labEl = document.getElementById('jr-' + cat + '-label');
