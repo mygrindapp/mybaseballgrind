@@ -2175,33 +2175,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="margin-top:14px; text-align:center; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Total reps: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">0</span></div>
       </div>
 
-      <!-- ── COACH / PARENT COMMENT ── -->
-      <div id="j-coach-section" style="background:rgba(var(--accent-rgb), 0.05); border:1px solid #2A0018; border-radius:3px; padding:16px; margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">💬 &nbsp;What Did My Coach or Parent Say?</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.6;">Did your coach, parent, or instructor give you feedback after this game or practice? Log it here so you never forget it.</div>
-        <div class="form-row" style="margin-bottom:0;">
-          <div>
-            <label>Who said it?</label>
-            <input type="text" id="j-comment-name" placeholder="e.g. Coach, Mom, Dad" style="margin-bottom:0;">
-          </div>
-          <div>
-            <label>Their Role</label>
-            <select id="j-comment-role" style="margin-bottom:0;">
-              <option value="">-- Select --</option>
-              <option value="coach">Coach</option>
-              <option value="parent">Parent</option>
-              <option value="instructor">Instructor</option>
-              <option value="teammate">Teammate</option>
-            </select>
-          </div>
-        </div>
-        <div style="margin-top:12px;">
-          <label>What did they tell me?</label>
-          <textarea id="j-comment-text" placeholder="e.g. Coach told me to stay back on off-speed pitches. Mom said she was proud of how I handled the strikeout..." style="min-height:80px; margin-bottom:0;"></textarea>
-        </div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-top:6px; line-height:1.5;">💡 This is your space to capture feedback from the people coaching you. Write it in their words so you can come back to it.</div>
-      </div>
-
       <!-- ══ GAME STATS SECTION — shows when type = Game ══ -->
       <div id="game-stats-section" style="display:none; margin-top:4px; margin-bottom:20px;">
         <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px; padding:16px 18px; margin-bottom:4px;">
@@ -2362,6 +2335,33 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <input type="date" id="j-inst-next" style="margin-bottom:0;">
           </div>
         </div>
+      </div>
+
+      <!-- ── COACH / PARENT COMMENT ── -->
+      <div id="j-coach-section" style="background:rgba(var(--accent-rgb), 0.05); border:1px solid #2A0018; border-radius:3px; padding:16px; margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">💬 &nbsp;What Did My Coach or Parent Say?</div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:12px; line-height:1.6;">Did your coach, parent, or instructor give you feedback after this game or practice? Log it here so you never forget it.</div>
+        <div class="form-row" style="margin-bottom:0;">
+          <div>
+            <label>Who said it?</label>
+            <input type="text" id="j-comment-name" placeholder="e.g. Coach, Mom, Dad" style="margin-bottom:0;">
+          </div>
+          <div>
+            <label>Their Role</label>
+            <select id="j-comment-role" style="margin-bottom:0;">
+              <option value="">-- Select --</option>
+              <option value="coach">Coach</option>
+              <option value="parent">Parent</option>
+              <option value="instructor">Instructor</option>
+              <option value="teammate">Teammate</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <label>What did they tell me?</label>
+          <textarea id="j-comment-text" placeholder="e.g. Coach told me to stay back on off-speed pitches. Mom said she was proud of how I handled the strikeout..." style="min-height:80px; margin-bottom:0;"></textarea>
+        </div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-top:6px; line-height:1.5;">💡 This is your space to capture feedback from the people coaching you. Write it in their words so you can come back to it.</div>
       </div>
 
       <!-- ── MEDIA UPLOAD (entry-specific photos/videos) ── -->
