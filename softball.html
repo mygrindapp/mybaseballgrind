@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v47';
+    const CACHE = 'ybg-mygrind-v48';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2530,7 +2530,14 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div id="media-preview-grid" style="display:none; margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill, minmax(90px,1fr)); gap:8px;"></div>
       </div>
 
-      <button class="btn btn-gold" onclick="saveEntry()">📓 &nbsp;Save Entry</button>
+      <!-- Editing banner — shown when user is editing a saved past entry. -->
+      <div id="editing-banner" style="display:none; margin-bottom:12px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); border-radius:3px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">
+        ✏️ Editing entry from <span id="editing-banner-date">—</span>
+      </div>
+      <div style="display:flex; gap:10px;">
+        <button class="btn btn-gold" id="save-entry-btn" onclick="saveEntry()" style="flex:1;">📓 &nbsp;Save Entry</button>
+        <button class="btn btn-outline" id="cancel-edit-btn" onclick="cancelEdit()" style="display:none;">Cancel</button>
+      </div>
     </div>
 
     <!-- ADD COMMENT TO EXISTING ENTRY -->
@@ -5470,6 +5477,159 @@ function removeMedia(i) {
   renderMediaPreview();
 }
 
+// ── EDIT ENTRY ────────────────────────────────────────
+// Coach Young 2026-05-09. When set, saveEntry() replaces the existing
+// entry instead of creating a new one. Cleared after successful save or
+// when the user taps Cancel.
+let editingEntryId = null;
+
+// Set the rep counter chip selection (or exact-mode value) from saved
+// entry data. Used by editEntry() to restore rep counter state.
+function setRepFromSavedValue(cat, val, label) {
+  const valEl = document.getElementById('jr-' + cat + '-value');
+  const labEl = document.getElementById('jr-' + cat + '-label');
+  if (valEl) valEl.value = String(val || 0);
+  if (labEl) labEl.value = label || '';
+  const row = document.getElementById('rep-chip-row-' + cat);
+  if (!row) return;
+  row.querySelectorAll('.rep-chip').forEach(function(b) { b.classList.remove('selected'); });
+  // Try to find a chip whose data-label matches the saved label first.
+  const chips = Array.from(row.querySelectorAll('.rep-chip'));
+  const match = chips.find(function(b) { return b.dataset && b.dataset.label === label; });
+  const exactInput = document.getElementById('jr-' + cat + '-exact');
+  if (match) {
+    match.classList.add('selected');
+    if (exactInput) { exactInput.style.display = 'none'; exactInput.value = ''; }
+  } else if (val > 0) {
+    // No matching range chip — fall back to Exact mode with the raw value.
+    const exactBtn = row.querySelector('.rep-chip-exact');
+    if (exactBtn) exactBtn.classList.add('selected');
+    if (exactInput) { exactInput.style.display = 'block'; exactInput.value = String(val); }
+  }
+}
+
+function editEntry(id) {
+  const entry = state.entries.find(function(e) { return e.id === id; });
+  if (!entry) return;
+
+  editingEntryId = id;
+
+  // Date — convert "May 9, 2026" back to YYYY-MM-DD for the input
+  const dateEl = document.getElementById('j-date');
+  if (dateEl) {
+    if (entry.date && entry.date !== 'Today') {
+      const d = new Date(entry.date);
+      if (!isNaN(d.getTime())) {
+        dateEl.value = d.getFullYear() + '-' +
+                       String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                       String(d.getDate()).padStart(2, '0');
+      }
+    } else {
+      dateEl.value = '';
+    }
+  }
+
+  // Type — set first, then trigger toggleGameStats so the right sections appear
+  const typeEl = document.getElementById('j-type');
+  if (typeEl) typeEl.value = entry.type || 'practice';
+  try { toggleGameStats(); } catch (e) {}
+
+  // Standard text fields
+  const setVal = function(elId, val) {
+    const el = document.getElementById(elId);
+    if (el) el.value = val || '';
+  };
+  setVal('j-title',    entry.title);
+  setVal('j-what',     entry.what);
+  setVal('j-tomorrow', entry.tomorrow);
+  setVal('j-prepare',  entry.prepare);
+  setVal('j-grade',    entry.grade);
+  setVal('j-result',   entry.result);
+
+  // Game stats — restore each gs-* field
+  if (entry.gameStats) {
+    const gs = entry.gameStats;
+    setVal('gs-ab', gs.ab); setVal('gs-h', gs.h); setVal('gs-hr', gs.hr); setVal('gs-rbi', gs.rbi);
+    setVal('gs-r',  gs.r);  setVal('gs-bb', gs.bb); setVal('gs-k',  gs.k); setVal('gs-sb', gs.sb);
+    setVal('gs-ip', gs.ip); setVal('gs-er', gs.er); setVal('gs-pk', gs.pk); setVal('gs-pbb', gs.pbb);
+    setVal('gs-po', gs.po); setVal('gs-a',  gs.a);  setVal('gs-e',  gs.e);
+    try { calcGameStats(); } catch (e) {}
+  }
+
+  // Instructor session
+  if (entry.instructor) {
+    setVal('j-inst-name',     entry.instructor.name);
+    setVal('j-inst-focus',    entry.instructor.focus);
+    setVal('j-inst-notes',    entry.instructor.notes);
+    setVal('j-inst-duration', entry.instructor.duration);
+    setVal('j-inst-next',     entry.instructor.next);
+    try { onInstructorFocusChange(); } catch (e) {}
+  }
+
+  // Workout
+  if (entry.workout) {
+    setVal('j-wo-focus',     entry.workout.focus);
+    setVal('j-wo-intensity', entry.workout.intensity);
+    setVal('j-wo-lifts',     entry.workout.lifts);
+    setVal('j-wo-duration',  entry.workout.duration);
+  }
+
+  // Rep counter — restore chip selections
+  if (entry.reps) {
+    setRepFromSavedValue('swings',  entry.reps.swings,  entry.reps.swingsLabel);
+    setRepFromSavedValue('gb',      entry.reps.gb,      entry.reps.gbLabel);
+    setRepFromSavedValue('throws',  entry.reps.throws,  entry.reps.throwsLabel);
+    setRepFromSavedValue('pitches', entry.reps.pitches, entry.reps.pitchesLabel);
+    try { calcReps(); } catch (e) {}
+  }
+
+  // Media — load existing media into pendingMedia so user can add/remove
+  pendingMedia = Array.isArray(entry.media) ? entry.media.map(function(m) { return Object.assign({}, m); }) : [];
+  renderMediaPreview();
+
+  // UI — show Cancel button + Editing banner, change Save button label
+  const saveBtn = document.getElementById('save-entry-btn');
+  const cancelBtn = document.getElementById('cancel-edit-btn');
+  const banner = document.getElementById('editing-banner');
+  const bannerDate = document.getElementById('editing-banner-date');
+  if (saveBtn)   saveBtn.innerHTML = '💾 &nbsp;Update Entry';
+  if (cancelBtn) cancelBtn.style.display = 'inline-block';
+  if (banner)    banner.style.display = 'block';
+  if (bannerDate) bannerDate.textContent = entry.date || 'this entry';
+
+  // Scroll to the New Entry card so the user sees the form
+  const card = document.querySelector('#panel-journal .card');
+  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  ybgHaptic(15);
+}
+
+function cancelEdit() {
+  editingEntryId = null;
+
+  // Reset all form fields
+  ['j-title','j-what','j-tomorrow','j-prepare','j-grade','j-result',
+   'j-comment-name','j-comment-role','j-comment-text',
+   'j-inst-name','j-inst-focus','j-inst-notes','j-inst-duration','j-inst-next',
+   'j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration',
+   'gs-ab','gs-h','gs-hr','gs-rbi','gs-r','gs-bb','gs-k','gs-sb',
+   'gs-ip','gs-er','gs-pk','gs-pbb','gs-po','gs-a','gs-e'
+  ].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  try { resetRepChips(); } catch (e) {}
+  pendingMedia = [];
+  renderMediaPreview();
+
+  // UI — restore default
+  const saveBtn = document.getElementById('save-entry-btn');
+  const cancelBtn = document.getElementById('cancel-edit-btn');
+  const banner = document.getElementById('editing-banner');
+  if (saveBtn)   saveBtn.innerHTML = '📓 &nbsp;Save Entry';
+  if (cancelBtn) cancelBtn.style.display = 'none';
+  if (banner)    banner.style.display = 'none';
+}
+
 // ── SAVE ENTRY ────────────────────────────────────────
 function saveEntry() {
   // Firebase cloud save hook — runs after local save
@@ -5623,7 +5783,34 @@ function saveEntry() {
     });
   }
 
-  state.entries.unshift(entry);
+  // Edit mode: replace the existing entry in-place instead of unshifting
+  // a duplicate. Preserve the original id and any existing comments
+  // (post-hoc feedback added via openAddComment shouldn't get wiped).
+  // Coach Young 2026-05-09.
+  if (editingEntryId) {
+    const idx = state.entries.findIndex(function(e) { return e.id === editingEntryId; });
+    if (idx !== -1) {
+      const original = state.entries[idx];
+      entry.id = original.id; // keep original id so comment links etc. still resolve
+      // Merge comments: in-form comment was already pushed above; combine
+      // with any post-hoc comments from the original (dedupe by id).
+      const existingIds = new Set(entry.comments.map(function(c) { return c.id; }));
+      (original.comments || []).forEach(function(c) {
+        if (!existingIds.has(c.id)) entry.comments.push(c);
+      });
+      state.entries[idx] = entry;
+    }
+    editingEntryId = null;
+    // Reset UI back to "create new" mode
+    const saveBtn = document.getElementById('save-entry-btn');
+    const cancelBtn = document.getElementById('cancel-edit-btn');
+    const banner = document.getElementById('editing-banner');
+    if (saveBtn)   saveBtn.innerHTML = '📓 &nbsp;Save Entry';
+    if (cancelBtn) cancelBtn.style.display = 'none';
+    if (banner)    banner.style.display = 'none';
+  } else {
+    state.entries.unshift(entry);
+  }
 
   // Reset form
   document.getElementById('j-title').value    = '';
@@ -6232,6 +6419,7 @@ function renderEntries() {
           ${e.result ? `<div style="font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px; color:${e.result === 'W' ? '#27AE60' : e.result === 'L' ? '#C0392B' : 'var(--grey)'}; background:${e.result === 'W' ? 'rgba(39,174,96,0.1)' : e.result === 'L' ? 'rgba(192,57,43,0.1)' : 'rgba(100,100,100,0.1)'}; padding:2px 10px; border-radius:2px;">${e.result}</div>` : ''}
           ${e.grade ? `<div class="grade-badge grade-${e.grade}" style="font-size:16px; width:30px; height:30px;">${e.grade}</div>` : ''}
           <div class="entry-type type-${e.type}">${e.type}</div>
+          <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:2px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="Edit this entry">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})">✕</button>
         </div>
       </div>
