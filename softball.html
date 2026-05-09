@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v50';
+    const CACHE = 'ybg-mygrind-v51';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1762,6 +1762,17 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div class="gold-line"></div>
     </div>
 
+    <!-- ── TODAY'S PLAN — checkable daily schedule derived from the
+         standard weekly rotation (Mon/Wed/Fri lift · Tue/Thu mobility ·
+         daily hitting · Sat recovery · Sun rest). Coach Young
+         2026-05-09: "schedule check lists." Resets daily. -->
+    <div class="card" id="today-plan-card" style="margin-bottom:18px; border-left:3px solid var(--gold);">
+      <div class="card-title">📋 <span id="today-plan-day-label">Today's Plan</span></div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-bottom:10px; line-height:1.5;">What today calls for. Tap each as you complete it. <strong style="color:var(--gold);">Resets at midnight.</strong></div>
+      <div id="today-plan-list"></div>
+      <div id="today-plan-progress" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
+    </div>
+
     <!-- ── THIS MONTH FOCUS + COACH'S NOTE — moved to top of dashboard
          under the player's name (Coach Young 2026-05-09) so the
          current month's intent and coach's voice are the FIRST thing
@@ -1769,13 +1780,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="grid-2" style="margin-bottom:18px;">
       <div class="card">
         <div class="card-title">📋 This Month — April Focus</div>
-        <div style="font-size:14px; color:var(--light); line-height:1.8;">
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Compete — One Game at a Time</div>
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Team First — not stats, not scouts</div>
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">📓 Post-Game Journal — every game</div>
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">🗣️ Talk to your coaches weekly</div>
-          <div data-mg-text="📚 GPA check — No Grades, No {Sport}" style="padding:6px 0;">📚 GPA check — No Grades, No Baseball</div>
-        </div>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-bottom:8px; line-height:1.5;">Tap each one as you live it this month. Resets when the month flips.</div>
+        <div id="month-focus-list" style="font-size:14px; color:var(--light); line-height:1.5;"></div>
+        <div id="month-focus-progress" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
       </div>
 
       <div class="card">
@@ -5319,6 +5326,8 @@ function showPanel(id) {
   if (id === 'dashboard') {
     try { renderTrainingVolume(); } catch (e) {}
     try { renderDashboardSnapshots(); } catch (e) {}
+    try { renderMonthFocus();     } catch (e) {}
+    try { renderTodayPlan();      } catch (e) {}
   }
   // Scroll back to top on tab switch
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -9040,6 +9049,8 @@ if (_originalRenderAll) {
     try { renderWeeklyRecap();    } catch(e) { try { console.warn('[recap]', e); } catch(err) {} }
     try { renderArmCare();        } catch(e) { try { console.warn('[armcare]', e); } catch(err) {} }
     try { renderWarmup();         } catch(e) { try { console.warn('[warmup]', e); } catch(err) {} }
+    try { renderMonthFocus();     } catch(e) { try { console.warn('[monthfocus]', e); } catch(err) {} }
+    try { renderTodayPlan();      } catch(e) { try { console.warn('[todayplan]', e); } catch(err) {} }
     // Persist state to localStorage so nothing is lost when the browser closes
     try { if (typeof saveState === 'function') saveState(); } catch(e) {}
   };
@@ -9574,6 +9585,147 @@ function updateWarmupVisibility() {
   const type = document.getElementById('j-type')?.value || '';
   sec.style.display = (type === 'workout') ? 'block' : 'none';
   if (type === 'workout') renderWarmup();
+}
+
+// ─── MONTH FOCUS CHECKLIST ────────────────────────────────
+// Coach Young 2026-05-09. The "This Month — April Focus" card on
+// Dashboard is now interactive — players tap to mark each item as
+// they live it. State is keyed by year+month so it auto-resets when
+// the calendar month flips.
+const MONTH_FOCUS_ITEMS = [
+  { id: 'compete', label: 'Compete — One Game at a Time' },
+  { id: 'team',    label: 'Team First — not stats, not scouts' },
+  { id: 'journal', label: 'Post-Game Journal — every game' },
+  { id: 'coaches', label: 'Talk to your coaches weekly' },
+  { id: 'gpa',     label: 'GPA check — No Grades, No {Sport}' }  // {Sport} resolved at render time
+];
+function monthFocusKey() {
+  const d = new Date();
+  return 'ybg_monthfocus_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+}
+function getMonthFocusState() {
+  try { return JSON.parse(localStorage.getItem(monthFocusKey()) || '{}'); }
+  catch(e) { return {}; }
+}
+function setMonthFocusState(s) {
+  try { localStorage.setItem(monthFocusKey(), JSON.stringify(s)); } catch(e) {}
+}
+function renderMonthFocus() {
+  try {
+    const list = document.getElementById('month-focus-list');
+    const prog = document.getElementById('month-focus-progress');
+    if (!list) return;
+    const sportName = (function() {
+      try { return localStorage.getItem('mg_sport') === 'softball' ? 'Softball' : 'Baseball'; }
+      catch(e) { return 'Baseball'; }
+    })();
+    const state = getMonthFocusState();
+    let done = 0;
+    list.innerHTML = MONTH_FOCUS_ITEMS.map(function(item) {
+      const isDone = !!state[item.id];
+      if (isDone) done++;
+      const label = item.label.replace('{Sport}', sportName);
+      return '<div onclick="toggleMonthFocus(\'' + item.id + '\')" style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); cursor:pointer; user-select:none;">' +
+               '<div style="width:18px; height:18px; border-radius:3px; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0;">' + (isDone ? '✓' : '') + '</div>' +
+               '<div style="flex:1; font-family:\'Barlow\'; font-size:14px; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; text-decoration:' + (isDone ? 'line-through' : 'none') + '; line-height:1.5;">' + label + '</div>' +
+             '</div>';
+    }).join('');
+    if (prog) prog.textContent = done + ' of ' + MONTH_FOCUS_ITEMS.length + ' complete';
+  } catch(err) { try { console.warn('[monthfocus]', err); } catch(e) {} }
+}
+function toggleMonthFocus(id) {
+  const state = getMonthFocusState();
+  state[id] = !state[id];
+  setMonthFocusState(state);
+  ybgHaptic(15);
+  renderMonthFocus();
+}
+
+// ─── TODAY'S PLAN CHECKLIST ───────────────────────────────
+// Day-of-week derived schedule. Items follow the canonical weekly
+// rotation Coach Young uses with players: Mon/Wed/Fri lifting,
+// Tue/Thu mobility + arm care, daily hitting, Sat recovery, Sun rest.
+// State keyed per-day so it resets at midnight.
+const WEEKLY_PLAN = {
+  // 0 = Sun ... 6 = Sat
+  0: [ { id: 'rest',     icon: '😴', label: 'Rest day — recharge body + mind, family time' } ],
+  1: [
+    { id: 'lift',     icon: '🏋️', label: 'Weight Room — squats, deadlifts, bench, rows, pull-ups' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings with intent' }
+  ],
+  2: [
+    { id: 'mobility', icon: '🤸', label: 'Mobility + Arm Care — 20 min full routine' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+  ],
+  3: [
+    { id: 'lift',     icon: '🏋️', label: 'Weight Room — full body, moderate-to-heavy' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+  ],
+  4: [
+    { id: 'mobility', icon: '🤸', label: 'Mobility + Arm Care — 20 min full routine' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+  ],
+  5: [
+    { id: 'lift',     icon: '🏋️', label: 'Weight Room — full body' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+  ],
+  6: [
+    { id: 'hit',      icon: '🏏', label: 'Hitting — light tee work, focus on mechanics' },
+    { id: 'recovery', icon: '🩹', label: 'Active recovery — walk, stretch, hydrate' }
+  ]
+};
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+function todayPlanKey() {
+  const d = new Date();
+  return 'ybg_todayplan_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getTodayPlanState() {
+  try { return JSON.parse(localStorage.getItem(todayPlanKey()) || '{}'); }
+  catch(e) { return {}; }
+}
+function setTodayPlanState(s) {
+  try { localStorage.setItem(todayPlanKey(), JSON.stringify(s)); } catch(e) {}
+}
+function renderTodayPlan() {
+  try {
+    const list = document.getElementById('today-plan-list');
+    const prog = document.getElementById('today-plan-progress');
+    const dayLabel = document.getElementById('today-plan-day-label');
+    if (!list) return;
+    const dayIdx = new Date().getDay();
+    if (dayLabel) dayLabel.textContent = DAY_NAMES[dayIdx] + "'s Plan";
+    const items = WEEKLY_PLAN[dayIdx] || [];
+    const state = getTodayPlanState();
+    let done = 0;
+    list.innerHTML = items.map(function(item) {
+      const isDone = !!state[item.id];
+      if (isDone) done++;
+      return '<label onclick="toggleTodayPlan(\'' + item.id + '\')" style="display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; background:' + (isDone ? 'rgba(39,174,96,0.12)' : 'var(--card2)') + '; border:1px solid ' + (isDone ? '#27AE60' : 'var(--border)') + '; border-radius:4px; cursor:pointer; transition:all 0.15s; user-select:none;">' +
+               '<div style="width:20px; height:20px; border-radius:50%; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; color:white; font-size:12px; font-weight:800; flex-shrink:0;">' + (isDone ? '✓' : '') + '</div>' +
+               '<div style="flex:1; font-family:\'Barlow\'; font-size:13px; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' +
+                 '<span style="margin-right:6px;">' + item.icon + '</span>' + item.label +
+               '</div>' +
+             '</label>';
+    }).join('');
+    if (prog) {
+      if (items.length === 0) {
+        prog.textContent = '';
+      } else if (done === items.length) {
+        prog.innerHTML = '✅ TODAY\'S WORK DONE';
+        prog.style.color = '#27AE60';
+      } else {
+        prog.textContent = done + ' of ' + items.length + ' complete';
+        prog.style.color = 'var(--grey)';
+      }
+    }
+  } catch(err) { try { console.warn('[todayplan]', err); } catch(e) {} }
+}
+function toggleTodayPlan(id) {
+  const state = getTodayPlanState();
+  state[id] = !state[id];
+  setTodayPlanState(state);
+  ybgHaptic(15);
+  renderTodayPlan();
 }
 
 // ─── PRACTICE REP COUNTER (#8) ───────────────────────────
