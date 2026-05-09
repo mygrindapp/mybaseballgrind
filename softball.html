@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v58';
+    const CACHE = 'ybg-mygrind-v59';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2632,7 +2632,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <hr class="divider">
+    <!-- Section break — separates the "log a new entry" form above from
+         the "your past entries" list below. Coach Young 2026-05-10
+         walkthrough: the old <hr> hairline didn't read as separation.
+         Reuses the brand section-header pattern (Bebas Neue title +
+         section-sub + gold-line) at a sub-panel scale (30px vs the
+         panel-level 42px) so it slots between the panel banner and a
+         card heading in the H1 > H2 hierarchy. -->
+    <div style="margin-top:40px; margin-bottom:20px;">
+      <div style="font-family:'Bebas Neue', cursive; font-size:30px; letter-spacing:3px; line-height:1; color:#F5F0EB;">📓 YOUR <span style="color:var(--gold);">ENTRIES</span></div>
+      <div style="font-family:'Barlow Condensed', sans-serif; font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#D4C4A8; margin-top:6px;">Tap any entry to expand · Newest first</div>
+      <div style="width:60px; height:3px; background:var(--gold); margin:10px 0 0;"></div>
+    </div>
 
     <div id="entries-list">
       <div class="empty-state">
