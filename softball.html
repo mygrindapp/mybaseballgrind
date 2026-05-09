@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v37';
+    const CACHE = 'ybg-mygrind-v38';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1760,6 +1760,31 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div class="gold-line"></div>
     </div>
 
+    <!-- ── THIS MONTH FOCUS + COACH'S NOTE — moved to top of dashboard
+         under the player's name (Coach Young 2026-05-09) so the
+         current month's intent and coach's voice are the FIRST thing
+         the player sees, not buried under stats and recent entries. -->
+    <div class="grid-2" style="margin-bottom:18px;">
+      <div class="card">
+        <div class="card-title">📋 This Month — April Focus</div>
+        <div style="font-size:14px; color:var(--light); line-height:1.8;">
+          <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Compete — One Game at a Time</div>
+          <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Team First — not stats, not scouts</div>
+          <div style="padding:6px 0; border-bottom:1px solid var(--border);">📓 Post-Game Journal — every game</div>
+          <div style="padding:6px 0; border-bottom:1px solid var(--border);">🗣️ Talk to your coaches weekly</div>
+          <div data-mg-text="📚 GPA check — No Grades, No {Sport}" style="padding:6px 0;">📚 GPA check — No Grades, No Baseball</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🗒️ Coach's Note — April</div>
+        <div class="coach-note" style="margin:0; font-size:13px;">
+          "The season is long, but it goes fast. You will blink and it will be June. Take it one game at a time — stay present, stay humble, and play for your team. The best players I have ever coached were the ones who made everyone around them better. Be that player."
+          <br><br>— The Grind
+        </div>
+      </div>
+    </div>
+
     <div class="alert alert-gold">
       ⚾ &nbsp;<strong>APRIL</strong> — In-Season · One Game at a Time. Stay present. Team first.
     </div>
@@ -1796,8 +1821,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div id="dash-arm-load-num" style="font-family:'Bebas Neue'; font-size:36px; line-height:1; color:var(--white);">0</div>
         </div>
       </div>
-      <div id="dash-arm-load-tier" style="padding:10px 18px; font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center;">No reps logged this week</div>
-      <div id="dash-today-reps" style="padding:8px 18px 12px; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); text-align:center; border-top:1px solid var(--border);">No reps logged today yet</div>
+      <div id="dash-arm-load-tier" style="padding:10px 18px 14px; font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center;">No reps logged this week</div>
     </div>
 
     <!-- ── MILESTONE CELEBRATION (hidden by default, shown when hit) ── -->
@@ -1946,38 +1970,30 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <div class="grid-2">
-      <div class="card">
-        <div class="card-title">📋 This Month — April Focus</div>
-        <div style="font-size:14px; color:var(--light); line-height:1.8;">
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Compete — One Game at a Time</div>
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">✅ Team First — not stats, not scouts</div>
-          <!-- Arm & Shoulder Care moved to Daily Journal panel where the interactive
-               checklist lives — removed redundant static reminder here. (2026-05-08) -->
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">📓 Post-Game Journal — every game</div>
-          <div style="padding:6px 0; border-bottom:1px solid var(--border);">🗣️ Talk to your coaches weekly</div>
-          <div data-mg-text="📚 GPA check — No Grades, No {Sport}" style="padding:6px 0;">📚 GPA check — No Grades, No Baseball</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">🗒️ Coach's Note — April</div>
-        <div class="coach-note" style="margin:0; font-size:13px;">
-          "The season is long, but it goes fast. You will blink and it will be June. Take it one game at a time — stay present, stay humble, and play for your team. The best players I have ever coached were the ones who made everyone around them better. Be that player."
-          <br><br>— The Grind
-        </div>
-      </div>
-    </div>
-
-    <!-- ── RECENT ENTRIES SNAPSHOT ── -->
+    <!-- ── TRAINING VOLUME SNAPSHOT — daily / weekly / monthly rep totals.
+         Replaced the per-entry Recent Entries list (Coach Young 2026-05-09:
+         "if you show each day here it will take up the whole page").
+         Aggregate totals scale; the full per-entry list lives on Journal. -->
     <div class="card" style="margin-top:4px;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">📓 Recent Entries</div>
+        <div class="card-title" style="margin:0;">📊 Training Volume</div>
         <button onclick="showPanel('journal')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer;">View All</button>
       </div>
-      <div id="dash-recent-entries" style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6;">
-        <em style="color:var(--grey);">No entries yet — tap the button below to log your first one.</em>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
+        <div style="text-align:center; padding:14px 6px; background:var(--card2); border-radius:3px;">
+          <div id="dash-day-total" style="font-family:'Bebas Neue'; font-size:30px; color:var(--white); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Today</div>
+        </div>
+        <div style="text-align:center; padding:14px 6px; background:var(--card2); border-radius:3px;">
+          <div id="dash-week-total" style="font-family:'Bebas Neue'; font-size:30px; color:var(--gold); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">This Week</div>
+        </div>
+        <div style="text-align:center; padding:14px 6px; background:var(--card2); border-radius:3px;">
+          <div id="dash-month-total" style="font-family:'Bebas Neue'; font-size:30px; color:var(--white); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">This Month</div>
+        </div>
       </div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); text-align:center; margin-top:10px;">Reps logged across practices, games, and lessons.</div>
       <button onclick="showPanel('journal')" class="btn btn-gold" style="width:100%; margin-top:14px;">
         📓 &nbsp;Open Daily Journal
       </button>
@@ -7098,14 +7114,17 @@ function renderTrainingVolume() {
   setText('vol-today-gb',       t.today.gb);
   setText('vol-today-throws',   t.today.throws);
   setText('vol-today-pitches',  t.today.pitches);
-  // Dashboard today line — surfaces "Today: N reps" beneath the 7-day arm
-  // load so Coach can monitor today's contribution at a glance.
-  const dashToday = document.getElementById('dash-today-reps');
-  if (dashToday) {
-    dashToday.textContent = t.todayTotal > 0
-      ? 'Today: ' + t.todayTotal.toLocaleString() + ' reps logged'
-      : 'No reps logged today yet';
-  }
+  // Dashboard Training Volume snapshot — daily / weekly / monthly rep
+  // totals (Coach Young 2026-05-09: replaced the per-entry Recent Entries
+  // list with aggregate totals so the dashboard stays scannable).
+  const week7Total  = t.last7.swings  + t.last7.gb  + t.last7.throws  + t.last7.pitches;
+  const month30Total = t.last30.swings + t.last30.gb + t.last30.throws + t.last30.pitches;
+  const dashDay   = document.getElementById('dash-day-total');
+  const dashWeek  = document.getElementById('dash-week-total');
+  const dashMonth = document.getElementById('dash-month-total');
+  if (dashDay)   dashDay.textContent   = (t.todayTotal || 0).toLocaleString();
+  if (dashWeek)  dashWeek.textContent  = week7Total.toLocaleString();
+  if (dashMonth) dashMonth.textContent = month30Total.toLocaleString();
 
   const armNum     = document.getElementById('arm-load-num');
   const armTier    = document.getElementById('arm-load-tier');
