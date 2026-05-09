@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v39';
+    const CACHE = 'ybg-mygrind-v40';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3341,8 +3341,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div style="background:rgba(var(--accent-rgb), 0.05); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px; margin-bottom:16px; display:flex; align-items:flex-start; gap:10px;">
         <span style="font-size:18px; flex-shrink:0;">📓</span>
         <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.7;">
-          <strong style="color:var(--gold);">Your game stats from Daily Journal auto-populate here.</strong><br>
-          Every time you log a game entry with stats in the <strong>Daily Journal tab</strong>, your season totals update here automatically — AVG, OBP, SLG, OPS, ERA, and WHIP all calculate on their own. You can also enter or edit any number below manually.
+          <strong style="color:var(--gold);">Your stats are sourced from your Daily Journal.</strong><br>
+          Every game entry you log in the <strong>Daily Journal tab</strong> updates your season totals here — AVG, OBP, SLG, OPS, ERA, and WHIP all calculate on their own. The fields below are read-only — to add or edit a stat, log or edit a game entry on the Journal tab.
         </div>
       </div>
 
@@ -3350,18 +3350,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">⚾ My Batting Stats</div>
       <div class="grid-3">
-        <div><label>Games (G)</label><input type="number" id="st-g" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>At-Bats (AB)</label><input type="number" id="st-ab" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Hits (H)</label><input type="number" id="st-h" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Doubles (2B)</label><input type="number" id="st-2b" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Triples (3B)</label><input type="number" id="st-3b" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Home Runs (HR)</label><input type="number" id="st-hr" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>RBI</label><input type="number" id="st-rbi" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Runs (R)</label><input type="number" id="st-r" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Walks (BB)</label><input type="number" id="st-bb" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Strikeouts (K)</label><input type="number" id="st-k" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Stolen Bases (SB)</label><input type="number" id="st-sb" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Hit By Pitch (HBP)</label><input type="number" id="st-hbp" placeholder="0" min="0" oninput="calcStats()"></div>
+        <div><label>Games (G)</label><input type="number" id="st-g" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>At-Bats (AB)</label><input type="number" id="st-ab" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Hits (H)</label><input type="number" id="st-h" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Doubles (2B)</label><input type="number" id="st-2b" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Triples (3B)</label><input type="number" id="st-3b" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Home Runs (HR)</label><input type="number" id="st-hr" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>RBI</label><input type="number" id="st-rbi" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Runs (R)</label><input type="number" id="st-r" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Walks (BB)</label><input type="number" id="st-bb" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Strikeouts (K)</label><input type="number" id="st-k" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Stolen Bases (SB)</label><input type="number" id="st-sb" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Hit By Pitch (HBP)</label><input type="number" id="st-hbp" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
       </div>
     </div>
 
@@ -3369,15 +3369,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">⚾ My Pitching Stats <span style="font-size:10px; color:var(--grey); font-weight:400; letter-spacing:0; text-transform:none;">(pitchers only — fastball, drop ball, rise ball, circle change)</span></div>
       <div class="grid-3">
-        <div><label>Innings Pitched (IP)</label><input type="number" id="st-ip" placeholder="0.0" step="0.1" min="0" oninput="calcStats()"></div>
-        <div><label>Wins (W)</label><input type="number" id="st-w" placeholder="0" min="0"></div>
-        <div><label>Losses (L)</label><input type="number" id="st-l" placeholder="0" min="0"></div>
-        <div><label>Earned Runs (ER)</label><input type="number" id="st-er" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Strikeouts (K)</label><input type="number" id="st-pk" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Walks (BB)</label><input type="number" id="st-pbb" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Hits Allowed (H)</label><input type="number" id="st-ph" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Saves (SV)</label><input type="number" id="st-sv" placeholder="0" min="0"></div>
-        <div><label>Complete Games (CG)</label><input type="number" id="st-cg" placeholder="0" min="0"></div>
+        <div><label>Innings Pitched (IP)</label><input type="number" id="st-ip" placeholder="0.0" step="0.1" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Wins (W)</label><input type="number" id="st-w" placeholder="0" min="0" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Losses (L)</label><input type="number" id="st-l" placeholder="0" min="0" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Earned Runs (ER)</label><input type="number" id="st-er" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Strikeouts (K)</label><input type="number" id="st-pk" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Walks (BB)</label><input type="number" id="st-pbb" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Hits Allowed (H)</label><input type="number" id="st-ph" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Saves (SV)</label><input type="number" id="st-sv" placeholder="0" min="0" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Complete Games (CG)</label><input type="number" id="st-cg" placeholder="0" min="0" style="cursor:not-allowed; opacity:0.85;" readonly></div>
       </div>
     </div>
 
@@ -3385,23 +3385,20 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">🧤 My Fielding Stats</div>
       <div class="grid-3">
-        <div><label>Putouts (PO)</label><input type="number" id="st-po" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Assists (A)</label><input type="number" id="st-a" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Errors (E)</label><input type="number" id="st-e" placeholder="0" min="0" oninput="calcStats()"></div>
-        <div><label>Pop Time (Catchers)</label><input type="text" id="st-pop" placeholder="e.g. 1.95s"></div>
-        <div><label>60-Yard Dash</label><input type="text" id="st-sixty" placeholder="e.g. 6.8 sec"></div>
-        <div><label>Velocity (MPH)</label><input type="text" id="st-velo" placeholder="e.g. 78 mph"></div>
+        <div><label>Putouts (PO)</label><input type="number" id="st-po" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Assists (A)</label><input type="number" id="st-a" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Errors (E)</label><input type="number" id="st-e" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Pop Time (Catchers)</label><input type="text" id="st-pop" placeholder="e.g. 1.95s" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>60-Yard Dash</label><input type="text" id="st-sixty" placeholder="e.g. 6.8 sec" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label>Velocity (MPH)</label><input type="text" id="st-velo" placeholder="e.g. 78 mph" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <!-- GameChanger Team input removed 2026-05-08 — Coach: stats can be wrong via GC. -->
       </div>
     </div>
 
-    <!-- ── SAVE ── -->
-    <button class="btn btn-gold" style="width:100%; padding:16px; font-size:15px;" onclick="saveAllStats()">
-      💾 &nbsp;Save My Stats
-    </button>
-    <div id="stats-saved-msg" style="display:none; margin-top:12px; background:rgba(39,174,96,0.1); border:1px solid var(--green); border-radius:2px; padding:14px; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1px; color:#58D68D; text-align:center;">
-      ✅ Stats saved! Scroll up to see your numbers.
-    </div>
+    <!-- Manual Save My Stats removed 2026-05-09 — stats now source purely
+         from Daily Journal entries (Coach Young: "Stats should only work
+         based on entry in journal"). The saveAllStats() function is kept
+         for backward compatibility with auto-rendering paths. -->
 
     <!-- ═══ OPTIONAL IMPORT HELPERS — moved to bottom to keep entry area clean ════ -->
     <div style="display:flex; align-items:center; gap:10px; margin:28px 0 16px;">
@@ -6859,11 +6856,11 @@ function accumulateGameStats() {
     const gameEntries = state.entries.filter(e => e.type === 'game' && e.gameStats);
     if (!gameEntries.length) return;
 
-    // Only auto-populate if manual stats haven't been saved yet
-    const manualSaved = localStorage.getItem('ybg_softball_stats');
-    const manual = manualSaved ? JSON.parse(manualSaved) : {};
-    // If player has manually entered AB already, don't overwrite
-    if (manual.ab && parseInt(manual.ab) > 0) return;
+    // Coach Young 2026-05-09: stats are derived purely from journal game
+    // entries — no manual override blocks the accumulator. Was previously
+    // skipping auto-populate when ybg_softball_stats had a manual.ab value;
+    // that created a fork where journal entries stopped feeding My Stats.
+    // Removed.
 
     // Accumulate totals from all game entries
     let ab=0, h=0, hr=0, rbi=0, r=0, bb=0, k=0, sb=0;
