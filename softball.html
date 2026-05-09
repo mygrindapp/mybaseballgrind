@@ -744,7 +744,9 @@
 
   .type-game { background: rgba(39,174,96,0.15); color: var(--green); }
   .type-practice { background: rgba(var(--accent-rgb), 0.15); color: var(--gold); }
+  .type-instructor { background: rgba(168,217,123,0.12); color: #A8D97B; }
   .type-reflection { background: rgba(136,136,136,0.15); color: #A89880; }
+  .type-workout { background: rgba(230,126,34,0.12); color: #E67E22; }
 
   .entry-title {
     font-family: 'Barlow Condensed', sans-serif;
@@ -1020,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v46';
+    const CACHE = 'ybg-mygrind-v47';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2144,6 +2146,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <option value="practice">Practice</option>
             <option value="instructor">Instructor</option>
             <option value="game">Game</option>
+            <option value="workout">Workout / Weight Room</option>
             <option value="reflection">Reflection</option>
           </select>
         </div>
@@ -2387,6 +2390,47 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
               </div>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- ── WORKOUT / WEIGHT ROOM ── -->
+      <!-- Coach Young 2026-05-09: weight room is huge in the off-season.
+           Tracks strength + conditioning sessions alongside throwing /
+           hitting work. No throwing reps captured here — workouts don't
+           contribute to arm load (handled by updateArmCareVisibility +
+           hasThrowingEntryToday excluding 'workout' type). -->
+      <div id="j-workout-section" style="display:none; border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:20px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:6px;">🏋️ Weight Room / Workout</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Track your strength + conditioning work. Off-season is where seasons are won.</div>
+        <div class="form-row" style="margin-bottom:0;">
+          <div>
+            <label>Focus</label>
+            <select id="j-wo-focus" style="margin-bottom:0;">
+              <option value="">-- Select --</option>
+              <option value="strength">💪 Strength</option>
+              <option value="mobility">🤸 Mobility / Flexibility</option>
+              <option value="cardio">🏃 Cardio</option>
+              <option value="speed">⚡ Speed / Agility</option>
+              <option value="mixed">🔀 Mixed</option>
+            </select>
+          </div>
+          <div>
+            <label>Intensity</label>
+            <select id="j-wo-intensity" style="margin-bottom:0;">
+              <option value="">-- Select --</option>
+              <option value="light">Light</option>
+              <option value="moderate">Moderate</option>
+              <option value="heavy">Heavy</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:12px;">
+          <label>Main Lifts / What I Worked On</label>
+          <textarea id="j-wo-lifts" placeholder="e.g. Squat 3x5 @ 185 · Bench 3x5 @ 135 · Deadlift 1x5 @ 225 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
+        </div>
+        <div style="margin-top:12px; margin-bottom:0;">
+          <label>Duration (min)</label>
+          <input type="number" id="j-wo-duration" min="0" max="600" step="5" placeholder="e.g. 60" style="margin-bottom:0;">
         </div>
       </div>
 
@@ -5550,6 +5594,25 @@ function saveEntry() {
     }
   }
 
+  // Capture Workout / Weight Room data when entry type is 'workout'
+  // Coach Young 2026-05-09. Off-season strength + conditioning is a huge
+  // part of player development; this captures focus, intensity, lifts log,
+  // and duration alongside the standard journal fields.
+  if (type === 'workout') {
+    const woFocus     = document.getElementById('j-wo-focus')?.value           || '';
+    const woIntensity = document.getElementById('j-wo-intensity')?.value       || '';
+    const woLifts     = document.getElementById('j-wo-lifts')?.value.trim()    || '';
+    const woDuration  = document.getElementById('j-wo-duration')?.value        || '';
+    if (woFocus || woLifts || woIntensity) {
+      entry.workout = {
+        focus:     woFocus,
+        intensity: woIntensity,
+        lifts:     woLifts,
+        duration:  woDuration
+      };
+    }
+  }
+
   if (commentName && commentText) {
     entry.comments.push({
       id:   Date.now() + 1,
@@ -5574,6 +5637,11 @@ function saveEntry() {
   document.getElementById('j-comment-name').value = '';
   document.getElementById('j-comment-role').value = '';
   document.getElementById('j-comment-text').value = '';
+  // Reset Workout fields
+  ['j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
   // Reset Instructor session fields
   ['j-inst-name','j-inst-focus','j-inst-notes','j-inst-duration','j-inst-next'].forEach(id => {
     const el = document.getElementById(id);
@@ -5662,10 +5730,15 @@ function toggleGameStats() {
   const isPrac    = type === 'practice';
   const isReflect = type === 'reflection';
   const isInstructor = type === 'instructor';
+  const isWorkout = type === 'workout';
 
   // Game stats and result
   if (section) section.style.display = isGame ? 'block' : 'none';
   if (resultW) resultW.style.display = isGame ? 'block' : 'none';
+
+  // Workout section visibility (Coach Young 2026-05-09)
+  const woSec = document.getElementById('j-workout-section');
+  if (woSec) woSec.style.display = isWorkout ? 'block' : 'none';
 
   // Instructor entry type — show the instructor session card
   const instSec = document.getElementById('j-instructor-section');
@@ -5735,6 +5808,11 @@ function toggleGameStats() {
     if (whatEl)  whatEl.placeholder  = 'Game day, practice day, or off day — just honest thoughts. How do I feel about where I am right now? Am I putting in the work? Am I showing up for my team?';
     if (tmrwLb)  tmrwLb.textContent  = 'What do I need to be honest with myself about?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What areas of my game need real attention? What have I been avoiding? Be straight with yourself — this journal does not lie.';
+  } else if (isWorkout) {
+    if (whatLb)  whatLb.textContent  = 'How did the workout go?';
+    if (whatEl)  whatEl.placeholder  = 'How did you feel today — strong, fresh, drained? Anything sore or off? What pushed you?';
+    if (tmrwLb)  tmrwLb.textContent  = 'What am I dialing in next session?';
+    if (tmrwEl)  tmrwEl.placeholder  = 'What weight, lift, or focus do I want to push next time?';
   }
 
   // Reset game displays when not game
@@ -6087,6 +6165,7 @@ function renderEntries() {
     practice:   'Practice',
     game:       'Game',
     instructor: 'Instructor Session',
+    workout:    'Workout',
     reflection: 'Reflection'
   };
 
@@ -6229,6 +6308,25 @@ function renderEntries() {
           </div>
         </div>
       `; })() : ''}
+
+      <!-- WORKOUT / WEIGHT ROOM BOX -->
+      ${e.workout ? `
+        <div style="margin:12px 0; background:rgba(230,126,34,0.06); border:1px solid #3A2008; border-radius:3px; padding:14px 16px;">
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:10px;">🏋️ Weight Room</div>
+          ${e.workout.focus || e.workout.intensity ? `
+            <div style="display:flex; gap:14px; flex-wrap:wrap; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#E67E22; margin-bottom:10px;">
+              ${e.workout.focus     ? `<div>Focus: <span style="color:var(--light);">${e.workout.focus}</span></div>` : ''}
+              ${e.workout.intensity ? `<div>Intensity: <span style="color:var(--light);">${e.workout.intensity}</span></div>` : ''}
+            </div>
+          ` : ''}
+          ${e.workout.lifts ? `<div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #B95E15; border-radius:2px; margin-bottom:8px; white-space:pre-wrap;">${e.workout.lifts}</div>` : ''}
+          ${e.workout.duration ? `
+            <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); padding-top:8px; border-top:1px solid var(--border);">
+              ⏱ <span style="color:var(--light);">${e.workout.duration} min</span>
+            </div>
+          ` : ''}
+        </div>
+      ` : ''}
 
       <!-- INSTRUCTOR SESSION BOX -->
       ${e.instructor ? `
