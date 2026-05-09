@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v23';
+    const CACHE = 'ybg-mygrind-v24';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8764,23 +8764,30 @@ function renderArmCare() {
     list.innerHTML = items.map(function(item) {
       const isDone = !!state[item.id];
       if (isDone) done++;
-      return '<label onclick="toggleArmCare(\'' + item.id + '\')" style="' +
-             'display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; ' +
+      // Two distinct click targets in this row: the toggle area (left,
+      // ~85% width) flips the checkbox; the demo button (right, 28px) opens
+      // the video modal. They live as siblings — NOT nested — so iOS Safari
+      // can't fire both handlers from a single tap. Coach Young 2026-05-09:
+      // earlier nested-in-<label> structure caused the modal to pop on
+      // checkbox completion taps.
+      return '<div style="display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; ' +
              'background:' + (isDone ? 'rgba(39,174,96,0.12)' : 'var(--card2)') + '; ' +
              'border:1px solid ' + (isDone ? '#27AE60' : 'var(--border)') + '; ' +
-             'border-radius:4px; cursor:pointer; transition:all 0.15s; user-select:none;">' +
-               '<div style="width:22px; height:22px; border-radius:50%; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; ' +
-                 'background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; ' +
-                 'color:white; font-size:13px; font-weight:800; flex-shrink:0;">' + (isDone ? '✓' : '') + '</div>' +
-               '<div style="flex:1; font-family:\'Barlow\'; font-size:13px; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; ' +
-                 'text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' +
-                 '<span style="margin-right:6px;">' + item.icon + '</span>' + item.label +
+             'border-radius:4px; transition:all 0.15s; user-select:none;">' +
+               '<div onclick="toggleArmCare(\'' + item.id + '\')" style="display:flex; align-items:center; gap:10px; flex:1; cursor:pointer; min-width:0;">' +
+                 '<div style="width:22px; height:22px; border-radius:50%; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; ' +
+                   'background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; ' +
+                   'color:white; font-size:13px; font-weight:800; flex-shrink:0;">' + (isDone ? '✓' : '') + '</div>' +
+                 '<div style="flex:1; font-family:\'Barlow\'; font-size:13px; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; ' +
+                   'text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' +
+                   '<span style="margin-right:6px;">' + item.icon + '</span>' + item.label +
+                 '</div>' +
                '</div>' +
-               '<button type="button" onclick="event.stopPropagation(); openArmCareDetail(\'' + item.id + '\')" style="' +
+               '<button type="button" onclick="openArmCareDetail(\'' + item.id + '\')" style="' +
                  'background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:28px; height:28px; ' +
                  'border-radius:50%; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0; padding:0; line-height:1;" ' +
                  'aria-label="How to do this exercise" title="How to do this">ⓘ</button>' +
-             '</label>';
+             '</div>';
     }).join('');
 
     if (prog) {
