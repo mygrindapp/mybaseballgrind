@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v65';
+    const CACHE = 'ybg-mygrind-v66';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2579,7 +2579,26 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <label>What We Worked On</label>
           <textarea id="j-inst-notes" placeholder="e.g. Tee work on back side, 50 swings. Then flips focusing on loading earlier..." style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
-        <div class="form-row" style="margin-top:12px; margin-bottom:0;">
+        <!-- "What I Need to Work On" — forward-looking takeaway from the
+             lesson. Coach Young 2026-05-10 walkthrough: the entry already
+             captures what was done; this captures what the player owes
+             between now and the next session. Pre-fills the "Text My
+             Coach" message below so the coach sees the player's plan. -->
+        <div style="margin-top:12px;">
+          <label>What I Need to Work On</label>
+          <textarea id="j-inst-takeaway" placeholder="e.g. Stay back on off-speed. 50 tee swings every day this week. Film my Wednesday session and send to coach." style="min-height:70px; margin-bottom:0;"></textarea>
+        </div>
+        <!-- Text My Coach — opens the player's SMS app with a pre-filled
+             message that summarizes the lesson + their takeaway. Recipient
+             is left blank so the player picks their coach from contacts.
+             Logs the send to ybg_coach_texts so the weekly recap to
+             parents shows the player is engaging with their instructor. -->
+        <div style="margin-top:14px; display:flex; justify-content:flex-end;">
+          <button type="button" onclick="textInstructor()" style="background:transparent; border:1px solid #A8D97B; color:#A8D97B; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer;">
+            📱 Text My Coach
+          </button>
+        </div>
+        <div class="form-row" style="margin-top:14px; margin-bottom:0;">
           <div>
             <label>Session Duration (min)</label>
             <input type="number" id="j-inst-duration" min="0" max="600" step="15" placeholder="e.g. 60" style="margin-bottom:0;">
@@ -5927,6 +5946,7 @@ function _doEditEntry(id) {
     setVal('j-inst-name',     entry.instructor.name);
     setVal('j-inst-focus',    entry.instructor.focus);
     setVal('j-inst-notes',    entry.instructor.notes);
+    setVal('j-inst-takeaway', entry.instructor.takeaway);
     setVal('j-inst-duration', entry.instructor.duration);
     setVal('j-inst-next',     entry.instructor.next);
     try { onInstructorFocusChange(); } catch (e) {}
@@ -5975,7 +5995,7 @@ function cancelEdit() {
   // Reset all form fields
   ['j-title','j-what','j-tomorrow','j-prepare','j-grade','j-result',
    'j-comment-name','j-comment-role','j-comment-text',
-   'j-inst-name','j-inst-focus','j-inst-notes','j-inst-duration','j-inst-next',
+   'j-inst-name','j-inst-focus','j-inst-notes','j-inst-takeaway','j-inst-duration','j-inst-next',
    'j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration',
    'gs-ab','gs-h','gs-hr','gs-rbi','gs-r','gs-bb','gs-k','gs-sb',
    'gs-ip','gs-er','gs-pk','gs-pbb','gs-po','gs-a','gs-e'
@@ -6151,13 +6171,15 @@ function saveEntry() {
     const instName     = document.getElementById('j-inst-name')?.value.trim()     || '';
     const instFocus    = document.getElementById('j-inst-focus')?.value           || '';
     const instNotes    = document.getElementById('j-inst-notes')?.value.trim()    || '';
+    const instTakeaway = document.getElementById('j-inst-takeaway')?.value.trim() || '';
     const instDuration = document.getElementById('j-inst-duration')?.value        || '';
     const instNext     = document.getElementById('j-inst-next')?.value            || '';
-    if (instName || instNotes || instFocus) {
+    if (instName || instNotes || instFocus || instTakeaway) {
       entry.instructor = {
         name:     instName,
         focus:    instFocus,
         notes:    instNotes,
+        takeaway: instTakeaway,
         duration: instDuration,
         next:     instNext
       };
@@ -6245,7 +6267,7 @@ function saveEntry() {
     if (el) el.value = '';
   });
   // Reset Instructor session fields
-  ['j-inst-name','j-inst-focus','j-inst-notes','j-inst-duration','j-inst-next'].forEach(id => {
+  ['j-inst-name','j-inst-focus','j-inst-notes','j-inst-takeaway','j-inst-duration','j-inst-next'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -6727,6 +6749,60 @@ function updateRepCounterHeader(mode) {
   }
 }
 
+// ── TEXT MY COACH ──────────────────────────────────────
+// Coach Young 2026-05-10 walkthrough: give the player a one-tap path
+// to message their instructor with the lesson summary + their takeaway.
+// Recipient is left blank so iOS / Android pop the contacts picker —
+// we don't store coach phone numbers in the app. The send is logged to
+// ybg_coach_texts so the weekly recap to parents shows the player is
+// engaging between sessions.
+function textInstructor() {
+  const instName  = (document.getElementById('j-inst-name')?.value  || '').trim();
+  const instFocus = (document.getElementById('j-inst-focus')?.value || '').trim();
+  const takeaway  = (document.getElementById('j-inst-takeaway')?.value || '').trim();
+  const profile = (function() {
+    try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); }
+    catch (e) { return {}; }
+  })();
+  const playerName = (profile.firstName || profile.name || '').trim();
+
+  // Build the message — gracefully handle any subset of fields filled in
+  let msg = 'Hey';
+  if (instName) msg += ' ' + instName;
+  msg += ' — thanks for today\'s lesson';
+  if (instFocus) msg += ' on ' + instFocus;
+  msg += '.';
+  if (takeaway) msg += '\n\nMy focus until next session:\n' + takeaway;
+  if (playerName) msg += '\n\n— ' + playerName;
+
+  // Log BEFORE opening SMS so the recap counts the intent even if the
+  // player decides not to actually hit send. Worth the slight over-count
+  // because the alternative (under-counting because we never get a
+  // confirmation back from the SMS app) is worse for parent visibility.
+  logCoachText({ msg: msg, instructor: instName || null, focus: instFocus || null });
+
+  // sms: URI — iOS uses & as the body separator, Android uses ?
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const sep = isIOS ? '&' : '?';
+  window.open('sms:' + sep + 'body=' + encodeURIComponent(msg));
+  if (typeof showShareToast === 'function') showShareToast('📱 Opening your messages — pick your coach.');
+}
+function logCoachText(payload) {
+  try {
+    const log = JSON.parse(localStorage.getItem('ybg_coach_texts') || '[]');
+    log.push({
+      at:         Date.now(),
+      msg:        String(payload.msg || ''),
+      instructor: payload.instructor || null,
+      focus:      payload.focus || null
+    });
+    // Keep last 90 days only — rolling window for the weekly recap.
+    const cutoff = Date.now() - 90 * 24 * 60 * 60 * 1000;
+    const trimmed = log.filter(function(t) { return t.at > cutoff; });
+    localStorage.setItem('ybg_coach_texts', JSON.stringify(trimmed));
+  } catch (e) {}
+}
+
 // Fired when the Instructor "Focus Area" dropdown changes. Reads the
 // active focus, maps it to relevant rep categories, and reveals/hides
 // the rep-counter section + individual category rows accordingly.
@@ -7045,7 +7121,8 @@ function renderEntries() {
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">🎓 Instructor Session</div>
           ${e.instructor.name ? `<div style="font-family:'Barlow'; font-size:14px; color:var(--white); font-weight:600; margin-bottom:6px;">${e.instructor.name}</div>` : ''}
           ${e.instructor.focus ? `<div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Focus: ${e.instructor.focus}</div>` : ''}
-          ${e.instructor.notes ? `<div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:8px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #5A8A3A; border-radius:2px;">${e.instructor.notes}</div>` : ''}
+          ${e.instructor.notes ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:4px;">What We Worked On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #5A8A3A; border-radius:2px;">${e.instructor.notes}</div>` : ''}
+          ${e.instructor.takeaway ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">What I Need to Work On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dark); border-radius:2px;">${e.instructor.takeaway}</div>` : ''}
           ${(e.instructor.duration || e.instructor.next) ? `
             <div style="display:flex; gap:14px; flex-wrap:wrap; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); padding-top:8px; border-top:1px solid var(--border);">
               ${e.instructor.duration ? `<div>⏱ <span style="color:var(--light);">${e.instructor.duration} min</span></div>` : ''}
@@ -9318,6 +9395,18 @@ function buildWeeklyRecap() {
     }
   });
 
+  // Coach texts this week — Coach Young 2026-05-10: parents see that
+  // their kid is engaging with their instructor between sessions.
+  // We log on intent (when "Text My Coach" is tapped), so this counts
+  // outreach attempts even if the player didn't ultimately hit send.
+  let coachTextsThisWeek = [];
+  try {
+    const log = JSON.parse(localStorage.getItem('ybg_coach_texts') || '[]');
+    coachTextsThisWeek = log.filter(function(t) {
+      return t && t.at && t.at >= weekAgo.getTime() && t.at <= now.getTime();
+    });
+  } catch (e) {}
+
   const streak = calculateStreak();
   const goalsActive = (state.goals && state.goals.length) || 0;
 
@@ -9344,7 +9433,26 @@ function buildWeeklyRecap() {
     '</div>' +
     '<div style="font-size:13px; color:var(--light); margin-top:6px;">' +
       '🏆 Active Goals: <strong style="color:var(--gold);">' + goalsActive + '</strong>' +
-    '</div>';
+    '</div>' +
+    // Coach Young 2026-05-10: messages the player sent to their
+    // instructor this week — visibility for parents that the kid is
+    // engaging between sessions. Block is only rendered when there's
+    // at least one to show.
+    (coachTextsThisWeek.length ? (
+      '<div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">' +
+        '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">📱 Coach Texts (' + coachTextsThisWeek.length + ')</div>' +
+        coachTextsThisWeek.slice(-3).map(function(t) {
+          const when = new Date(t.at);
+          const day  = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          const who  = t.instructor ? ' · ' + t.instructor : '';
+          const snippet = (t.msg || '').replace(/\s+/g, ' ').slice(0, 90);
+          return '<div style="font-family:\'Barlow\'; font-size:12px; color:var(--light); line-height:1.5; margin-bottom:4px;">' +
+                   '<span style="color:var(--grey);">' + day + who + ' — </span>' + snippet + (snippet.length >= 90 ? '…' : '') +
+                 '</div>';
+        }).join('') +
+        (coachTextsThisWeek.length > 3 ? '<div style="font-family:\'Barlow\'; font-size:11px; color:var(--grey); margin-top:4px;">+ ' + (coachTextsThisWeek.length - 3) + ' more this week</div>' : '') +
+      '</div>'
+    ) : '');
 
   const profile = (function() {
     try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); }
@@ -9354,16 +9462,30 @@ function buildWeeklyRecap() {
 
   // Plain-text payload for the OS share sheet — uses canonical mygrindapp.com
   // (legacy youngsbaseball.github.io link replaced 2026-05-08 audit fix).
-  const plain =
+  // Coach-text snippets appended below so parents see exactly what their
+  // kid reached out to their instructor about this week.
+  let plain =
     name + "'s Week — MY GRIND Recap " + _ball + "\n\n" +
     "Entries this week: " + total + "\n" +
     "Games logged: " + games + "\n" +
     "Practices logged: " + practices + "\n" +
     "Reflections: " + reflections + "\n" +
     "Current streak: " + streak + " days 🔥\n" +
-    "Active goals: " + goalsActive + "\n\n" +
-    "Tracked on MY GRIND\n" +
-    "https://www.mygrindapp.com/signup.html?trial=1";
+    "Active goals: " + goalsActive + "\n";
+  if (coachTextsThisWeek.length) {
+    plain += "\n📱 Coach Texts (" + coachTextsThisWeek.length + ")\n";
+    coachTextsThisWeek.slice(-3).forEach(function(t) {
+      const when = new Date(t.at);
+      const day  = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      const who  = t.instructor ? ' · ' + t.instructor : '';
+      const snippet = (t.msg || '').replace(/\s+/g, ' ').slice(0, 90);
+      plain += "  " + day + who + " — " + snippet + (snippet.length >= 90 ? '…' : '') + "\n";
+    });
+    if (coachTextsThisWeek.length > 3) {
+      plain += "  + " + (coachTextsThisWeek.length - 3) + " more this week\n";
+    }
+  }
+  plain += "\nTracked on MY GRIND\nhttps://www.mygrindapp.com/signup.html?trial=1";
 
   return { html: html, plain: plain };
 }
