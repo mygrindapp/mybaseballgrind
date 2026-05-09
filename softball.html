@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v57';
+    const CACHE = 'ybg-mygrind-v58';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2224,7 +2224,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <!-- Collapse button — only visible when all 5 are checked AND
                  the user has expanded the pill back open. Lets them re-hide
                  the list manually instead of having to uncheck/recheck. -->
-            <button type="button" id="arm-care-collapse-btn" onclick="collapseArmCare()" style="display:none; background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer; flex-shrink:0;">
+            <button type="button" id="arm-care-collapse-btn" onclick="collapseArmCare()" style="display:none; background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer; flex-shrink:0;">
               ▲ Hide
             </button>
           </div>
