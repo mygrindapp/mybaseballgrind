@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v51';
+    const CACHE = 'ybg-mygrind-v52';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5334,20 +5334,88 @@ function showPanel(id) {
 }
 
 // ─── CALENDAR ─────────────────────────────────────────────
+// Each week's `content` field is free-text with newline-separated lines.
+// Lines that start with a letter are intro/closing prose; lines that
+// start with an emoji (🏋️ ⚾ 🤸 🩹 😴 📓 🧠 etc.) are prescription
+// bullets. We split here so the renderer can show bullets as checkable
+// items while keeping the surrounding prose as plain text. State is
+// keyed per month/week/bullet index and persists indefinitely — these
+// are seasonal commitments, not daily resets.
+function parseWeekContent(raw) {
+  const lines = String(raw || '').split('\n').map(s => s.trim()).filter(s => s.length);
+  const intro = [];
+  const bullets = [];
+  for (const line of lines) {
+    // Bullet lines begin with a non-letter (emoji). Prose lines begin
+    // with an ASCII letter.
+    if (/^[A-Za-z]/.test(line)) {
+      intro.push(line);
+    } else {
+      bullets.push(line);
+    }
+  }
+  return { intro: intro.join(' '), bullets };
+}
+function getCalendarChecks() {
+  try { return JSON.parse(localStorage.getItem('ybg_calendar_checks') || '{}'); }
+  catch(e) { return {}; }
+}
+function setCalendarChecks(s) {
+  try { localStorage.setItem('ybg_calendar_checks', JSON.stringify(s)); } catch(e) {}
+}
+function toggleCalendarCheck(id) {
+  const s = getCalendarChecks();
+  s[id] = !s[id];
+  setCalendarChecks(s);
+  ybgHaptic(15);
+  // Re-render only the affected bullet's row in place to avoid
+  // collapsing the whole calendar accordion on every tap.
+  const el = document.querySelector('[data-cal-id="' + id + '"]');
+  if (el) {
+    const isDone = !!s[id];
+    el.setAttribute('data-done', isDone ? '1' : '0');
+    const box = el.querySelector('[data-cal-box]');
+    const txt = el.querySelector('[data-cal-text]');
+    if (box) {
+      box.style.borderColor = isDone ? '#27AE60' : '#444';
+      box.style.background  = isDone ? '#27AE60' : 'transparent';
+      box.textContent       = isDone ? '✓' : '';
+    }
+    if (txt) {
+      txt.style.color          = isDone ? 'var(--grey)' : 'var(--light)';
+      txt.style.textDecoration = isDone ? 'line-through' : 'none';
+    }
+  }
+}
 function buildCalendar() {
   const container = document.getElementById('calendar-months');
   container.innerHTML = '';
+
+  const checks = getCalendarChecks();
 
   months.forEach((m, i) => {
     const badgeClass = m.type === 'season' ? 'badge-season' : m.type === 'preseason' ? 'badge-preseason' : 'badge-offseason';
     const badgeText = m.type === 'season' ? 'In-Season' : m.type === 'preseason' ? 'Pre-Season' : 'Off-Season';
 
-    const weeksHTML = m.weeks.map(w => `
-      <div class="week-block">
-        <div class="week-title">${w.title}</div>
-        <div class="week-content">${w.content}</div>
-      </div>
-    `).join('');
+    const weeksHTML = m.weeks.map((w, wi) => {
+      const parsed = parseWeekContent(w.content);
+      const introHTML = parsed.intro
+        ? '<div class="week-content" style="margin-bottom:12px;">' + parsed.intro + '</div>'
+        : '';
+      const bulletsHTML = parsed.bullets.map((b, bi) => {
+        const id = 'M' + i + '-W' + wi + '-B' + bi;
+        const isDone = !!checks[id];
+        return '<div data-cal-id="' + id + '" data-done="' + (isDone ? '1' : '0') + '" onclick="toggleCalendarCheck(\'' + id + '\')" style="display:flex; align-items:flex-start; gap:10px; padding:10px 12px; margin-bottom:6px; background:var(--card2); border:1px solid var(--border); border-radius:4px; cursor:pointer; user-select:none;">' +
+                 '<div data-cal-box style="width:18px; height:18px; border-radius:3px; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:2px;">' + (isDone ? '✓' : '') + '</div>' +
+                 '<div data-cal-text style="flex:1; font-family:\'Barlow\'; font-size:13px; line-height:1.55; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' + b + '</div>' +
+               '</div>';
+      }).join('');
+      return '<div class="week-block">' +
+               '<div class="week-title">' + w.title + '</div>' +
+               introHTML +
+               bulletsHTML +
+             '</div>';
+    }).join('');
 
     const card = document.createElement('div');
     card.className = 'month-card';
