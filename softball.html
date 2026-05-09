@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v41';
+    const CACHE = 'ybg-mygrind-v42';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5684,20 +5684,18 @@ function toggleGameStats() {
   // Reflection extra field
   if (extraEl) extraEl.style.display = isReflect ? 'block' : 'none';
 
-  // Rep counter visibility — Practice (all 4 cats) / Game (all 4 cats) /
-  // Instructor (focus-scoped) / hide. Game added 2026-05-09 so game-day
-  // reps roll into the Training Volume aggregation alongside practice +
-  // instructor reps. Coach Young: "today's total should show in weekly
-  // and monthly" — game day is the biggest single rep contributor.
+  // Rep counter visibility — Practice (all 4 cats) / Instructor (focus-
+  // scoped) / hide. Removed from Game entries 2026-05-09 (Coach Young:
+  // "When you hit the game tab, Game reps seems unnecessary since we
+  // already have the Game Stats section — seems redundant."). Game-day
+  // arm load now derives from gs.ip × 15 inside accumulateRepStats so
+  // game pitches still count toward Training Volume / arm-load tier
+  // without requiring duplicate input.
   const repsSec = document.getElementById('j-reps-section');
   if (isPrac) {
     if (repsSec) repsSec.style.display = 'block';
     applyRepCategoryVisibility(REP_CATEGORIES);
     updateRepCounterHeader('practice');
-  } else if (isGame) {
-    if (repsSec) repsSec.style.display = 'block';
-    applyRepCategoryVisibility(REP_CATEGORIES);
-    updateRepCounterHeader('game');
   } else if (isInstructor) {
     // Defer to the instructor-focus-aware handler — it reads the current
     // Focus Area dropdown value and scopes the rep counter accordingly.
@@ -5975,9 +5973,6 @@ function updateRepCounterHeader(mode) {
   if (mode === 'instructor') {
     if (titleEl) titleEl.textContent = '🔢 This Lesson’s Reps';
     if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this lesson</strong> — your daily total updates on the Dashboard.';
-  } else if (mode === 'game') {
-    if (titleEl) titleEl.textContent = '🔢 This Game’s Reps';
-    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this game</strong> — your daily total updates on the Dashboard.';
   } else {
     if (titleEl) titleEl.textContent = '🔢 This Session’s Reps';
     if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this practice</strong> — your daily total updates on the Dashboard.';
@@ -7073,35 +7068,70 @@ function accumulateRepStats() {
   };
 
   state.entries.forEach(function(e) {
-    if (!e || !e.reps) return;
-    const swings  = parseInt(e.reps.swings)  || 0;
-    const gb      = parseInt(e.reps.gb)      || 0;
-    const throws  = parseInt(e.reps.throws)  || 0;
-    const pitches = parseInt(e.reps.pitches) || 0;
-    totals.season.swings  += swings;
-    totals.season.gb      += gb;
-    totals.season.throws  += throws;
-    totals.season.pitches += pitches;
+    if (!e) return;
     const d = parseEntryDate(e.date);
-    if (d && d >= thirtyStart) {
-      totals.last30.swings  += swings;
-      totals.last30.gb      += gb;
-      totals.last30.throws  += throws;
-      totals.last30.pitches += pitches;
+
+    // Practice + Instructor entries: read from entry.reps (chip-based
+    // range counter). Game entries no longer use the rep counter — see
+    // gameStats derivation block below.
+    if (e.reps) {
+      const swings  = parseInt(e.reps.swings)  || 0;
+      const gb      = parseInt(e.reps.gb)      || 0;
+      const throws  = parseInt(e.reps.throws)  || 0;
+      const pitches = parseInt(e.reps.pitches) || 0;
+      totals.season.swings  += swings;
+      totals.season.gb      += gb;
+      totals.season.throws  += throws;
+      totals.season.pitches += pitches;
+      if (d && d >= thirtyStart) {
+        totals.last30.swings  += swings;
+        totals.last30.gb      += gb;
+        totals.last30.throws  += throws;
+        totals.last30.pitches += pitches;
+      }
+      if (d && d >= sevenStart) {
+        totals.last7.swings  += swings;
+        totals.last7.gb      += gb;
+        totals.last7.throws  += throws;
+        totals.last7.pitches += pitches;
+      }
+      if (d && d >= today) {
+        totals.today.swings  += swings;
+        totals.today.gb      += gb;
+        totals.today.throws  += throws;
+        totals.today.pitches += pitches;
+      }
     }
-    if (d && d >= sevenStart) {
-      totals.last7.swings  += swings;
-      totals.last7.gb      += gb;
-      totals.last7.throws  += throws;
-      totals.last7.pitches += pitches;
-    }
-    // Today bucket — entries dated today (start-of-day boundary). Used by
-    // the Dashboard "Today's Reps" line and the Training Volume "Today" row.
-    if (d && d >= today) {
-      totals.today.swings  += swings;
-      totals.today.gb      += gb;
-      totals.today.throws  += throws;
-      totals.today.pitches += pitches;
+
+    // Game entries: derive arm-load contributions from box-score stats so
+    // we don't double-count via a redundant rep counter (Coach Young
+    // 2026-05-09: dropped Game from rep counter UI). Mappings:
+    //   pitches  ≈ IP × 15  (~15 pitches per inning is a reasonable youth/HS avg)
+    //   swings   ≈ AB × 3   (~3 pitches per at-bat seen on average; some are swings)
+    // GBs and throws are NOT derived from box-score stats — fielding
+    // chances exist (PO/A/E) but they're attempts, not reps. We keep
+    // those out of the rep aggregation; they live in Fielding totals.
+    if (e.gameStats) {
+      const gIp  = parseFloat(e.gameStats.ip) || 0;
+      const gAb  = parseInt(e.gameStats.ab)   || 0;
+      const gamePitches = Math.round(gIp * 15);
+      const gameSwings  = Math.round(gAb * 3);
+      if (gamePitches > 0 || gameSwings > 0) {
+        totals.season.pitches += gamePitches;
+        totals.season.swings  += gameSwings;
+        if (d && d >= thirtyStart) {
+          totals.last30.pitches += gamePitches;
+          totals.last30.swings  += gameSwings;
+        }
+        if (d && d >= sevenStart) {
+          totals.last7.pitches += gamePitches;
+          totals.last7.swings  += gameSwings;
+        }
+        if (d && d >= today) {
+          totals.today.pitches += gamePitches;
+          totals.today.swings  += gameSwings;
+        }
+      }
     }
   });
 
