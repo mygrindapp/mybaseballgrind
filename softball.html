@@ -1019,7 +1019,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v17';
+    const CACHE = 'ybg-mygrind-v18';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1492,7 +1492,7 @@ function dismissIosBanner() {
 
     <!-- HEADER -->
     <div style="background:linear-gradient(135deg,#1A0012,#140008); border-bottom:1px solid #2A0018; padding:24px 28px; text-align:center;">
-      <img data-mg-img="mark" alt="MyGrind" style="width:56px; height:56px; display:block; margin:0 auto 12px;">
+      <img data-mg-img="mark" alt="MyGrind" style="width:56px; height:56px; display:block; margin:0 auto 12px; filter:brightness(0) invert(1);">
       <div style="font-family:'Bebas Neue',cursive; font-size:34px; letter-spacing:3px; color:#F4F4F4; line-height:1;">MY <span style="color:var(--gold);">GRIND</span></div>
       <div data-mg-text="2026 Annual {Sport} Journal" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#555; margin-top:4px;">2026 Annual Baseball Journal</div>
     </div>
@@ -10208,8 +10208,10 @@ setTimeout(function() {
 <div id="qotd-overlay" style="display:none;position:fixed;inset:0;z-index:9990;background:rgba(14,11,9,0.96);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
   <div style="max-width:400px;width:100%;text-align:center;">
 
-    <!-- MyGrind compass mark -->
-    <img data-mg-img="mark" alt="MyGrind" style="width:56px;height:56px;display:block;margin:0 auto 20px;">
+    <!-- MyGrind compass mark — white on this dark popup, matches the
+         header treatment (Coach Young 2026-05-07 decision: white mark
+         on dark surfaces, gold/black on light). -->
+    <img data-mg-img="mark" alt="MyGrind" style="width:56px;height:56px;display:block;margin:0 auto 20px;filter:brightness(0) invert(1);">
 
     <!-- Label -->
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--gold);margin-bottom:16px;">Today's Grind</div>
