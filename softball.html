@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v38';
+    const CACHE = 'ybg-mygrind-v39';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1672,7 +1672,7 @@ function dismissIosBanner() {
   max-width: 100%;
 ">
   <button class="tab-btn mg-tab" id="tab-dashboard" onclick="mgTab('dashboard','tab-dashboard')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <span style="font-size:20px;line-height:1;">🏠</span>Home
+    <span style="font-size:20px;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:20px;"><svg width="18" height="18" viewBox="0 0 24 24" style="display:block;fill:currentColor;"><polygon points="3,3 21,3 21,13 12,22 3,13"/></svg></span>Home
   </button>
   <button class="tab-btn mg-tab" id="tab-journal"  onclick="mgTab('journal','tab-journal')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid var(--gold);color:var(--gold);cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <span style="font-size:20px;line-height:1;">📓</span>Journal
@@ -1805,23 +1805,78 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ── ARM LOAD (last 7 days) — visible at-a-glance health check ──
-         Coach Young 2026-05-08: arm health is the high-priority parent/coach
-         signal. Surfaces 7-day combined throws + pitches with tier-coded
-         color (green / gold / red) once age is set in Profile. Auto-refreshes
-         from renderAll() → renderTrainingVolume(). Tap to scroll to the full
-         Training Volume card on My Stats. -->
-    <div class="card" id="dash-arm-load-card" onclick="showPanel('stats'); setTimeout(function(){var el=document.getElementById('training-volume-card'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});}, 100);" style="margin-bottom:18px; padding:0; border:1px solid var(--border); background:#0E0006; overflow:hidden; cursor:pointer;">
-      <div style="background:linear-gradient(135deg,#1F0018,#15000A); border-bottom:1px solid var(--gold-dark); padding:14px 18px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div>
-          <div style="font-family:'Bebas Neue',cursive; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1;">💪 ARM LOAD</div>
-          <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Last 7 Days · Throws + Pitches</div>
-        </div>
-        <div style="text-align:right;">
-          <div id="dash-arm-load-num" style="font-family:'Bebas Neue'; font-size:36px; line-height:1; color:var(--white);">0</div>
-        </div>
+
+    <!-- ══ TRAINING VOLUME — auto-aggregated from journal reps ══
+         Coach Young 2026-05-08: aggregates state.entries[].reps into season /
+         30-day / 7-day buckets per category, plus a tier-coded "arm load"
+         (throws + pitches in last 7 days) read against age-bracketed
+         thresholds (Pitch Smart + ASMI + Yang 2021 derived). Updates via
+         renderTrainingVolume() called from renderAll(). -->
+    <div class="card" id="training-volume-card" style="margin-top:16px; margin-bottom:16px;">
+      <div class="card-title">🔢 TRAINING VOLUME</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.5;">
+        Auto-totaled from your Daily Journal reps. <strong style="color:var(--light);">Guidance, not medical advice</strong> — based on Pitch Smart, ASMI, and Yang 2021 research.
       </div>
-      <div id="dash-arm-load-tier" style="padding:10px 18px 14px; font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center;">No reps logged this week</div>
+
+      <!-- ARM LOAD HEADLINE — tier-coded -->
+      <div id="arm-load-headline" style="background:var(--card2); border-left:4px solid var(--border); padding:14px 16px; border-radius:3px; margin-bottom:14px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">ARM LOAD — LAST 7 DAYS</div>
+        <div style="display:flex; align-items:baseline; gap:12px;">
+          <div id="arm-load-num" style="font-family:'Bebas Neue'; font-size:48px; line-height:1; color:var(--white);">0</div>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey);">throws + pitches</div>
+        </div>
+        <div id="arm-load-tier" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--grey); margin-top:6px;">⚙️ Set your age in My Profile to see arm-health guidance</div>
+        <div id="arm-load-bracket" style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:4px; display:none;"></div>
+      </div>
+
+      <!-- VOLUME GRID — Season / Last 30 / Last 7 × 4 categories -->
+      <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--white);">
+          <thead>
+            <tr style="background:var(--card2);">
+              <th style="text-align:left; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Window</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🏏 Sw</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ GB</th>
+              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🎯 Th</th>
+              <th style="text-align:right; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ Pi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border); background:rgba(var(--accent-rgb), 0.04);">
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--white);">Today</td>
+              <td id="vol-today-swings"  style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
+              <td id="vol-today-gb"      style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
+              <td id="vol-today-throws"  style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
+              <td id="vol-today-pitches" style="text-align:right; padding:10px 12px; color:var(--white);">0</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">Last 7 days</td>
+              <td id="vol-7d-swings"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-7d-gb"      style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-7d-throws"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-7d-pitches" style="text-align:right; padding:10px 12px;">0</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--border);">
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--light);">Last 30 days</td>
+              <td id="vol-30d-swings"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-30d-gb"      style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-30d-throws"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-30d-pitches" style="text-align:right; padding:10px 12px;">0</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Season total</td>
+              <td id="vol-season-swings"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-season-gb"      style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-season-throws"  style="text-align:right; padding:10px 8px;">0</td>
+              <td id="vol-season-pitches" style="text-align:right; padding:10px 12px;">0</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
+        Sw = Swings · GB = Ground Balls · Th = Throws · Pi = Pitches. Reps from Practice, Game, and Instructor entries roll up automatically.
+      </div>
     </div>
 
     <!-- ── MILESTONE CELEBRATION (hidden by default, shown when hit) ── -->
@@ -1970,34 +2025,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ── TRAINING VOLUME SNAPSHOT — daily / weekly / monthly rep totals.
-         Replaced the per-entry Recent Entries list (Coach Young 2026-05-09:
-         "if you show each day here it will take up the whole page").
-         Aggregate totals scale; the full per-entry list lives on Journal. -->
-    <div class="card" style="margin-top:4px;">
-      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">📊 Training Volume</div>
-        <button onclick="showPanel('journal')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer;">View All</button>
-      </div>
-      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;">
-        <div style="text-align:center; padding:14px 6px; background:var(--card2); border-radius:3px;">
-          <div id="dash-day-total" style="font-family:'Bebas Neue'; font-size:30px; color:var(--white); line-height:1;">0</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Today</div>
-        </div>
-        <div style="text-align:center; padding:14px 6px; background:var(--card2); border-radius:3px;">
-          <div id="dash-week-total" style="font-family:'Bebas Neue'; font-size:30px; color:var(--gold); line-height:1;">0</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">This Week</div>
-        </div>
-        <div style="text-align:center; padding:14px 6px; background:var(--card2); border-radius:3px;">
-          <div id="dash-month-total" style="font-family:'Bebas Neue'; font-size:30px; color:var(--white); line-height:1;">0</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">This Month</div>
-        </div>
-      </div>
-      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); text-align:center; margin-top:10px;">Reps logged across practices, games, and lessons.</div>
-      <button onclick="showPanel('journal')" class="btn btn-gold" style="width:100%; margin-top:14px;">
-        📓 &nbsp;Open Daily Journal
-      </button>
-    </div>
 
     <!-- ── GAME STATS SNAPSHOT (only shows if game entries exist) ── -->
     <div id="dash-stats-card" class="card" style="display:none; margin-top:16px; border-left:3px solid var(--gold);">
@@ -3390,78 +3417,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
     </div><!-- end stats-entry-section -->
 
-    <!-- ══ TRAINING VOLUME — auto-aggregated from journal reps ══
-         Coach Young 2026-05-08: aggregates state.entries[].reps into season /
-         30-day / 7-day buckets per category, plus a tier-coded "arm load"
-         (throws + pitches in last 7 days) read against age-bracketed
-         thresholds (Pitch Smart + ASMI + Yang 2021 derived). Updates via
-         renderTrainingVolume() called from renderAll(). -->
-    <div class="card" id="training-volume-card" style="margin-top:16px; margin-bottom:16px;">
-      <div class="card-title">🔢 TRAINING VOLUME</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.5;">
-        Auto-totaled from your Daily Journal reps. <strong style="color:var(--light);">Guidance, not medical advice</strong> — based on Pitch Smart, ASMI, and Yang 2021 research.
-      </div>
-
-      <!-- ARM LOAD HEADLINE — tier-coded -->
-      <div id="arm-load-headline" style="background:var(--card2); border-left:4px solid var(--border); padding:14px 16px; border-radius:3px; margin-bottom:14px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">ARM LOAD — LAST 7 DAYS</div>
-        <div style="display:flex; align-items:baseline; gap:12px;">
-          <div id="arm-load-num" style="font-family:'Bebas Neue'; font-size:48px; line-height:1; color:var(--white);">0</div>
-          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey);">throws + pitches</div>
-        </div>
-        <div id="arm-load-tier" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--grey); margin-top:6px;">⚙️ Set your age in My Profile to see arm-health guidance</div>
-        <div id="arm-load-bracket" style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:4px; display:none;"></div>
-      </div>
-
-      <!-- VOLUME GRID — Season / Last 30 / Last 7 × 4 categories -->
-      <div style="overflow-x:auto;">
-        <table style="width:100%; border-collapse:collapse; font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--white);">
-          <thead>
-            <tr style="background:var(--card2);">
-              <th style="text-align:left; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Window</th>
-              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🏏 Sw</th>
-              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ GB</th>
-              <th style="text-align:right; padding:10px 8px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">🎯 Th</th>
-              <th style="text-align:right; padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">⚾ Pi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style="border-bottom:1px solid var(--border); background:rgba(var(--accent-rgb), 0.04);">
-              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--white);">Today</td>
-              <td id="vol-today-swings"  style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
-              <td id="vol-today-gb"      style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
-              <td id="vol-today-throws"  style="text-align:right; padding:10px 8px; color:var(--white);">0</td>
-              <td id="vol-today-pitches" style="text-align:right; padding:10px 12px; color:var(--white);">0</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">Last 7 days</td>
-              <td id="vol-7d-swings"  style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-7d-gb"      style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-7d-throws"  style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-7d-pitches" style="text-align:right; padding:10px 12px;">0</td>
-            </tr>
-            <tr style="border-bottom:1px solid var(--border);">
-              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--light);">Last 30 days</td>
-              <td id="vol-30d-swings"  style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-30d-gb"      style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-30d-throws"  style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-30d-pitches" style="text-align:right; padding:10px 12px;">0</td>
-            </tr>
-            <tr>
-              <td style="padding:10px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Season total</td>
-              <td id="vol-season-swings"  style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-season-gb"      style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-season-throws"  style="text-align:right; padding:10px 8px;">0</td>
-              <td id="vol-season-pitches" style="text-align:right; padding:10px 12px;">0</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
-        Sw = Swings · GB = Ground Balls · Th = Throws · Pi = Pitches. Reps from Practice, Game, and Instructor entries roll up automatically.
-      </div>
-    </div>
 
   </div>
 
