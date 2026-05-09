@@ -1022,7 +1022,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v54';
+    const CACHE = 'ybg-mygrind-v55';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2210,17 +2210,37 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            sits as the closing nudge right before the user commits the entry: "Did
            you take care of your arm today?" Coach Young 2026-05-09. -->
       <div class="card" id="j-armcare-section" style="margin-top:20px; margin-bottom:16px; border-left:3px solid var(--gold);">
-        <div class="card-title">💪 Arm & Shoulder Care — Today</div>
-        <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
-             Wired into renderTrainingVolume(): when last-7-day arm load crosses a
-             threshold, this strip becomes the "why this matters today" prompt right
-             above the checklist. Hidden in green / unknown-age states. -->
-        <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
-        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
-          Non-negotiable daily. <strong style="color:var(--gold);">Resets at midnight.</strong>
+        <!-- Expanded state — the full checklist. Hidden when 5/5 complete
+             unless the user taps the compressed pill to re-open it. -->
+        <div id="arm-care-expanded">
+          <div class="card-title">💪 Arm & Shoulder Care — Today</div>
+          <!-- Tier-aware context strip — surfaces only when arm-load tier is gold or red.
+               Wired into renderTrainingVolume(): when last-7-day arm load crosses a
+               threshold, this strip becomes the "why this matters today" prompt right
+               above the checklist. Hidden in green / unknown-age states. -->
+          <div id="armcare-tier-strip" style="display:none; padding:10px 12px; border-radius:3px; margin-bottom:12px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; line-height:1.5;"></div>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
+            Non-negotiable daily. <strong style="color:var(--gold);">Resets at midnight.</strong>
+          </div>
+          <div id="arm-care-list"></div>
+          <div id="arm-care-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
         </div>
-        <div id="arm-care-list"></div>
-        <div id="arm-care-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
+
+        <!-- Compressed-pill state — shown when all items are complete for the
+             day. Frees vertical real estate on mobile so the entry form below
+             is more reachable. Tap to re-expand the full list (e.g. to verify
+             or uncheck). Resets at midnight via the daily state key.
+             Coach Young 2026-05-10 walkthrough. -->
+        <div id="arm-care-pill" onclick="expandArmCare()" style="display:none; padding:14px 16px; background:rgba(39,174,96,0.12); border:1px solid #27AE60; border-radius:4px; cursor:pointer; user-select:none; align-items:center; justify-content:space-between; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:18px;">💪</span>
+            <div>
+              <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60; line-height:1;">Arm Care — Done for Today</div>
+              <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:3px;" id="arm-care-pill-sub">5 of 5 complete · Resets at midnight</div>
+            </div>
+          </div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Tap to expand</div>
+        </div>
       </div>
 
       <div id="j-title-wrapper" style="display:none;">
@@ -9480,6 +9500,16 @@ function setArmCareState(s) {
   try { localStorage.setItem(armCareKey(), JSON.stringify(s)); } catch(e) {}
 }
 
+// Module-level UI flag — set true when the user taps the compressed pill
+// to re-open the full checklist after they've already completed all items.
+// Resets on page reload (intentional — the daily state key is the source
+// of truth, this is just a UI override for "I want to see my list again").
+let _armCareExpandedOverride = false;
+function expandArmCare() {
+  _armCareExpandedOverride = true;
+  renderArmCare();
+}
+
 function renderArmCare() {
   try {
     const list = document.getElementById('arm-care-list');
@@ -9518,8 +9548,8 @@ function renderArmCare() {
              '</div>';
     }).join('');
 
+    const total = items.length;
     if (prog) {
-      const total = items.length;
       if (done === total) {
         prog.innerHTML = '✅ ALL DONE — ARM CARE COMPLETE';
         prog.style.color = '#27AE60';
@@ -9527,6 +9557,27 @@ function renderArmCare() {
         prog.innerHTML = done + ' of ' + total + ' complete';
         prog.style.color = 'var(--grey)';
       }
+    }
+
+    // Compressed-pill swap. When all items are complete AND the user hasn't
+    // explicitly tapped to expand, hide the full checklist and show the
+    // green pill instead. Saves vertical real estate on mobile so the entry
+    // form below is more reachable. If they uncheck anything later, count
+    // drops below total and we naturally fall back to the expanded view.
+    const expanded = document.getElementById('arm-care-expanded');
+    const pill     = document.getElementById('arm-care-pill');
+    const pillSub  = document.getElementById('arm-care-pill-sub');
+    const allDone  = total > 0 && done === total;
+    if (allDone && !_armCareExpandedOverride) {
+      if (expanded) expanded.style.display = 'none';
+      if (pill)     pill.style.display     = 'flex';
+      if (pillSub)  pillSub.textContent    = done + ' of ' + total + ' complete · Resets at midnight';
+    } else {
+      if (expanded) expanded.style.display = '';
+      if (pill)     pill.style.display     = 'none';
+      // If the user unchecked an item we no longer need the override — drop
+      // it so a fresh re-completion next time auto-compresses again.
+      if (!allDone) _armCareExpandedOverride = false;
     }
   } catch(err) {
     try { console.warn('[renderArmCare]', err); } catch(e) {}
