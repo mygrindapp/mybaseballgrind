@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v42';
+    const CACHE = 'ybg-mygrind-v43';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2048,6 +2048,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
       <div id="dash-last-game" style="font-family:'Barlow'; font-size:14px; color:var(--grey); padding-top:12px; border-top:1px solid var(--border); line-height:1.6;"></div>
     </div>
+
+    <!-- ── PHOTOBOOK ENTRY POINT ── -->
+    <button onclick="openPhotobook()" class="card" style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:16px; padding:14px 18px; background:var(--card); border:1px solid var(--border); border-radius:6px; cursor:pointer; text-align:left;">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="font-size:24px; line-height:1;">📷</div>
+        <div>
+          <div style="font-family:'Bebas Neue'; font-size:18px; letter-spacing:1.5px; color:var(--gold); line-height:1;">My Photobook</div>
+          <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:var(--grey); margin-top:3px;">Every photo + video across all entries</div>
+        </div>
+      </div>
+      <div style="font-family:'Bebas Neue'; font-size:20px; color:var(--gold); line-height:1;">→</div>
+    </button>
 
     <!-- ── FIELDING SNAPSHOT (only shows if game entries with fielding data exist) ── -->
     <div id="dash-fielding-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
@@ -8985,6 +8997,74 @@ function closeArmCareDetail(event) {
   if (iframe) iframe.src = '';
 }
 
+// ─── PHOTOBOOK ─────────────────────────────────────────
+// Builds a flat grid of every media item across all journal entries.
+// Tapping a tile reuses viewMedia(entryId, mediaIndex) — the same
+// full-size viewer used inside past entries. Coach Young 2026-05-09.
+function openPhotobook() {
+  var grid  = document.getElementById('photobook-grid');
+  var count = document.getElementById('photobook-count');
+  var overlay = document.getElementById('photobook-overlay');
+  if (!grid || !overlay) return;
+
+  var allMedia = [];
+  if (window.state && Array.isArray(state.entries)) {
+    state.entries.forEach(function(en) {
+      if (en && en.media && en.media.length) {
+        en.media.forEach(function(m, idx) {
+          if (!m) return;
+          allMedia.push({
+            type:       m.type,
+            dataUrl:    m.dataUrl,
+            name:       m.name,
+            entryId:    en.id,
+            entryDate:  en.date || '',
+            mediaIndex: idx
+          });
+        });
+      }
+    });
+  }
+
+  if (count) {
+    count.textContent = allMedia.length === 0
+      ? 'No photos yet — add one to a journal entry to fill your photobook'
+      : allMedia.length + ' photo' + (allMedia.length === 1 ? '' : 's') + ' across all entries';
+  }
+
+  if (allMedia.length === 0) {
+    grid.innerHTML =
+      '<div style="grid-column:1/-1; text-align:center; padding:48px 20px; color:var(--grey); font-family:Barlow,sans-serif; font-size:14px; line-height:1.7;">' +
+        '<div style="font-size:42px; margin-bottom:10px;">📸</div>' +
+        'Your photobook is empty.<br>Add a photo or video to a journal entry and it will appear here.' +
+      '</div>';
+  } else {
+    var html = '';
+    for (var i = 0; i < allMedia.length; i++) {
+      var m = allMedia[i];
+      var safeDate = String(m.entryDate || '').replace(/[<>"']/g, '');
+      var inner = m.type === 'image'
+        ? '<img src="' + m.dataUrl + '" style="width:100%; height:100%; object-fit:cover;">'
+        : '<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px;"><span style="font-size:22px;">▶️</span><div style="font-size:9px; color:var(--grey);">Video</div></div>';
+      html +=
+        '<div onclick="closePhotobook(); viewMedia(' + m.entryId + ', ' + m.mediaIndex + ');" style="position:relative; aspect-ratio:1; border-radius:3px; overflow:hidden; background:var(--card2); border:1px solid var(--border); cursor:pointer;">' +
+          inner +
+          '<div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent, rgba(0,0,0,0.85)); padding:8px 6px 5px; font-family:\'Barlow Condensed\',sans-serif; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#fff; line-height:1.3; text-align:center;">' + safeDate + '</div>' +
+        '</div>';
+    }
+    grid.innerHTML = html;
+  }
+
+  overlay.style.display = 'block';
+  ybgHaptic(10);
+}
+
+function closePhotobook(event) {
+  if (event && event.target && event.target.id !== 'photobook-overlay') return;
+  var overlay = document.getElementById('photobook-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
 function armCareKey() {
   const d = new Date();
   return 'ybg_armcare_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -10618,6 +10698,26 @@ setTimeout(function() {
   try { refreshTeamPanel(); } catch(e) {}
 }, 300);
 </script>
+
+<!-- ══ PHOTOBOOK OVERLAY ════════════════════════════════════════════════
+     A single canonical place to browse every photo + video the player
+     has logged across all journal entries. Coach Young 2026-05-09:
+     "picture should stay only with the entry it was made and create a
+     photobook somewhere." Each tile shows the source entry's date as
+     a caption; tapping a tile opens viewMedia() (the full-size viewer
+     used by past-entry galleries) so the click flow matches what
+     users already know. Reuses entry.media in place — no duplicate
+     storage. -->
+<div id="photobook-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.96); z-index:9992; padding:16px; overflow-y:auto;" onclick="closePhotobook(event)">
+  <div onclick="event.stopPropagation()" style="max-width:680px; margin:0 auto; background:#161210; border:2px solid var(--gold-dark); border-radius:6px; padding:22px 22px 26px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:6px;">
+      <div style="font-family:'Bebas Neue'; font-size:24px; letter-spacing:2px; color:var(--gold);">📷 My Photobook</div>
+      <button onclick="closePhotobook()" style="background:rgba(255,255,255,0.06); border:none; color:#A89880; width:32px; height:32px; border-radius:50%; font-size:18px; cursor:pointer; flex-shrink:0; line-height:1;">✕</button>
+    </div>
+    <div id="photobook-count" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:16px;">0 photos</div>
+    <div id="photobook-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(120px, 1fr)); gap:8px;"></div>
+  </div>
+</div>
 
 <!-- ══ ARM CARE EXERCISE DETAIL MODAL ═══════════════════════════════════
      Tapping the ⓘ next to any arm-care item opens this overlay with a
