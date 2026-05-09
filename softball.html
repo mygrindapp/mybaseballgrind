@@ -510,14 +510,20 @@
     margin-bottom: 20px;
   }
 
+  /* Card titles — Coach Young 2026-05-10 walkthrough: 13px Barlow Condensed
+     read like an eyebrow stamp, not a section heading. Promoted to 22px
+     Bebas Neue (the brand display font) so each card opens with a real
+     H2-style heading. Creates a clear H1 (.section-title 42px) > H2
+     (.card-title 22px) > body hierarchy across every panel. Bebas Neue is
+     naturally uppercase so text-transform is no longer needed. */
   .card-title {
-    font-family: 'Barlow Condensed', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    font-weight: 400;
     letter-spacing: 2px;
-    text-transform: uppercase;
     color: var(--gold);
-    margin-bottom: 14px;
+    margin-bottom: 12px;
+    line-height: 1.1;
   }
 
   /* ── FORMS ── */
@@ -1022,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v55';
+    const CACHE = 'ybg-mygrind-v56';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
