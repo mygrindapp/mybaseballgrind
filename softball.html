@@ -1020,7 +1020,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v35';
+    const CACHE = 'ybg-mygrind-v36';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2099,8 +2099,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <textarea id="j-tomorrow" inputmode="text" placeholder="What is one thing I want to carry forward and keep working on?"></textarea>
       <!-- Reflection-only third prompt -->
       <div id="j-reflect-extra" style="display:none;">
-        <label>How do I need to prepare for next week?</label>
-        <textarea id="j-prepare" inputmode="text" placeholder="What do I need to work on? What is my focus going into next practice or game?"></textarea>
+        <label>How do I prepare for what's next?</label>
+        <textarea id="j-prepare" inputmode="text" placeholder="What do I need to work on? What is my focus going into the next practice, game, or week?"></textarea>
       </div>
 
       <div class="form-row" id="j-grade-row">
@@ -5693,9 +5693,9 @@ function toggleGameStats() {
     if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing I want to carry forward and keep working on?';
   } else if (isReflect) {
     if (titleLb) titleLb.textContent = 'Reflection Title';
-    if (titleEl) titleEl.placeholder = 'e.g. End of Week Reflection — April 20';
-    if (whatLb)  whatLb.textContent  = 'How did this week go overall?';
-    if (whatEl)  whatEl.placeholder  = 'No game, no practice — just honest thoughts. How do I feel about where I am right now? Am I putting in the work? Am I showing up for my team?';
+    if (titleEl) titleEl.placeholder = 'e.g. Honest thoughts after tonight\'s game · This week\'s check-in';
+    if (whatLb)  whatLb.textContent  = 'What\'s on my mind?';
+    if (whatEl)  whatEl.placeholder  = 'Game day, practice day, or off day — just honest thoughts. How do I feel about where I am right now? Am I putting in the work? Am I showing up for my team?';
     if (tmrwLb)  tmrwLb.textContent  = 'What do I need to be honest with myself about?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What areas of my game need real attention? What have I been avoiding? Be straight with yourself — this journal does not lie.';
   }
