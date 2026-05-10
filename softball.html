@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v74';
+    const CACHE = 'ybg-mygrind-v75';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2243,18 +2243,40 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            use case but the form has team-only sections (Coach Comment,
            Save Note for Coach) that don't apply. Toggle hides those
            when "On My Own" is selected. Visible only when type=practice
-           (set by toggleGameStats). Default is "With Team". -->
+           (set by toggleGameStats). Default is "With Team".
+           CSS lives in class only (NOT inline) so the .selected
+           background actually wins — inline styles override class
+           specificity which broke visual feedback in the first cut. -->
+      <style>
+        .practice-mode-chip {
+          flex: 1;
+          background: transparent;
+          border: 1px solid var(--gold-dark);
+          color: var(--light);
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 14px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          padding: 11px 14px;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .practice-mode-chip:hover { background: rgba(var(--accent-rgb), 0.1); }
+        .practice-mode-chip.selected {
+          background: var(--gold);
+          color: var(--dark);
+          border-color: var(--gold);
+        }
+      </style>
       <div id="practice-mode-row" style="display:none; margin-bottom:14px;">
         <label>Was this with the team or on your own?</label>
         <input type="hidden" id="j-practice-mode" value="team">
         <div style="display:flex; gap:6px;">
-          <button type="button" class="practice-mode-chip selected" data-mode="team" onclick="setPracticeMode('team')" style="flex:1; background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:11px 14px; border-radius:3px; cursor:pointer; transition:all 0.15s;">👥 With Team</button>
-          <button type="button" class="practice-mode-chip" data-mode="solo" onclick="setPracticeMode('solo')" style="flex:1; background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:11px 14px; border-radius:3px; cursor:pointer; transition:all 0.15s;">💪 On My Own</button>
+          <button type="button" class="practice-mode-chip selected" data-mode="team" onclick="setPracticeMode('team')">👥 With Team</button>
+          <button type="button" class="practice-mode-chip" data-mode="solo" onclick="setPracticeMode('solo')">💪 On My Own</button>
         </div>
-        <style>
-          .practice-mode-chip:hover { background: rgba(var(--accent-rgb), 0.1); }
-          .practice-mode-chip.selected { background: var(--gold); color: var(--dark); border-color: var(--gold); }
-        </style>
       </div>
 
       <!-- ── WORKOUT WARM-UP CHECKLIST ── -->
