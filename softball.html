@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v69';
+    const CACHE = 'ybg-mygrind-v70';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2364,8 +2364,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           .rep-chip { background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:11px 14px; border-radius:3px; cursor:pointer; transition:all 0.15s; flex:1 1 auto; min-width:56px; }
           .rep-chip:hover { background:rgba(var(--accent-rgb), 0.1); }
           .rep-chip.selected { background:var(--gold); color:var(--dark); border-color:var(--gold); }
-          .rep-chip-exact { font-style:italic; opacity:0.8; flex:0 0 auto; }
-          .rep-chip-exact.selected { opacity:1; }
+          /* Exact chip — kept italic to differentiate from numeric range
+             chips, but dropped the opacity dim now that it's a peer
+             first-choice (Coach Young 2026-05-10 walkthrough). */
+          .rep-chip-exact { font-style:italic; flex:0 0 auto; }
           /* Category labels (SWINGS, GROUND BALLS, etc.) bumped 10→13 with
              brighter color so each category reads as a real subhead. */
           .rep-cat-label { font-family:'Barlow Condensed', sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#D4C4A8; }
@@ -6622,12 +6624,15 @@ function buildRepChips() {
     const row = document.getElementById('rep-chip-row-' + cat);
     if (!row) return;
     const ranges = REP_RANGES[cat] || [];
-    let html = '';
+    // ✏️ Exact chip rendered FIRST (Coach Young 2026-05-10 walkthrough:
+    // make exact-mode a peer first-choice, not a fallback at the end of
+    // the row). Italic styling still differentiates it from the range
+    // chips visually.
+    let html = '<button type="button" class="rep-chip rep-chip-exact" data-cat="' + cat + '" onclick="toggleRepExact(\'' + cat + '\', this)">✏️ Exact</button>';
     ranges.forEach(function(r) {
       // Use String() + escape for safety (labels are static config so low risk)
       html += '<button type="button" class="rep-chip" data-cat="' + cat + '" data-val="' + r.value + '" data-label="' + r.label + '" onclick="selectRep(\'' + cat + '\', this)">' + r.label + '</button>';
     });
-    html += '<button type="button" class="rep-chip rep-chip-exact" data-cat="' + cat + '" onclick="toggleRepExact(\'' + cat + '\', this)">✏️ Exact</button>';
     row.innerHTML = html;
   });
 }
