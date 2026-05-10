@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v68';
+    const CACHE = 'ybg-mygrind-v69';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2357,46 +2357,52 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            by calcReps()/totals + a label for display fidelity. Built dynamically by
            buildRepChips() from REP_RANGES — change ranges in one place, no HTML edits. -->
       <div id="j-reps-section" style="display:block; margin-top:4px; margin-bottom:20px; padding:16px; border:1px solid var(--border); border-radius:3px;">
+        <!-- Rep-chip typography bumped 2026-05-10 walkthrough — was too
+             small to read or tap comfortably. font-size 12→15, padding
+             7/10→11/14 for a proper touch target on phones. -->
         <style>
-          .rep-chip { background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:7px 10px; border-radius:3px; cursor:pointer; transition:all 0.15s; flex:1 1 auto; min-width:48px; }
+          .rep-chip { background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:11px 14px; border-radius:3px; cursor:pointer; transition:all 0.15s; flex:1 1 auto; min-width:56px; }
           .rep-chip:hover { background:rgba(var(--accent-rgb), 0.1); }
           .rep-chip.selected { background:var(--gold); color:var(--dark); border-color:var(--gold); }
           .rep-chip-exact { font-style:italic; opacity:0.8; flex:0 0 auto; }
           .rep-chip-exact.selected { opacity:1; }
+          /* Category labels (SWINGS, GROUND BALLS, etc.) bumped 10→13 with
+             brighter color so each category reads as a real subhead. */
+          .rep-cat-label { font-family:'Barlow Condensed', sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#D4C4A8; }
         </style>
-        <div id="rep-counter-title" style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">🔢 Rep Counter — Today's Practice</div>
+        <div id="rep-counter-title" style="font-family:'Barlow Condensed'; font-size:14px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">🔢 Rep Counter — Today's Practice</div>
         <div id="rep-counter-subtitle" style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:14px; line-height:1.5;">Tap the range that matches your day. Don't know exact? Don't worry — <strong style="color:var(--light);">just commit a range</strong>.</div>
-        <div style="display:grid; grid-template-columns:1fr; gap:14px;">
+        <div style="display:grid; grid-template-columns:1fr; gap:18px;">
           <div id="rep-cat-swings">
-            <label style="font-size:10px; letter-spacing:1px;">🏏 SWINGS</label>
-            <div id="rep-chip-row-swings" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
-            <input type="number" id="jr-swings-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('swings')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <label class="rep-cat-label">🏏 SWINGS</label>
+            <div id="rep-chip-row-swings" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
+            <input type="number" id="jr-swings-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('swings')" style="display:none; width:100%; padding:12px; font-size:18px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
             <input type="hidden" id="jr-swings-value" value="0">
             <input type="hidden" id="jr-swings-label" value="">
           </div>
           <div id="rep-cat-gb">
-            <label style="font-size:10px; letter-spacing:1px;">⚾ GROUND BALLS</label>
-            <div id="rep-chip-row-gb" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
-            <input type="number" id="jr-gb-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('gb')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <label class="rep-cat-label">⚾ GROUND BALLS</label>
+            <div id="rep-chip-row-gb" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
+            <input type="number" id="jr-gb-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('gb')" style="display:none; width:100%; padding:12px; font-size:18px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
             <input type="hidden" id="jr-gb-value" value="0">
             <input type="hidden" id="jr-gb-label" value="">
           </div>
           <div id="rep-cat-throws">
-            <label style="font-size:10px; letter-spacing:1px;">🎯 THROWS</label>
-            <div id="rep-chip-row-throws" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
-            <input type="number" id="jr-throws-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('throws')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <label class="rep-cat-label">🎯 THROWS</label>
+            <div id="rep-chip-row-throws" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
+            <input type="number" id="jr-throws-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('throws')" style="display:none; width:100%; padding:12px; font-size:18px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
             <input type="hidden" id="jr-throws-value" value="0">
             <input type="hidden" id="jr-throws-label" value="">
           </div>
           <div id="rep-cat-pitches">
-            <label style="font-size:10px; letter-spacing:1px;">⚾ PITCHES</label>
-            <div id="rep-chip-row-pitches" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;"></div>
-            <input type="number" id="jr-pitches-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('pitches')" style="display:none; width:100%; padding:10px; font-size:15px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
+            <label class="rep-cat-label">⚾ PITCHES</label>
+            <div id="rep-chip-row-pitches" class="rep-chip-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;"></div>
+            <input type="number" id="jr-pitches-exact" min="0" placeholder="Exact #" inputmode="numeric" oninput="onRepExactInput('pitches')" style="display:none; width:100%; padding:12px; font-size:18px; text-align:center; font-family:'Bebas Neue'; letter-spacing:1px; margin-top:6px;">
             <input type="hidden" id="jr-pitches-value" value="0">
             <input type="hidden" id="jr-pitches-label" value="">
           </div>
         </div>
-        <div style="margin-top:14px; text-align:center; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">This session: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:18px; letter-spacing:1px;">0</span> reps</div>
+        <div style="margin-top:18px; text-align:center; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">This session: <span id="jr-total-num" style="color:var(--gold); font-weight:800; font-family:'Bebas Neue'; font-size:22px; letter-spacing:1px;">0</span> reps</div>
       </div>
 
       <!-- ══ GAME STATS SECTION — shows when type = Game ══ -->
