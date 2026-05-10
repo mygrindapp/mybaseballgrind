@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v71';
+    const CACHE = 'ybg-mygrind-v72';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2628,9 +2628,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <!-- ── COACH / PARENT COMMENT ── -->
+      <!-- Subtitle removed 2026-05-10 walkthrough: title + role dropdown
+           options already make this self-explanatory. -->
       <div id="j-coach-section" style="border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">💬 What Did My Coach or Parent Say?</div>
-        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Feedback from coach, parent, or instructor — log it before you forget.</div>
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:14px;">💬 What Did My Coach or Parent Say?</div>
         <div class="form-row" style="margin-bottom:0;">
           <div>
             <label>Who said it?</label>
