@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v67';
+    const CACHE = 'ybg-mygrind-v68';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2197,8 +2197,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="daily-quote-author" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:2px; color:var(--gold); margin-top:14px; text-align:center; text-transform:uppercase;"></div>
     </div>
 
+    <!-- "New Entry" card title removed 2026-05-10 walkthrough — the
+         panel banner ("DAILY JOURNAL") and the obvious form below
+         already communicate "this is where you log a new entry." The
+         eyebrow stamp was redundant after the 22px display-heading bump. -->
     <div class="card">
-      <div class="card-title">➕ New Entry</div>
       <div class="form-row">
         <div>
           <label>Date</label>
@@ -2593,19 +2596,17 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
              was open-ended and the reply never came back to the journal).
              This stays in-app: the note is saved with the entry and will
              surface in the Coach Portal in Phase 7b V2. Two-way real
-             messaging is deferred to that phase as part of the upgrade. -->
-        <details id="j-inst-note-details" style="margin-top:14px; background:rgba(168,217,123,0.05); border:1px solid #2A3A2A; border-radius:3px; padding:0;">
-          <summary style="cursor:pointer; padding:12px 16px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; user-select:none;">
-            📝 Save Note for Instructor
-          </summary>
-          <div style="padding:0 16px 14px;">
-            <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:8px; line-height:1.5;">Anything you want your instructor to see — questions, what felt different today, what you want to work on next session.</div>
-            <textarea id="j-inst-note" placeholder="e.g. My back leg felt weak in the front-toss reps — can we work on that next time?" style="min-height:70px; margin-bottom:6px;"></textarea>
-            <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5;">
-              Saved with this entry. Your instructor will see it in the <strong style="color:#A8D97B;">Coach Portal</strong> — coming with MyGrind Pro.
-            </div>
+             messaging is deferred to that phase as part of the upgrade.
+             Always-visible card (was a <details> — collapsed state was
+             too easy to miss). -->
+        <div style="margin-top:14px; padding:14px 16px; background:rgba(168,217,123,0.05); border:1px solid #2A3A2A; border-radius:3px;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:6px;">📝 Save Note for Instructor</div>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:10px; line-height:1.5;">Anything you want your instructor to see — questions, what felt different today, what you want to work on next session.</div>
+          <textarea id="j-inst-note" placeholder="e.g. My back leg felt weak in the front-toss reps — can we work on that next time?" style="min-height:70px; margin-bottom:6px;"></textarea>
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5;">
+            Saved with this entry. Your instructor will see it in the <strong style="color:#A8D97B;">Coach Portal</strong> — coming with MyGrind Pro.
           </div>
-        </details>
+        </div>
         <div class="form-row" style="margin-top:14px; margin-bottom:0;">
           <div>
             <label>Session Duration (min)</label>
@@ -2648,19 +2649,17 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            Coach Young 2026-05-10 walkthrough: lets the player flag something
            directly to their head coach (e.g. "I felt slow off the bag in
            the 6th"). Saves with the entry; routes to the Coach Portal in
-           Phase 7b V2. Show/hide is wired in toggleGameStats(). ── -->
-      <details id="j-coach-note-section" style="display:none; margin-bottom:20px; background:rgba(var(--accent-rgb), 0.05); border:1px solid var(--gold-dark); border-radius:3px; padding:0;">
-        <summary style="cursor:pointer; padding:12px 16px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); user-select:none;">
-          📝 Save Note for Coach
-        </summary>
-        <div style="padding:0 16px 14px;">
-          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:8px; line-height:1.5;">Anything you want your head coach to see — what felt off, what you want to work on, a question.</div>
-          <textarea id="j-coach-note" placeholder="e.g. I'd love some extra reps on bunting before Tuesday's game." style="min-height:70px; margin-bottom:6px;"></textarea>
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5;">
-            Saved with this entry. Your coach will see it in the <strong style="color:var(--gold);">Coach Portal</strong> — coming with MyGrind Pro.
-          </div>
+           Phase 7b V2. Show/hide is wired in toggleGameStats(). Always-
+           visible card (was a <details>; collapsed state was too easy to
+           miss next to the Coach Comment box above). ── -->
+      <div id="j-coach-note-section" style="display:none; margin-bottom:20px; padding:16px; background:rgba(var(--accent-rgb), 0.05); border:1px solid var(--gold-dark); border-radius:3px;">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">📝 Save Note for Coach</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:10px; line-height:1.5;">Anything you want your head coach to see — what felt off, what you want to work on, a question.</div>
+        <textarea id="j-coach-note" placeholder="e.g. I'd love some extra reps on bunting before Tuesday's game." style="min-height:70px; margin-bottom:6px;"></textarea>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5;">
+          Saved with this entry. Your coach will see it in the <strong style="color:var(--gold);">Coach Portal</strong> — coming with MyGrind Pro.
         </div>
-      </details>
+      </div>
 
       <!-- ── MEDIA UPLOAD (entry-specific photos/videos) ── -->
       <!-- Photos & Videos are tied to THIS entry — they document the practice
