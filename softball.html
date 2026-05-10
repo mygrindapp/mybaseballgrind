@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v76';
+    const CACHE = 'ybg-mygrind-v77';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2309,7 +2309,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            was so the entry shows "INDIVIDUAL · TEE" instead of just
            "PRACTICE". Chips built dynamically from SOLO_WORK_TYPES. -->
       <div id="solo-work-row" style="display:none; margin-bottom:14px;">
-        <label>What kind of work?</label>
+        <label>What kind of work? <span style="color:var(--grey); font-weight:400; text-transform:none; letter-spacing:0.5px;">— pick all that apply</span></label>
         <input type="hidden" id="j-solo-work-type" value="">
         <div id="solo-work-chips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
       </div>
@@ -6048,11 +6048,12 @@ function _doEditEntry(id) {
   // hidden input and apply solo-vs-team visibility correctly. Default
   // legacy entries (no practiceMode field) to 'team' for back-compat.
   try { setPracticeMode(entry.practiceMode || 'team'); } catch (e) {}
-  // Solo work type lives nested under solo mode — only restore if the
+  // Solo work types live nested under solo mode — only restore if the
   // entry was solo. Restored AFTER setPracticeMode so the solo-work-row
-  // is visible by the time we set the chip selection.
+  // is visible by the time we set the chip selection. Stored value is
+  // a comma-separated string (back-compat with old single-select).
   if (entry.practiceMode === 'solo' && entry.soloWorkType) {
-    try { selectSoloWorkType(entry.soloWorkType); } catch (e) {}
+    try { setSoloWorkTypes(entry.soloWorkType); } catch (e) {}
   }
   try { toggleGameStats(); } catch (e) {}
 
@@ -7003,18 +7004,35 @@ function buildSoloWorkChips() {
     return '<button type="button" class="solo-work-chip" data-solo-id="' + t.id + '" onclick="selectSoloWorkType(\'' + t.id + '\')">' + t.icon + ' ' + t.label + '</button>';
   }).join('');
 }
-function selectSoloWorkType(id) {
+// Multi-select — Coach Young 2026-05-10 walkthrough: a player might
+// do tee + cages + running in one day, so chips toggle independently
+// rather than single-select. Storage is a comma-separated string in
+// the hidden input; comma-separated CSV is back-compat with the
+// single-select format ("tee" reads cleanly as a one-element list).
+function _refreshSoloWorkChips() {
   const hidden = document.getElementById('j-solo-work-type');
-  if (hidden) hidden.value = id || '';
+  const current = new Set(String(hidden && hidden.value || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean));
   document.querySelectorAll('.solo-work-chip').forEach(function(b) {
-    if (b.dataset && b.dataset.soloId === id) b.classList.add('selected');
+    if (b.dataset && current.has(b.dataset.soloId)) b.classList.add('selected');
     else b.classList.remove('selected');
   });
 }
-function resetSoloWorkType() {
+function selectSoloWorkType(id) {
   const hidden = document.getElementById('j-solo-work-type');
-  if (hidden) hidden.value = '';
-  document.querySelectorAll('.solo-work-chip').forEach(function(b) { b.classList.remove('selected'); });
+  if (!hidden) return;
+  const current = new Set(String(hidden.value || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean));
+  if (current.has(id)) current.delete(id); else current.add(id);
+  hidden.value = Array.from(current).join(',');
+  _refreshSoloWorkChips();
+}
+function setSoloWorkTypes(csv) {
+  const hidden = document.getElementById('j-solo-work-type');
+  if (!hidden) return;
+  hidden.value = csv || '';
+  _refreshSoloWorkChips();
+}
+function resetSoloWorkType() {
+  setSoloWorkTypes('');
 }
 
 function setPracticeMode(mode) {
@@ -7228,15 +7246,21 @@ function gradePill(g) {
   return _metaPill(g, label, color);
 }
 // Compose the entry-type pill label. Practice + solo mode reads as
-// "individual · {work type}" instead of just "practice" so the player's
-// solo work shows up distinctly in the entries list. Coach Young
-// 2026-05-10 walkthrough.
+// "individual · {work types}" instead of just "practice" so the
+// player's solo work shows up distinctly in the entries list. Multi-
+// select — entry.soloWorkType is a comma-separated string of ids
+// (single id back-compat works since "tee".split(",") === ["tee"]).
+// Coach Young 2026-05-10 walkthrough.
 function entryTypeLabel(e) {
   if (!e || !e.type) return '';
   if (e.type === 'practice' && e.practiceMode === 'solo') {
     if (e.soloWorkType && typeof SOLO_WORK_TYPES !== 'undefined') {
-      const w = SOLO_WORK_TYPES.find(function(t) { return t.id === e.soloWorkType; });
-      if (w) return 'individual · ' + w.label.toLowerCase();
+      const ids = String(e.soloWorkType).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+      const labels = ids.map(function(id) {
+        const w = SOLO_WORK_TYPES.find(function(t) { return t.id === id; });
+        return w ? w.label.toLowerCase() : null;
+      }).filter(Boolean);
+      if (labels.length) return 'individual · ' + labels.join(', ');
     }
     return 'individual work';
   }
