@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v70';
+    const CACHE = 'ybg-mygrind-v71';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6581,9 +6581,14 @@ function getBallEmoji() {
 // the arm-load math (greenMax/goldMax thresholds) still maps cleanly.
 // Older saved entries display their original label (stored with the entry)
 // so historical data isn't disrupted.
+//
+// "0" chip removed from each category 2026-05-10 walkthrough — it was
+// redundant with the implicit "no chip selected" default. Hidden value
+// inputs initialize to "0", so a category with nothing tapped already
+// contributes 0 to the total. Older entries with saved label "0" still
+// display correctly via the val>0 fallback path in render code.
 const REP_RANGES = {
   swings:  [
-    { label: '0',       value: 0   },
     { label: '1-15',    value: 8   },
     { label: '16-30',   value: 23  },
     { label: '31-50',   value: 40  },
@@ -6591,7 +6596,6 @@ const REP_RANGES = {
     { label: '75+',     value: 100 }
   ],
   gb: [
-    { label: '0',       value: 0  },
     { label: '1-10',    value: 5  },
     { label: '11-20',   value: 15 },
     { label: '21-35',   value: 28 },
@@ -6599,7 +6603,6 @@ const REP_RANGES = {
     { label: '60+',     value: 80 }
   ],
   throws: [
-    { label: '0',       value: 0   },
     { label: '1-15',    value: 8   },
     { label: '16-30',   value: 23  },
     { label: '31-50',   value: 40  },
@@ -6607,7 +6610,6 @@ const REP_RANGES = {
     { label: '75+',     value: 100 }
   ],
   pitches: [
-    { label: '0',       value: 0  },
     { label: '1-15',    value: 8  },
     { label: '16-30',   value: 23 },
     { label: '31-50',   value: 40 },
