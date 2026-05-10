@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v77';
+    const CACHE = 'ybg-mygrind-v78';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5642,8 +5642,10 @@ function init() {
   document.getElementById('headerDate').textContent = today.toLocaleDateString('en-US', {
     weekday:'long', month:'long', day:'numeric', year:'numeric'
   });
-  const dateInput = document.getElementById('j-date');
-  if (dateInput) dateInput.valueAsDate = today;
+  // valueAsDate replaced with todayLocalISO() — see helper comment.
+  // The old setter interpreted Date as UTC and rolled the picker
+  // forward in evening Pacific hours. Local-string set is timezone-safe.
+  resetJDateToToday();
   setJDateMaxToToday();
 
   buildCalendar();
@@ -6153,6 +6155,7 @@ function cancelEdit() {
   try { resetRepChips(); } catch (e) {}
   try { resetGradeResultChips(); } catch (e) {}
   try { setPracticeMode('team'); } catch (e) {}
+  try { resetJDateToToday(); } catch (e) {}
   pendingMedia = [];
   renderMediaPreview();
 
@@ -6433,6 +6436,10 @@ function saveEntry() {
   try { resetGradeResultChips(); } catch (_) {}
   // Reset practice mode back to default 'team' for the next entry.
   try { setPracticeMode('team'); } catch (_) {}
+  // Reset the date back to today — otherwise the form keeps showing
+  // whatever date the just-saved entry used, which is misleading
+  // for the next entry.
+  try { resetJDateToToday(); } catch (_) {}
   document.getElementById('j-comment-name').value = '';
   document.getElementById('j-comment-role').value = '';
   document.getElementById('j-comment-text').value = '';
@@ -7195,15 +7202,27 @@ function calcGameStats() {
 // days so the player can't even tap them. Re-set every time the
 // journal becomes active so an app left open across midnight rolls
 // the cap forward to the new "today."
+function todayLocalISO() {
+  // Returns YYYY-MM-DD in the user's LOCAL timezone. Critical: don't
+  // use new Date().toISOString() or input.valueAsDate — both interpret
+  // via UTC, which rolls the date forward in evening Pacific hours.
+  // (Coach Young 2026-05-10: "default calendar date now shows the
+  // next day, I have to manually put in the right date.")
+  const d = new Date();
+  return d.getFullYear() + '-' +
+         String(d.getMonth() + 1).padStart(2, '0') + '-' +
+         String(d.getDate()).padStart(2, '0');
+}
 function setJDateMaxToToday() {
   try {
     const el = document.getElementById('j-date');
-    if (!el) return;
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    el.max = yyyy + '-' + mm + '-' + dd;
+    if (el) el.max = todayLocalISO();
+  } catch (e) {}
+}
+function resetJDateToToday() {
+  try {
+    const el = document.getElementById('j-date');
+    if (el) el.value = todayLocalISO();
   } catch (e) {}
 }
 
@@ -7306,6 +7325,10 @@ function renderEntries() {
   // Type-specific fallback when the user didn't title the entry. Replaces
   // the old generic "Entry" — too vague when the type was instructor/game/
   // reflection. Coach Young 2026-05-09.
+  // Solo practice gets a more specific fallback: single work type uses
+  // the chip label ("Tee Work"), multi-types collapse to "Solo Practice"
+  // since listing all of them inline would be too long for a title.
+  // (Coach Young 2026-05-10 walkthrough.)
   const titleFallback = {
     practice:   'Practice',
     game:       'Game',
@@ -7313,6 +7336,19 @@ function renderEntries() {
     workout:    'Workout',
     reflection: 'Reflection'
   };
+  function _entryFallbackTitle(en) {
+    if (en.type === 'practice' && en.practiceMode === 'solo') {
+      if (en.soloWorkType && typeof SOLO_WORK_TYPES !== 'undefined') {
+        const ids = String(en.soloWorkType).split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+        if (ids.length === 1) {
+          const w = SOLO_WORK_TYPES.find(function(t) { return t.id === ids[0]; });
+          if (w) return w.label;
+        }
+      }
+      return 'Solo Practice';
+    }
+    return titleFallback[en.type] || "Today's Grind";
+  }
 
   // Today's date in the same format entries are stored in, so we can show
   // a "TODAY'S GRIND" tag on today's day header (vs just "N entries" for
@@ -7343,7 +7379,7 @@ function renderEntries() {
       '</div>'
     ) : '';
     lastDate = e.date;
-    const displayTitle = e.title || titleFallback[e.type] || "Today's Grind";
+    const displayTitle = e.title || _entryFallbackTitle(e);
 
     // Today's totals card — appended after the LAST today entry (entries
     // are sorted newest-first, so today's entries cluster at the top of
@@ -7440,7 +7476,7 @@ function renderEntries() {
            between baseball and softball mode. The page's emoji walker only
            runs once on DOMContentLoaded — anything injected by renderAll()
            after that needs to read sport state itself. (Coach Young 2026-05-08.) -->
-      ${e.reps ? (() => { const _ball = getBallEmoji(); const _repsHeader = e.instructor ? '🔢 Lesson Reps' : '🔢 Practice Reps'; return `
+      ${e.reps ? (() => { const _ball = getBallEmoji(); const _repsHeader = e.instructor ? '🔢 Lesson Reps' : (e.practiceMode === 'solo' ? '🔢 Solo Practice Reps' : '🔢 Practice Reps'); return `
         <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px;">
           <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">${_repsHeader}</div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
