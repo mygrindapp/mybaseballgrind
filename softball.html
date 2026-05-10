@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v72';
+    const CACHE = 'ybg-mygrind-v73';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1683,6 +1683,25 @@ function dismissIosBanner() {
     </div>
     <div style="text-align:center; margin-top:14px; font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5;">
       Forgot your PIN? Ask your parent — or clear app data to reset.
+    </div>
+  </div>
+</div>
+
+<!-- ── DELETE-ENTRY OVERLAY — Coach Young 2026-05-10 walkthrough.
+     Replaces the native browser confirm with a clearer modal that
+     shows the entry being deleted and offers "Edit Instead" as the
+     escape hatch. After deletion, a 10-second undo toast lets the
+     player recover from a mis-tap. PIN-protected entries skip this
+     modal (the PIN itself is the confirmation). ── -->
+<div id="entry-delete-overlay" style="display:none; position:fixed; inset:0; background:rgba(14,11,9,0.96); z-index:1004; align-items:center; justify-content:center; padding:24px; backdrop-filter:blur(12px);">
+  <div style="max-width:400px; width:100%; background:#222630; border:1px solid #3A1010; border-radius:4px; padding:24px;">
+    <div style="font-family:'Bebas Neue',cursive; font-size:24px; letter-spacing:2px; color:#E57373; margin-bottom:6px; line-height:1;">🗑 DELETE THIS ENTRY?</div>
+    <div id="entry-delete-preview" style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.5; margin:14px 0; padding:12px 14px; background:var(--card2); border-left:3px solid var(--gold); border-radius:3px;"></div>
+    <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); margin-bottom:16px; line-height:1.5;">You'll have <strong style="color:var(--gold);">10 seconds to undo</strong> after deleting.</div>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <button class="btn btn-danger" onclick="confirmDeleteFromPrompt()" style="width:100%;">🗑 Delete</button>
+      <button onclick="editFromDeletePrompt()" style="width:100%; background:transparent; border:1px solid var(--gold); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px; border-radius:4px; cursor:pointer;">📝 Edit Instead</button>
+      <button onclick="closeDeletePrompt()" style="width:100%; background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px; border-radius:4px; cursor:pointer;">Cancel</button>
     </div>
   </div>
 </div>
@@ -6341,16 +6360,108 @@ function deleteEntry(id) {
   if (!entry) return;
   // PIN gate — same rule as editEntry. Deleting a bad-day entry to
   // erase the record is the same revisionist move as rewriting it.
+  // For protected entries, the PIN itself is the confirmation, so we
+  // skip the custom modal and go straight to soft-delete + undo toast.
   if (isEntryProtected(entry)) {
-    requestEditPinAccess(function() { _doDeleteEntry(id); }, entry);
+    requestEditPinAccess(function() { softDeleteEntry(id); }, entry);
     return;
   }
-  _doDeleteEntry(id);
+  // Unprotected — show the custom delete prompt with Edit Instead +
+  // Cancel escape hatches (Coach Young 2026-05-10 walkthrough).
+  showDeletePrompt(id);
 }
-function _doDeleteEntry(id) {
-  if (!confirm('Delete this entry?')) return;
-  state.entries = state.entries.filter(e => e.id !== id);
+
+// ── DELETE FLOW (soft-delete + undo) ─────────────────
+// Coach Young 2026-05-10 walkthrough: a mis-tap on ✕ shouldn't lose an
+// entry forever. Three layers of protection:
+//   1) Custom modal with "🗑 Delete / 📝 Edit Instead / Cancel"
+//   2) Soft-delete: entry is spliced out but held in memory for 10s
+//   3) Undo toast: tap "↶ Undo" to restore before the timer fires
+// PIN gate (entries >24h old) replaces the modal — having to type a PIN
+// is already strong enough confirmation.
+let _pendingDeleteId = null;
+let _trashedEntry    = null;
+let _undoTimer       = null;
+
+function showDeletePrompt(id) {
+  const entry = state.entries.find(function(e) { return e.id === id; });
+  if (!entry) return;
+  _pendingDeleteId = id;
+  const preview = document.getElementById('entry-delete-preview');
+  if (preview) {
+    const dateStr  = entry.date || 'this entry';
+    const typeStr  = (entry.type || 'entry').toUpperCase();
+    const titleStr = entry.title || (entry.what ? String(entry.what).slice(0, 80) + (entry.what.length > 80 ? '…' : '') : '(no title)');
+    preview.innerHTML =
+      '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">' + dateStr + ' · ' + typeStr + '</div>' +
+      '<div>' + titleStr + '</div>';
+  }
+  const overlay = document.getElementById('entry-delete-overlay');
+  if (overlay) overlay.style.display = 'flex';
+}
+function closeDeletePrompt() {
+  _pendingDeleteId = null;
+  const overlay = document.getElementById('entry-delete-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+function confirmDeleteFromPrompt() {
+  const id = _pendingDeleteId;
+  closeDeletePrompt();
+  if (id !== null) softDeleteEntry(id);
+}
+function editFromDeletePrompt() {
+  const id = _pendingDeleteId;
+  closeDeletePrompt();
+  if (id !== null) editEntry(id);
+}
+function softDeleteEntry(id) {
+  // Finalize any prior trashed entry first — the user moved on without
+  // undoing, so its window is over.
+  if (_trashedEntry) finalizeTrashedDelete();
+
+  const idx = state.entries.findIndex(function(e) { return e.id === id; });
+  if (idx === -1) return;
+  _trashedEntry = state.entries[idx];
+  state.entries.splice(idx, 1);
   renderAll();
+  showUndoToast();
+  if (_undoTimer) clearTimeout(_undoTimer);
+  _undoTimer = setTimeout(finalizeTrashedDelete, 10000);
+  ybgHaptic(15);
+}
+function showUndoToast() {
+  let toast = document.getElementById('undo-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.id = 'undo-toast';
+    toast.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#1A0010; border:1px solid var(--gold); color:var(--light); font-family:"Barlow Condensed",sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; padding:10px 14px 10px 18px; border-radius:4px; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,0.5); display:flex; align-items:center; gap:14px;';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = '<span>🗑 Entry deleted</span><button onclick="undoDelete()" style="background:var(--gold); color:var(--dark); border:none; font-family:\'Barlow Condensed\',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:7px 14px; border-radius:3px; cursor:pointer;">↶ Undo</button>';
+  toast.style.display = 'flex';
+}
+function hideUndoToast() {
+  const toast = document.getElementById('undo-toast');
+  if (toast) toast.style.display = 'none';
+}
+function undoDelete() {
+  if (!_trashedEntry) { hideUndoToast(); return; }
+  // Restore at top — original index may be stale if anything else
+  // changed during the 10s window. Player can re-sort if needed.
+  state.entries.unshift(_trashedEntry);
+  _trashedEntry = null;
+  if (_undoTimer) clearTimeout(_undoTimer);
+  _undoTimer = null;
+  hideUndoToast();
+  renderAll();
+  if (typeof showShareToast === 'function') showShareToast('↶ Entry restored.');
+  ybgHaptic([15, 30, 15]);
+}
+function finalizeTrashedDelete() {
+  _trashedEntry = null;
+  if (_undoTimer) clearTimeout(_undoTimer);
+  _undoTimer = null;
+  hideUndoToast();
 }
 
 // ── COMMENT SYSTEM ───────────────────────────────────
