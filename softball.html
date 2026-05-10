@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v73';
+    const CACHE = 'ybg-mygrind-v74';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2237,6 +2237,26 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </select>
         </div>
       </div>
+
+      <!-- Practice context — Coach Young 2026-05-10 walkthrough: solo
+           drills (cage work alone, daily tee swings) are a first-class
+           use case but the form has team-only sections (Coach Comment,
+           Save Note for Coach) that don't apply. Toggle hides those
+           when "On My Own" is selected. Visible only when type=practice
+           (set by toggleGameStats). Default is "With Team". -->
+      <div id="practice-mode-row" style="display:none; margin-bottom:14px;">
+        <label>Was this with the team or on your own?</label>
+        <input type="hidden" id="j-practice-mode" value="team">
+        <div style="display:flex; gap:6px;">
+          <button type="button" class="practice-mode-chip selected" data-mode="team" onclick="setPracticeMode('team')" style="flex:1; background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:11px 14px; border-radius:3px; cursor:pointer; transition:all 0.15s;">👥 With Team</button>
+          <button type="button" class="practice-mode-chip" data-mode="solo" onclick="setPracticeMode('solo')" style="flex:1; background:transparent; border:1px solid var(--gold-dark); color:var(--light); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:11px 14px; border-radius:3px; cursor:pointer; transition:all 0.15s;">💪 On My Own</button>
+        </div>
+        <style>
+          .practice-mode-chip:hover { background: rgba(var(--accent-rgb), 0.1); }
+          .practice-mode-chip.selected { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+        </style>
+      </div>
+
       <!-- ── WORKOUT WARM-UP CHECKLIST ── -->
       <!-- Shown ONLY when entry type = workout. Mirrors the arm-care
            pattern (per-day state in localStorage, ⓘ button per item)
@@ -5966,6 +5986,10 @@ function _doEditEntry(id) {
   // Type — set first, then trigger toggleGameStats so the right sections appear
   const typeEl = document.getElementById('j-type');
   if (typeEl) typeEl.value = entry.type || 'practice';
+  // Restore practice mode BEFORE toggleGameStats so it can read the
+  // hidden input and apply solo-vs-team visibility correctly. Default
+  // legacy entries (no practiceMode field) to 'team' for back-compat.
+  try { setPracticeMode(entry.practiceMode || 'team'); } catch (e) {}
   try { toggleGameStats(); } catch (e) {}
 
   // Standard text fields
@@ -6063,6 +6087,7 @@ function cancelEdit() {
   });
   try { resetRepChips(); } catch (e) {}
   try { resetGradeResultChips(); } catch (e) {}
+  try { setPracticeMode('team'); } catch (e) {}
   pendingMedia = [];
   renderMediaPreview();
 
@@ -6256,6 +6281,14 @@ function saveEntry() {
     }
   }
 
+  // Practice mode (team / solo) — Coach Young 2026-05-10 walkthrough.
+  // Persist so the past-entries view can show a solo badge and the
+  // form restores the mode on edit.
+  if (type === 'practice') {
+    const mode = document.getElementById('j-practice-mode')?.value || 'team';
+    entry.practiceMode = (mode === 'solo') ? 'solo' : 'team';
+  }
+
   // Capture Workout / Weight Room data when entry type is 'workout'
   // Coach Young 2026-05-09. Off-season strength + conditioning is a huge
   // part of player development; this captures focus, intensity, lifts log,
@@ -6328,6 +6361,8 @@ function saveEntry() {
   if (resultEl) resultEl.value = '';
   // Clear chip visual selections after wiping the hidden inputs above.
   try { resetGradeResultChips(); } catch (_) {}
+  // Reset practice mode back to default 'team' for the next entry.
+  try { setPracticeMode('team'); } catch (_) {}
   document.getElementById('j-comment-name').value = '';
   document.getElementById('j-comment-role').value = '';
   document.getElementById('j-comment-text').value = '';
@@ -6531,12 +6566,29 @@ function toggleGameStats() {
   if (section) section.style.display = isGame ? 'block' : 'none';
   if (resultW) resultW.style.display = isGame ? 'block' : 'none';
 
+  // Practice context toggle — visible only when type=practice. Hides
+  // the row entirely for other types so the form doesn't carry an
+  // irrelevant control. Mode value persists in the hidden input so
+  // switching back to practice restores the prior choice.
+  const practiceModeRow = document.getElementById('practice-mode-row');
+  if (practiceModeRow) practiceModeRow.style.display = isPrac ? 'block' : 'none';
+
   // Note for head coach — only meaningful for game/practice. Instructor
   // entries have their own #j-inst-note inside the instructor card.
   // Workout / Reflection don't surface this for now (revisit if Coach
-  // Young's players ask for it).
+  // Young's players ask for it). For PRACTICE, the practice-mode toggle
+  // can override (solo hides this).
   const coachNoteSec = document.getElementById('j-coach-note-section');
-  if (coachNoteSec) coachNoteSec.style.display = (isGame || isPrac) ? 'block' : 'none';
+  if (coachNoteSec) {
+    if (isGame) {
+      coachNoteSec.style.display = 'block';
+    } else if (isPrac) {
+      const mode = document.getElementById('j-practice-mode')?.value || 'team';
+      coachNoteSec.style.display = (mode === 'solo') ? 'none' : 'block';
+    } else {
+      coachNoteSec.style.display = 'none';
+    }
+  }
 
   // Workout section visibility (Coach Young 2026-05-09)
   const woSec = document.getElementById('j-workout-section');
@@ -6564,6 +6616,16 @@ function toggleGameStats() {
       el.style.display = el.dataset.prevDisplay;
     }
   });
+
+  // Practice solo-mode override — j-coach-section is restored above for
+  // any non-instructor type, but a solo practice should also hide it.
+  // Layered AFTER the fieldsToHide loop so the override applies on top
+  // of the type-level restoration.
+  if (isPrac) {
+    const mode = document.getElementById('j-practice-mode')?.value || 'team';
+    const cs = document.getElementById('j-coach-section');
+    if (cs && mode === 'solo') cs.style.display = 'none';
+  }
 
   // Title hidden for practice and instructor; shown for game and reflection
   if (titleW && !isInstructor) titleW.style.display = (isPrac) ? 'none' : 'block';
@@ -6844,6 +6906,36 @@ function resetGradeResultChips() {
     const row = document.getElementById(id);
     if (row) row.querySelectorAll('button').forEach(function(b) { b.classList.remove('selected'); });
   });
+}
+
+// ── PRACTICE MODE (team / solo) ───────────────────────
+// Coach Young 2026-05-10 walkthrough: a player drilling on their own
+// shouldn't see Coach Comment + Save Note for Coach sections that
+// don't apply. setPracticeMode() flips the toggle + hides those
+// sections; saveEntry / editEntry persist the choice as
+// entry.practiceMode so the form restores correctly on edit.
+function setPracticeMode(mode) {
+  if (mode !== 'team' && mode !== 'solo') mode = 'team';
+  const hidden = document.getElementById('j-practice-mode');
+  if (hidden) hidden.value = mode;
+  document.querySelectorAll('.practice-mode-chip').forEach(function(b) {
+    if (b.dataset && b.dataset.mode === mode) b.classList.add('selected');
+    else b.classList.remove('selected');
+  });
+  applyPracticeModeVisibility(mode);
+}
+function applyPracticeModeVisibility(mode) {
+  const isSolo = (mode === 'solo');
+  // Only override for current PRACTICE entries — toggleGameStats() owns
+  // the type-level rules. If the player switched to a non-practice type,
+  // those rules already hid practice-mode-row, and these sections follow
+  // their own type rules from there.
+  const type = document.getElementById('j-type')?.value;
+  if (type !== 'practice') return;
+  const coachSection     = document.getElementById('j-coach-section');
+  const coachNoteSection = document.getElementById('j-coach-note-section');
+  if (coachSection)     coachSection.style.display     = isSolo ? 'none' : '';
+  if (coachNoteSection) coachNoteSection.style.display = isSolo ? 'none' : 'block';
 }
 
 // Sum the four rep-counter values and update the "Total reps" display.
@@ -7141,7 +7233,7 @@ function renderEntries() {
           ${resultPill(e.result)}
           ${gradePill(e.grade)}
           ${e.editedAt ? `<div title="This entry was edited after the original day" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey); background:rgba(100,100,100,0.12); padding:4px 8px; border-radius:3px;">✏️ edited ${formatEditedDate(e.editedAt)}</div>` : ''}
-          <div class="entry-type type-${e.type}">${e.type}</div>
+          <div class="entry-type type-${e.type}">${e.type}${e.type === 'practice' && e.practiceMode === 'solo' ? ' · SOLO' : ''}</div>
           ${isEntryProtected(e) && !isCreator() ? `<span title="PIN required to edit — older than 24h" style="font-size:11px; color:var(--gold-dark); margin-right:-2px;">🔒</span>` : ''}
           <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:2px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="${isEntryProtected(e) && !isCreator() ? 'Edit this entry — PIN required' : 'Edit this entry'}">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})" title="${isEntryProtected(e) && !isCreator() ? 'Delete — PIN required' : 'Delete'}">✕</button>
