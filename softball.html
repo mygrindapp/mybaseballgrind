@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v75';
+    const CACHE = 'ybg-mygrind-v76';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2269,6 +2269,30 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           color: var(--dark);
           border-color: var(--gold);
         }
+        /* Solo work-type chips — same visual contract as practice-mode
+           chips but flex:0 0 auto so each chip is its natural width
+           rather than stretched to fill. Coach Young 2026-05-10. */
+        .solo-work-chip {
+          flex: 0 0 auto;
+          background: transparent;
+          border: 1px solid var(--gold-dark);
+          color: var(--light);
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          padding: 9px 13px;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .solo-work-chip:hover { background: rgba(var(--accent-rgb), 0.1); }
+        .solo-work-chip.selected {
+          background: var(--gold);
+          color: var(--dark);
+          border-color: var(--gold);
+        }
       </style>
       <div id="practice-mode-row" style="display:none; margin-bottom:14px;">
         <label>Was this with the team or on your own?</label>
@@ -2277,6 +2301,17 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <button type="button" class="practice-mode-chip selected" data-mode="team" onclick="setPracticeMode('team')">👥 With Team</button>
           <button type="button" class="practice-mode-chip" data-mode="solo" onclick="setPracticeMode('solo')">💪 On My Own</button>
         </div>
+      </div>
+
+      <!-- Solo work type — visible only when practice mode = solo.
+           Coach Young 2026-05-10 walkthrough: when the player picks
+           "On My Own", let them tag what kind of individual work it
+           was so the entry shows "INDIVIDUAL · TEE" instead of just
+           "PRACTICE". Chips built dynamically from SOLO_WORK_TYPES. -->
+      <div id="solo-work-row" style="display:none; margin-bottom:14px;">
+        <label>What kind of work?</label>
+        <input type="hidden" id="j-solo-work-type" value="">
+        <div id="solo-work-chips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
       </div>
 
       <!-- ── WORKOUT WARM-UP CHECKLIST ── -->
@@ -5622,6 +5657,7 @@ function init() {
   // Build the practice rep-counter range chips. Pure DOM-injection — safe to
   // run on every load; later renders just overwrite the rows' innerHTML.
   try { buildRepChips(); } catch(e) { console.warn('[MG] init buildRepChips:', e); }
+  try { buildSoloWorkChips(); } catch(e) { console.warn('[MG] init buildSoloWorkChips:', e); }
 
   // ── CREATOR ACCESS & OLD FLAG CLEANUP ──────────────
   try {
@@ -6012,6 +6048,12 @@ function _doEditEntry(id) {
   // hidden input and apply solo-vs-team visibility correctly. Default
   // legacy entries (no practiceMode field) to 'team' for back-compat.
   try { setPracticeMode(entry.practiceMode || 'team'); } catch (e) {}
+  // Solo work type lives nested under solo mode — only restore if the
+  // entry was solo. Restored AFTER setPracticeMode so the solo-work-row
+  // is visible by the time we set the chip selection.
+  if (entry.practiceMode === 'solo' && entry.soloWorkType) {
+    try { selectSoloWorkType(entry.soloWorkType); } catch (e) {}
+  }
   try { toggleGameStats(); } catch (e) {}
 
   // Standard text fields
@@ -6309,6 +6351,11 @@ function saveEntry() {
   if (type === 'practice') {
     const mode = document.getElementById('j-practice-mode')?.value || 'team';
     entry.practiceMode = (mode === 'solo') ? 'solo' : 'team';
+    // Solo work type — only meaningful when mode === 'solo'.
+    if (entry.practiceMode === 'solo') {
+      const swt = (document.getElementById('j-solo-work-type')?.value || '').trim();
+      if (swt) entry.soloWorkType = swt;
+    }
   }
 
   // Capture Workout / Weight Room data when entry type is 'workout'
@@ -6936,6 +6983,40 @@ function resetGradeResultChips() {
 // don't apply. setPracticeMode() flips the toggle + hides those
 // sections; saveEntry / editEntry persist the choice as
 // entry.practiceMode so the form restores correctly on edit.
+
+// Solo work types — chip options shown when mode=solo. Edit this list
+// to add/remove categories; buildSoloWorkChips() reads it on init.
+const SOLO_WORK_TYPES = [
+  { id: 'tee',       icon: '🏌️', label: 'Tee Work'   },
+  { id: 'cages',     icon: '🏏', label: 'Cages'      },
+  { id: 'bullpen',   icon: '⚾', label: 'Bullpen'    },
+  { id: 'longtoss',  icon: '🎯', label: 'Long Toss'  },
+  { id: 'fielding',  icon: '🧤', label: 'Fielding'   },
+  { id: 'running',   icon: '🏃', label: 'Running'    },
+  { id: 'mobility',  icon: '🤸', label: 'Mobility'   },
+  { id: 'other',     icon: '📋', label: 'Other'      }
+];
+function buildSoloWorkChips() {
+  const row = document.getElementById('solo-work-chips');
+  if (!row) return;
+  row.innerHTML = SOLO_WORK_TYPES.map(function(t) {
+    return '<button type="button" class="solo-work-chip" data-solo-id="' + t.id + '" onclick="selectSoloWorkType(\'' + t.id + '\')">' + t.icon + ' ' + t.label + '</button>';
+  }).join('');
+}
+function selectSoloWorkType(id) {
+  const hidden = document.getElementById('j-solo-work-type');
+  if (hidden) hidden.value = id || '';
+  document.querySelectorAll('.solo-work-chip').forEach(function(b) {
+    if (b.dataset && b.dataset.soloId === id) b.classList.add('selected');
+    else b.classList.remove('selected');
+  });
+}
+function resetSoloWorkType() {
+  const hidden = document.getElementById('j-solo-work-type');
+  if (hidden) hidden.value = '';
+  document.querySelectorAll('.solo-work-chip').forEach(function(b) { b.classList.remove('selected'); });
+}
+
 function setPracticeMode(mode) {
   if (mode !== 'team' && mode !== 'solo') mode = 'team';
   const hidden = document.getElementById('j-practice-mode');
@@ -6956,8 +7037,12 @@ function applyPracticeModeVisibility(mode) {
   if (type !== 'practice') return;
   const coachSection     = document.getElementById('j-coach-section');
   const coachNoteSection = document.getElementById('j-coach-note-section');
+  const soloWorkRow      = document.getElementById('solo-work-row');
   if (coachSection)     coachSection.style.display     = isSolo ? 'none' : '';
   if (coachNoteSection) coachNoteSection.style.display = isSolo ? 'none' : 'block';
+  // Show/hide the solo-work-type row + clear selection when leaving solo.
+  if (soloWorkRow) soloWorkRow.style.display = isSolo ? 'block' : 'none';
+  if (!isSolo) resetSoloWorkType();
 }
 
 // Sum the four rep-counter values and update the "Total reps" display.
@@ -7142,6 +7227,21 @@ function gradePill(g) {
   if (!label || !color) return '';
   return _metaPill(g, label, color);
 }
+// Compose the entry-type pill label. Practice + solo mode reads as
+// "individual · {work type}" instead of just "practice" so the player's
+// solo work shows up distinctly in the entries list. Coach Young
+// 2026-05-10 walkthrough.
+function entryTypeLabel(e) {
+  if (!e || !e.type) return '';
+  if (e.type === 'practice' && e.practiceMode === 'solo') {
+    if (e.soloWorkType && typeof SOLO_WORK_TYPES !== 'undefined') {
+      const w = SOLO_WORK_TYPES.find(function(t) { return t.id === e.soloWorkType; });
+      if (w) return 'individual · ' + w.label.toLowerCase();
+    }
+    return 'individual work';
+  }
+  return e.type;
+}
 // Compact "edited" badge timestamp. <1 min: "just now"; <1 hr: "Nm ago";
 // <24 hr: "Nh ago"; otherwise: short date like "May 10".
 function formatEditedDate(ts) {
@@ -7255,7 +7355,7 @@ function renderEntries() {
           ${resultPill(e.result)}
           ${gradePill(e.grade)}
           ${e.editedAt ? `<div title="This entry was edited after the original day" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey); background:rgba(100,100,100,0.12); padding:4px 8px; border-radius:3px;">✏️ edited ${formatEditedDate(e.editedAt)}</div>` : ''}
-          <div class="entry-type type-${e.type}">${e.type}${e.type === 'practice' && e.practiceMode === 'solo' ? ' · SOLO' : ''}</div>
+          <div class="entry-type type-${e.type}">${entryTypeLabel(e)}</div>
           ${isEntryProtected(e) && !isCreator() ? `<span title="PIN required to edit — older than 24h" style="font-size:11px; color:var(--gold-dark); margin-right:-2px;">🔒</span>` : ''}
           <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:2px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="${isEntryProtected(e) && !isCreator() ? 'Edit this entry — PIN required' : 'Edit this entry'}">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})" title="${isEntryProtected(e) && !isCreator() ? 'Delete — PIN required' : 'Delete'}">✕</button>
