@@ -793,9 +793,61 @@
     background: var(--card);
     border: 1px solid #3D3530;
     border-radius: 4px;
-    padding: 20px 24px;
-    margin-bottom: 14px;
+    padding: 0;
+    margin-bottom: 8px;
     position: relative;
+    overflow: hidden;
+  }
+  .entry-card.expanded { padding-bottom: 16px; }
+
+  /* Compact summary row — Coach Young 2026-05-11 walkthrough. Entries
+     default to a one-line collapsed view; tap to expand. */
+  .entry-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    cursor: pointer;
+    min-height: 56px;
+    transition: background 0.15s;
+  }
+  .entry-summary:hover { background: rgba(var(--accent-rgb), 0.04); }
+  .entry-summary-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+  }
+  .entry-summary-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .entry-summary-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .entry-chevron {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    color: var(--grey);
+    transition: transform 0.2s;
+    display: inline-block;
+    width: 18px;
+    text-align: center;
+  }
+  .entry-card.expanded .entry-chevron { transform: rotate(180deg); }
+  .entry-expanded {
+    padding: 4px 18px 0;
+    border-top: 1px solid var(--border);
   }
 
   .entry-meta {
@@ -803,6 +855,7 @@
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 10px;
+    padding-top: 12px;
   }
 
   .entry-date {
@@ -1104,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v100';
+    const CACHE = 'ybg-mygrind-v101';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7818,6 +7871,22 @@ function onEntriesDatePicked(ymd) {
   setEntriesFilter('date:' + ymd);
 }
 
+// Toggle a past entry between compact summary + expanded view. Coach
+// Young 2026-05-11 walkthrough — bullet-list pattern for the journal
+// history. Edit / delete buttons live inside the expanded section so
+// no event.stopPropagation needed; clicks there don't reach the
+// summary's onclick handler.
+function toggleEntryCard(entryId) {
+  const card = document.querySelector('.entry-card[data-entry-id="' + entryId + '"]');
+  if (!card) return;
+  const expanded = card.querySelector('.entry-expanded');
+  if (!expanded) return;
+  const isOpen = expanded.style.display === 'block';
+  expanded.style.display = isOpen ? 'none' : 'block';
+  card.classList.toggle('expanded', !isOpen);
+  if (!isOpen) ybgHaptic(8);
+}
+
 function renderEntries() {
   const container = document.getElementById('entries-list');
   if (!state.entries.length) {
@@ -7943,26 +8012,35 @@ function renderEntries() {
     ) : '';
 
     return dayHeader + `
-    <div class="entry-card">
+    <div class="entry-card" data-entry-id="${e.id}">
 
-      <!-- META ROW — date moved to the day header above so it's not
-           repeated on every same-day entry. flex-wrap lets the result/grade
-           pills drop to a new line on narrow screens instead of clipping
-           the edit/delete buttons off the right edge. -->
+      <!-- COMPACT SUMMARY (always visible, tap to expand). Coach Young
+           2026-05-11 walkthrough: entries default collapsed to a one-row
+           summary so the journal reads like a bullet list. -->
+      <div class="entry-summary" onclick="toggleEntryCard(${e.id})">
+        <div class="entry-summary-left">
+          <div class="entry-type type-${e.type}">${entryTypeLabel(e)}</div>
+          <span class="entry-summary-title">${displayTitle}</span>
+        </div>
+        <div class="entry-summary-right">
+          ${gradePill(e.grade)}
+          ${resultPill(e.result)}
+          ${isEntryProtected(e) && !isCreator() ? `<span title="PIN required to edit — older than 24h" style="font-size:11px; color:var(--gold-dark);">🔒</span>` : ''}
+          <span class="entry-chevron">▾</span>
+        </div>
+      </div>
+
+      <!-- EXPANDED CONTENT (hidden by default) -->
+      <div class="entry-expanded" style="display:none;">
+
+      <!-- META ACTIONS — edited badge, edit, delete -->
       <div class="entry-meta" style="justify-content:flex-end;">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-          ${resultPill(e.result)}
-          ${gradePill(e.grade)}
           ${e.editedAt ? `<div title="This entry was edited after the original day" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey); background:rgba(100,100,100,0.12); padding:4px 8px; border-radius:3px;">✏️ edited ${formatEditedDate(e.editedAt)}</div>` : ''}
-          <div class="entry-type type-${e.type}">${entryTypeLabel(e)}</div>
-          ${isEntryProtected(e) && !isCreator() ? `<span title="PIN required to edit — older than 24h" style="font-size:11px; color:var(--gold-dark); margin-right:-2px;">🔒</span>` : ''}
           <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:2px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="${isEntryProtected(e) && !isCreator() ? 'Edit this entry — PIN required' : 'Edit this entry'}">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})" title="${isEntryProtected(e) && !isCreator() ? 'Delete — PIN required' : 'Delete'}">✕</button>
         </div>
       </div>
-
-      <!-- TITLE -->
-      <div class="entry-title">${displayTitle}</div>
 
       <!-- GAME STATS BOX -->
       ${e.gameStats ? `
@@ -8124,6 +8202,7 @@ function renderEntries() {
       </div>
       ` : ''}
 
+      </div><!-- /entry-expanded -->
     </div>
   ` + todayTotalsCard;
   }).join('');
