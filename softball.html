@@ -1104,7 +1104,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v97';
+    const CACHE = 'ybg-mygrind-v98';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2292,10 +2292,23 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="daily-quote-author" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:2px; color:var(--gold); margin-top:14px; text-align:center; text-transform:uppercase;"></div>
     </div>
 
+    <!-- ── COMPOSE TRIGGER ── Coach Young 2026-05-11 walkthrough.
+         Default view is the entries list. The compose form lives behind
+         this bar so it doesn't visually merge with past entries. Matches
+         Day One / Reflectly / Apple Notes — compose is its own focused
+         mode, list is the home view. Hidden when compose is open. -->
+    <div id="open-compose-bar" onclick="openCompose()" style="margin-bottom:20px; padding:18px 20px; background:linear-gradient(135deg, var(--gold), var(--gold-dark)); border:none; border-radius:4px; cursor:pointer; text-align:center; transition:all 0.15s; box-shadow:0 2px 8px rgba(0,0,0,0.3);">
+      <div style="font-family:'Bebas Neue', cursive; font-size:26px; letter-spacing:2px; color:var(--dark); line-height:1;">+ LOG A NEW ENTRY</div>
+      <div style="font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:rgba(0,0,0,0.6); margin-top:6px;">Practice · Game · Instructor · Workout · Reflection · Off Day</div>
+    </div>
+
     <!-- "New Entry" card title removed 2026-05-10 walkthrough — the
          panel banner ("DAILY JOURNAL") and the obvious form below
          already communicate "this is where you log a new entry." The
-         eyebrow stamp was redundant after the 22px display-heading bump. -->
+         eyebrow stamp was redundant after the 22px display-heading bump.
+         Compose section wrapper added 2026-05-11 — hidden by default,
+         revealed when the trigger bar is tapped. -->
+    <div id="compose-section" style="display:none;">
     <div class="card">
       <!-- Date picker — Coach Young 2026-05-11 walkthrough iteration 2.
            Tried locking to today (commit 061641b), but back-dating is
@@ -2884,9 +2897,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
       <div style="display:flex; gap:10px;">
         <button class="btn btn-gold" id="save-entry-btn" onclick="saveEntry()" style="flex:1;">📓 &nbsp;Save Entry</button>
-        <button class="btn btn-outline" id="cancel-edit-btn" onclick="cancelEdit()" style="display:none;">Cancel</button>
+        <button class="btn btn-outline" id="cancel-edit-btn" onclick="closeCompose()">× Close</button>
       </div>
     </div>
+    </div><!-- /compose-section -->
 
     <!-- ADD COMMENT TO EXISTING ENTRY -->
     <div class="card" id="add-comment-card" style="display:none; border-color:var(--gold-dark);">
@@ -6324,19 +6338,21 @@ function _doEditEntry(id) {
   pendingMedia = Array.isArray(entry.media) ? entry.media.map(function(m) { return Object.assign({}, m); }) : [];
   renderMediaPreview();
 
-  // UI — show Cancel button + Editing banner, change Save button label
+  // UI — show Editing banner, change Save button label, set Cancel text.
+  // Cancel button is always-visible in the new compose-section model
+  // (Coach Young 2026-05-11) — its text just swaps between "× Close"
+  // (new entry) and "Cancel" (editing a saved entry).
   const saveBtn = document.getElementById('save-entry-btn');
   const cancelBtn = document.getElementById('cancel-edit-btn');
   const banner = document.getElementById('editing-banner');
   const bannerDate = document.getElementById('editing-banner-date');
   if (saveBtn)   saveBtn.innerHTML = '💾 &nbsp;Update Entry';
-  if (cancelBtn) cancelBtn.style.display = 'inline-block';
+  if (cancelBtn) cancelBtn.textContent = 'Cancel';
   if (banner)    banner.style.display = 'block';
   if (bannerDate) bannerDate.textContent = entry.date || 'this entry';
 
-  // Scroll to the New Entry card so the user sees the form
-  const card = document.querySelector('#panel-journal .card');
-  if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  // Reveal compose section + scroll into view.
+  try { openCompose(true); } catch (e) {}
   ybgHaptic(15);
 }
 
@@ -6362,13 +6378,73 @@ function cancelEdit() {
   pendingMedia = [];
   renderMediaPreview();
 
-  // UI — restore default
+  // UI — restore default. Cancel button is always-visible since the
+  // compose section is itself togglable (Coach Young 2026-05-11) — its
+  // text reverts to "× Close" for the new-entry flow.
   const saveBtn = document.getElementById('save-entry-btn');
   const cancelBtn = document.getElementById('cancel-edit-btn');
   const banner = document.getElementById('editing-banner');
   if (saveBtn)   saveBtn.innerHTML = '📓 &nbsp;Save Entry';
-  if (cancelBtn) cancelBtn.style.display = 'none';
+  if (cancelBtn) cancelBtn.textContent = '× Close';
   if (banner)    banner.style.display = 'none';
+}
+
+// ── COMPOSE SECTION TOGGLE ───────────────────────────
+// Default journal view shows the entries list. Compose form lives
+// behind the "+ LOG A NEW ENTRY" bar so it doesn't visually merge with
+// past entries — matches Day One / Reflectly / Apple Notes pattern
+// where compose is a focused mode, list is the home view. Coach Young
+// 2026-05-11 walkthrough.
+function openCompose(skipScroll) {
+  const composeSection = document.getElementById('compose-section');
+  const openBar = document.getElementById('open-compose-bar');
+  if (composeSection) composeSection.style.display = 'block';
+  if (openBar) openBar.style.display = 'none';
+  if (!skipScroll && composeSection) {
+    setTimeout(function() {
+      composeSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
+  }
+}
+
+function closeCompose(skipConfirm) {
+  // Confirm before discarding unsaved content. saveEntry passes true
+  // since it just persisted the entry — no draft to protect.
+  if (!skipConfirm && hasAnyEntryDraft()) {
+    const ok = confirm('Discard this entry?');
+    if (!ok) return;
+  }
+  try { cancelEdit(); } catch (e) {}
+  const composeSection = document.getElementById('compose-section');
+  const openBar = document.getElementById('open-compose-bar');
+  if (composeSection) composeSection.style.display = 'none';
+  if (openBar) openBar.style.display = '';
+  setTimeout(function() {
+    const list = document.getElementById('entries-list');
+    if (list) list.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+function hasAnyEntryDraft() {
+  const textFields = ['j-title','j-what','j-team-role-text','j-tomorrow','j-prepare','j-coach-note',
+    'j-inst-name','j-inst-notes','j-inst-takeaway','j-inst-note','j-inst-next',
+    'j-wo-lifts'];
+  for (let i = 0; i < textFields.length; i++) {
+    if ((document.getElementById(textFields[i])?.value || '').trim() !== '') return true;
+  }
+  const numFields = ['j-inst-duration','j-wo-duration',
+    'gs-ab','gs-h','gs-hr','gs-rbi','gs-r','gs-bb','gs-k','gs-sb',
+    'gs-ip','gs-er','gs-pk','gs-pbb','gs-po','gs-a','gs-e'];
+  for (let i = 0; i < numFields.length; i++) {
+    const v = document.getElementById(numFields[i])?.value;
+    if (v && parseInt(v) > 0) return true;
+  }
+  const repIds = ['jr-swings-value','jr-gb-value','jr-throws-value','jr-pitches-value'];
+  for (let i = 0; i < repIds.length; i++) {
+    if ((parseInt(document.getElementById(repIds[i])?.value) || 0) > 0) return true;
+  }
+  if ((document.getElementById('j-grade')?.value || '').trim() !== '') return true;
+  return false;
 }
 
 // ── SAVE ENTRY ────────────────────────────────────────
@@ -6643,12 +6719,13 @@ function saveEntry() {
       state.entries[idx] = entry;
     }
     editingEntryId = null;
-    // Reset UI back to "create new" mode
+    // Reset UI back to "create new" mode. Cancel button stays visible
+    // (compose-section model — Coach Young 2026-05-11); text reverts.
     const saveBtn = document.getElementById('save-entry-btn');
     const cancelBtn = document.getElementById('cancel-edit-btn');
     const banner = document.getElementById('editing-banner');
     if (saveBtn)   saveBtn.innerHTML = '📓 &nbsp;Save Entry';
-    if (cancelBtn) cancelBtn.style.display = 'none';
+    if (cancelBtn) cancelBtn.textContent = '× Close';
     if (banner)    banner.style.display = 'none';
   } else {
     state.entries.unshift(entry);
@@ -6723,6 +6800,10 @@ function saveEntry() {
       }
     }
   } catch (_) {}
+
+  // Collapse compose section + scroll to the entries list so the new
+  // entry is the focal point. Coach Young 2026-05-11 walkthrough.
+  try { closeCompose(true); } catch (_) {}
 }
 
 function deleteEntry(id) {
