@@ -1086,7 +1086,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v93';
+    const CACHE = 'ybg-mygrind-v94';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2844,26 +2844,32 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <!-- ── MEDIA UPLOAD (entry-specific photos/videos) ── -->
       <!-- Photos & Videos are tied to THIS entry — they document the practice
            or game being logged. They belong adjacent to the entry data they
-           document, BEFORE the daily Arm Care ritual. Coach Young 2026-05-09. -->
+           document, BEFORE the daily Arm Care ritual. Coach Young 2026-05-09.
+           Redesigned 2026-05-11: was a 28px-padded dashed drop-zone that read
+           as mandatory. Now a single compact line so it feels optional. -->
       <div style="margin-bottom:20px;">
-        <label>📸 Photos & Videos</label>
         <div id="media-drop-zone" style="
-          border: 2px dashed var(--border);
+          border: 1px solid var(--border);
           border-radius: 4px;
-          padding: 28px;
-          text-align: center;
+          padding: 11px 14px;
           cursor: pointer;
           transition: all 0.2s;
           background: var(--card2);
-          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 12px;
         "
         onclick="document.getElementById('media-file-input').click()"
         ondragover="handleDragOver(event)"
         ondragleave="handleDragLeave(event)"
         ondrop="handleDrop(event)">
-          <div style="font-size:32px; margin-bottom:8px;">📸</div>
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Tap to Upload or Drag & Drop</div>
-          <div style="font-family:'Barlow'; font-size:12px; color:var(--border); margin-top:4px;">Photos (JPG, PNG) · Videos (MP4, MOV) · Max 50MB each</div>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:16px;">📸</span>
+            <span style="font-family:'Barlow'; font-size:14px; color:var(--light);">Add a photo or video</span>
+            <span style="font-family:'Barlow'; font-size:12px; color:var(--grey);">(optional)</span>
+          </div>
+          <span style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">+ Add</span>
           <input type="file" id="media-file-input" multiple accept="image/*,video/*" style="display:none;" onchange="handleFileSelect(event)">
         </div>
         <!-- Media Preview Grid -->
