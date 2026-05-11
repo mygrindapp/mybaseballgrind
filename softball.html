@@ -1188,7 +1188,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v119';
+    const CACHE = 'ybg-mygrind-v120';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8210,14 +8210,18 @@ function _entrySummaryBrief(e) {
                           'core':'Core', 'speed-plyo':'Speed/Plyo', 'mobility':'Mobility',
                           'mixed':'Mixed', 'other':'Custom' };
       if (e.workout.focus) parts.push(focusMap[e.workout.focus] || e.workout.focus);
-      if (e.workout.duration) parts.push(e.workout.duration + ' min');
+      // parseInt guard — "0" string is truthy, so a stale or empty
+      // duration would render "0 min" without it (Coach Young 2026-05-11).
+      const woDur = parseInt(e.workout.duration);
+      if (woDur > 0) parts.push(woDur + ' min');
       return parts.join(' · ');
     }
     if (e.type === 'instructor' && e.instructor) {
       const parts = [];
       if (e.instructor.name)  parts.push(e.instructor.name);
       if (e.instructor.focus) parts.push(e.instructor.focus);
-      if (e.instructor.duration) parts.push(e.instructor.duration + ' min');
+      const instDur = parseInt(e.instructor.duration);
+      if (instDur > 0) parts.push(instDur + ' min');
       return parts.join(' · ');
     }
     if (e.type === 'reflection' || e.type === 'offday') {
@@ -8487,9 +8491,9 @@ function renderEntries() {
             </div>
           ` : ''}
           ${e.workout.lifts ? `<div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #B95E15; border-radius:2px; margin-bottom:8px; white-space:pre-wrap;">${e.workout.lifts}</div>` : ''}
-          ${e.workout.duration ? `
+          ${parseInt(e.workout.duration) > 0 ? `
             <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); padding-top:8px; border-top:1px solid var(--border);">
-              ⏱ <span style="color:var(--light);">${e.workout.duration} min</span>
+              ⏱ <span style="color:var(--light);">${parseInt(e.workout.duration)} min</span>
             </div>
           ` : ''}
         </div>
@@ -8504,9 +8508,9 @@ function renderEntries() {
           ${e.instructor.notes ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:4px;">What We Worked On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #5A8A3A; border-radius:2px;">${e.instructor.notes}</div>` : ''}
           ${e.instructor.takeaway ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">What I Need to Work On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dark); border-radius:2px;">${e.instructor.takeaway}</div>` : ''}
           ${e.instructor.noteForCoach ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:4px;">📝 Note for Instructor</div><div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(168,217,123,0.06); border-left:2px solid #5A8A3A; border-radius:2px;">${e.instructor.noteForCoach}</div>` : ''}
-          ${(e.instructor.duration || e.instructor.next) ? `
+          ${((parseInt(e.instructor.duration) > 0) || e.instructor.next) ? `
             <div style="display:flex; gap:14px; flex-wrap:wrap; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); padding-top:8px; border-top:1px solid var(--border);">
-              ${e.instructor.duration ? `<div>⏱ <span style="color:var(--light);">${e.instructor.duration} min</span></div>` : ''}
+              ${parseInt(e.instructor.duration) > 0 ? `<div>⏱ <span style="color:var(--light);">${parseInt(e.instructor.duration)} min</span></div>` : ''}
               ${e.instructor.next ? `<div>📅 Next: <span style="color:var(--light);">${e.instructor.next}</span></div>` : ''}
             </div>
           ` : ''}
