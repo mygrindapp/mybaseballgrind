@@ -644,7 +644,25 @@
   .btn-outline:hover { background: rgba(var(--accent-rgb), 0.1); }
   .btn-danger { background: transparent; color: var(--red); border: 1px solid var(--red); }
   .btn-danger:hover { background: rgba(192,57,43,0.1); }
-  .btn-sm { padding: 7px 14px; font-size: 11px; }
+  .btn-sm { padding: 11px 16px; font-size: 11px; }
+
+  /* ── MOBILE TAP-TARGET FLOOR ── Coach Young 2026-05-11.
+     Players use this app one-handed on a phone. Every interactive
+     element needs to clear Apple's 44pt minimum so a thumb can hit it
+     without precision aim. Applied via min-height (not padding) so the
+     existing visual density of dense chip rows stays — boxes only grow
+     when content + padding doesn't already reach 44px. -->
+  button,
+  .rep-chip,
+  .grade-chip,
+  .result-chip,
+  .practice-mode-chip,
+  .solo-work-chip {
+    min-height: 44px;
+  }
+  /* Photo upload row + media preview tiles + the form's drop-zone all
+     get the same tap floor so they're easy to hit on mobile. */
+  #media-drop-zone { min-height: 44px; }
 
   /* ── GRID ── */
   .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
@@ -1086,7 +1104,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v94';
+    const CACHE = 'ybg-mygrind-v95';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
