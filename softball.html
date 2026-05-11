@@ -1029,7 +1029,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v81';
+    const CACHE = 'ybg-mygrind-v82';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6516,16 +6516,17 @@ function saveEntry() {
 function deleteEntry(id) {
   const entry = state.entries.find(function(e) { return e.id === id; });
   if (!entry) return;
-  // PIN gate — same rule as editEntry. Deleting a bad-day entry to
-  // erase the record is the same revisionist move as rewriting it.
-  // For protected entries, the PIN itself is the confirmation, so we
-  // skip the custom modal and go straight to soft-delete + undo toast.
+  // Two-step gate for prior-day entries (Coach Young 2026-05-11
+  // walkthrough): "When they go to a prior entry date they are able
+  // to delete. This should be harder." Was: PIN → soft-delete. Now:
+  // PIN → confirm modal (with Edit Instead escape) → soft-delete →
+  // undo toast. Three layers of friction protect honest history.
+  // Unprotected entries (today's) still skip the PIN and go straight
+  // to the confirm modal.
   if (isEntryProtected(entry)) {
-    requestEditPinAccess(function() { softDeleteEntry(id); }, entry);
+    requestEditPinAccess(function() { showDeletePrompt(id); }, entry);
     return;
   }
-  // Unprotected — show the custom delete prompt with Edit Instead +
-  // Cancel escape hatches (Coach Young 2026-05-10 walkthrough).
   showDeletePrompt(id);
 }
 
@@ -6550,9 +6551,21 @@ function showDeletePrompt(id) {
     const dateStr  = entry.date || 'this entry';
     const typeStr  = (entry.type || 'entry').toUpperCase();
     const titleStr = entry.title || (entry.what ? String(entry.what).slice(0, 80) + (entry.what.length > 80 ? '…' : '') : '(no title)');
+    // Protected (>24h old) entries get a stronger warning line —
+    // signals to the player this is real history, not today's draft.
+    // Coach Young 2026-05-11.
+    let warningLine = '';
+    if (isEntryProtected(entry) && !isCreator()) {
+      const daysOld = Math.max(1, Math.round((Date.now() - entry.id) / (1000 * 60 * 60 * 24)));
+      warningLine =
+        '<div style="margin-top:8px; padding-top:8px; border-top:1px dashed var(--gold-dark); font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#E57373;">' +
+          '⚠ This is from ' + daysOld + ' day' + (daysOld === 1 ? '' : 's') + ' ago' +
+        '</div>';
+    }
     preview.innerHTML =
       '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">' + dateStr + ' · ' + typeStr + '</div>' +
-      '<div>' + titleStr + '</div>';
+      '<div>' + titleStr + '</div>' +
+      warningLine;
   }
   const overlay = document.getElementById('entry-delete-overlay');
   if (overlay) overlay.style.display = 'flex';
