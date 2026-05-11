@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v101';
+    const CACHE = 'ybg-mygrind-v102';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2459,12 +2459,35 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            evidence-based pre-lift protocol (RAMP — Raise · Activate ·
            Mobilize · Potentiate). -->
       <div class="card" id="j-warmup-section" style="display:none; margin-top:20px; margin-bottom:16px; border-left:3px solid #E67E22;">
-        <div class="card-title">🏋️ Pre-Workout Warm-up</div>
-        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
-          Prime the body before lifting. Skip this and you risk pulls. <strong style="color:#E67E22;">Resets at midnight.</strong>
+        <!-- Expanded state — full checklist. Mirrors the arm-care
+             collapsed-to-pill pattern (Coach Young 2026-05-11): when 5/5
+             checked, the section compresses to a single green pill that
+             frees vertical space on mobile. -->
+        <div id="warmup-expanded">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
+            <div class="card-title" style="margin-bottom:0;">🏋️ Pre-Workout Warm-up</div>
+            <button type="button" id="warmup-collapse-btn" onclick="collapseWarmup()" style="display:none; background:transparent; border:1px solid #B95E15; color:#E67E22; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer; flex-shrink:0;">▲ Hide</button>
+          </div>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
+            Prime the body before lifting. Skip this and you risk pulls. <strong style="color:#E67E22;">Resets at midnight.</strong>
+          </div>
+          <div id="warmup-list"></div>
+          <div id="warmup-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
         </div>
-        <div id="warmup-list"></div>
-        <div id="warmup-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
+
+        <!-- Compressed-pill state — shown when all items are complete.
+             Tap to re-expand (e.g. to verify or uncheck). Resets at
+             midnight via the daily state key. -->
+        <div id="warmup-pill" onclick="expandWarmup()" style="display:none; padding:14px 16px; background:rgba(39,174,96,0.12); border:1px solid #27AE60; border-radius:4px; cursor:pointer; user-select:none; align-items:center; justify-content:space-between; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:18px;">🏋️</span>
+            <div>
+              <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60; line-height:1;">Warm-up — Done for Today</div>
+              <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:3px;">5 of 5 complete · Resets at midnight</div>
+            </div>
+          </div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Tap to expand</div>
+        </div>
       </div>
 
       <!-- ── ARM CARE DAILY CHECKLIST ── -->
@@ -2768,34 +2791,90 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            hitting work. No throwing reps captured here — workouts don't
            contribute to arm load (handled by updateArmCareVisibility +
            hasThrowingEntryToday excluding 'workout' type). -->
+      <!-- Workout section rebuilt 2026-05-11 (Coach Young walkthrough).
+           Was generic dropdowns (Strength / Mobility / Cardio / Speed /
+           Mixed) with no sport context. Now keyed to baseball/softball
+           weight training: focus chips drive a sport-specific "why this
+           matters" tip + a tap-to-add suggested-lifts library so the
+           player isn't staring at a blank textarea. -->
+      <style>
+        .wo-focus-chip, .wo-intensity-chip {
+          background: transparent;
+          border: 1px solid #B95E15;
+          color: var(--light);
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          padding: 9px 14px;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: all 0.15s;
+          flex: 0 0 auto;
+        }
+        .wo-focus-chip:hover, .wo-intensity-chip:hover { background: rgba(230,126,34,0.10); }
+        .wo-focus-chip.selected, .wo-intensity-chip.selected {
+          background: #E67E22;
+          color: var(--dark);
+          border-color: #E67E22;
+        }
+        .wo-lift-chip {
+          background: var(--card2);
+          border: 1px solid var(--border);
+          color: var(--light);
+          font-family: 'Barlow', sans-serif;
+          font-size: 12px;
+          font-weight: 600;
+          padding: 8px 12px;
+          border-radius: 14px;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .wo-lift-chip:hover { background: rgba(230,126,34,0.10); border-color: #B95E15; color: #E67E22; }
+        .wo-lift-chip:active { transform: scale(0.97); }
+      </style>
       <div id="j-workout-section" style="display:none; border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:6px;">🏋️ Weight Room / Workout</div>
-        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Track your strength + conditioning work. Off-season is where seasons are won.</div>
-        <div class="form-row" style="margin-bottom:0;">
-          <div>
-            <label>Focus</label>
-            <select id="j-wo-focus" style="margin-bottom:0;">
-              <option value="">-- Select --</option>
-              <option value="strength">💪 Strength</option>
-              <option value="mobility">🤸 Mobility / Flexibility</option>
-              <option value="cardio">🏃 Cardio</option>
-              <option value="speed">⚡ Speed / Agility</option>
-              <option value="mixed">🔀 Mixed</option>
-            </select>
-          </div>
-          <div>
-            <label>Intensity</label>
-            <select id="j-wo-intensity" style="margin-bottom:0;">
-              <option value="">-- Select --</option>
-              <option value="light">Light</option>
-              <option value="moderate">Moderate</option>
-              <option value="heavy">Heavy</option>
-            </select>
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:6px;">🏋️ Weight Room / Gym</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.5;">Strength + conditioning built for baseball / softball — rotational power, lower-body explosiveness, arm health. Off-season is where seasons are won.</div>
+
+        <!-- Focus chips (was a select). Drives the tip + suggested lifts below. -->
+        <label>What kind of workout?</label>
+        <input type="hidden" id="j-wo-focus" value="">
+        <div id="j-wo-focus-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:4px;">
+          <button type="button" class="wo-focus-chip" data-focus="lower-power" onclick="selectWoFocus('lower-power')">💥 Lower Power</button>
+          <button type="button" class="wo-focus-chip" data-focus="rotational"  onclick="selectWoFocus('rotational')">🔄 Rotational</button>
+          <button type="button" class="wo-focus-chip" data-focus="upper"       onclick="selectWoFocus('upper')">💪 Upper Body</button>
+          <button type="button" class="wo-focus-chip" data-focus="core"        onclick="selectWoFocus('core')">🤸 Core / Anti-Rotation</button>
+          <button type="button" class="wo-focus-chip" data-focus="speed-plyo"  onclick="selectWoFocus('speed-plyo')">⚡ Speed / Plyo</button>
+          <button type="button" class="wo-focus-chip" data-focus="mobility"    onclick="selectWoFocus('mobility')">🧘 Mobility</button>
+          <button type="button" class="wo-focus-chip" data-focus="mixed"       onclick="selectWoFocus('mixed')">🔀 Mixed / Conditioning</button>
+        </div>
+
+        <!-- Why this matters — populated by selectWoFocus(). Sport-specific
+             tip so the player understands what the work is buying them. -->
+        <div id="j-wo-focus-tip" style="display:none; margin-top:10px; padding:10px 12px; background:rgba(230,126,34,0.08); border-left:2px solid #E67E22; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.55;"></div>
+
+        <!-- Suggested lifts — tap-to-add chips that append to the lifts log. -->
+        <div id="j-wo-suggested-row" style="display:none; margin-top:14px;">
+          <label>Suggested lifts <span style="color:var(--grey); font-weight:400; text-transform:none; letter-spacing:0.5px;">— tap to add to your log</span></label>
+          <div id="j-wo-suggested-chips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+        </div>
+
+        <!-- Intensity chips (was a select) -->
+        <div style="margin-top:14px;">
+          <label>Intensity</label>
+          <input type="hidden" id="j-wo-intensity" value="">
+          <div id="j-wo-intensity-row" style="display:flex; gap:6px;">
+            <button type="button" class="wo-intensity-chip" data-intensity="light"    onclick="selectWoIntensity('light')">Light</button>
+            <button type="button" class="wo-intensity-chip" data-intensity="moderate" onclick="selectWoIntensity('moderate')">Moderate</button>
+            <button type="button" class="wo-intensity-chip" data-intensity="heavy"    onclick="selectWoIntensity('heavy')">Heavy</button>
           </div>
         </div>
-        <div style="margin-top:12px;">
+
+        <div style="margin-top:14px;">
           <label>Main Lifts / What I Worked On</label>
-          <textarea id="j-wo-lifts" placeholder="e.g. Squat 3x5 @ 185 · Bench 3x5 @ 135 · Deadlift 1x5 @ 225 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
+          <textarea id="j-wo-lifts" placeholder="e.g. Trap Bar DL 3x5 @ 225 · Med Ball Rotational Throw 3x8 · Bench 3x5 @ 155 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
         <div style="margin-top:12px; margin-bottom:0;">
           <label>Duration (min)</label>
@@ -6363,10 +6442,13 @@ function _doEditEntry(id) {
     setVal('j-coach-note', entry.coachNote);
   }
 
-  // Workout
+  // Workout — call the chip selectors so visuals + tip + suggested lifts
+  // restore correctly (was: setVal alone left the chips unhighlighted).
+  // Legacy focus values ('strength', 'cardio', 'speed') gracefully degrade
+  // — selectWoFocus writes them to the hidden input but no chip selects.
   if (entry.workout) {
-    setVal('j-wo-focus',     entry.workout.focus);
-    setVal('j-wo-intensity', entry.workout.intensity);
+    if (entry.workout.focus)     { try { selectWoFocus(entry.workout.focus); }       catch (e) { setVal('j-wo-focus',     entry.workout.focus); } }
+    if (entry.workout.intensity) { try { selectWoIntensity(entry.workout.intensity); } catch (e) { setVal('j-wo-intensity', entry.workout.intensity); } }
     setVal('j-wo-lifts',     entry.workout.lifts);
     setVal('j-wo-duration',  entry.workout.duration);
   }
@@ -6469,10 +6551,12 @@ function saveEntry() {
   const commentRole = document.getElementById('j-comment-role').value;
   const commentText = document.getElementById('j-comment-text').value.trim();
 
-  // Title required for game / workout / reflection (which have visible title fields).
-  // Practice / instructor / offday hide the title field by default, so a title
-  // isn't required. Off-day's optional title placeholder ("Sunday rest…") still works.
-  if (!title && type !== 'practice' && type !== 'instructor' && type !== 'offday') { alert('Please add a title or opponent.'); return; }
+  // Title required for game / reflection. Practice / instructor / offday /
+  // workout hide the title field by default OR have their own structured
+  // fields (lifts log for workout), so a title isn't required. Coach Young
+  // 2026-05-11: workout was blocking save with the "title or opponent"
+  // alert which made the form feel like a game.
+  if (!title && type !== 'practice' && type !== 'instructor' && type !== 'offday' && type !== 'workout') { alert('Please add a title or opponent.'); return; }
 
   // Reps-without-context guard — Coach Young 2026-05-10 walkthrough.
   // A practice entry with rep chips tapped but no reflection / grade /
@@ -6741,6 +6825,8 @@ function saveEntry() {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
+  // Clear workout chip visuals + suggested lifts panel after save/cancel.
+  try { resetWorkoutChips(); } catch (_) {}
   // Reset Instructor session fields
   ['j-inst-name','j-inst-focus','j-inst-notes','j-inst-takeaway','j-inst-note','j-inst-duration','j-inst-next','j-coach-note'].forEach(id => {
     const el = document.getElementById(id);
@@ -11271,6 +11357,170 @@ function toggleArmCare(id) {
 // foam roll), Activate (band + glute), Mobilize (dynamic stretches),
 // Potentiate (warm-up sets ramping to working weight).
 // Coach Young 2026-05-09: "add workout warm up checklists."
+// ─── WORKOUT FOCUS LIBRARY ─────────────────────────────────
+// Coach Young 2026-05-11 walkthrough. Baseball/softball-specific weight
+// training: focus chips drive a sport-specific tip + tap-to-add suggested
+// lifts so the player isn't staring at a blank textarea. Library curated
+// from baseball/softball strength research (Cressey, Driveline, Live
+// Every Day off-season program, Bruce Bolt rotational-power guidance).
+const WORKOUT_FOCI = {
+  'lower-power': {
+    label: '💥 Lower Power',
+    tip: 'Lower body explosiveness is the engine for bat speed, throwing velocity, and first-step quickness. The legs go first — everything else is downstream.',
+    lifts: [
+      'Trap Bar Deadlift 3x5',
+      'Back Squat 3x5',
+      'Front Squat 3x5',
+      'Bulgarian Split Squat 3x8/leg',
+      'Romanian Deadlift 3x6',
+      'Hip Thrust 3x8',
+      'Goblet Squat 3x10',
+      'Reverse Lunge 3x8/leg'
+    ]
+  },
+  'rotational': {
+    label: '🔄 Rotational Power',
+    tip: 'Rotational power separates average from elite. Trunk rotation has the largest influence on throwing velocity, and the same kinetic chain drives bat speed.',
+    lifts: [
+      'Med Ball Rotational Throw 3x8/side',
+      'Med Ball Scoop Toss 3x8/side',
+      'Med Ball Overhead Slam 3x8',
+      'Cable Rotation 3x10/side',
+      'Landmine Rotation 3x8/side',
+      'Hanging Russian Twist 3x12',
+      'Half-Kneeling Pallof Press 3x10/side',
+      'Med Ball Shotput Throw 3x6/side'
+    ]
+  },
+  'upper': {
+    label: '💪 Upper Body',
+    tip: 'Build pulling strength to protect the shoulder — pull-to-push at a 2:1 ratio favoring pull keeps the rotator cuff healthy for the long season.',
+    lifts: [
+      'Pull-ups 3x AMRAP',
+      'Chest-Supported Row 3x8',
+      'Single-Arm DB Row 3x8/side',
+      'DB Bench Press 3x6',
+      'Incline DB Bench 3x8',
+      'Face Pulls 3x12',
+      'Landmine Press 3x6/side',
+      'Band Pull-Apart 3x15'
+    ]
+  },
+  'core': {
+    label: '🤸 Core / Anti-Rotation',
+    tip: 'A stable core transfers force from legs to arms — without it the kinetic chain leaks power before it reaches the ball.',
+    lifts: [
+      'Pallof Press 3x10/side',
+      'Dead Bug 3x10',
+      'Side Plank 3x30s/side',
+      'Plank 3x60s',
+      'Bird Dog 3x10/side',
+      'Hollow Body Hold 3x30s',
+      'Suitcase Carry 3x30yd/side',
+      'Ab Wheel Rollout 3x8'
+    ]
+  },
+  'speed-plyo': {
+    label: '⚡ Speed / Plyo',
+    tip: 'Plyometrics build elastic strength — the kind that turns gym strength into game speed and explosive first-step quickness.',
+    lifts: [
+      'Box Jump 3x5',
+      'Broad Jump 3x5',
+      'Split Squat Jump 3x6/leg',
+      'Lateral Bound 3x6/side',
+      '10-yard Sprint 6 reps',
+      'Skater Jumps 3x8/side',
+      'Depth Drop to Jump 3x5',
+      'Pogo Hops 3x20s'
+    ]
+  },
+  'mobility': {
+    label: '🧘 Mobility',
+    tip: 'Mobility work pays compound interest — protects against pulls, opens up rotation, and lets your strength reach its full range.',
+    lifts: [
+      'Foam roll quads/back/lats 5 min',
+      'Hip flexor stretch 2x30s/side',
+      'T-spine rotations 2x10/side',
+      'Couch stretch 2x60s/side',
+      '90/90 hip stretch 2x60s/side',
+      'Banded shoulder dislocates 2x10',
+      'Cat-cow 2x10',
+      'World\'s Greatest Stretch 2x5/side'
+    ]
+  },
+  'mixed': {
+    label: '🔀 Mixed / Conditioning',
+    tip: 'Mixed sessions build conditioning + maintain strength — best when you only have one window in a busy week.',
+    lifts: [
+      'Trap Bar DL 3x5',
+      'Pull-ups 3x6',
+      'Med Ball Rotational Throw 3x8',
+      'KB Swing 3x12',
+      'Sled Push 3x20yd',
+      'Bike Sprints 8x20s',
+      'Goblet Squat 3x8',
+      'Plank 3x45s'
+    ]
+  }
+};
+
+function selectWoFocus(focus) {
+  document.querySelectorAll('.wo-focus-chip').forEach(function(b) {
+    if (b.dataset && b.dataset.focus === focus) b.classList.add('selected');
+    else b.classList.remove('selected');
+  });
+  const hidden = document.getElementById('j-wo-focus');
+  if (hidden) hidden.value = focus;
+  const data = WORKOUT_FOCI[focus];
+  const tip  = document.getElementById('j-wo-focus-tip');
+  const row  = document.getElementById('j-wo-suggested-row');
+  const chips = document.getElementById('j-wo-suggested-chips');
+  if (!data) {
+    if (tip)   tip.style.display = 'none';
+    if (row)   row.style.display = 'none';
+    if (chips) chips.innerHTML = '';
+    return;
+  }
+  if (tip) {
+    tip.innerHTML = '<strong style="color:#E67E22;">Why this matters:</strong> ' + data.tip;
+    tip.style.display = 'block';
+  }
+  if (row) row.style.display = 'block';
+  if (chips) {
+    chips.innerHTML = data.lifts.map(function(lift) {
+      const safe = lift.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
+      return '<button type="button" class="wo-lift-chip" onclick="addLiftToLog(\'' + lift.replace(/'/g, "\\'") + '\')">+ ' + safe + '</button>';
+    }).join('');
+  }
+}
+
+function selectWoIntensity(intensity) {
+  document.querySelectorAll('.wo-intensity-chip').forEach(function(b) {
+    if (b.dataset && b.dataset.intensity === intensity) b.classList.add('selected');
+    else b.classList.remove('selected');
+  });
+  const hidden = document.getElementById('j-wo-intensity');
+  if (hidden) hidden.value = intensity;
+}
+
+function addLiftToLog(lift) {
+  const ta = document.getElementById('j-wo-lifts');
+  if (!ta) return;
+  const cur = ta.value.trim();
+  ta.value = cur ? cur + ' · ' + lift : lift;
+  try { ybgHaptic(8); } catch(e) {}
+}
+
+function resetWorkoutChips() {
+  document.querySelectorAll('.wo-focus-chip, .wo-intensity-chip').forEach(function(b) {
+    b.classList.remove('selected');
+  });
+  const tip = document.getElementById('j-wo-focus-tip');
+  const row = document.getElementById('j-wo-suggested-row');
+  if (tip) tip.style.display = 'none';
+  if (row) row.style.display = 'none';
+}
+
 const WORKOUT_WARMUP_ITEMS = [
   { id: 'foamroll', label: 'Foam roll tight spots (3-5 min)',                       icon: '🟦' },
   { id: 'dynamic',  label: 'Dynamic warm-up — leg swings, hip & arm circles',       icon: '🤸' },
@@ -11328,9 +11578,39 @@ function renderWarmup() {
         prog.style.color = 'var(--grey)';
       }
     }
+
+    // Auto-compress to pill when all 5 done; expand if user re-opens
+    // (collapseBtn shows after expand so they can re-hide manually).
+    const allDone = (done === WORKOUT_WARMUP_ITEMS.length);
+    const pill        = document.getElementById('warmup-pill');
+    const expanded    = document.getElementById('warmup-expanded');
+    const collapseBtn = document.getElementById('warmup-collapse-btn');
+    if (pill && expanded) {
+      const userExpanded = pill.dataset.userExpanded === '1';
+      if (allDone && !userExpanded) {
+        pill.style.display     = 'flex';
+        expanded.style.display = 'none';
+      } else {
+        pill.style.display     = 'none';
+        expanded.style.display = 'block';
+      }
+      if (collapseBtn) collapseBtn.style.display = (allDone && userExpanded) ? 'inline-block' : 'none';
+    }
   } catch(err) {
     try { console.warn('[renderWarmup]', err); } catch(e) {}
   }
+}
+
+function expandWarmup() {
+  const pill = document.getElementById('warmup-pill');
+  if (pill) pill.dataset.userExpanded = '1';
+  renderWarmup();
+}
+
+function collapseWarmup() {
+  const pill = document.getElementById('warmup-pill');
+  if (pill) pill.dataset.userExpanded = '';
+  renderWarmup();
 }
 
 function toggleWarmup(id) {
@@ -11338,6 +11618,11 @@ function toggleWarmup(id) {
   state[id] = !state[id];
   setWarmupState(state);
   ybgHaptic(15);
+  // Unchecking after the pill is up should reopen the list automatically.
+  if (!state[id]) {
+    const pill = document.getElementById('warmup-pill');
+    if (pill) pill.dataset.userExpanded = '';
+  }
   renderWarmup();
 
   const allDone = WORKOUT_WARMUP_ITEMS.every(function(it) { return state[it.id]; });
