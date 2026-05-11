@@ -1086,7 +1086,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v88';
+    const CACHE = 'ybg-mygrind-v89';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -10611,31 +10611,34 @@ function getArmCareItems() {
     items.push({ id: 'modwarm', label: 'Modified warm-up — 5 min light bands + short toss', icon: '🔁' });
   }
 
+  // Coach Young 2026-05-11 restructure. Daily reminder list, not a
+  // prescribed protocol — player checks what they actually did.
+  // Order follows the natural throwing-day flow: pre-throw warmup
+  // → throwing → recovery → daily rituals → off-day option.
+  //
+  // Changes from prior list:
+  //   - NEW: poles (run before J-Bands to get blood flowing)
+  //   - REMOVED: wrist (replaced by 'stretches' — arm stretches)
+  //   - NEW: longtoss (situational — only on days the player did it)
+  //   - cooldown REPURPOSED: "walk the ball in from long toss" replaces
+  //     the older "cool-down toss + walk" concept. Same id so older
+  //     localStorage check-state still maps.
+  //   - NEW: jog (post-bullpen, for pitchers)
+  //   - NEW: ice (end-of-day icing with pressure)
+  //   - rest now always shown (no longer red-tier-only) since Coach
+  //     wants off-day to be a regular option, not a red-tier nudge.
   items.push(
-    { id: 'bands',    label: 'J-Bands routine — rotator cuff + shoulder blades (8 min)', icon: '💪' },
-    { id: 'toss',     label: 'Warm-up toss — build to full distance',         icon: '🎯' }
+    { id: 'poles',     label: 'Run a couple of poles — get blood flowing',                                   icon: '🏃' },
+    { id: 'bands',     label: 'J-Bands routine — rotator cuff + shoulder blades (8 min)',                    icon: '💪' },
+    { id: 'stretches', label: 'Arm stretches — full range of motion',                                        icon: '🤸' },
+    { id: 'toss',      label: 'Warm-up toss — build to full distance',                                       icon: '🎯' },
+    { id: 'longtoss',  label: 'Long toss when necessary',                                                    icon: '🎯' },
+    { id: 'cooldown',  label: 'Walk the ball in — keep throwing on the way back',                            icon: '🚶' },
+    { id: 'mobility',  label: 'Shoulder mobility — arm circles + back-of-shoulder stretch',                  icon: '🤸' },
+    { id: 'jog',       label: 'Jog after bullpens — for pitchers',                                           icon: '🏃' },
+    { id: 'ice',       label: 'Ice with pressure — end of day after heavy throwing',                         icon: '🧊' },
+    { id: 'rest',      label: 'Active rest — no throwing today',                                             icon: '⛔' }
   );
-
-  // Skill-load work — drop in red tier so we're not stacking intensity on
-  // top of an already over-threshold week.
-  if (tier !== 'red') {
-    items.push({ id: 'wrist', label: 'Wrist snaps & spin work (5 min)', icon: ballEmoji });
-  }
-
-  // Modern post-throw protocol: active cool-down, NOT immediate ice. The
-  // 'cooldown' id replaces the legacy 'recovery' (ice) id — older
-  // localStorage entries keyed on 'recovery' just become inert (no harm).
-  // Sleep was removed 2026-05-09 — it's a "did I get this last night"
-  // measurement, not an active "did I do this today" task. Belongs on
-  // the journal entry form alongside Performance Grade, not here.
-  items.push(
-    { id: 'cooldown', label: 'Cool-down toss (50% effort) + 10 min walk',         icon: '🚶' },
-    { id: 'mobility', label: 'Shoulder mobility — circles + back-of-shoulder stretch (5 min)', icon: '🤸' }
-  );
-
-  if (tier === 'red') {
-    items.push({ id: 'rest', label: 'Active rest — no throwing today', icon: '⛔' });
-  }
 
   return items;
 }
@@ -10659,27 +10662,54 @@ const ARM_CARE_REFS = {
     video: 'Dako4zqyN2Y',
     credit: 'Demo: Pro pitcher Craig Stem'
   },
-  wrist: {
-    title: 'Wrist Snaps & Spin Work',
-    desc: "Sharpens the release point and trains finger pressure on the ball. 3–5 minutes of focused wrist snaps tunes your spin axis and feel for the ball before high-effort throwing.",
-    proTip: "Quality over quantity. 50 controlled snaps beats 200 sloppy ones. Keep the ball on your fingertips — never on the heel of your hand.",
-    video: 'Xy9q87s6RoA',         // baseball
-    videoSoftball: 'DEIMeDMzIo4', // softball — fastpitch wrist snap drill
-    credit: 'Demo: Coach Madden (baseball) · FastPitchPower (softball)'
+  poles: {
+    title: 'Run a Couple of Poles',
+    desc: "Light jog from foul pole to foul pole (or 60-90 yards back and forth) before any throwing. Gets blood flowing to your shoulder, hips, and legs — your throwing engine — so the J-Bands and warm-up toss actually work on warm tissue, not cold.",
+    proTip: "Easy effort, not a sprint. Build a sweat without burning the legs you'll need for game throws. 2-3 poles is plenty for a normal day; pitchers prep day can stretch this longer.",
+    video: null,
+    credit: 'Source: Coach Young — Young\'s Baseball Group arm care protocol'
+  },
+  stretches: {
+    title: 'Arm Stretches — Full Range of Motion',
+    desc: "After J-Bands and before throwing, take the shoulder, elbow, and wrist through full range of motion. Cross-body stretch, sleeper stretch (the gentle version), wrist flexion + extension, forearm pronation. 30 seconds each.",
+    proTip: "Slow and controlled, never bouncing. If anything pinches at the FRONT of the shoulder, back off — you want stretch in the back/sides, not the front. Pain ≠ progress.",
+    video: null,
+    credit: 'Source: Coach Young — pre-throw mobility protocol'
+  },
+  longtoss: {
+    title: 'Long Toss — When Necessary',
+    desc: "Distance throwing past your normal warmup max — useful for arm strength building, recovery days, and feel work. Not every day. Build out to a comfortable distance (not max), feel the arm work easy, then walk it back in.",
+    proTip: "Long toss is a tool, not a daily mandate. Pitchers on a structured plan know their distance days. Position players should long toss 2-3x/week max. Listen to the arm — if it's tight, distance is the wrong choice today.",
+    video: 'Dako4zqyN2Y',
+    credit: 'Demo: Pro pitcher Craig Stem'
   },
   cooldown: {
-    title: 'Cool-down Toss + 10 min Walk',
-    desc: "Modern recovery beats immediate icing. 5 minutes of light tossing at 50% effort plus a 10-minute walk pumps fresh blood through tired muscles and clears waste — the first 20 minutes after throwing influence how your arm feels tomorrow.",
-    proTip: "Skip routine post-pitching ice (slows healing for healthy arms). Save cold for acute injuries or between-innings cooling, not as your daily recovery.",
+    title: 'Walk the Ball In — Keep Throwing',
+    desc: "From your long-toss distance, walk back toward your partner while continuing to throw at lower effort. Re-engages the arm in a controlled way and lets the shoulder finish working through smaller ranges before you stop. Smoother than just stopping cold at max distance.",
+    proTip: "Throws on the way in should drop from 100% to 70% to 50% effort progressively. By the time you're at 30 feet you're playing easy catch. Then walk a few minutes — keeps blood moving without big force.",
     video: 'bDEXVfchUGg',
-    credit: 'Demo: ARM Pitching · Source: MLB Pitch Smart'
+    credit: 'Demo: ARM Pitching · Coach Young protocol'
   },
   mobility: {
-    title: 'Shoulder Mobility — Circles + Back-of-Shoulder Stretch',
-    desc: "Throwing tightens the back of your shoulder. Stretching it back out keeps your arm moving through full range tomorrow. 5 minutes daily prevents the slow stiffness that wrecks throwing mechanics.",
+    title: 'Shoulder Mobility — Arm Circles + Back-of-Shoulder Stretch',
+    desc: "Throwing tightens the back of your shoulder. Arm circles + the back-of-shoulder stretch keep your arm moving through full range tomorrow. 5 minutes daily prevents the slow stiffness that wrecks throwing mechanics.",
     proTip: "Important: when you stretch the back of your shoulder (lying on your throwing side, arm bent), STOP the moment you feel pinching in the FRONT. You should only feel the stretch in the BACK of the shoulder. Done wrong, it can cause impingement — done right, it's gold.",
     video: 'l5O4-D246Os',
     credit: 'Demo: Ultimate Baseball Training'
+  },
+  jog: {
+    title: 'Jog After Bullpens',
+    desc: "For pitchers — a 5-10 minute easy jog right after a bullpen flushes the metabolic waste out of the throwing arm and gets the heart rate down gradually. Helps the arm feel fresh the next day instead of cement.",
+    proTip: "Easy effort — conversation pace, not punishment. The point is blood flow, not conditioning. If you can't talk while jogging, you're going too hard.",
+    video: null,
+    credit: 'Source: Coach Young — post-bullpen flush protocol'
+  },
+  ice: {
+    title: 'Ice with Pressure — End of Day',
+    desc: "After a heavy throwing day (long game, bullpen, max-effort outing), ice the shoulder and elbow with light compression for 15-20 minutes at the end of the day. Helps with inflammation when the arm is genuinely beat up.",
+    proTip: "Not after every throw — that slows healing for normal days. Use it after the days where you KNOW your arm did real work. Wrap with a light ace bandage to keep contact without restricting circulation.",
+    video: null,
+    credit: 'Source: Coach Young — heavy-day recovery protocol'
   },
   rest: {
     title: 'Active Rest — No Throwing Today',
