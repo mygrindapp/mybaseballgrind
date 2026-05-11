@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v115';
+    const CACHE = 'ybg-mygrind-v116';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -11496,13 +11496,18 @@ const WORKOUT_FOCI = {
     tip: 'Lower body explosiveness is the engine for bat speed, throwing velocity, and first-step quickness. The legs go first — everything else is downstream.',
     lifts: [
       'Trap Bar Deadlift 3x5',
+      'Conventional Deadlift 3x5',
       'Back Squat 3x5',
       'Front Squat 3x5',
+      'Leg Press 3x10',
       'Bulgarian Split Squat 3x8/leg',
+      'Walking Lunge 3x10/leg',
+      'Reverse Lunge 3x8/leg',
+      'Step-up 3x8/leg',
       'Romanian Deadlift 3x6',
       'Hip Thrust 3x8',
       'Goblet Squat 3x10',
-      'Reverse Lunge 3x8/leg'
+      'Calf Raise 3x12'
     ]
   },
   'rotational': {
@@ -11513,6 +11518,8 @@ const WORKOUT_FOCI = {
       'Med Ball Scoop Toss 3x8/side',
       'Med Ball Overhead Slam 3x8',
       'Cable Rotation 3x10/side',
+      'Cable Wood Chopper 3x10/side',
+      'Reverse Wood Chopper 3x10/side',
       'Landmine Rotation 3x8/side',
       'Hanging Russian Twist 3x12',
       'Half-Kneeling Pallof Press 3x10/side',
@@ -11523,14 +11530,22 @@ const WORKOUT_FOCI = {
     label: '💪 Upper Body',
     tip: 'Build pulling strength to protect the shoulder — pull-to-push at a 2:1 ratio favoring pull keeps the rotator cuff healthy for the long season.',
     lifts: [
-      'Pull-ups 3x AMRAP',
-      'Chest-Supported Row 3x8',
-      'Single-Arm DB Row 3x8/side',
+      'Bench Press 3x5',
       'DB Bench Press 3x6',
       'Incline DB Bench 3x8',
+      'Overhead Press 3x5',
+      'Push-ups 3x AMRAP',
+      'Pull-ups 3x AMRAP',
+      'Lat Pulldown 3x8',
+      'Cable Row 3x10',
+      'Chest-Supported Row 3x8',
+      'Single-Arm DB Row 3x8/side',
       'Face Pulls 3x12',
       'Landmine Press 3x6/side',
-      'Band Pull-Apart 3x15'
+      'Band Pull-Apart 3x15',
+      'Tricep Pushdown 3x10',
+      'DB Curl 3x10',
+      'Dips 3x8'
     ]
   },
   'core': {
@@ -11538,11 +11553,14 @@ const WORKOUT_FOCI = {
     tip: 'A stable core transfers force from legs to arms — without it the kinetic chain leaks power before it reaches the ball.',
     lifts: [
       'Pallof Press 3x10/side',
+      'Cable Wood Chopper 3x10/side',
       'Dead Bug 3x10',
       'Side Plank 3x30s/side',
       'Plank 3x60s',
       'Bird Dog 3x10/side',
       'Hollow Body Hold 3x30s',
+      'V-up 3x12',
+      'Mountain Climbers 3x20',
       'Suitcase Carry 3x30yd/side',
       'Ab Wheel Rollout 3x8'
     ]
@@ -11553,10 +11571,13 @@ const WORKOUT_FOCI = {
     lifts: [
       'Box Jump 3x5',
       'Broad Jump 3x5',
+      'Tuck Jump 3x5',
       'Split Squat Jump 3x6/leg',
       'Lateral Bound 3x6/side',
-      '10-yard Sprint 6 reps',
       'Skater Jumps 3x8/side',
+      '10-yard Sprint 6 reps',
+      'Sled Sprint 3x20yd',
+      'Hurdle Hops 3x5',
       'Depth Drop to Jump 3x5',
       'Pogo Hops 3x20s'
     ]
@@ -11570,6 +11591,8 @@ const WORKOUT_FOCI = {
       'T-spine rotations 2x10/side',
       'Couch stretch 2x60s/side',
       '90/90 hip stretch 2x60s/side',
+      'Pigeon stretch 2x30s/side',
+      'Cobra stretch 2x30s',
       'Banded shoulder dislocates 2x10',
       'Cat-cow 2x10',
       'World\'s Greatest Stretch 2x5/side'
@@ -11667,21 +11690,37 @@ function selectWoFocus(focus) {
   if (chips && (!data.lifts || !data.lifts.length)) chips.innerHTML = '';
   if (chips && data.lifts && data.lifts.length) {
     const logText = (document.getElementById('j-wo-lifts')?.value || '');
-    chips.innerHTML = data.lifts.map(function(lift) {
+    const liftHTML = data.lifts.map(function(lift) {
       const safe = lift.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
       const esc  = lift.replace(/'/g, "\\'");
       const inLog = logText.indexOf(lift) !== -1;
       const prefix = inLog ? '✓ ' : '+ ';
       const rowClass = inLog ? 'wo-lift-row selected' : 'wo-lift-row';
-      // Two-part chip — main body toggles add/remove on the log, ▶️
-      // opens the YouTube form-demo modal (or tap-out search fallback).
-      // Tap an already-selected chip to remove that lift from the log.
+      // Two-part chip — main body toggles add/remove on the log, ▶ Watch
+      // opens the YouTube form demo (curated direct, uncurated search).
       return '<div class="' + rowClass + '" style="display:inline-flex; align-items:stretch; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--card2);">' +
                '<button type="button" class="wo-lift-chip" style="border:none; border-radius:0; background:transparent;" onclick="addLiftToLog(\'' + esc + '\')">' + prefix + safe + '</button>' +
                '<button type="button" class="wo-lift-video" title="Watch form demo" onclick="openExerciseVideo(\'' + esc + '\')" style="border:none; border-left:1px solid var(--border); cursor:pointer;">▶ Watch</button>' +
              '</div>';
     }).join('');
+    // "+ Add Your Own" — Coach Young 2026-05-11: "We need to have an
+    // option for each suggested lifts to add their own lift." Dashed
+    // gold chip at the end of every category. Tap → focuses the lifts
+    // textarea so the player can type whatever they want.
+    const addCustomHTML =
+      '<div class="wo-lift-row wo-add-custom" style="display:inline-flex; align-items:stretch; border:1px dashed var(--gold-dark); border-radius:14px; overflow:hidden; background:transparent;">' +
+        '<button type="button" class="wo-lift-chip" style="border:none; border-radius:0; background:transparent; color:var(--gold);" onclick="focusLiftsTextarea()">+ Add Your Own</button>' +
+      '</div>';
+    chips.innerHTML = liftHTML + addCustomHTML;
   }
+}
+
+function focusLiftsTextarea() {
+  const ta = document.getElementById('j-wo-lifts');
+  if (!ta) return;
+  ta.focus();
+  try { ta.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch(e) {}
+  try { ybgHaptic(8); } catch(e) {}
 }
 
 function selectWoIntensity(intensity) {
