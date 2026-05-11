@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v78';
+    const CACHE = 'ybg-mygrind-v79';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2370,9 +2370,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
              Coach Young 2026-05-10 walkthrough. -->
         <div id="arm-care-pill" onclick="expandArmCare()" style="display:none; padding:14px 16px; background:rgba(39,174,96,0.12); border:1px solid #27AE60; border-radius:4px; cursor:pointer; user-select:none; align-items:center; justify-content:space-between; gap:12px;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:18px;">💪</span>
+            <span id="arm-care-pill-icon" style="font-size:18px;">💪</span>
             <div>
-              <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60; line-height:1;">Arm Care — Done for Today</div>
+              <div id="arm-care-pill-title" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60; line-height:1;">Arm Care — Done for Today</div>
               <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:3px;" id="arm-care-pill-sub">5 of 5 complete · Resets at midnight</div>
             </div>
           </div>
@@ -2840,10 +2840,44 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          section-sub + gold-line) at a sub-panel scale (30px vs the
          panel-level 42px) so it slots between the panel banner and a
          card heading in the H1 > H2 hierarchy. -->
-    <div style="margin-top:40px; margin-bottom:20px;">
+    <div style="margin-top:40px; margin-bottom:14px;">
       <div style="font-family:'Bebas Neue', cursive; font-size:30px; letter-spacing:3px; line-height:1; color:#F5F0EB;">📓 YOUR <span style="color:var(--gold);">ENTRIES</span></div>
       <div style="font-family:'Barlow Condensed', sans-serif; font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#D4C4A8; margin-top:6px;">Tap any entry to expand · Newest first</div>
       <div style="width:60px; height:3px; background:var(--gold); margin:10px 0 0;"></div>
+    </div>
+
+    <!-- Entries filter chips — Coach Young 2026-05-11 walkthrough.
+         Default = Today so the journal isn't a noisy scroll-fest. Player
+         can widen the window via chip taps. Past entries >24h are
+         already PIN-gated for edit/delete (Decision #25), so "view but
+         can't edit" is enforced regardless of filter. -->
+    <style>
+      .entries-filter-chip {
+        background: transparent;
+        border: 1px solid var(--gold-dark);
+        color: var(--light);
+        font-family: 'Barlow Condensed', sans-serif;
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding: 8px 14px;
+        border-radius: 3px;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .entries-filter-chip:hover { background: rgba(var(--accent-rgb), 0.1); }
+      .entries-filter-chip.selected {
+        background: var(--gold);
+        color: var(--dark);
+        border-color: var(--gold);
+      }
+    </style>
+    <div id="entries-filter-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:18px;">
+      <button type="button" class="entries-filter-chip selected" data-entries-filter="today" onclick="setEntriesFilter('today')">📅 Today</button>
+      <button type="button" class="entries-filter-chip"          data-entries-filter="7d"    onclick="setEntriesFilter('7d')">7 Days</button>
+      <button type="button" class="entries-filter-chip"          data-entries-filter="30d"   onclick="setEntriesFilter('30d')">30 Days</button>
+      <button type="button" class="entries-filter-chip"          data-entries-filter="all"   onclick="setEntriesFilter('all')">All</button>
     </div>
 
     <div id="entries-list">
@@ -7302,10 +7336,58 @@ function formatEditedDate(ts) {
 }
 
 // ── RENDER ENTRIES ────────────────────────────────────
+// ── ENTRIES LIST FILTER ───────────────────────────────
+// Coach Young 2026-05-11 walkthrough: showing every entry forever made
+// the journal a noisy scroll-fest. Default filter is "today" so the
+// player only sees what they logged TODAY by default. Past entries are
+// still accessible via the [7 Days / 30 Days / All] chips above the
+// list. Past entries >24h old are PIN-gated for edit/delete (Decision
+// #25), so "view but can't edit" is enforced regardless of filter.
+// Module-level (not persisted) — resets to 'today' on each page load.
+let _entriesFilter = 'today';
+function setEntriesFilter(f) {
+  if (f !== 'today' && f !== '7d' && f !== '30d' && f !== 'all') f = 'today';
+  _entriesFilter = f;
+  document.querySelectorAll('.entries-filter-chip').forEach(function(b) {
+    if (b.dataset && b.dataset.entriesFilter === f) b.classList.add('selected');
+    else b.classList.remove('selected');
+  });
+  renderEntries();
+}
+function _filteredEntries(arr) {
+  if (!Array.isArray(arr)) return [];
+  if (_entriesFilter === 'all') return arr;
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  let cutoff;
+  if (_entriesFilter === 'today') cutoff = today;
+  else if (_entriesFilter === '7d')  { cutoff = new Date(today); cutoff.setDate(today.getDate() - 6); }
+  else if (_entriesFilter === '30d') { cutoff = new Date(today); cutoff.setDate(today.getDate() - 29); }
+  return arr.filter(function(e) {
+    const d = parseEntryDate(e.date);
+    return d && d >= cutoff;
+  });
+}
+
 function renderEntries() {
   const container = document.getElementById('entries-list');
   if (!state.entries.length) {
     container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, and reflections above.<br>Close the book on every game — learn from it and move on.</p></div>`;
+    return;
+  }
+  // Apply the active filter window. If it lands on an empty set but the
+  // player HAS older entries, show a friendlier empty state pointing
+  // them at the wider filter chips above.
+  const entries = _filteredEntries(state.entries);
+  if (!entries.length) {
+    const labels = { today: 'today', '7d': 'the last 7 days', '30d': 'the last 30 days' };
+    const label = labels[_entriesFilter] || 'this window';
+    container.innerHTML =
+      '<div class="empty-state" style="padding:30px 20px;">' +
+        '<div class="empty-icon">📭</div>' +
+        '<h3>Nothing logged ' + label + ' yet</h3>' +
+        '<p style="font-size:15px;">Log a new entry above, or tap <strong>30 Days</strong> / <strong>All</strong> to see older entries.</p>' +
+      '</div>';
     return;
   }
 
@@ -7320,7 +7402,7 @@ function renderEntries() {
   // instructor on the same day should group visually so the user sees the
   // whole day's grind as one unit.
   const dateCounts = {};
-  state.entries.forEach(function(en) { dateCounts[en.date] = (dateCounts[en.date] || 0) + 1; });
+  entries.forEach(function(en) { dateCounts[en.date] = (dateCounts[en.date] || 0) + 1; });
 
   // Type-specific fallback when the user didn't title the entry. Replaces
   // the old generic "Entry" — too vague when the type was instructor/game/
@@ -7362,7 +7444,7 @@ function renderEntries() {
   const week7Total = repStats ? (repStats.last7.swings + repStats.last7.gb + repStats.last7.throws + repStats.last7.pitches) : 0;
 
   let lastDate = null;
-  container.innerHTML = state.entries.map(function(e, idx) {
+  container.innerHTML = entries.map(function(e, idx) {
     const dateChanged = e.date !== lastDate;
     const dayCount    = dateCounts[e.date] || 1;
     const isToday     = e.date === todayDateStr;
@@ -7385,7 +7467,7 @@ function renderEntries() {
     // are sorted newest-first, so today's entries cluster at the top of
     // the list; this entry is the last today one when the next entry's
     // date is different or doesn't exist).
-    const nextEntry = state.entries[idx + 1];
+    const nextEntry = entries[idx + 1];
     const isLastTodayEntry = e.date === todayDateStr && (!nextEntry || nextEntry.date !== todayDateStr);
     const todayTotalsCard = (isLastTodayEntry && repStats && repStats.todayTotal > 0) ? (
       '<div style="margin:14px 0 24px; padding:16px 18px; border:1px solid var(--gold-dark); border-radius:3px; background:linear-gradient(135deg,#1A0012,#0E0006);">' +
@@ -10463,17 +10545,21 @@ function setArmCareState(s) {
   try { localStorage.setItem(armCareKey(), JSON.stringify(s)); } catch(e) {}
 }
 
-// Module-level UI flag — set true when the user taps the compressed pill
-// to re-open the full checklist after they've already completed all items.
-// Resets on page reload (intentional — the daily state key is the source
-// of truth, this is just a UI override for "I want to see my list again").
-let _armCareExpandedOverride = false;
+// View-mode flag — Coach Young 2026-05-10/11 walkthrough. Three states:
+//   'auto'     — derive from data (allDone or restOnly → compressed pill,
+//                else → expanded). Reset whenever the player toggles a
+//                checkbox so the form follows their intent.
+//   'expanded' — user pinned the list open (tapped the pill).
+//   'collapsed'— user pinned it closed (tapped "▲ Hide" at any state).
+// Resets on page reload. Daily state key is still the source of truth
+// for WHICH items are checked; this only controls the view shape.
+let _armCareViewMode = 'auto';
 function expandArmCare() {
-  _armCareExpandedOverride = true;
+  _armCareViewMode = 'expanded';
   renderArmCare();
 }
 function collapseArmCare() {
-  _armCareExpandedOverride = false;
+  _armCareViewMode = 'collapsed';
   renderArmCare();
 }
 
@@ -10526,31 +10612,59 @@ function renderArmCare() {
       }
     }
 
-    // Compressed-pill swap. When all items are complete AND the user hasn't
-    // explicitly tapped to expand, hide the full checklist and show the
-    // green pill instead. Saves vertical real estate on mobile so the entry
-    // form below is more reachable. If they uncheck anything later, count
-    // drops below total and we naturally fall back to the expanded view.
-    const expanded   = document.getElementById('arm-care-expanded');
-    const pill       = document.getElementById('arm-care-pill');
-    const pillSub    = document.getElementById('arm-care-pill-sub');
+    // Multi-state pill swap (Coach Young 2026-05-11 walkthrough). The
+    // single "Done for Today" green pill split into three because the
+    // "Active rest" item conflicts with the 4 throwing-prep items — a
+    // player can never reach 5/5 cleanly. Decide which view + which
+    // pill flavor based on data + the user's view-mode pin.
+    const expanded    = document.getElementById('arm-care-expanded');
+    const pill        = document.getElementById('arm-care-pill');
+    const pillIcon    = document.getElementById('arm-care-pill-icon');
+    const pillTitle   = document.getElementById('arm-care-pill-title');
+    const pillSub     = document.getElementById('arm-care-pill-sub');
     const collapseBtn = document.getElementById('arm-care-collapse-btn');
-    const allDone    = total > 0 && done === total;
-    if (allDone && !_armCareExpandedOverride) {
-      if (expanded) expanded.style.display = 'none';
-      if (pill)     pill.style.display     = 'flex';
-      if (pillSub)  pillSub.textContent    = done + ' of ' + total + ' complete · Resets at midnight';
+
+    const allDone  = total > 0 && done === total;
+    const restOnly = !!state['rest'] && done === 1; // only rest checked, nothing else
+
+    // Determine which view to show based on user's pin + auto rules.
+    let showCompressed;
+    if (_armCareViewMode === 'expanded') showCompressed = false;
+    else if (_armCareViewMode === 'collapsed') showCompressed = true;
+    else /* auto */ showCompressed = allDone || restOnly;
+
+    if (showCompressed && pill) {
+      // Pill flavor depends on data state — done / rest / partial / empty
+      let bg, border, color, icon, title, sub;
+      if (allDone) {
+        bg = 'rgba(39,174,96,0.12)'; border = '#27AE60'; color = '#27AE60';
+        icon = '💪'; title = 'Arm Care — Done for Today';
+        sub  = done + ' of ' + total + ' complete · Resets at midnight';
+      } else if (restOnly) {
+        bg = 'rgba(93,173,226,0.10)'; border = '#5DADE2'; color = '#5DADE2';
+        icon = '🛌'; title = 'Rest Day — No Arm Care Needed';
+        sub  = 'Active rest only · Resets at midnight';
+      } else {
+        bg = 'var(--card2)'; border = 'var(--border)'; color = 'var(--grey)';
+        icon = '💪'; title = 'Arm Care · ' + done + '/' + total + ' done';
+        sub  = (done === 0 ? 'Tap to open the checklist' : 'Tap to finish · Resets at midnight');
+      }
+      pill.style.display      = 'flex';
+      pill.style.background   = bg;
+      pill.style.borderColor  = border;
+      if (pillIcon)  pillIcon.textContent  = icon;
+      if (pillTitle) { pillTitle.textContent = title; pillTitle.style.color = color; }
+      if (pillSub)   pillSub.textContent   = sub;
+      if (expanded)  expanded.style.display = 'none';
     } else {
       if (expanded) expanded.style.display = '';
       if (pill)     pill.style.display     = 'none';
-      // If the user unchecked an item we no longer need the override — drop
-      // it so a fresh re-completion next time auto-compresses again.
-      if (!allDone) _armCareExpandedOverride = false;
     }
-    // The "▲ Hide" button only makes sense when the user has manually
-    // expanded a fully-complete list — otherwise hiding does nothing
-    // (the pill swap only kicks in at allDone). Show it only in that state.
-    if (collapseBtn) collapseBtn.style.display = (allDone && _armCareExpandedOverride) ? 'inline-block' : 'none';
+    // "▲ Hide" button always available in the expanded view now —
+    // player can stash the card at any state (rest day, partial day,
+    // off day with no throwing). Hidden only when the card itself is
+    // already collapsed into a pill.
+    if (collapseBtn) collapseBtn.style.display = showCompressed ? 'none' : 'inline-block';
   } catch(err) {
     try { console.warn('[renderArmCare]', err); } catch(e) {}
   }
@@ -10560,6 +10674,10 @@ function toggleArmCare(id) {
   const state = getArmCareState();
   state[id] = !state[id];
   setArmCareState(state);
+  // Reset view pin to 'auto' so the new check-state drives the view
+  // (e.g. completing the 5th item auto-collapses to the DONE pill;
+  // tapping rest alone auto-collapses to the REST pill).
+  _armCareViewMode = 'auto';
   ybgHaptic(15);
   renderArmCare();
 
