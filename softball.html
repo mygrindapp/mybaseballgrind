@@ -753,6 +753,7 @@
   .type-instructor { background: rgba(168,217,123,0.12); color: #A8D97B; }
   .type-reflection { background: rgba(136,136,136,0.15); color: #A89880; }
   .type-workout { background: rgba(230,126,34,0.12); color: #E67E22; }
+  .type-offday { background: rgba(93,173,226,0.12); color: #5DADE2; }
 
   .entry-title {
     font-family: 'Barlow Condensed', sans-serif;
@@ -1028,7 +1029,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v80';
+    const CACHE = 'ybg-mygrind-v81';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2234,6 +2235,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <option value="game">Game</option>
             <option value="workout">Workout / Weight Room</option>
             <option value="reflection">Reflection</option>
+            <option value="offday">😴 Off Day</option>
           </select>
         </div>
       </div>
@@ -6247,7 +6249,10 @@ function saveEntry() {
   const commentRole = document.getElementById('j-comment-role').value;
   const commentText = document.getElementById('j-comment-text').value.trim();
 
-  if (!title && type !== 'practice' && type !== 'instructor') { alert('Please add a title or opponent.'); return; }
+  // Title required for game / workout / reflection (which have visible title fields).
+  // Practice / instructor / offday hide the title field by default, so a title
+  // isn't required. Off-day's optional title placeholder ("Sunday rest…") still works.
+  if (!title && type !== 'practice' && type !== 'instructor' && type !== 'offday') { alert('Please add a title or opponent.'); return; }
 
   // Reps-without-context guard — Coach Young 2026-05-10 walkthrough.
   // A practice entry with rep chips tapped but no reflection / grade /
@@ -6679,6 +6684,12 @@ function toggleGameStats() {
   const isReflect = type === 'reflection';
   const isInstructor = type === 'instructor';
   const isWorkout = type === 'workout';
+  // Off Day — Coach Young 2026-05-11. Same form structure as Reflection
+  // (title + textareas, no rep counter, no arm care, no game stats)
+  // but its own type so saved entries can be labeled "Off Day" vs
+  // "Reflection." Treated as reflection-shaped throughout this handler.
+  const isOffDay  = type === 'offday';
+  const isJournalish = isReflect || isOffDay;
 
   // Game stats and result
   if (section) section.style.display = isGame ? 'block' : 'none';
@@ -6745,11 +6756,13 @@ function toggleGameStats() {
     if (cs && mode === 'solo') cs.style.display = 'none';
   }
 
-  // Title hidden for practice and instructor; shown for game and reflection
+  // Title hidden for practice and instructor; shown for game / reflection / off day
   if (titleW && !isInstructor) titleW.style.display = (isPrac) ? 'none' : 'block';
 
-  // Reflection extra field
-  if (extraEl) extraEl.style.display = isReflect ? 'block' : 'none';
+  // "How do I prepare for what's next?" extra field — shown for both
+  // reflection and off-day entries (both are forward-looking journal
+  // surfaces, no training data attached).
+  if (extraEl) extraEl.style.display = isJournalish ? 'block' : 'none';
 
   // Rep counter visibility — Practice (all 4 cats) / Instructor (focus-
   // scoped) / hide. Removed from Game entries 2026-05-09 (Coach Young:
@@ -6784,16 +6797,27 @@ function toggleGameStats() {
     if (tmrwLb)  tmrwLb.textContent  = 'What am I taking into the next practice or game?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing I want to carry forward and keep working on?';
   } else if (isReflect) {
+    // Reflection — for post-game thoughts, weekly check-ins, mental-
+    // game work. Off-day journaling moved to its own type 2026-05-11
+    // (Coach Young walkthrough) so this copy can stay focused.
     if (titleLb) titleLb.textContent = 'Reflection Title';
-    // Title placeholder widened 2026-05-11 walkthrough — Coach Young:
-    // "If the player does nothing that day, can they just go to
-    // reflection?" Yes. The off-day journal note is exactly what
-    // Reflection is for; the placeholder now invites that explicitly.
-    if (titleEl) titleEl.placeholder = 'e.g. Off day thoughts · This week\'s check-in · Honest reflection after tonight\'s game';
+    if (titleEl) titleEl.placeholder = 'e.g. This week\'s check-in · Honest reflection after tonight\'s game';
     if (whatLb)  whatLb.textContent  = 'What\'s on my mind?';
-    if (whatEl)  whatEl.placeholder  = 'Game day, practice day, or off day — just honest thoughts. How do I feel about where I am right now? Am I putting in the work? Am I showing up for my team?';
+    if (whatEl)  whatEl.placeholder  = 'Honest thoughts. How do I feel about where I am right now? Am I putting in the work? Am I showing up for my team?';
     if (tmrwLb)  tmrwLb.textContent  = 'What do I need to be honest with myself about?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What areas of my game need real attention? What have I been avoiding? Be straight with yourself — this journal does not lie.';
+  } else if (isOffDay) {
+    // Off Day — no practice, no game, no workout, no instructor.
+    // Player still journals so the day isn't a black hole in their
+    // training history. Coach Young 2026-05-11: "Entry type should
+    // include an off day drop down that when selected it goes to
+    // reflection by default."
+    if (titleLb) titleLb.textContent = 'Off Day Title';
+    if (titleEl) titleEl.placeholder = 'e.g. Sunday rest · No throwing today · Family day';
+    if (whatLb)  whatLb.textContent  = 'What did I do today?';
+    if (whatEl)  whatEl.placeholder  = 'Even if you didn\'t train, what was on your mind about your game? How did your body feel? What did you watch, read, or learn?';
+    if (tmrwLb)  tmrwLb.textContent  = 'What am I bringing back tomorrow?';
+    if (tmrwEl)  tmrwEl.placeholder  = 'What\'s the one thing I want to attack when I get back to the grind?';
   } else if (isWorkout) {
     if (whatLb)  whatLb.textContent  = 'How did the workout go?';
     if (whatEl)  whatEl.placeholder  = 'How did you feel today — strong, fresh, drained? Anything sore or off? What pushed you?';
@@ -6840,9 +6864,9 @@ function updateArmCareVisibility() {
   const sec = document.getElementById('j-armcare-section');
   if (!sec) return;
   const type = document.getElementById('j-type')?.value || '';
-  // Workout + reflection entries explicitly suppress the arm-care card
-  // regardless of earlier throwing activity today.
-  if (type === 'workout' || type === 'reflection') {
+  // Workout / reflection / off-day entries explicitly suppress the
+  // arm-care card regardless of earlier throwing activity today.
+  if (type === 'workout' || type === 'reflection' || type === 'offday') {
     sec.style.display = 'none';
     return;
   }
@@ -7328,6 +7352,7 @@ function entryTypeLabel(e) {
     }
     return 'individual work';
   }
+  if (e.type === 'offday') return 'off day';
   return e.type;
 }
 // Compact "edited" badge timestamp. <1 min: "just now"; <1 hr: "Nm ago";
@@ -7488,7 +7513,8 @@ function renderEntries() {
     game:       'Game',
     instructor: 'Instructor Session',
     workout:    'Workout',
-    reflection: 'Reflection'
+    reflection: 'Reflection',
+    offday:     'Off Day'
   };
   function _entryFallbackTitle(en) {
     if (en.type === 'practice' && en.practiceMode === 'solo') {
@@ -10326,6 +10352,14 @@ function buildPromptForEntry(type, positions) {
            '🧠 What\'s on your mind — baseball or otherwise?<br>' +
            '🎯 What\'s one thing you\'ll work on tomorrow?<br>' +
            '🙏 One thing you\'re grateful for today?';
+  }
+  // Off Day — Coach Young 2026-05-11. Off-day prompts skew toward
+  // recovery / mindset / family rather than training focus.
+  if (type === 'offday') {
+    return '<strong style="color:var(--gold);">Off Day Prompts:</strong><br>' +
+           '😴 How does the body feel — rested or beat up?<br>' +
+           '🧠 What\'s the game showing me when I step away?<br>' +
+           '🎯 What am I attacking when I get back to the grind?';
   }
   return '';
 }
