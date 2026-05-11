@@ -1086,7 +1086,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v91';
+    const CACHE = 'ybg-mygrind-v92';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2964,7 +2964,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div class="empty-state">
         <div class="empty-icon">📓</div>
         <h3>No Entries Yet</h3>
-        <p style="font-size:15px;">Start logging your games, practices, and reflections above.<br>Close the book on every game — learn from it and move on.</p>
+        <p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day — learn from it and move on.</p>
       </div>
     </div>
 
@@ -6047,19 +6047,93 @@ function handleFileSelect(e) {
   processFiles(Array.from(e.target.files));
 }
 
+// Compress images to ~1200px longest side at JPEG quality 0.82 before
+// stashing them in localStorage. Raw phone photos are 3-5MB each; the
+// localStorage cap is 5-10MB total. Without compression a player loses
+// entries silently after ~2-3 months of daily photos. Coach Young
+// 2026-05-11 pre-launch audit. Videos are passed through as-is (the
+// browser won't let us compress them client-side without a build).
+const _PHOTO_MAX_DIM = 1200;
+const _PHOTO_QUALITY = 0.82;
+function _compressImageDataUrl(srcDataUrl) {
+  return new Promise(function(resolve) {
+    try {
+      const img = new Image();
+      img.onload = function() {
+        const w0 = img.width || _PHOTO_MAX_DIM;
+        const h0 = img.height || _PHOTO_MAX_DIM;
+        const scale = Math.min(1, _PHOTO_MAX_DIM / Math.max(w0, h0));
+        const w = Math.round(w0 * scale);
+        const h = Math.round(h0 * scale);
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) { resolve(srcDataUrl); return; }
+        ctx.drawImage(img, 0, 0, w, h);
+        try {
+          resolve(canvas.toDataURL('image/jpeg', _PHOTO_QUALITY));
+        } catch (e) { resolve(srcDataUrl); }
+      };
+      img.onerror = function() { resolve(srcDataUrl); };
+      img.src = srcDataUrl;
+    } catch (e) { resolve(srcDataUrl); }
+  });
+}
+// Soft cap warning — if total ybg_* localStorage usage exceeds 80% of
+// the typical 5MB browser quota, surface a one-time-per-session toast
+// pointing the player at Settings → Backup. Hard quota errors get
+// caught downstream by store() in the access-layer; this is just the
+// proactive warning.
+function _warnStorageNearCapIfNeeded() {
+  try {
+    if (window._ybgStorageWarnedThisSession) return;
+    let total = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+      const k = localStorage.key(i);
+      if (!k || k.indexOf('ybg_') !== 0) continue;
+      const v = localStorage.getItem(k) || '';
+      total += k.length + v.length;
+    }
+    // Approx 5MB quota across most mobile browsers. Each char is ~2
+    // bytes in localStorage (UTF-16 internal).
+    const usedRatio = (total * 2) / (5 * 1024 * 1024);
+    if (usedRatio >= 0.80) {
+      window._ybgStorageWarnedThisSession = true;
+      if (typeof showShareToast === 'function') {
+        showShareToast('⚠ Storage almost full — open Settings → Backup to save your journal.');
+      }
+    }
+  } catch (e) {}
+}
 function processFiles(files) {
   files.forEach(file => {
     if (!file.type.startsWith('image/') && !file.type.startsWith('video/')) return;
     if (file.size > 50 * 1024 * 1024) { alert(file.name + ' is too large. Max 50MB.'); return; }
+    const isImage = file.type.startsWith('image/');
     const reader = new FileReader();
-    reader.onload = (e) => {
-      pendingMedia.push({
-        type:    file.type.startsWith('image/') ? 'image' : 'video',
-        name:    file.name,
-        dataUrl: e.target.result,
-        size:    (file.size / (1024*1024)).toFixed(1) + 'MB'
-      });
-      renderMediaPreview();
+    reader.onload = function(e) {
+      const rawDataUrl = e.target.result;
+      const finalize = function(dataUrl, sizeNote) {
+        pendingMedia.push({
+          type:    isImage ? 'image' : 'video',
+          name:    file.name,
+          dataUrl: dataUrl,
+          size:    sizeNote
+        });
+        renderMediaPreview();
+        _warnStorageNearCapIfNeeded();
+      };
+      if (isImage) {
+        _compressImageDataUrl(rawDataUrl).then(function(compressedDataUrl) {
+          // Approximate post-compression size from the base64 string.
+          // (length * 0.75 bytes is the standard base64-to-bytes ratio.)
+          const approxKB = Math.round((compressedDataUrl.length * 0.75) / 1024);
+          finalize(compressedDataUrl, approxKB + 'KB');
+        });
+      } else {
+        // Videos pass through — no client-side compression today.
+        finalize(rawDataUrl, (file.size / (1024 * 1024)).toFixed(1) + 'MB');
+      }
     };
     reader.readAsDataURL(file);
   });
@@ -7643,7 +7717,7 @@ function onEntriesDatePicked(ymd) {
 function renderEntries() {
   const container = document.getElementById('entries-list');
   if (!state.entries.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, and reflections above.<br>Close the book on every game — learn from it and move on.</p></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day — learn from it and move on.</p></div>`;
     return;
   }
   // Apply the active filter window. If it lands on an empty set but the
@@ -9945,6 +10019,13 @@ document.addEventListener('click', function(e) {
 }, { passive: true });
 
 // ─── STREAK CALCULATION ──────────────────────────────────
+// Streak rule (locked 2026-05-11 pre-launch audit): ANY entry type
+// counts as a streak day — Practice, Game, Instructor, Workout,
+// Reflection, and Off Day all maintain the streak. The principle:
+// the player showed up to journal, that's what we're rewarding. Off
+// Day in particular is meant to keep the streak alive on rest days
+// instead of forcing the player to skip and break the chain. If a
+// future product decision narrows this, change the .filter() below.
 function calculateStreak() {
   if (!state || !state.entries || state.entries.length === 0) return 0;
 
