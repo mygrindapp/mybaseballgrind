@@ -1086,7 +1086,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v92';
+    const CACHE = 'ybg-mygrind-v93';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2452,6 +2452,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
       <label id="j-what-label">What did I work on today?</label>
       <textarea id="j-what" inputmode="text" placeholder="What drills, reps, or skills did I focus on? What felt good?"></textarea>
+      <!-- Team-practice individual layer (Coach Young 2026-05-11 walkthrough).
+           When practice mode = TEAM, applyPracticeCopy() retitles j-what to
+           "What did the team work on today?" and reveals this block so the
+           player can carve out their own role separate from what coach ran.
+           Hidden for solo practice and all non-practice types. -->
+      <div id="j-team-role" style="display:none;">
+        <label id="j-team-role-label">What was my role — where did I stand out or struggle?</label>
+        <textarea id="j-team-role-text" inputmode="text" placeholder="The reps you got, what coach pointed out, what felt sharp or sloppy."></textarea>
+      </div>
       <label id="j-tomorrow-label">What am I taking into the next practice or game?</label>
       <textarea id="j-tomorrow" inputmode="text" placeholder="What is one thing I want to carry forward and keep working on?"></textarea>
       <!-- Reflection-only third prompt -->
@@ -6256,10 +6265,11 @@ function _doEditEntry(id) {
     const el = document.getElementById(elId);
     if (el) el.value = val || '';
   };
-  setVal('j-title',    entry.title);
-  setVal('j-what',     entry.what);
-  setVal('j-tomorrow', entry.tomorrow);
-  setVal('j-prepare',  entry.prepare);
+  setVal('j-title',         entry.title);
+  setVal('j-what',          entry.what);
+  setVal('j-team-role-text', entry.teamRole);
+  setVal('j-tomorrow',      entry.tomorrow);
+  setVal('j-prepare',       entry.prepare);
   setVal('j-grade',    entry.grade);
   setVal('j-result',   entry.result);
   // Restore the chip visual selection — the hidden input value is set
@@ -6333,7 +6343,7 @@ function cancelEdit() {
   editingEntryId = null;
 
   // Reset all form fields
-  ['j-title','j-what','j-tomorrow','j-prepare','j-grade','j-result',
+  ['j-title','j-what','j-team-role-text','j-tomorrow','j-prepare','j-grade','j-result',
    'j-comment-name','j-comment-role','j-comment-text',
    'j-inst-name','j-inst-focus','j-inst-notes','j-inst-takeaway','j-inst-note','j-inst-duration','j-inst-next',
    'j-coach-note',
@@ -6568,6 +6578,13 @@ function saveEntry() {
       const swt = (document.getElementById('j-solo-work-type')?.value || '').trim();
       if (swt) entry.soloWorkType = swt;
     }
+    // Team-practice individual layer — captured only when team mode is
+    // active. Coach Young 2026-05-11: team practice prompts now ask
+    // what coach ran (j-what) + what the player's own role was (this).
+    if (entry.practiceMode === 'team') {
+      const tr = (document.getElementById('j-team-role-text')?.value || '').trim();
+      if (tr) entry.teamRole = tr;
+    }
   }
 
   // Capture Workout / Weight Room data when entry type is 'workout'
@@ -6639,6 +6656,8 @@ function saveEntry() {
   // Reset form
   document.getElementById('j-title').value    = '';
   document.getElementById('j-what').value     = '';
+  const teamRoleEl = document.getElementById('j-team-role-text');
+  if (teamRoleEl) teamRoleEl.value = '';
   document.getElementById('j-tomorrow').value = '';
   const prepEl = document.getElementById('j-prepare');
   if (prepEl) prepEl.value = '';
@@ -6939,7 +6958,7 @@ function toggleGameStats() {
   // selected Focus Area (e.g. hitting → swings only). The instructor branch
   // below routes through onInstructorFocusChange() to apply that scoping.
   const hideOthers = isInstructor;
-  const fieldsToHide = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
+  const fieldsToHide = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
   fieldsToHide.forEach(function(fid) {
     const el = document.getElementById(fid);
     if (!el) return;
@@ -7042,6 +7061,11 @@ function toggleGameStats() {
   try { updateArmCareVisibility(); } catch(e) {}
   // Workout warm-up visibility — shown only when type === 'workout'.
   try { updateWarmupVisibility(); } catch(e) {}
+  // Practice copy + team-role visibility — must run AFTER the practice
+  // branch above so it can override the default "What did I work on?"
+  // label when mode === 'team'. Also handles hiding the team-role block
+  // when the user leaves the practice type.
+  try { applyPracticeCopy(); } catch(e) {}
 }
 
 // Returns true if any of today's logged entries is a throwing session.
@@ -7316,6 +7340,32 @@ function resetSoloWorkType() {
   setSoloWorkTypes('');
 }
 
+// Team-vs-solo practice form copy (Coach Young 2026-05-11 walkthrough).
+// When practice mode = TEAM, retitle j-what to a team-flavored prompt
+// and surface #j-team-role for the player's individual layer. SOLO or
+// non-practice types restore default copy / hide the block.
+const PRACTICE_LABEL_DEFAULT = 'What did I work on today?';
+const PRACTICE_PH_DEFAULT    = 'What drills, reps, or skills did I focus on? What felt good?';
+const PRACTICE_LABEL_TEAM    = 'What did the team work on today?';
+const PRACTICE_PH_TEAM       = 'Drills, scrimmage, situations, BP — what did coach run today?';
+function applyPracticeCopy() {
+  const type = document.getElementById('j-type')?.value;
+  const mode = document.getElementById('j-practice-mode')?.value || 'team';
+  const teamBlock = document.getElementById('j-team-role');
+  const lblWhat   = document.getElementById('j-what-label');
+  const txtWhat   = document.getElementById('j-what');
+  // Non-practice types own their own copy (set by toggleGameStats) — only
+  // hide the team-role block and leave the labels alone.
+  if (type !== 'practice') {
+    if (teamBlock) teamBlock.style.display = 'none';
+    return;
+  }
+  const isTeam = (mode === 'team');
+  if (lblWhat)   lblWhat.textContent     = isTeam ? PRACTICE_LABEL_TEAM : PRACTICE_LABEL_DEFAULT;
+  if (txtWhat)   txtWhat.placeholder      = isTeam ? PRACTICE_PH_TEAM    : PRACTICE_PH_DEFAULT;
+  if (teamBlock) teamBlock.style.display  = isTeam ? 'block' : 'none';
+}
+
 function setPracticeMode(mode) {
   if (mode !== 'team' && mode !== 'solo') mode = 'team';
   const hidden = document.getElementById('j-practice-mode');
@@ -7342,6 +7392,7 @@ function applyPracticeModeVisibility(mode) {
   // Show/hide the solo-work-type row + clear selection when leaving solo.
   if (soloWorkRow) soloWorkRow.style.display = isSolo ? 'block' : 'none';
   if (!isSolo) resetSoloWorkType();
+  applyPracticeCopy();
 }
 
 // Sum the four rep-counter values and update the "Total reps" display.
@@ -7969,6 +8020,7 @@ function renderEntries() {
 
       <!-- BODY TEXT -->
       ${e.what ? `<div class="entry-text">${e.what}</div>` : ''}
+      ${e.teamRole ? `<div class="entry-text" style="margin-top:10px; padding:8px 10px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:2px;"><div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">My Role</div>${e.teamRole}</div>` : ''}
       ${e.tomorrow ? `<div class="entry-text" style="margin-top:10px; color:var(--gold-light);"><em>Tomorrow → ${e.tomorrow}</em></div>` : ''}
       ${e.prepare  ? `<div class="entry-text" style="margin-top:10px; color:#5DADE2;"><em>My Preparation Plan → ${e.prepare}</em></div>` : ''}
 
@@ -10486,6 +10538,10 @@ function exportJournalPDF() {
     if (e.what) {
       html += '<div class="label">What Happened</div>';
       html += '<p>' + escapeHTMLExport(e.what).replace(/\n/g, '<br>') + '</p>';
+    }
+    if (e.teamRole) {
+      html += '<div class="label">My Role</div>';
+      html += '<p>' + escapeHTMLExport(e.teamRole).replace(/\n/g, '<br>') + '</p>';
     }
     if (e.tomorrow) {
       html += '<div class="label">What I Will Do Tomorrow</div>';
