@@ -1028,7 +1028,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v79';
+    const CACHE = 'ybg-mygrind-v80';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2878,6 +2878,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <button type="button" class="entries-filter-chip"          data-entries-filter="7d"    onclick="setEntriesFilter('7d')">7 Days</button>
       <button type="button" class="entries-filter-chip"          data-entries-filter="30d"   onclick="setEntriesFilter('30d')">30 Days</button>
       <button type="button" class="entries-filter-chip"          data-entries-filter="all"   onclick="setEntriesFilter('all')">All</button>
+      <!-- "Pick Date" chip — Coach Young 2026-05-11. Triggers the
+           hidden native date picker via showPicker() (Chrome / Edge
+           / iOS 16.4+) with a click() fallback for older browsers.
+           When a date is selected, _entriesFilter = 'date:YYYY-MM-DD'
+           and the chip text updates to show that date. -->
+      <button type="button" class="entries-filter-chip"          data-entries-filter="date"  onclick="pickEntriesDate()">📅 Pick Date</button>
+      <input type="date" id="entries-date-picker" style="position:absolute; opacity:0; pointer-events:none; width:0; height:0; padding:0; border:0;" onchange="onEntriesDatePicked(this.value)">
     </div>
 
     <div id="entries-list">
@@ -6778,7 +6785,11 @@ function toggleGameStats() {
     if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing I want to carry forward and keep working on?';
   } else if (isReflect) {
     if (titleLb) titleLb.textContent = 'Reflection Title';
-    if (titleEl) titleEl.placeholder = 'e.g. Honest thoughts after tonight\'s game · This week\'s check-in';
+    // Title placeholder widened 2026-05-11 walkthrough — Coach Young:
+    // "If the player does nothing that day, can they just go to
+    // reflection?" Yes. The off-day journal note is exactly what
+    // Reflection is for; the placeholder now invites that explicitly.
+    if (titleEl) titleEl.placeholder = 'e.g. Off day thoughts · This week\'s check-in · Honest reflection after tonight\'s game';
     if (whatLb)  whatLb.textContent  = 'What\'s on my mind?';
     if (whatEl)  whatEl.placeholder  = 'Game day, practice day, or off day — just honest thoughts. How do I feel about where I am right now? Am I putting in the work? Am I showing up for my team?';
     if (tmrwLb)  tmrwLb.textContent  = 'What do I need to be honest with myself about?';
@@ -7346,17 +7357,48 @@ function formatEditedDate(ts) {
 // Module-level (not persisted) — resets to 'today' on each page load.
 let _entriesFilter = 'today';
 function setEntriesFilter(f) {
-  if (f !== 'today' && f !== '7d' && f !== '30d' && f !== 'all') f = 'today';
+  // Accepted values: 'today' | '7d' | '30d' | 'all' | 'date:YYYY-MM-DD'
+  const isDateForm = (typeof f === 'string' && f.indexOf('date:') === 0 && /^date:\d{4}-\d{2}-\d{2}$/.test(f));
+  if (f !== 'today' && f !== '7d' && f !== '30d' && f !== 'all' && !isDateForm) f = 'today';
   _entriesFilter = f;
   document.querySelectorAll('.entries-filter-chip').forEach(function(b) {
-    if (b.dataset && b.dataset.entriesFilter === f) b.classList.add('selected');
+    const targetKey = b.dataset && b.dataset.entriesFilter;
+    let active = false;
+    if (isDateForm) active = targetKey === 'date';
+    else            active = targetKey === _entriesFilter;
+    if (active) b.classList.add('selected');
     else b.classList.remove('selected');
   });
+  // Re-label the Pick Date chip with the chosen date (or reset to default)
+  const dateBtn = document.querySelector('[data-entries-filter="date"]');
+  if (dateBtn) {
+    if (isDateForm) {
+      const ymd = _entriesFilter.slice(5);
+      const dObj = new Date(ymd + 'T12:00:00');
+      const label = isNaN(dObj.getTime()) ? ymd : dObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      dateBtn.textContent = '📅 ' + label;
+    } else {
+      dateBtn.textContent = '📅 Pick Date';
+    }
+  }
   renderEntries();
 }
 function _filteredEntries(arr) {
   if (!Array.isArray(arr)) return [];
   if (_entriesFilter === 'all') return arr;
+  // Single-day jump — exact YYYY-MM-DD match
+  if (typeof _entriesFilter === 'string' && _entriesFilter.indexOf('date:') === 0) {
+    const ymd = _entriesFilter.slice(5);
+    return arr.filter(function(e) {
+      const d = parseEntryDate(e.date);
+      if (!d) return false;
+      const eYmd = d.getFullYear() + '-' +
+                   String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                   String(d.getDate()).padStart(2, '0');
+      return eYmd === ymd;
+    });
+  }
+  // Window-based filters
   const now = new Date();
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   let cutoff;
@@ -7367,6 +7409,29 @@ function _filteredEntries(arr) {
     const d = parseEntryDate(e.date);
     return d && d >= cutoff;
   });
+}
+// Tapping the "Pick Date" chip triggers the native date picker. Uses
+// showPicker() where supported (Chrome / Edge / iOS 16.4+), with a
+// click()/focus() fallback for older browsers. The input itself is
+// visually hidden — the chip is the only thing the player sees.
+function pickEntriesDate() {
+  const input = document.getElementById('entries-date-picker');
+  if (!input) return;
+  // Pre-fill with the currently-filtered date (if any) so the picker
+  // opens on that date rather than today's default.
+  if (typeof _entriesFilter === 'string' && _entriesFilter.indexOf('date:') === 0) {
+    input.value = _entriesFilter.slice(5);
+  }
+  try {
+    if (typeof input.showPicker === 'function') input.showPicker();
+    else input.click();
+  } catch (e) {
+    input.click();
+  }
+}
+function onEntriesDatePicked(ymd) {
+  if (!ymd) return;
+  setEntriesFilter('date:' + ymd);
 }
 
 function renderEntries() {
@@ -7381,12 +7446,19 @@ function renderEntries() {
   const entries = _filteredEntries(state.entries);
   if (!entries.length) {
     const labels = { today: 'today', '7d': 'the last 7 days', '30d': 'the last 30 days' };
-    const label = labels[_entriesFilter] || 'this window';
+    let label = labels[_entriesFilter] || 'this window';
+    let hint = 'Log a new entry above, or tap <strong>30 Days</strong> / <strong>All</strong> to see older entries.';
+    if (typeof _entriesFilter === 'string' && _entriesFilter.indexOf('date:') === 0) {
+      const ymd = _entriesFilter.slice(5);
+      const dObj = new Date(ymd + 'T12:00:00');
+      label = 'on ' + (isNaN(dObj.getTime()) ? ymd : dObj.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }));
+      hint = 'Tap <strong>📅 Pick Date</strong> to choose a different day, or <strong>All</strong> to see everything.';
+    }
     container.innerHTML =
       '<div class="empty-state" style="padding:30px 20px;">' +
         '<div class="empty-icon">📭</div>' +
         '<h3>Nothing logged ' + label + ' yet</h3>' +
-        '<p style="font-size:15px;">Log a new entry above, or tap <strong>30 Days</strong> / <strong>All</strong> to see older entries.</p>' +
+        '<p style="font-size:15px;">' + hint + '</p>' +
       '</div>';
     return;
   }
