@@ -583,6 +583,44 @@
     line-height: 1.1;
   }
 
+  /* Journal entry form — tighter padding + margins to fight the
+     "pages look awfully busy" feedback (Coach Young 2026-05-11). Scoped
+     to #panel-journal so other tabs keep their breathing room. Targets
+     the stacked ritual cards (warm-up, arm care, cool-down) + section
+     boxes inside the compose card. */
+  #panel-journal .card {
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+  #panel-journal .card-title {
+    font-size: 18px;
+    margin-bottom: 8px;
+  }
+  /* The compose form .card (the main entry-form card) keeps a bit more
+     room — it holds the whole form. Tighter sub-section padding inside. */
+  #panel-journal > .card {
+    padding: 20px 18px;
+  }
+  /* Inline section boxes inside the compose form (workout-section,
+     instructor-section, j-coach-section, j-reps-section, game stats) —
+     was padding:16px. Trimmed to 14px and tightened margin between
+     subsequent sections so the form scrolls less. */
+  #panel-journal #j-workout-section,
+  #panel-journal #j-instructor-section,
+  #panel-journal #j-coach-section,
+  #panel-journal #j-reps-section {
+    padding: 14px;
+    margin-bottom: 14px;
+  }
+  /* Checklist item rows in warm-up / cool-down / arm care — was 10px
+     vertical padding, dropped to 8px so the list takes less height. */
+  #j-warmup-section #warmup-list > div,
+  #j-cooldown-section #cooldown-list > div,
+  #j-armcare-section #arm-care-list > div {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
   /* ── FORMS ── */
   label {
     display: block;
@@ -1188,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v120';
+    const CACHE = 'ybg-mygrind-v121';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
