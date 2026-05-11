@@ -815,9 +815,15 @@
   .entry-summary:hover { background: rgba(var(--accent-rgb), 0.04); }
   .entry-summary-left {
     display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+  }
+  .entry-summary-top {
+    display: flex;
     align-items: center;
     gap: 10px;
-    flex: 1;
     min-width: 0;
   }
   .entry-summary-title {
@@ -825,6 +831,21 @@
     font-size: 16px;
     font-weight: 700;
     color: var(--light);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  /* Per-entry brief — Coach Young 2026-05-11: "In the entry section on
+     the days showing can there be a small brief for that day, such as
+     game should show stats from that game without opening tab." Quick
+     scannable summary line under the title so the player gets the gist
+     without expanding. Tap-to-expand still reveals everything. */
+  .entry-summary-brief {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--grey);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -1157,7 +1178,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v117';
+    const CACHE = 'ybg-mygrind-v118';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8100,6 +8121,90 @@ function onEntriesDatePicked(ymd) {
   setEntriesFilter('date:' + ymd);
 }
 
+// Per-entry brief shown under the title in the collapsed summary row.
+// Coach Young 2026-05-11: "Game should show stats from that game
+// without opening tab. Make this useful for all tabs." Each type
+// surfaces its most-scannable signal so the player gets the day's gist
+// at a glance. Tap-to-expand still reveals everything else.
+function _entrySummaryBrief(e) {
+  if (!e || !e.type) return '';
+  try {
+    if (e.type === 'game' && e.gameStats) {
+      const gs = e.gameStats;
+      const parts = [];
+      // Hitting line (only if they batted)
+      if (gs.ab > 0) {
+        parts.push(gs.h + '/' + gs.ab);
+        if (gs.hr > 0)  parts.push(gs.hr + 'HR');
+        if (gs.rbi > 0) parts.push(gs.rbi + ' RBI');
+        if (gs.avg)     parts.push(gs.avg + ' AVG');
+      }
+      // Pitching line (only if they threw)
+      if (gs.ip > 0) {
+        parts.push(gs.ip + ' IP');
+        if (gs.er > 0 || gs.era) parts.push((gs.er || 0) + ' ER');
+        if (gs.era) parts.push(gs.era + ' ERA');
+      }
+      // Fielding line (only if they had chances)
+      const tc = (parseInt(gs.po)||0) + (parseInt(gs.a)||0) + (parseInt(gs.e)||0);
+      if (tc > 0 && gs.ab <= 0 && gs.ip <= 0) {
+        parts.push(gs.po + ' PO');
+        if (gs.a > 0) parts.push(gs.a + ' A');
+        if (gs.e > 0) parts.push(gs.e + ' E');
+      }
+      return parts.join(' · ');
+    }
+    if (e.type === 'practice') {
+      const parts = [];
+      if (e.practiceMode === 'solo') {
+        if (e.soloWorkType) {
+          const ids = String(e.soloWorkType).split(',').map(s => s.trim()).filter(Boolean);
+          if (typeof SOLO_WORK_TYPES !== 'undefined') {
+            const labels = ids.map(id => {
+              const w = SOLO_WORK_TYPES.find(t => t.id === id);
+              return w ? w.label : id;
+            }).slice(0, 3);
+            parts.push('solo · ' + labels.join(', '));
+          } else parts.push('solo');
+        } else parts.push('solo');
+      } else if (e.practiceMode === 'team') {
+        parts.push('with team');
+      }
+      if (e.reps) {
+        const total = (parseInt(e.reps.swings)||0) + (parseInt(e.reps.gb)||0) +
+                      (parseInt(e.reps.throws)||0) + (parseInt(e.reps.pitches)||0);
+        if (total > 0) parts.push(total + ' reps');
+      }
+      return parts.join(' · ');
+    }
+    if (e.type === 'workout' && e.workout) {
+      const parts = [];
+      const intensityMap = { 'light-day':'Light Day', 'maintenance':'Maintenance', 'max-day':'Max Day' };
+      if (e.workout.intensity) parts.push(intensityMap[e.workout.intensity] || e.workout.intensity);
+      const focusMap = { 'lower-power':'Lower Power', 'rotational':'Rotational', 'upper':'Upper Body',
+                          'core':'Core', 'speed-plyo':'Speed/Plyo', 'mobility':'Mobility',
+                          'mixed':'Mixed', 'other':'Custom' };
+      if (e.workout.focus) parts.push(focusMap[e.workout.focus] || e.workout.focus);
+      if (e.workout.duration) parts.push(e.workout.duration + ' min');
+      return parts.join(' · ');
+    }
+    if (e.type === 'instructor' && e.instructor) {
+      const parts = [];
+      if (e.instructor.name)  parts.push(e.instructor.name);
+      if (e.instructor.focus) parts.push(e.instructor.focus);
+      if (e.instructor.duration) parts.push(e.instructor.duration + ' min');
+      return parts.join(' · ');
+    }
+    if (e.type === 'reflection' || e.type === 'offday') {
+      const src = (e.what || e.tomorrow || e.prepare || '').trim();
+      if (!src) return '';
+      const oneLine = src.replace(/\s+/g, ' ');
+      return oneLine.length > 80 ? oneLine.slice(0, 80) + '…' : oneLine;
+    }
+  } catch (err) { try { console.warn('[brief]', err); } catch (_) {} }
+  return '';
+}
+
 // Toggle a past entry between compact summary + expanded view. Coach
 // Young 2026-05-11 walkthrough — bullet-list pattern for the journal
 // history. Edit / delete buttons live inside the expanded section so
@@ -8245,11 +8350,16 @@ function renderEntries() {
 
       <!-- COMPACT SUMMARY (always visible, tap to expand). Coach Young
            2026-05-11 walkthrough: entries default collapsed to a one-row
-           summary so the journal reads like a bullet list. -->
+           summary; iteration 2 adds a per-entry brief so the player can
+           scan the day's gist (game stats, gym focus, instructor name,
+           etc.) without expanding. -->
       <div class="entry-summary" onclick="toggleEntryCard(${e.id})">
         <div class="entry-summary-left">
-          <div class="entry-type type-${e.type}">${entryTypeLabel(e)}</div>
-          <span class="entry-summary-title">${displayTitle}</span>
+          <div class="entry-summary-top">
+            <div class="entry-type type-${e.type}">${entryTypeLabel(e)}</div>
+            <span class="entry-summary-title">${displayTitle}</span>
+          </div>
+          ${(() => { const b = _entrySummaryBrief(e); return b ? `<div class="entry-summary-brief">${b}</div>` : ''; })()}
         </div>
         <div class="entry-summary-right">
           ${gradePill(e.grade)}
