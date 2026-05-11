@@ -1086,7 +1086,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v90';
+    const CACHE = 'ybg-mygrind-v91';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -10616,15 +10616,15 @@ function getArmCareItems() {
   // shoulder mobility belongs right after the warmup poles (not in
   // the recovery section). Recovery is jog + ice + rest.
   //
-  // PRE-THROW WARMUP    : poles → mobility → bands → stretches
+  // PRE-THROW WARMUP    : poles → stretches → mobility → bands
   // THROWING            : toss → longtoss → cooldown (walk the ball in)
   // RECOVERY            : jog → ice → rest (off-day option)
   items.push(
     // Pre-throw warmup
     { id: 'poles',     label: 'Run a couple of poles — get blood flowing',                                   icon: '🏃' },
+    { id: 'stretches', label: 'Arm stretches — full range of motion',                                        icon: '🤸' },
     { id: 'mobility',  label: 'Shoulder mobility — arm circles + back-of-shoulder stretch',                  icon: '🤸' },
     { id: 'bands',     label: 'J-Bands routine — rotator cuff + shoulder blades (8 min)',                    icon: '💪' },
-    { id: 'stretches', label: 'Arm stretches — full range of motion',                                        icon: '🤸' },
     // Throwing
     { id: 'toss',      label: 'Warm-up toss — build to full distance',                                       icon: '🎯' },
     { id: 'longtoss',  label: 'Long toss when necessary',                                                    icon: '🎯' },
