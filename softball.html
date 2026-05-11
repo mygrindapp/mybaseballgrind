@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v104';
+    const CACHE = 'ybg-mygrind-v105';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2459,14 +2459,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            evidence-based pre-lift protocol (RAMP — Raise · Activate ·
            Mobilize · Potentiate). -->
       <div class="card" id="j-warmup-section" style="display:none; margin-top:20px; margin-bottom:16px; border-left:3px solid #E67E22;">
-        <!-- Expanded state — full checklist. Mirrors the arm-care
-             collapsed-to-pill pattern (Coach Young 2026-05-11): when 5/5
-             checked, the section compresses to a single green pill that
-             frees vertical space on mobile. -->
+        <!-- Expanded state — full checklist. Default open until 5/5
+             checked or until user manually hides via the ▲ Hide button.
+             Coach Young 2026-05-11 walkthrough: "need a hide button for
+             the warm up pill so you can open and close it. Also have it
+             default open until all are checked off." -->
         <div id="warmup-expanded">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
             <div class="card-title" style="margin-bottom:0;">🏋️ Pre-Workout Warm-up</div>
-            <button type="button" id="warmup-collapse-btn" onclick="collapseWarmup()" style="display:none; background:transparent; border:1px solid #B95E15; color:#E67E22; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer; flex-shrink:0;">▲ Hide</button>
+            <button type="button" id="warmup-collapse-btn" onclick="collapseWarmup()" style="background:transparent; border:1px solid #B95E15; color:#E67E22; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer; flex-shrink:0;">▲ Hide</button>
           </div>
           <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
             Prime the body before lifting. Skip this and you risk pulls. <strong style="color:#E67E22;">Resets at midnight.</strong>
@@ -2475,15 +2476,16 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div id="warmup-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
         </div>
 
-        <!-- Compressed-pill state — shown when all items are complete.
-             Tap to re-expand (e.g. to verify or uncheck). Resets at
-             midnight via the daily state key. -->
-        <div id="warmup-pill" onclick="expandWarmup()" style="display:none; padding:14px 16px; background:rgba(39,174,96,0.12); border:1px solid #27AE60; border-radius:4px; cursor:pointer; user-select:none; align-items:center; justify-content:space-between; gap:12px;">
+        <!-- Compressed-pill state — shown when all 5 done OR when user
+             manually collapsed via Hide. Pill styles itself based on
+             progress (green when 5/5, gray when partial). Tap to expand
+             back. Resets at midnight via the daily state key. -->
+        <div id="warmup-pill" onclick="expandWarmup()" style="display:none; padding:14px 16px; background:rgba(100,100,100,0.10); border:1px solid var(--border); border-radius:4px; cursor:pointer; user-select:none; align-items:center; justify-content:space-between; gap:12px;">
           <div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:18px;">🏋️</span>
+            <span id="warmup-pill-icon" style="font-size:18px;">🏋️</span>
             <div>
-              <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60; line-height:1;">Warm-up — Done for Today</div>
-              <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:3px;">5 of 5 complete · Resets at midnight</div>
+              <div id="warmup-pill-title" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); line-height:1;">Warm-up — 0 of 5</div>
+              <div id="warmup-pill-sub" style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:3px;">Tap to expand · Resets at midnight</div>
             </div>
           </div>
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Tap to expand</div>
@@ -2849,6 +2851,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <button type="button" class="wo-focus-chip" data-focus="speed-plyo"  onclick="selectWoFocus('speed-plyo')">⚡ Speed / Plyo</button>
           <button type="button" class="wo-focus-chip" data-focus="mobility"    onclick="selectWoFocus('mobility')">🧘 Mobility</button>
           <button type="button" class="wo-focus-chip" data-focus="mixed"       onclick="selectWoFocus('mixed')">🔀 Mixed / Conditioning</button>
+          <button type="button" class="wo-focus-chip" data-focus="other"       onclick="selectWoFocus('other')">🛠️ Other / Custom</button>
         </div>
 
         <!-- Why this matters — populated by selectWoFocus(). Sport-specific
@@ -11472,6 +11475,11 @@ const WORKOUT_FOCI = {
       '🏋️ Goblet Squat 3x8',
       '➖ Plank 3x45s'
     ]
+  },
+  'other': {
+    label: '🛠️ Other / Custom',
+    tip: 'Running your own program? Log it below — your trainer\'s plan, a school weight room session, P90X, anything. Type the lifts the way you want them to read in your saved entry.',
+    lifts: []   // empty → no suggested-lifts row, just the textarea
   }
 };
 
@@ -11565,8 +11573,10 @@ function selectWoFocus(focus) {
     tip.innerHTML = '<strong style="color:#E67E22;">Why this matters:</strong> ' + data.tip;
     tip.style.display = 'block';
   }
-  if (row) row.style.display = 'block';
-  if (chips) {
+  // Empty lifts array = "Other / Custom" — show tip only, no suggestion chips.
+  if (row) row.style.display = (data.lifts && data.lifts.length) ? 'block' : 'none';
+  if (chips && (!data.lifts || !data.lifts.length)) chips.innerHTML = '';
+  if (chips && data.lifts && data.lifts.length) {
     chips.innerHTML = data.lifts.map(function(lift) {
       const safe = lift.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
       const esc  = lift.replace(/'/g, "\\'");
@@ -11665,22 +11675,43 @@ function renderWarmup() {
       }
     }
 
-    // Auto-compress to pill when all 5 done; expand if user re-opens
-    // (collapseBtn shows after expand so they can re-hide manually).
-    const allDone = (done === WORKOUT_WARMUP_ITEMS.length);
+    // Display state — tri-state via pill.dataset.userDisplay:
+    //   ''         → auto (default — expand until 5/5, then collapse)
+    //   'expand'   → user re-opened the pill, keep expanded
+    //   'collapse' → user manually hid the list, keep collapsed
+    // Coach Young 2026-05-11: default open until all checked AND let the
+    // player manually hide before 5/5 if they don't need the checklist.
+    const total      = WORKOUT_WARMUP_ITEMS.length;
+    const allDone    = (done === total);
     const pill        = document.getElementById('warmup-pill');
     const expanded    = document.getElementById('warmup-expanded');
     const collapseBtn = document.getElementById('warmup-collapse-btn');
+    const pillTitle   = document.getElementById('warmup-pill-title');
+    const pillSub     = document.getElementById('warmup-pill-sub');
+
     if (pill && expanded) {
-      const userExpanded = pill.dataset.userExpanded === '1';
-      if (allDone && !userExpanded) {
-        pill.style.display     = 'flex';
-        expanded.style.display = 'none';
+      const userDisplay = pill.dataset.userDisplay || '';
+      let isCollapsed;
+      if (userDisplay === 'expand')        isCollapsed = false;
+      else if (userDisplay === 'collapse') isCollapsed = true;
+      else                                 isCollapsed = allDone; // auto
+
+      pill.style.display     = isCollapsed ? 'flex'  : 'none';
+      expanded.style.display = isCollapsed ? 'none'  : 'block';
+      if (collapseBtn) collapseBtn.style.display = 'inline-block';
+
+      // Pill styling — green when 5/5, gray when partial.
+      if (allDone) {
+        pill.style.background = 'rgba(39,174,96,0.12)';
+        pill.style.borderColor = '#27AE60';
+        if (pillTitle) { pillTitle.style.color = '#27AE60'; pillTitle.textContent = 'Warm-up — Done for Today'; }
+        if (pillSub)     pillSub.textContent = '5 of 5 complete · Resets at midnight';
       } else {
-        pill.style.display     = 'none';
-        expanded.style.display = 'block';
+        pill.style.background = 'rgba(100,100,100,0.10)';
+        pill.style.borderColor = 'var(--border)';
+        if (pillTitle) { pillTitle.style.color = 'var(--grey)'; pillTitle.textContent = 'Warm-up — ' + done + ' of ' + total; }
+        if (pillSub)     pillSub.textContent = 'Tap to expand · Resets at midnight';
       }
-      if (collapseBtn) collapseBtn.style.display = (allDone && userExpanded) ? 'inline-block' : 'none';
     }
   } catch(err) {
     try { console.warn('[renderWarmup]', err); } catch(e) {}
@@ -11689,13 +11720,13 @@ function renderWarmup() {
 
 function expandWarmup() {
   const pill = document.getElementById('warmup-pill');
-  if (pill) pill.dataset.userExpanded = '1';
+  if (pill) pill.dataset.userDisplay = 'expand';
   renderWarmup();
 }
 
 function collapseWarmup() {
   const pill = document.getElementById('warmup-pill');
-  if (pill) pill.dataset.userExpanded = '';
+  if (pill) pill.dataset.userDisplay = 'collapse';
   renderWarmup();
 }
 
@@ -11704,11 +11735,10 @@ function toggleWarmup(id) {
   state[id] = !state[id];
   setWarmupState(state);
   ybgHaptic(15);
-  // Unchecking after the pill is up should reopen the list automatically.
-  if (!state[id]) {
-    const pill = document.getElementById('warmup-pill');
-    if (pill) pill.dataset.userExpanded = '';
-  }
+  // Any item toggle resets display back to 'auto' so the default rules
+  // take over again (expand until 5/5, then auto-collapse).
+  const pill = document.getElementById('warmup-pill');
+  if (pill) pill.dataset.userDisplay = '';
   renderWarmup();
 
   const allDone = WORKOUT_WARMUP_ITEMS.every(function(it) { return state[it.id]; });
