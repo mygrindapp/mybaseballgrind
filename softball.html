@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v113';
+    const CACHE = 'ybg-mygrind-v114';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2982,7 +2982,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div style="display:flex; align-items:center; gap:10px;">
             <span style="font-size:18px;">🧘</span>
             <div>
-              <div id="cooldown-pill-title" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); line-height:1;">Recovery — 0 of 5</div>
+              <div id="cooldown-pill-title" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); line-height:1;">Recovery — 0 of 6</div>
               <div id="cooldown-pill-sub" style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:3px;">Tap to expand · Resets at midnight</div>
             </div>
           </div>
@@ -11883,12 +11883,24 @@ function updateWarmupVisibility() {
 // Coach Young 2026-05-11: "Need to add post workout stretching, cool
 // down and protein." Mirrors the pre-workout warmup pattern exactly —
 // same daily reset, hide button, tri-state pill collapse.
+// Cool-down items updated 2026-05-11 against current sports-recovery
+// research. Notable changes from v1:
+//   - "Protein within 60 min" → "Fuel within 60 min — protein + carbs"
+//     (research-backed 3:1 carb:protein ratio for glycogen + muscle
+//     recovery; chocolate milk is the classic example).
+//   - "Hydrate water minimum" → "Hydrate water + electrolytes if you
+//     sweat hard" (2026 sports-nutrition research: electrolyte drinks
+//     rehydrate 26% faster than plain water after intense work).
+//   - Added "Sleep 8+ hours" as item 6 — sleep is the single biggest
+//     recovery lever for high school athletes (developing bodies need
+//     it for growth + protein synthesis).
 const WORKOUT_COOLDOWN_ITEMS = [
-  { id: 'cooldown', label: 'Cool down — 5 min easy walk or bike',                     icon: '🚶' },
-  { id: 'stretch',  label: 'Static stretching — 30s+ holds on legs, hips, back, chest', icon: '🧘' },
-  { id: 'foamroll', label: 'Foam roll — quads, hamstrings, back, lats (5 min)',        icon: '🟦' },
-  { id: 'protein',  label: 'Protein within 60 min — shake, meal, or chicken + rice',   icon: '🥩' },
-  { id: 'hydrate',  label: 'Hydrate — 16-20 oz water minimum',                         icon: '💧' }
+  { id: 'cooldown', label: 'Cool down — 5 min easy walk or bike',                          icon: '🚶' },
+  { id: 'stretch',  label: 'Stretch — 30s+ holds on legs, hips, back, shoulders',           icon: '🧘' },
+  { id: 'foamroll', label: 'Foam roll — quads, hamstrings, back, lats (5 min)',             icon: '🟦' },
+  { id: 'fuel',     label: 'Fuel within 60 min — protein + carbs (chocolate milk, shake + fruit, or full meal)', icon: '🥩' },
+  { id: 'hydrate',  label: 'Hydrate — 16-20 oz water + electrolytes if you sweat hard',     icon: '💧' },
+  { id: 'sleep',    label: 'Sleep 8+ hours tonight — recovery\'s biggest lever',            icon: '😴' }
 ];
 
 function cooldownKey() {
@@ -11963,7 +11975,7 @@ function renderCooldown() {
         pill.style.background = 'rgba(39,174,96,0.12)';
         pill.style.borderColor = '#27AE60';
         if (pillTitle) { pillTitle.style.color = '#27AE60'; pillTitle.textContent = 'Recovery — Locked In'; }
-        if (pillSub)     pillSub.textContent = '5 of 5 complete · Resets at midnight';
+        if (pillSub)     pillSub.textContent = total + ' of ' + total + ' complete · Resets at midnight';
       } else {
         pill.style.background = 'rgba(100,100,100,0.10)';
         pill.style.borderColor = 'var(--border)';
