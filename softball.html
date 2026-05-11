@@ -866,6 +866,16 @@
     text-align: center;
   }
   .entry-card.expanded .entry-chevron { transform: rotate(180deg); }
+  /* Brief gold flash on the newly-saved entry so the player's eye
+     catches where it landed in the list. Coach Young 2026-05-11:
+     "When I save entry it shows up but it takes a long time it should
+     show up immediately." Real fix is scroll-to-new + this flash so
+     the entry's arrival is obvious. */
+  @keyframes entryFlash {
+    0%   { background: rgba(var(--accent-rgb), 0.35); box-shadow: 0 0 0 2px var(--gold); }
+    100% { background: var(--card); box-shadow: none; }
+  }
+  .entry-card.entry-flash { animation: entryFlash 1.4s ease-out; }
   .entry-expanded {
     padding: 4px 18px 0;
     border-top: 1px solid var(--border);
@@ -1178,7 +1188,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v118';
+    const CACHE = 'ybg-mygrind-v119';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7015,6 +7025,21 @@ function saveEntry() {
       }
     }
   } catch (_) {}
+
+  // Scroll the new entry into view + flash it gold so the player sees
+  // exactly where it landed. Coach Young 2026-05-11: "When I save entry
+  // it shows up but it takes a long time it should show up immediately."
+  // Real cause was the player was still scrolled to the (now-empty) form
+  // and had to manually scroll down to find the entry below.
+  setTimeout(function() {
+    try {
+      const newCard = document.querySelector('.entry-card[data-entry-id="' + entry.id + '"]');
+      if (!newCard) return;
+      newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      newCard.classList.add('entry-flash');
+      setTimeout(function() { newCard.classList.remove('entry-flash'); }, 1600);
+    } catch (_) {}
+  }, 60);
 }
 
 function deleteEntry(id) {
