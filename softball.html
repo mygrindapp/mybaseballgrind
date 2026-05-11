@@ -1029,7 +1029,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v85';
+    const CACHE = 'ybg-mygrind-v86';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6530,11 +6530,12 @@ function saveEntry() {
   renderMediaPreview();
   renderAll();
 
-  // Post-save UX (Coach Young 2026-05-11): give the player clear
-  // confirmation. For back-dated saves, also jump the entries-list
-  // filter to that date so the new entry shows up in the list right
-  // below — otherwise the Today filter hides it and the player thinks
-  // the save failed.
+  // Post-save UX (Coach Young 2026-05-11 iteration 2): confirm with a
+  // toast that names the date. Do NOT auto-jump the entries-list
+  // filter — earlier auto-jump pulled the player to the back-dated
+  // day and away from today; Coach wanted the screen to clearly
+  // return to today's view. If the player wants to verify the entry
+  // landed, they can tap 📅 Pick Date on the entries list.
   try {
     const _savedDate = parseEntryDate(entry.date);
     const _todayYmd  = todayLocalISO();
@@ -6544,19 +6545,15 @@ function saveEntry() {
                   String(_savedDate.getMonth() + 1).padStart(2, '0') + '-' +
                   String(_savedDate.getDate()).padStart(2, '0');
     }
-    if (_savedYmd && _savedYmd !== _todayYmd) {
-      // Back-dated save — auto-jump filter so the new entry is visible
-      // in the entries list right below the form. setEntriesFilter
-      // re-renders the entries list (renderAll() above already covered
-      // everything else, so the double-render on the list is harmless).
-      setEntriesFilter('date:' + _savedYmd);
-      const _pretty = _savedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      if (typeof showShareToast === 'function') showShareToast('✅ Saved for ' + _pretty);
-    } else {
-      // Today save — filter stays on Today; new entry shows at the top.
-      if (typeof showShareToast === 'function') showShareToast('✅ Entry saved');
+    if (typeof showShareToast === 'function') {
+      if (_savedYmd && _savedYmd !== _todayYmd) {
+        const _pretty = _savedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        showShareToast('✅ Saved for ' + _pretty);
+      } else {
+        showShareToast('✅ Entry saved');
+      }
     }
-  } catch (_) { /* renderAll already fired */ }
+  } catch (_) {}
 }
 
 function deleteEntry(id) {
@@ -10805,12 +10802,24 @@ function renderArmCare() {
     }).join('');
 
     const total = items.length;
+    // Progress text now reflects mutually-exclusive states:
+    //   - All actives checked + rest unchecked → "ALL DONE"
+    //   - Rest checked alone                   → "REST DAY"
+    //   - Anything in between                  → "N of M complete"
+    // (Computed counts come from the activesDone/activesTotal lines
+    //  below, recomputed here to keep this block self-contained.)
     if (prog) {
-      if (done === total) {
+      const _aTotal = items.filter(function(i){ return i.id !== 'rest'; }).length;
+      const _aDone  = items.filter(function(i){ return i.id !== 'rest' && !!state[i.id]; }).length;
+      const _restOn = !!state['rest'];
+      if (_aTotal > 0 && _aDone === _aTotal && !_restOn) {
         prog.innerHTML = '✅ ALL DONE — ARM CARE COMPLETE';
         prog.style.color = '#27AE60';
+      } else if (_restOn) {
+        prog.innerHTML = '🛌 REST DAY — NO ARM CARE NEEDED';
+        prog.style.color = '#5DADE2';
       } else {
-        prog.innerHTML = done + ' of ' + total + ' complete';
+        prog.innerHTML = _aDone + ' of ' + _aTotal + ' complete';
         prog.style.color = 'var(--grey)';
       }
     }
@@ -10827,8 +10836,15 @@ function renderArmCare() {
     const pillSub     = document.getElementById('arm-care-pill-sub');
     const collapseBtn = document.getElementById('arm-care-collapse-btn');
 
-    const allDone  = total > 0 && done === total;
-    const restOnly = !!state['rest'] && done === 1; // only rest checked, nothing else
+    // Active items = everything except the 'rest' item (which is
+    // mutually exclusive with the others — see toggleArmCare).
+    // allDone now means "all ACTIVE items checked" rather than
+    // "literally everything checked" since the latter is unreachable
+    // under mutual exclusion (rest excludes actives and vice versa).
+    const activesTotal = items.filter(function(i) { return i.id !== 'rest'; }).length;
+    const activesDone  = items.filter(function(i) { return i.id !== 'rest' && !!state[i.id]; }).length;
+    const allDone      = activesTotal > 0 && activesDone === activesTotal && !state['rest'];
+    const restOnly     = !!state['rest']; // mutual exclusion guarantees others are off when rest is on
 
     // Determine which view to show based on user's pin + auto rules.
     let showCompressed;
@@ -10842,15 +10858,15 @@ function renderArmCare() {
       if (allDone) {
         bg = 'rgba(39,174,96,0.12)'; border = '#27AE60'; color = '#27AE60';
         icon = '💪'; title = 'Arm Care — Done for Today';
-        sub  = done + ' of ' + total + ' complete · Resets at midnight';
+        sub  = activesDone + ' of ' + activesTotal + ' complete · Resets at midnight';
       } else if (restOnly) {
         bg = 'rgba(93,173,226,0.10)'; border = '#5DADE2'; color = '#5DADE2';
         icon = '🛌'; title = 'Rest Day — No Arm Care Needed';
         sub  = 'Active rest only · Resets at midnight';
       } else {
         bg = 'var(--card2)'; border = 'var(--border)'; color = 'var(--grey)';
-        icon = '💪'; title = 'Arm Care · ' + done + '/' + total + ' done';
-        sub  = (done === 0 ? 'Tap to open the checklist' : 'Tap to finish · Resets at midnight');
+        icon = '💪'; title = 'Arm Care · ' + activesDone + '/' + activesTotal + ' done';
+        sub  = (activesDone === 0 ? 'Tap to open the checklist' : 'Tap to finish · Resets at midnight');
       }
       pill.style.display      = 'flex';
       pill.style.background   = bg;
@@ -10875,17 +10891,38 @@ function renderArmCare() {
 
 function toggleArmCare(id) {
   const state = getArmCareState();
+  const wasChecked = !!state[id];
   state[id] = !state[id];
+  // Mutual exclusion (Coach Young 2026-05-11): "rest" and the active
+  // throwing-prep items are logically incompatible — a rest day means
+  // NO throwing, so doing active arm care + claiming rest at the same
+  // time doesn't make sense. When the user just CHECKED an item:
+  //   - If they checked 'rest', clear all active items
+  //   - If they checked an active, clear 'rest'
+  // (Unchecking doesn't trigger any cascading clears.)
+  if (!wasChecked) {
+    if (id === 'rest') {
+      Object.keys(state).forEach(function(k) { if (k !== 'rest') state[k] = false; });
+    } else {
+      state['rest'] = false;
+    }
+  }
   setArmCareState(state);
   // Reset view pin to 'auto' so the new check-state drives the view
-  // (e.g. completing the 5th item auto-collapses to the DONE pill;
+  // (e.g. completing all actives auto-collapses to the DONE pill;
   // tapping rest alone auto-collapses to the REST pill).
   _armCareViewMode = 'auto';
   ybgHaptic(15);
   renderArmCare();
 
-  // Celebrate first full completion of the day
-  const allDone = getArmCareItems().every(function(it) { return state[it.id]; });
+  // Celebrate first full completion of the day. Under mutual
+  // exclusion, "complete" means all ACTIVES done (rest unchecked).
+  // A rest day is its own legitimate state but doesn't fire the
+  // arm-care celebration — the rest pill is enough confirmation.
+  const _items = getArmCareItems();
+  const _allActivesDone = _items.filter(function(i){ return i.id !== 'rest'; })
+                                .every(function(i){ return !!state[i.id]; });
+  const allDone = _allActivesDone && !state['rest'];
   const celebKey = armCareKey() + '_celebrated';
   if (allDone && !localStorage.getItem(celebKey)) {
     localStorage.setItem(celebKey, '1');
