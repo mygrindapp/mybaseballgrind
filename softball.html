@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v106';
+    const CACHE = 'ybg-mygrind-v107';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2826,15 +2826,26 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           border: 1px solid var(--border);
           color: var(--light);
           font-family: 'Barlow', sans-serif;
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 600;
-          padding: 8px 12px;
+          padding: 12px 16px;
           border-radius: 14px;
           cursor: pointer;
           transition: all 0.15s;
         }
         .wo-lift-chip:hover { background: rgba(230,126,34,0.10); border-color: #B95E15; color: #E67E22; }
         .wo-lift-chip:active { transform: scale(0.97); }
+        /* Selected = this lift is already in the textarea. Tap again to
+           remove it (toggle pattern — Coach Young 2026-05-11). */
+        .wo-lift-row.selected {
+          background: rgba(230,126,34,0.15) !important;
+          border-color: #E67E22 !important;
+        }
+        .wo-lift-row.selected .wo-lift-chip {
+          color: #E67E22;
+          background: transparent;
+        }
+        .wo-lift-video { font-size: 16px !important; padding: 0 14px !important; }
       </style>
       <div id="j-workout-section" style="display:none; border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:20px;">
         <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:6px;">🏋️ Weight Room / Gym</div>
@@ -2877,7 +2888,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
         <div style="margin-top:14px;">
           <label>Main Lifts / What I Worked On</label>
-          <textarea id="j-wo-lifts" placeholder="e.g. Trap Bar DL 3x5 @ 225 · Med Ball Rotational Throw 3x8 · Bench 3x5 @ 155 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
+          <textarea id="j-wo-lifts" oninput="_refreshWoLiftChips()" placeholder="e.g. Trap Bar DL 3x5 @ 225 · Med Ball Rotational Throw 3x8 · Bench 3x5 @ 155 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
         <div style="margin-top:12px; margin-bottom:0;">
           <label>Duration (min)</label>
@@ -11583,13 +11594,18 @@ function selectWoFocus(focus) {
   if (row) row.style.display = (data.lifts && data.lifts.length) ? 'block' : 'none';
   if (chips && (!data.lifts || !data.lifts.length)) chips.innerHTML = '';
   if (chips && data.lifts && data.lifts.length) {
+    const logText = (document.getElementById('j-wo-lifts')?.value || '');
     chips.innerHTML = data.lifts.map(function(lift) {
       const safe = lift.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
       const esc  = lift.replace(/'/g, "\\'");
-      // Two-part chip — main body adds the lift to the log, ▶️ button
+      const inLog = logText.indexOf(lift) !== -1;
+      const prefix = inLog ? '✓ ' : '+ ';
+      const rowClass = inLog ? 'wo-lift-row selected' : 'wo-lift-row';
+      // Two-part chip — main body toggles add/remove on the log, ▶️
       // opens the YouTube form-demo modal (or tap-out search fallback).
-      return '<div class="wo-lift-row" style="display:inline-flex; align-items:stretch; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--card2);">' +
-               '<button type="button" class="wo-lift-chip" style="border:none; border-radius:0; background:transparent;" onclick="addLiftToLog(\'' + esc + '\')">+ ' + safe + '</button>' +
+      // Tap an already-selected chip to remove that lift from the log.
+      return '<div class="' + rowClass + '" style="display:inline-flex; align-items:stretch; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--card2);">' +
+               '<button type="button" class="wo-lift-chip" style="border:none; border-radius:0; background:transparent;" onclick="addLiftToLog(\'' + esc + '\')">' + prefix + safe + '</button>' +
                '<button type="button" class="wo-lift-video" title="Watch form demo" onclick="openExerciseVideo(\'' + esc + '\')" style="border:none; background:transparent; padding:0 10px; cursor:pointer; color:#E67E22; font-size:14px; border-left:1px solid var(--border);">▶️</button>' +
              '</div>';
     }).join('');
@@ -11608,9 +11624,36 @@ function selectWoIntensity(intensity) {
 function addLiftToLog(lift) {
   const ta = document.getElementById('j-wo-lifts');
   if (!ta) return;
+  // Toggle: tap once to add, tap again to remove. Coach Young 2026-05-11.
+  if (ta.value.indexOf(lift) !== -1) {
+    removeLiftFromLog(lift);
+    return;
+  }
   const cur = ta.value.trim();
   ta.value = cur ? cur + ' · ' + lift : lift;
   try { ybgHaptic(8); } catch(e) {}
+  _refreshWoLiftChips();
+}
+
+function removeLiftFromLog(lift) {
+  const ta = document.getElementById('j-wo-lifts');
+  if (!ta) return;
+  let s = ta.value;
+  // Try each separator form so we don't leave stranded " · " bits.
+  if (s.indexOf(lift + ' · ') !== -1)      s = s.replace(lift + ' · ', '');
+  else if (s.indexOf(' · ' + lift) !== -1) s = s.replace(' · ' + lift, '');
+  else                                     s = s.replace(lift, '');
+  ta.value = s.replace(/\s*·\s*·\s*/g, ' · ').replace(/^\s*·\s*|\s*·\s*$/g, '').trim();
+  try { ybgHaptic(8); } catch(e) {}
+  _refreshWoLiftChips();
+}
+
+// Re-render the suggested-lifts chips so the selected/✓ state matches
+// the current textarea content. Called after add/remove + on textarea
+// input so manual edits stay in sync with chip visuals.
+function _refreshWoLiftChips() {
+  const focus = document.getElementById('j-wo-focus')?.value;
+  if (focus && typeof WORKOUT_FOCI !== 'undefined' && WORKOUT_FOCI[focus]) selectWoFocus(focus);
 }
 
 function resetWorkoutChips() {
