@@ -1086,7 +1086,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v89';
+    const CACHE = 'ybg-mygrind-v90';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -10611,30 +10611,25 @@ function getArmCareItems() {
     items.push({ id: 'modwarm', label: 'Modified warm-up — 5 min light bands + short toss', icon: '🔁' });
   }
 
-  // Coach Young 2026-05-11 restructure. Daily reminder list, not a
-  // prescribed protocol — player checks what they actually did.
-  // Order follows the natural throwing-day flow: pre-throw warmup
-  // → throwing → recovery → daily rituals → off-day option.
+  // Coach Young 2026-05-11 v2 — corrected sectioning. The "walk the
+  // ball in" is part of the long-toss throwing flow (not recovery);
+  // shoulder mobility belongs right after the warmup poles (not in
+  // the recovery section). Recovery is jog + ice + rest.
   //
-  // Changes from prior list:
-  //   - NEW: poles (run before J-Bands to get blood flowing)
-  //   - REMOVED: wrist (replaced by 'stretches' — arm stretches)
-  //   - NEW: longtoss (situational — only on days the player did it)
-  //   - cooldown REPURPOSED: "walk the ball in from long toss" replaces
-  //     the older "cool-down toss + walk" concept. Same id so older
-  //     localStorage check-state still maps.
-  //   - NEW: jog (post-bullpen, for pitchers)
-  //   - NEW: ice (end-of-day icing with pressure)
-  //   - rest now always shown (no longer red-tier-only) since Coach
-  //     wants off-day to be a regular option, not a red-tier nudge.
+  // PRE-THROW WARMUP    : poles → mobility → bands → stretches
+  // THROWING            : toss → longtoss → cooldown (walk the ball in)
+  // RECOVERY            : jog → ice → rest (off-day option)
   items.push(
+    // Pre-throw warmup
     { id: 'poles',     label: 'Run a couple of poles — get blood flowing',                                   icon: '🏃' },
+    { id: 'mobility',  label: 'Shoulder mobility — arm circles + back-of-shoulder stretch',                  icon: '🤸' },
     { id: 'bands',     label: 'J-Bands routine — rotator cuff + shoulder blades (8 min)',                    icon: '💪' },
     { id: 'stretches', label: 'Arm stretches — full range of motion',                                        icon: '🤸' },
+    // Throwing
     { id: 'toss',      label: 'Warm-up toss — build to full distance',                                       icon: '🎯' },
     { id: 'longtoss',  label: 'Long toss when necessary',                                                    icon: '🎯' },
     { id: 'cooldown',  label: 'Walk the ball in — keep throwing on the way back',                            icon: '🚶' },
-    { id: 'mobility',  label: 'Shoulder mobility — arm circles + back-of-shoulder stretch',                  icon: '🤸' },
+    // Recovery
     { id: 'jog',       label: 'Jog after bullpens — for pitchers',                                           icon: '🏃' },
     { id: 'ice',       label: 'Ice with pressure — end of day after heavy throwing',                         icon: '🧊' },
     { id: 'rest',      label: 'Active rest — no throwing today',                                             icon: '⛔' }
