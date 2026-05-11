@@ -1104,7 +1104,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v96';
+    const CACHE = 'ybg-mygrind-v97';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2859,40 +2859,17 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
 
-      <!-- ── MEDIA UPLOAD (entry-specific photos/videos) ── -->
-      <!-- Photos & Videos are tied to THIS entry — they document the practice
-           or game being logged. They belong adjacent to the entry data they
-           document, BEFORE the daily Arm Care ritual. Coach Young 2026-05-09.
-           Redesigned 2026-05-11: was a 28px-padded dashed drop-zone that read
-           as mandatory. Now a single compact line so it feels optional. -->
-      <div style="margin-bottom:20px;">
-        <div id="media-drop-zone" style="
-          border: 1px solid var(--border);
-          border-radius: 4px;
-          padding: 11px 14px;
-          cursor: pointer;
-          transition: all 0.2s;
-          background: var(--card2);
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: 12px;
-        "
-        onclick="document.getElementById('media-file-input').click()"
-        ondragover="handleDragOver(event)"
-        ondragleave="handleDragLeave(event)"
-        ondrop="handleDrop(event)">
-          <div style="display:flex; align-items:center; gap:10px;">
-            <span style="font-size:16px;">📸</span>
-            <span style="font-family:'Barlow'; font-size:14px; color:var(--light);">Add a photo or video</span>
-            <span style="font-family:'Barlow'; font-size:12px; color:var(--grey);">(optional)</span>
-          </div>
-          <span style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">+ Add</span>
-          <input type="file" id="media-file-input" multiple accept="image/*,video/*" style="display:none;" onchange="handleFileSelect(event)">
-        </div>
-        <!-- Media Preview Grid -->
-        <div id="media-preview-grid" style="display:none; margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill, minmax(90px,1fr)); gap:8px;"></div>
-      </div>
+      <!-- ── MEDIA UPLOAD — DISABLED FOR LAUNCH ──
+           Pulled 2026-05-11 (Coach Young walkthrough). localStorage strips
+           media dataUrls on save (5MB cap), so photos vanished on reload —
+           confusing UX that broke Coach's trust mid-walkthrough. Cross-device
+           cloud-synced photos belong in Phase 7b V2 / MyGrind Pro with
+           Firebase Storage, where they become a real paid upgrade feature
+           (player + coach see the same photos from anywhere).
+           The JS hooks (handleFileSelect / processFiles / pendingMedia /
+           renderMediaPreview / handleDragOver|Leave|Drop) are left in place
+           as dormant code — they'll wire back up to the new affordance when
+           Pro lands. Per CLAUDE.md "no aspirational UI in live app." -->
 
       <!-- Back-date banner — shows when j-date is set to a date other
            than today. Loud orange so the player can't accidentally
@@ -8102,22 +8079,10 @@ function renderEntries() {
         </div>
       ` : ''}
 
-      <!-- MEDIA GRID -->
-      ${e.media && e.media.length ? `
-        <div style="margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
-          <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">📸 Media (${e.media.length})</div>
-          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(80px,1fr)); gap:6px;">
-            ${e.media.map((m, mi) => `
-              <div style="position:relative; border-radius:3px; overflow:hidden; background:var(--card2); border:1px solid var(--border); aspect-ratio:1; cursor:pointer;" onclick="viewMedia('${e.id}', ${mi})">
-                ${m.type === 'image'
-                  ? `<img src="${m.dataUrl}" style="width:100%; height:100%; object-fit:cover;">`
-                  : `<div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;"><span style="font-size:22px;">▶️</span><div style="font-size:10px; color:var(--grey); margin-top:4px; text-align:center; padding:0 4px;">Video</div></div>`
-                }
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      ` : ''}
+      <!-- MEDIA GRID — disabled for launch (2026-05-11). Photos persisted
+           as dataUrls in localStorage but were stripped on save (5MB cap),
+           so they vanished on reload. Cross-device cloud-synced photos
+           come back with Phase 7b V2 / MyGrind Pro via Firebase Storage. -->
 
       <!-- COMMENTS — only render when feedback actually exists. Capture
            during entry creation lives in j-coach-section ABOVE; this past-

@@ -50,7 +50,7 @@ If beta users aren't logging entries daily:
 - Push notifications (real lock-screen pushes — requires Firebase Cloud Functions, $25/mo)
 - Multi-player accounts (one parent buys, multiple kids use)
 - Coach dashboard — see all players' progress in one view
-- Photo/video attachments (currently disabled, needs cloud storage)
+- **Photo + video on entries (MyGrind Pro)** — Firebase Storage backed, cross-device, accessible to coaches inside the Pro coach portal. Live-app UI pulled 2026-05-11 because localStorage stripped media dataUrls on save (5MB cap) and photos vanished on reload. JS hooks left dormant in `softball.html` (handleFileSelect / processFiles / pendingMedia / renderMediaPreview) — wire to new affordance + Firebase Storage upload when Pro lands.
 - GameChanger import via backend proxy — deferred to post-launch upgrade tier (UI removed 2026-05-08, dead JS removed 2026-05-09; Option 1 was disabled because Anthropic API is blocked by browser CORS, would need a server-side endpoint)
 - MaxPreps integration — deferred to post-launch upgrade tier (UI removed 2026-05-09; revisit once initial app is running and API partnership lands)
 - Affirmation push notifications via SMS (Twilio integration)
