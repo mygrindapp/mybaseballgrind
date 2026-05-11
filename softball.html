@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v103';
+    const CACHE = 'ybg-mygrind-v104';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -11475,6 +11475,75 @@ const WORKOUT_FOCI = {
   }
 };
 
+// ─── EXERCISE FORM VIDEO LIBRARY ───────────────────────────
+// Coach Young 2026-05-11: "Open a youtube embed" for exercise form
+// demos. Verified video IDs from credible coaches (Cressey, Squat
+// University). For uncurated exercises, tap-out to YouTube search in a
+// new tab. Add new IDs to grow coverage over time.
+const EXERCISE_VIDEOS = {
+  'trap bar deadlift':            '5BpuTmfQjro',
+  'med ball rotational throw':    'GTK8P0IOCTI',
+  'med ball scoop toss':          'mxf1D3NtxMo',
+  'med ball shotput throw':       'GTK8P0IOCTI'
+};
+
+// Strip emoji prefix + rep scheme so "🔻 Trap Bar Deadlift 3x5" becomes
+// "trap bar deadlift" for the lookup. Preserves the original label for
+// the YouTube search fallback.
+function _canonicalExerciseName(lift) {
+  return lift
+    .replace(/^[^\w]+/, '')                   // leading emoji/spaces
+    .replace(/\s+\d+x[\w/]+.*$/i, '')         // "3x5", "3x8/side", "3x AMRAP", etc.
+    .replace(/\s+\d+ (reps|min|sec|s|yd).*$/i, '') // "6 reps", "5 min"
+    .trim()
+    .toLowerCase();
+}
+
+function openExerciseVideo(lift) {
+  const key   = _canonicalExerciseName(lift);
+  const vid   = EXERCISE_VIDEOS[key];
+  const query = encodeURIComponent(lift.replace(/^[^\w]+/, '').trim() + ' form tutorial');
+
+  if (!vid) {
+    // No curated embed for this exercise — tap out to YouTube search
+    // in a new tab. Keeps the player moving without breaking the app.
+    window.open('https://www.youtube.com/results?search_query=' + query, '_blank', 'noopener');
+    return;
+  }
+
+  // Build / reuse the video modal
+  let modal = document.getElementById('exercise-video-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'exercise-video-modal';
+    modal.style.cssText = 'position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:10000; display:none; align-items:center; justify-content:center; padding:16px;';
+    modal.onclick = function(e) { if (e.target === modal) closeExerciseVideo(); };
+    document.body.appendChild(modal);
+  }
+  const safeLabel = lift.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  modal.innerHTML =
+    '<div style="position:relative; max-width:900px; width:100%;">' +
+      '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">' +
+        '<div style="font-family:\'Barlow Condensed\'; font-size:14px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#E67E22;">▶️ Form Demo — ' + safeLabel + '</div>' +
+        '<button onclick="closeExerciseVideo()" style="background:var(--gold); border:none; color:var(--dark); width:36px; height:36px; border-radius:50%; font-size:16px; font-weight:800; cursor:pointer;">✕</button>' +
+      '</div>' +
+      '<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:6px; background:#000;">' +
+        '<iframe src="https://www.youtube-nocookie.com/embed/' + vid + '?autoplay=1&rel=0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"></iframe>' +
+      '</div>' +
+      '<div style="text-align:center; margin-top:12px;">' +
+        '<a href="https://www.youtube.com/results?search_query=' + query + '" target="_blank" rel="noopener" style="font-family:\'Barlow Condensed\'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); text-decoration:none;">More videos on YouTube ↗</a>' +
+      '</div>' +
+    '</div>';
+  modal.style.display = 'flex';
+}
+
+function closeExerciseVideo() {
+  const modal = document.getElementById('exercise-video-modal');
+  if (!modal) return;
+  modal.style.display = 'none';
+  modal.innerHTML = ''; // stops the iframe playback
+}
+
 function selectWoFocus(focus) {
   document.querySelectorAll('.wo-focus-chip').forEach(function(b) {
     if (b.dataset && b.dataset.focus === focus) b.classList.add('selected');
@@ -11500,7 +11569,13 @@ function selectWoFocus(focus) {
   if (chips) {
     chips.innerHTML = data.lifts.map(function(lift) {
       const safe = lift.replace(/'/g, "&#39;").replace(/"/g, '&quot;');
-      return '<button type="button" class="wo-lift-chip" onclick="addLiftToLog(\'' + lift.replace(/'/g, "\\'") + '\')">+ ' + safe + '</button>';
+      const esc  = lift.replace(/'/g, "\\'");
+      // Two-part chip — main body adds the lift to the log, ▶️ button
+      // opens the YouTube form-demo modal (or tap-out search fallback).
+      return '<div class="wo-lift-row" style="display:inline-flex; align-items:stretch; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--card2);">' +
+               '<button type="button" class="wo-lift-chip" style="border:none; border-radius:0; background:transparent;" onclick="addLiftToLog(\'' + esc + '\')">+ ' + safe + '</button>' +
+               '<button type="button" class="wo-lift-video" title="Watch form demo" onclick="openExerciseVideo(\'' + esc + '\')" style="border:none; background:transparent; padding:0 10px; cursor:pointer; color:#E67E22; font-size:14px; border-left:1px solid var(--border);">▶️</button>' +
+             '</div>';
     }).join('');
   }
 }
