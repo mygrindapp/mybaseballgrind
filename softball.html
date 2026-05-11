@@ -1029,7 +1029,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v84';
+    const CACHE = 'ybg-mygrind-v85';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6529,6 +6529,34 @@ function saveEntry() {
   pendingMedia = [];
   renderMediaPreview();
   renderAll();
+
+  // Post-save UX (Coach Young 2026-05-11): give the player clear
+  // confirmation. For back-dated saves, also jump the entries-list
+  // filter to that date so the new entry shows up in the list right
+  // below — otherwise the Today filter hides it and the player thinks
+  // the save failed.
+  try {
+    const _savedDate = parseEntryDate(entry.date);
+    const _todayYmd  = todayLocalISO();
+    let _savedYmd = null;
+    if (_savedDate && !isNaN(_savedDate.getTime())) {
+      _savedYmd = _savedDate.getFullYear() + '-' +
+                  String(_savedDate.getMonth() + 1).padStart(2, '0') + '-' +
+                  String(_savedDate.getDate()).padStart(2, '0');
+    }
+    if (_savedYmd && _savedYmd !== _todayYmd) {
+      // Back-dated save — auto-jump filter so the new entry is visible
+      // in the entries list right below the form. setEntriesFilter
+      // re-renders the entries list (renderAll() above already covered
+      // everything else, so the double-render on the list is harmless).
+      setEntriesFilter('date:' + _savedYmd);
+      const _pretty = _savedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      if (typeof showShareToast === 'function') showShareToast('✅ Saved for ' + _pretty);
+    } else {
+      // Today save — filter stays on Today; new entry shows at the top.
+      if (typeof showShareToast === 'function') showShareToast('✅ Entry saved');
+    }
+  } catch (_) { /* renderAll already fired */ }
 }
 
 function deleteEntry(id) {
