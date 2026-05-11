@@ -168,6 +168,17 @@
       while (node = walker.nextNode()) {
         var v = node.nodeValue;
         if (v.indexOf('\u26BE') === -1 && v.indexOf('\uD83E\uDD4E') === -1) continue;
+        // Skip text inside the sport-toggle \u2014 those emojis are tab
+        // labels, not body content, and shouldn't auto-swap (the
+        // softball tab needs to keep its \uD83E\uDD4E even in baseball mode).
+        // Coach Young 2026-05-11.
+        var anc = node.parentNode;
+        var skip = false;
+        while (anc && anc !== document.body) {
+          if (anc.classList && anc.classList.contains('sport-toggle')) { skip = true; break; }
+          anc = anc.parentNode;
+        }
+        if (skip) continue;
         // Protect both-sport combos with a sentinel so we don't break them
         v = v.replace(/\u26BE\uD83E\uDD4E/g, '\u0001');
         if (target === '🥎') {
@@ -231,6 +242,14 @@
       // theme-color meta, body emoji walk, and {Sport}-templated text.
       window.setActiveSport = function(newSport) {
         if (!valid[newSport] || newSport === 'both') return;
+        // Coach Young 2026-05-11: players can only switch to a sport
+        // their family signed up for. mg_family_sport === 'baseball'
+        // → can't switch to softball; same for the inverse. 'both'
+        // unlocks the toggle. Without this gate, the disabled visual
+        // state could be bypassed via console or stale DOM clicks.
+        var family = localStorage.getItem('mg_family_sport') || familySport || newSport;
+        if (family !== 'both' && family !== newSport) return;
+
         localStorage.setItem('mg_sport', newSport);
         document.documentElement.setAttribute('data-sport', newSport);
         applyTitleAndMeta(newSport);
@@ -248,6 +267,12 @@
           if (b.getAttribute('data-toggle-sport') === newSport) b.classList.add('active');
           else                                                  b.classList.remove('active');
         }
+        // Refresh the journal entry form so the new entry is scoped
+        // to the newly-selected sport. cancelEdit() is the safest
+        // reset path — idempotent when no edit is in progress.
+        // Wrapped in try since cancelEdit is defined later in the
+        // file and may not exist yet if this fires very early.
+        try { if (typeof cancelEdit === 'function') cancelEdit(); } catch (_) {}
       };
       // Body text needs to wait for DOM to parse. attribute-only system —
       // any element with [data-mg-text] gets its template rendered.
@@ -261,16 +286,38 @@
           else                                                     b.classList.remove('active');
         }
       }
+      // Coach Young 2026-05-11: lock the non-owned sport tab visually
+      // (greyed + not clickable). family === 'both' unlocks both.
+      function syncToggleAllowed() {
+        var family = localStorage.getItem('mg_family_sport') || familySport || activeSport;
+        var btns = document.querySelectorAll('[data-toggle-sport]');
+        for (var i = 0; i < btns.length; i++) {
+          var b = btns[i];
+          var tabSport = b.getAttribute('data-toggle-sport');
+          var allowed = (family === 'both') || (family === tabSport);
+          if (allowed) {
+            b.classList.remove('disabled');
+            b.removeAttribute('aria-disabled');
+            b.title = '';
+          } else {
+            b.classList.add('disabled');
+            b.setAttribute('aria-disabled', 'true');
+            b.title = 'You signed up for ' + family + ' only.';
+          }
+        }
+      }
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
           applyBodyText(activeSport);
           applyBallEmoji(activeSport);
           syncToggleActiveClass();
+          syncToggleAllowed();
         });
       } else {
         applyBodyText(activeSport);
         applyBallEmoji(activeSport);
         syncToggleActiveClass();
+        syncToggleAllowed();
       }
     } catch (e) {
       document.documentElement.setAttribute('data-sport', 'baseball');
@@ -365,11 +412,13 @@
     gap: 12px;
   }
 
-  /* Phase 1D — multi-sport toggle (visible only to "both" family users) */
-  .sport-toggle { display: none; gap: 0; align-items: center;
+  /* Sport toggle — always visible (Coach Young 2026-05-11). Single-
+     sport users see the non-owned tab in a disabled state so they
+     understand the other sport exists but can't switch to it. Both-
+     sport users get full toggle behavior. */
+  .sport-toggle { display: inline-flex; gap: 0; align-items: center;
                   background: #1A1614; border: 1px solid var(--border);
                   border-radius: 999px; padding: 3px; }
-  html[data-family-sport="both"] .sport-toggle { display: inline-flex; }
   .sport-toggle button {
     background: transparent; border: none; cursor: pointer;
     color: var(--grey); font-family: 'Barlow Condensed', sans-serif;
@@ -381,7 +430,12 @@
   .sport-toggle button.active {
     background: var(--gold); color: #161210;
   }
-  .sport-toggle button:not(.active):hover { color: var(--white); }
+  .sport-toggle button:not(.active):not(.disabled):hover { color: var(--white); }
+  .sport-toggle button.disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+  }
+  .sport-toggle button.disabled:hover { color: var(--grey); }
   .sport-toggle .sport-toggle-emoji { margin-right: 4px; }
 
   .logo-badge {
@@ -1029,7 +1083,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v86';
+    const CACHE = 'ybg-mygrind-v87';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -10802,24 +10856,12 @@ function renderArmCare() {
     }).join('');
 
     const total = items.length;
-    // Progress text now reflects mutually-exclusive states:
-    //   - All actives checked + rest unchecked → "ALL DONE"
-    //   - Rest checked alone                   → "REST DAY"
-    //   - Anything in between                  → "N of M complete"
-    // (Computed counts come from the activesDone/activesTotal lines
-    //  below, recomputed here to keep this block self-contained.)
     if (prog) {
-      const _aTotal = items.filter(function(i){ return i.id !== 'rest'; }).length;
-      const _aDone  = items.filter(function(i){ return i.id !== 'rest' && !!state[i.id]; }).length;
-      const _restOn = !!state['rest'];
-      if (_aTotal > 0 && _aDone === _aTotal && !_restOn) {
+      if (done === total) {
         prog.innerHTML = '✅ ALL DONE — ARM CARE COMPLETE';
         prog.style.color = '#27AE60';
-      } else if (_restOn) {
-        prog.innerHTML = '🛌 REST DAY — NO ARM CARE NEEDED';
-        prog.style.color = '#5DADE2';
       } else {
-        prog.innerHTML = _aDone + ' of ' + _aTotal + ' complete';
+        prog.innerHTML = done + ' of ' + total + ' complete';
         prog.style.color = 'var(--grey)';
       }
     }
@@ -10836,15 +10878,12 @@ function renderArmCare() {
     const pillSub     = document.getElementById('arm-care-pill-sub');
     const collapseBtn = document.getElementById('arm-care-collapse-btn');
 
-    // Active items = everything except the 'rest' item (which is
-    // mutually exclusive with the others — see toggleArmCare).
-    // allDone now means "all ACTIVE items checked" rather than
-    // "literally everything checked" since the latter is unreachable
-    // under mutual exclusion (rest excludes actives and vice versa).
-    const activesTotal = items.filter(function(i) { return i.id !== 'rest'; }).length;
-    const activesDone  = items.filter(function(i) { return i.id !== 'rest' && !!state[i.id]; }).length;
-    const allDone      = activesTotal > 0 && activesDone === activesTotal && !state['rest'];
-    const restOnly     = !!state['rest']; // mutual exclusion guarantees others are off when rest is on
+    // Arm care = simple reminder checklist (Coach Young 2026-05-11).
+    // No mutual exclusion, no auto-collapse to REST pill — the only
+    // auto-collapse trigger is literal 5/5 complete. Rest day is just
+    // one of the 5 items the player might check.
+    const allDone  = total > 0 && done === total;
+    const restOnly = false; // disabled — REST pill auto-collapse removed
 
     // Determine which view to show based on user's pin + auto rules.
     let showCompressed;
@@ -10858,15 +10897,12 @@ function renderArmCare() {
       if (allDone) {
         bg = 'rgba(39,174,96,0.12)'; border = '#27AE60'; color = '#27AE60';
         icon = '💪'; title = 'Arm Care — Done for Today';
-        sub  = activesDone + ' of ' + activesTotal + ' complete · Resets at midnight';
-      } else if (restOnly) {
-        bg = 'rgba(93,173,226,0.10)'; border = '#5DADE2'; color = '#5DADE2';
-        icon = '🛌'; title = 'Rest Day — No Arm Care Needed';
-        sub  = 'Active rest only · Resets at midnight';
+        sub  = done + ' of ' + total + ' complete · Resets at midnight';
       } else {
+        // Manual-collapse / partial state — gentle grey reminder pill.
         bg = 'var(--card2)'; border = 'var(--border)'; color = 'var(--grey)';
-        icon = '💪'; title = 'Arm Care · ' + activesDone + '/' + activesTotal + ' done';
-        sub  = (activesDone === 0 ? 'Tap to open the checklist' : 'Tap to finish · Resets at midnight');
+        icon = '💪'; title = 'Arm Care · ' + done + '/' + total + ' done';
+        sub  = (done === 0 ? 'Tap to open the checklist' : 'Tap to finish · Resets at midnight');
       }
       pill.style.display      = 'flex';
       pill.style.background   = bg;
@@ -10891,38 +10927,21 @@ function renderArmCare() {
 
 function toggleArmCare(id) {
   const state = getArmCareState();
-  const wasChecked = !!state[id];
   state[id] = !state[id];
-  // Mutual exclusion (Coach Young 2026-05-11): "rest" and the active
-  // throwing-prep items are logically incompatible — a rest day means
-  // NO throwing, so doing active arm care + claiming rest at the same
-  // time doesn't make sense. When the user just CHECKED an item:
-  //   - If they checked 'rest', clear all active items
-  //   - If they checked an active, clear 'rest'
-  // (Unchecking doesn't trigger any cascading clears.)
-  if (!wasChecked) {
-    if (id === 'rest') {
-      Object.keys(state).forEach(function(k) { if (k !== 'rest') state[k] = false; });
-    } else {
-      state['rest'] = false;
-    }
-  }
   setArmCareState(state);
-  // Reset view pin to 'auto' so the new check-state drives the view
-  // (e.g. completing all actives auto-collapses to the DONE pill;
-  // tapping rest alone auto-collapses to the REST pill).
+  // Arm care is a daily reminder, not mandatory (Coach Young
+  // 2026-05-11 iteration: "This should be just a good reminder what
+  // they should be doing to maintain arm health not mandatory.").
+  // No mutual exclusion, no auto-collapse to a "Rest Day" pill —
+  // just a plain 5-item checklist. The only auto-collapse is when
+  // all 5 are checked (DONE pill), and the manual ▲ Hide button is
+  // always available so the player can stash the card whenever.
   _armCareViewMode = 'auto';
   ybgHaptic(15);
   renderArmCare();
 
-  // Celebrate first full completion of the day. Under mutual
-  // exclusion, "complete" means all ACTIVES done (rest unchecked).
-  // A rest day is its own legitimate state but doesn't fire the
-  // arm-care celebration — the rest pill is enough confirmation.
-  const _items = getArmCareItems();
-  const _allActivesDone = _items.filter(function(i){ return i.id !== 'rest'; })
-                                .every(function(i){ return !!state[i.id]; });
-  const allDone = _allActivesDone && !state['rest'];
+  // Celebrate first full completion of the day — fires once per day.
+  const allDone = getArmCareItems().every(function(it) { return state[it.id]; });
   const celebKey = armCareKey() + '_celebrated';
   if (allDone && !localStorage.getItem(celebKey)) {
     localStorage.setItem(celebKey, '1');
