@@ -1029,7 +1029,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v83';
+    const CACHE = 'ybg-mygrind-v84';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2222,23 +2222,17 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          already communicate "this is where you log a new entry." The
          eyebrow stamp was redundant after the 22px display-heading bump. -->
     <div class="card">
-      <!-- Date is locked to today by default — Coach Young 2026-05-11
-           walkthrough: the picker in the form looked like it should
-           navigate to past days but only sets the entry's stored date,
-           which was confusing. Today the form is hard-coded to today;
-           past-day VIEWING happens via the "📅 Pick Date" chip above
-           the entries list, and past-entry EDITING happens via the
-           ✏️ button on each saved entry (PIN-gated for entries >24h).
-           Input stays in the DOM (so saveEntry / editEntry read/write
-           it unchanged) but pointer-events:none + tabindex:-1 + muted
-           opacity make it non-interactive. When editing a past entry,
-           editEntry sets j-date.value to that entry's date and the
-           display reflects it — read-only either way. -->
+      <!-- Date picker — Coach Young 2026-05-11 walkthrough iteration 2.
+           Tried locking to today (commit 061641b), but back-dating is
+           still needed for the "forgot to log yesterday" case. Keeping
+           it interactive AND adding a loud visual banner below the
+           save button when date !== today, so the player can't pick a
+           past date and not realize they did. -->
       <div class="form-row">
         <div>
           <label>Date</label>
-          <input type="date" id="j-date" readonly tabindex="-1" style="pointer-events:none; opacity:0.7; cursor:default;">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px; line-height:1.4;">Saved as today. To view or edit a past day, use <strong style="color:var(--gold);">📅 Pick Date</strong> above the entries list below.</div>
+          <input type="date" id="j-date" onchange="updateBackdateBanner()">
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px; line-height:1.4;">Defaults to today. Pick a past date if you forgot to log a missed day.</div>
         </div>
         <div>
           <label>Entry Type</label>
@@ -2808,6 +2802,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
         <!-- Media Preview Grid -->
         <div id="media-preview-grid" style="display:none; margin-top:12px; display:grid; grid-template-columns:repeat(auto-fill, minmax(90px,1fr)); gap:8px;"></div>
+      </div>
+
+      <!-- Back-date banner — shows when j-date is set to a date other
+           than today. Loud orange so the player can't accidentally
+           back-date and not realize. Coach Young 2026-05-11. -->
+      <div id="backdate-banner" style="display:none; margin-bottom:12px; padding:12px 14px; background:rgba(230,126,34,0.12); border:1px solid #E67E22; border-radius:3px; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#E67E22; line-height:1.4;">
+        📅 Logging for <span id="backdate-banner-date">—</span><span id="backdate-banner-suffix" style="font-weight:600; color:#C0681E; margin-left:6px;"></span>
       </div>
 
       <!-- Editing banner — shown when user is editing a saved past entry. -->
@@ -6098,6 +6099,10 @@ function _doEditEntry(id) {
       dateEl.value = '';
     }
   }
+  // Banner reflects the loaded entry's date — when editing a past
+  // entry, the back-date banner appears so the player knows the form
+  // is now scoped to that day, not today.
+  try { updateBackdateBanner(); } catch (e) {}
 
   // Type — set first, then trigger toggleGameStats so the right sections appear
   const typeEl = document.getElementById('j-type');
@@ -7319,6 +7324,44 @@ function resetJDateToToday() {
     const el = document.getElementById('j-date');
     if (el) el.value = todayLocalISO();
   } catch (e) {}
+  try { updateBackdateBanner(); } catch (e) {}
+}
+// Show / hide the orange "📅 Logging for [date]" banner depending on
+// whether the form's date picker is set to a non-today value. Wired
+// to onchange on #j-date so it updates immediately when the player
+// picks a date; also called from init, resetJDateToToday, editEntry,
+// and cancelEdit so the banner state always reflects the current
+// j-date value. Coach Young 2026-05-11.
+function updateBackdateBanner() {
+  const el      = document.getElementById('j-date');
+  const banner  = document.getElementById('backdate-banner');
+  const dateEl  = document.getElementById('backdate-banner-date');
+  const suffEl  = document.getElementById('backdate-banner-suffix');
+  if (!el || !banner) return;
+  const val = el.value || '';
+  const todayIso = todayLocalISO();
+  if (!val || val === todayIso) {
+    banner.style.display = 'none';
+    return;
+  }
+  // Past (or future, though the max= attr blocks future on most
+  // browsers) — show the banner with a friendly date + relative hint.
+  const picked = new Date(val + 'T12:00:00');
+  if (isNaN(picked.getTime())) {
+    banner.style.display = 'none';
+    return;
+  }
+  const pretty = picked.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  // Days delta — positive = past, negative = future
+  const today = new Date(); today.setHours(12, 0, 0, 0);
+  const days = Math.round((today - picked) / (1000 * 60 * 60 * 24));
+  let suffix = '';
+  if (days === 1) suffix = '· 1 day ago';
+  else if (days > 1) suffix = '· ' + days + ' days ago';
+  else if (days < 0) suffix = '· in the future'; // shouldn't normally happen
+  if (dateEl) dateEl.textContent = pretty;
+  if (suffEl) suffEl.textContent = suffix;
+  banner.style.display = 'block';
 }
 
 // ── ENTRY META PILLS ──────────────────────────────────
