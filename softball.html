@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v102';
+    const CACHE = 'ybg-mygrind-v103';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7104,16 +7104,29 @@ function toggleGameStats() {
   // for the rep counter to surface on Instructor entries too, scoped to the
   // selected Focus Area (e.g. hitting → swings only). The instructor branch
   // below routes through onInstructorFocusChange() to apply that scoping.
-  const hideOthers = isInstructor;
-  const fieldsToHide = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
-  fieldsToHide.forEach(function(fid) {
+  // Workout type gets the same "scoped form" treatment Coach Young asked
+  // for 2026-05-11: "Everything on this page should be gym workout
+  // related." Reflection-style textareas (what / tomorrow / team-role),
+  // Save Note for Coach, and the Grade chips ("How did I perform today?")
+  // are all hidden for workouts — the workout section + warm-up + arm
+  // care are the only meaningful surfaces. Title stays visible so the
+  // player can name a session (e.g. "Leg Day").
+  const hideOthers = isInstructor || isWorkout;
+  const instructorHideList = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
+  const workoutHideList    = ['j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
+  const fieldsToHide = isInstructor ? instructorHideList : (isWorkout ? workoutHideList : []);
+  // Restoration set — union of both hide lists so prevDisplay can
+  // restore correctly when the user switches AWAY from workout/instructor.
+  const allRestorable = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
+  allRestorable.forEach(function(fid) {
     const el = document.getElementById(fid);
     if (!el) return;
-    if (hideOthers) {
-      el.dataset.prevDisplay = el.style.display || '';
+    if (fieldsToHide.indexOf(fid) !== -1) {
+      if (el.dataset.prevDisplay === undefined) el.dataset.prevDisplay = el.style.display || '';
       el.style.display = 'none';
     } else if (el.dataset.prevDisplay !== undefined) {
       el.style.display = el.dataset.prevDisplay;
+      delete el.dataset.prevDisplay;
     }
   });
 
@@ -7189,12 +7202,10 @@ function toggleGameStats() {
     if (whatEl)  whatEl.placeholder  = 'Even if you didn\'t train, what was on your mind about your game? How did your body feel? What did you watch, read, or learn?';
     if (tmrwLb)  tmrwLb.textContent  = 'What am I bringing back tomorrow?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What\'s the one thing I want to attack when I get back to the grind?';
-  } else if (isWorkout) {
-    if (whatLb)  whatLb.textContent  = 'How did the workout go?';
-    if (whatEl)  whatEl.placeholder  = 'How did you feel today — strong, fresh, drained? Anything sore or off? What pushed you?';
-    if (tmrwLb)  tmrwLb.textContent  = 'What am I dialing in next session?';
-    if (tmrwEl)  tmrwEl.placeholder  = 'What weight, lift, or focus do I want to push next time?';
   }
+  // (Workout branch removed 2026-05-11 — j-what / j-tomorrow / grade /
+  // coach-note are now hidden for workout entries, so re-flavoring their
+  // labels was dead code. The workout section is the entire surface.)
 
   // Reset game displays when not game
   if (!isGame) {
@@ -11368,98 +11379,98 @@ const WORKOUT_FOCI = {
     label: '💥 Lower Power',
     tip: 'Lower body explosiveness is the engine for bat speed, throwing velocity, and first-step quickness. The legs go first — everything else is downstream.',
     lifts: [
-      'Trap Bar Deadlift 3x5',
-      'Back Squat 3x5',
-      'Front Squat 3x5',
-      'Bulgarian Split Squat 3x8/leg',
-      'Romanian Deadlift 3x6',
-      'Hip Thrust 3x8',
-      'Goblet Squat 3x10',
-      'Reverse Lunge 3x8/leg'
+      '🔻 Trap Bar Deadlift 3x5',
+      '🦵 Back Squat 3x5',
+      '🦵 Front Squat 3x5',
+      '🦿 Bulgarian Split Squat 3x8/leg',
+      '🔻 Romanian Deadlift 3x6',
+      '🍑 Hip Thrust 3x8',
+      '🏋️ Goblet Squat 3x10',
+      '🦵 Reverse Lunge 3x8/leg'
     ]
   },
   'rotational': {
     label: '🔄 Rotational Power',
     tip: 'Rotational power separates average from elite. Trunk rotation has the largest influence on throwing velocity, and the same kinetic chain drives bat speed.',
     lifts: [
-      'Med Ball Rotational Throw 3x8/side',
-      'Med Ball Scoop Toss 3x8/side',
-      'Med Ball Overhead Slam 3x8',
-      'Cable Rotation 3x10/side',
-      'Landmine Rotation 3x8/side',
-      'Hanging Russian Twist 3x12',
-      'Half-Kneeling Pallof Press 3x10/side',
-      'Med Ball Shotput Throw 3x6/side'
+      '🌀 Med Ball Rotational Throw 3x8/side',
+      '🌀 Med Ball Scoop Toss 3x8/side',
+      '💥 Med Ball Overhead Slam 3x8',
+      '🔄 Cable Rotation 3x10/side',
+      '🔄 Landmine Rotation 3x8/side',
+      '🌀 Hanging Russian Twist 3x12',
+      '🛑 Half-Kneeling Pallof Press 3x10/side',
+      '🌀 Med Ball Shotput Throw 3x6/side'
     ]
   },
   'upper': {
     label: '💪 Upper Body',
     tip: 'Build pulling strength to protect the shoulder — pull-to-push at a 2:1 ratio favoring pull keeps the rotator cuff healthy for the long season.',
     lifts: [
-      'Pull-ups 3x AMRAP',
-      'Chest-Supported Row 3x8',
-      'Single-Arm DB Row 3x8/side',
-      'DB Bench Press 3x6',
-      'Incline DB Bench 3x8',
-      'Face Pulls 3x12',
-      'Landmine Press 3x6/side',
-      'Band Pull-Apart 3x15'
+      '⬆️ Pull-ups 3x AMRAP',
+      '🚣 Chest-Supported Row 3x8',
+      '🚣 Single-Arm DB Row 3x8/side',
+      '🛌 DB Bench Press 3x6',
+      '🛌 Incline DB Bench 3x8',
+      '😤 Face Pulls 3x12',
+      '🆙 Landmine Press 3x6/side',
+      '↔️ Band Pull-Apart 3x15'
     ]
   },
   'core': {
     label: '🤸 Core / Anti-Rotation',
     tip: 'A stable core transfers force from legs to arms — without it the kinetic chain leaks power before it reaches the ball.',
     lifts: [
-      'Pallof Press 3x10/side',
-      'Dead Bug 3x10',
-      'Side Plank 3x30s/side',
-      'Plank 3x60s',
-      'Bird Dog 3x10/side',
-      'Hollow Body Hold 3x30s',
-      'Suitcase Carry 3x30yd/side',
-      'Ab Wheel Rollout 3x8'
+      '🛑 Pallof Press 3x10/side',
+      '🪲 Dead Bug 3x10',
+      '🟧 Side Plank 3x30s/side',
+      '➖ Plank 3x60s',
+      '🐕 Bird Dog 3x10/side',
+      '🥯 Hollow Body Hold 3x30s',
+      '💼 Suitcase Carry 3x30yd/side',
+      '🎱 Ab Wheel Rollout 3x8'
     ]
   },
   'speed-plyo': {
     label: '⚡ Speed / Plyo',
     tip: 'Plyometrics build elastic strength — the kind that turns gym strength into game speed and explosive first-step quickness.',
     lifts: [
-      'Box Jump 3x5',
-      'Broad Jump 3x5',
-      'Split Squat Jump 3x6/leg',
-      'Lateral Bound 3x6/side',
-      '10-yard Sprint 6 reps',
-      'Skater Jumps 3x8/side',
-      'Depth Drop to Jump 3x5',
-      'Pogo Hops 3x20s'
+      '📦 Box Jump 3x5',
+      '➡️ Broad Jump 3x5',
+      '🦘 Split Squat Jump 3x6/leg',
+      '⬅️ Lateral Bound 3x6/side',
+      '🏃 10-yard Sprint 6 reps',
+      '⛸️ Skater Jumps 3x8/side',
+      '⬇️ Depth Drop to Jump 3x5',
+      '🦘 Pogo Hops 3x20s'
     ]
   },
   'mobility': {
     label: '🧘 Mobility',
     tip: 'Mobility work pays compound interest — protects against pulls, opens up rotation, and lets your strength reach its full range.',
     lifts: [
-      'Foam roll quads/back/lats 5 min',
-      'Hip flexor stretch 2x30s/side',
-      'T-spine rotations 2x10/side',
-      'Couch stretch 2x60s/side',
-      '90/90 hip stretch 2x60s/side',
-      'Banded shoulder dislocates 2x10',
-      'Cat-cow 2x10',
-      'World\'s Greatest Stretch 2x5/side'
+      '🟦 Foam roll quads/back/lats 5 min',
+      '🦵 Hip flexor stretch 2x30s/side',
+      '🌀 T-spine rotations 2x10/side',
+      '🛋️ Couch stretch 2x60s/side',
+      '🦵 90/90 hip stretch 2x60s/side',
+      '💪 Banded shoulder dislocates 2x10',
+      '🐱 Cat-cow 2x10',
+      '🧎 World\'s Greatest Stretch 2x5/side'
     ]
   },
   'mixed': {
     label: '🔀 Mixed / Conditioning',
     tip: 'Mixed sessions build conditioning + maintain strength — best when you only have one window in a busy week.',
     lifts: [
-      'Trap Bar DL 3x5',
-      'Pull-ups 3x6',
-      'Med Ball Rotational Throw 3x8',
-      'KB Swing 3x12',
-      'Sled Push 3x20yd',
-      'Bike Sprints 8x20s',
-      'Goblet Squat 3x8',
-      'Plank 3x45s'
+      '🔻 Trap Bar DL 3x5',
+      '⬆️ Pull-ups 3x6',
+      '🌀 Med Ball Rotational Throw 3x8',
+      '🔔 KB Swing 3x12',
+      '🛷 Sled Push 3x20yd',
+      '🚴 Bike Sprints 8x20s',
+      '🏋️ Goblet Squat 3x8',
+      '➖ Plank 3x45s'
     ]
   }
 };
