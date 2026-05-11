@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v111';
+    const CACHE = 'ybg-mygrind-v112';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2911,6 +2911,20 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="font-family:'Barlow Condensed'; font-size:20px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:8px;">🏋️ Weight Room / Gym</div>
         <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:18px; line-height:1.55;">Strength + conditioning built for baseball / softball — rotational power, lower-body explosiveness, arm health. Off-season is where seasons are won.</div>
 
+        <!-- Session-type chips — Coach Young 2026-05-11 iteration 3:
+             "Session type should be first thing you choose before
+             suggested lifts." Sets the day's intent (Light / Maintenance
+             / Max) before drilling into focus + lifts. -->
+        <div style="margin-bottom:18px;">
+          <label class="wo-section-label">Session Type <span class="wo-section-hint">— what kind of day is this?</span></label>
+          <input type="hidden" id="j-wo-intensity" value="">
+          <div id="j-wo-intensity-row" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="wo-intensity-chip" data-intensity="light-day"   onclick="selectWoIntensity('light-day')">Light Day<br><span class="wo-day-sub">recovery</span></button>
+            <button type="button" class="wo-intensity-chip" data-intensity="maintenance" onclick="selectWoIntensity('maintenance')">Maintenance<br><span class="wo-day-sub">in-season · stay sharp</span></button>
+            <button type="button" class="wo-intensity-chip" data-intensity="max-day"     onclick="selectWoIntensity('max-day')">Max Day<br><span class="wo-day-sub">build strength · push hard</span></button>
+          </div>
+        </div>
+
         <!-- Focus chips (was a select). Drives the tip + suggested lifts below. -->
         <label class="wo-section-label">What kind of workout?</label>
         <input type="hidden" id="j-wo-focus" value="">
@@ -2933,22 +2947,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div id="j-wo-suggested-row" style="display:none; margin-top:18px;">
           <label class="wo-section-label">Suggested Lifts <span class="wo-section-hint">— tap to add to your log</span></label>
           <div id="j-wo-suggested-chips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
-        </div>
-
-        <!-- Session-type chips — Coach Young 2026-05-11 iteration 2:
-             "Light/Working/Hard doesn't really relate to anything. Maybe
-             it should be more like light day, maintenance day, or max
-             day." Reframed as a SESSION classification (whole-workout
-             intent) rather than per-set perception. Maps to how players
-             actually think about their training week. -->
-        <div style="margin-top:18px;">
-          <label class="wo-section-label">Session Type <span class="wo-section-hint">— what kind of day was this?</span></label>
-          <input type="hidden" id="j-wo-intensity" value="">
-          <div id="j-wo-intensity-row" style="display:flex; gap:6px; flex-wrap:wrap;">
-            <button type="button" class="wo-intensity-chip" data-intensity="light-day"   onclick="selectWoIntensity('light-day')">Light Day<br><span class="wo-day-sub">recovery</span></button>
-            <button type="button" class="wo-intensity-chip" data-intensity="maintenance" onclick="selectWoIntensity('maintenance')">Maintenance<br><span class="wo-day-sub">in-season · stay sharp</span></button>
-            <button type="button" class="wo-intensity-chip" data-intensity="max-day"     onclick="selectWoIntensity('max-day')">Max Day<br><span class="wo-day-sub">build strength · push hard</span></button>
-          </div>
         </div>
 
         <div style="margin-top:18px;">
