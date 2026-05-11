@@ -1104,7 +1104,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v99';
+    const CACHE = 'ybg-mygrind-v100';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2882,8 +2882,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="editing-banner" style="display:none; margin-bottom:12px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); border-radius:3px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">
         ✏️ Editing entry from <span id="editing-banner-date">—</span>
       </div>
-      <div style="display:flex; gap:10px;">
-        <button class="btn btn-gold" id="save-entry-btn" onclick="saveEntry()" style="flex:1;">📓 &nbsp;Save Entry</button>
+      <!-- Save Entry no longer a full-width gold banner (Coach Young
+           2026-05-11). Was visually overpowering and made "YOUR ENTRIES"
+           below feel like a continuation of the same section. Now a
+           centered, fixed-width action button — clearly the form's
+           commit affordance, not a section banner. -->
+      <div style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
+        <button class="btn btn-gold" id="save-entry-btn" onclick="saveEntry()" style="min-width:200px;">📓 &nbsp;Save Entry</button>
         <button class="btn btn-outline" id="cancel-edit-btn" onclick="cancelEdit()" style="display:none;">Cancel</button>
       </div>
     </div>
@@ -2917,17 +2922,16 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     </div>
 
     <!-- ── ENTRIES HISTORY SECTION ── Coach Young 2026-05-11 walkthrough
-         iteration 2. The compose card above + entries list below shared
-         the same panel background and read as one wall. Wrapping the
-         history bits in a darker, bordered container makes "your past
-         entries" feel like its own surface. The wrapper closes after
-         #entries-list below. -->
-    <div style="margin-top:48px; padding:24px 18px 18px; background:rgba(0,0,0,0.28); border:1px solid var(--gold-dark); border-radius:4px;">
+         iteration 3. Wrapper container makes the history feel like its
+         own surface (was: same background, read as one wall). Header
+         dialed down from a 30px Bebas section-title to a quieter list
+         eyebrow — Save Entry is the form's commit, this is just the
+         start of the list, not a competing banner. -->
+    <div style="margin-top:40px; padding:18px 18px 18px; background:rgba(0,0,0,0.22); border:1px solid var(--border); border-radius:4px;">
 
-    <div style="margin-bottom:14px;">
-      <div style="font-family:'Bebas Neue', cursive; font-size:30px; letter-spacing:3px; line-height:1; color:#F5F0EB;">📓 YOUR <span style="color:var(--gold);">ENTRIES</span></div>
-      <div style="font-family:'Barlow Condensed', sans-serif; font-size:13px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:#D4C4A8; margin-top:6px;">Tap any entry to expand · Newest first</div>
-      <div style="width:60px; height:3px; background:var(--gold); margin:10px 0 0;"></div>
+    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);">
+      <div style="font-family:'Barlow Condensed', sans-serif; font-size:15px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold);">📓 Your Entries</div>
+      <div style="font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Newest first · Tap to expand</div>
     </div>
 
     <!-- Entries filter chips — Coach Young 2026-05-11 walkthrough.
