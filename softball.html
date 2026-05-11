@@ -273,6 +273,9 @@
         // Wrapped in try since cancelEdit is defined later in the
         // file and may not exist yet if this fires very early.
         try { if (typeof cancelEdit === 'function') cancelEdit(); } catch (_) {}
+        // Re-render the entries list so it filters to entries logged
+        // under the new active sport (Coach Young 2026-05-11).
+        try { if (typeof renderEntries === 'function') renderEntries(); } catch (_) {}
       };
       // Body text needs to wait for DOM to parse. attribute-only system —
       // any element with [data-mg-text] gets its template rendered.
@@ -1083,7 +1086,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v87';
+    const CACHE = 'ybg-mygrind-v88';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6394,10 +6397,23 @@ function saveEntry() {
     }
   }
 
+  // Sport tag — every entry remembers which sport was active when it
+  // was logged so the entries list can filter to the currently-active
+  // sport for "both" players. Single-sport players see no difference;
+  // every entry will match their one sport. Coach Young 2026-05-11:
+  // "if the player selects softball after making baseball entry the
+  // journal goes into softball specific journal."
+  const _entrySport = (function() {
+    try {
+      var s = window.mgSport || localStorage.getItem('mg_sport') || 'baseball';
+      return (s === 'softball') ? 'softball' : 'baseball';
+    } catch (e) { return 'baseball'; }
+  })();
   const entry = {
     id:        Date.now(),
     date:      date ? new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
     type, title, what, tomorrow, prepare, grade, result,
+    sport:     _entrySport,
     gameStats,
     media:     [...pendingMedia],
     comments:  []
@@ -6518,6 +6534,11 @@ function saveEntry() {
     if (idx !== -1) {
       const original = state.entries[idx];
       entry.id = original.id; // keep original id so comment links etc. still resolve
+      // Preserve the original sport tag — editing an entry doesn't
+      // mean the player re-played it under the active sport. A
+      // baseball game logged on May 5 stays a baseball game even if
+      // the player is in softball mode while editing typos.
+      if (original.sport) entry.sport = original.sport;
       // Stamp editedAt so the entry-meta row can show an "edited" badge —
       // gives the player visibility into what's been retroactively changed.
       entry.editedAt = Date.now();
@@ -7558,6 +7579,18 @@ function setEntriesFilter(f) {
 }
 function _filteredEntries(arr) {
   if (!Array.isArray(arr)) return [];
+  // Sport scope (Coach Young 2026-05-11): only show entries logged
+  // under the currently-active sport. Entries without a sport tag
+  // (pre-5/11 data) are treated as sport-agnostic and shown in both
+  // views so legacy entries aren't hidden.
+  const activeSport = (function() {
+    try { return window.mgSport || localStorage.getItem('mg_sport') || 'baseball'; }
+    catch (e) { return 'baseball'; }
+  })();
+  arr = arr.filter(function(e) {
+    if (!e || !e.sport) return true; // untagged legacy = show always
+    return e.sport === activeSport;
+  });
   if (_entriesFilter === 'all') return arr;
   // Single-day jump — exact YYYY-MM-DD match
   if (typeof _entriesFilter === 'string' && _entriesFilter.indexOf('date:') === 0) {
