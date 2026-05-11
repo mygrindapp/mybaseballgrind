@@ -1029,7 +1029,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v82';
+    const CACHE = 'ybg-mygrind-v83';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2222,10 +2222,23 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          already communicate "this is where you log a new entry." The
          eyebrow stamp was redundant after the 22px display-heading bump. -->
     <div class="card">
+      <!-- Date is locked to today by default — Coach Young 2026-05-11
+           walkthrough: the picker in the form looked like it should
+           navigate to past days but only sets the entry's stored date,
+           which was confusing. Today the form is hard-coded to today;
+           past-day VIEWING happens via the "📅 Pick Date" chip above
+           the entries list, and past-entry EDITING happens via the
+           ✏️ button on each saved entry (PIN-gated for entries >24h).
+           Input stays in the DOM (so saveEntry / editEntry read/write
+           it unchanged) but pointer-events:none + tabindex:-1 + muted
+           opacity make it non-interactive. When editing a past entry,
+           editEntry sets j-date.value to that entry's date and the
+           display reflects it — read-only either way. -->
       <div class="form-row">
         <div>
           <label>Date</label>
-          <input type="date" id="j-date">
+          <input type="date" id="j-date" readonly tabindex="-1" style="pointer-events:none; opacity:0.7; cursor:default;">
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px; line-height:1.4;">Saved as today. To view or edit a past day, use <strong style="color:var(--gold);">📅 Pick Date</strong> above the entries list below.</div>
         </div>
         <div>
           <label>Entry Type</label>
