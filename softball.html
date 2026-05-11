@@ -1104,7 +1104,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v95';
+    const CACHE = 'ybg-mygrind-v96';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2382,8 +2382,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <label>Was this with the team or on your own?</label>
         <input type="hidden" id="j-practice-mode" value="team">
         <div style="display:flex; gap:6px;">
-          <button type="button" class="practice-mode-chip selected" data-mode="team" onclick="setPracticeMode('team')">👥 With Team</button>
-          <button type="button" class="practice-mode-chip" data-mode="solo" onclick="setPracticeMode('solo')">💪 On My Own</button>
+          <button type="button" class="practice-mode-chip selected" data-mode="team" onclick="onPracticeModeChipClick('team')">👥 With Team</button>
+          <button type="button" class="practice-mode-chip" data-mode="solo" onclick="onPracticeModeChipClick('solo')">💪 On My Own</button>
         </div>
       </div>
 
@@ -7399,6 +7399,51 @@ function setPracticeMode(mode) {
     else b.classList.remove('selected');
   });
   applyPracticeModeVisibility(mode);
+}
+
+// User-initiated mode toggle (Coach Young 2026-05-11 walkthrough). Team
+// practice and solo work on the same day are different sessions, so a
+// mid-compose mode flip should start a separate entry rather than carry
+// the prior draft across. Confirms before discarding unsaved content;
+// in edit mode the toggle just reclassifies the saved entry (no clear).
+function onPracticeModeChipClick(mode) {
+  const currentMode = document.getElementById('j-practice-mode')?.value || 'team';
+  if (mode === currentMode) return;
+  if (!editingEntryId && hasUnsavedPracticeContent()) {
+    const otherLabel = (mode === 'team') ? 'With Team' : 'On My Own';
+    const ok = confirm('Switch to "' + otherLabel + '"? This starts a separate entry — the current draft will be discarded.');
+    if (!ok) return;
+    clearPracticeDraft();
+  }
+  setPracticeMode(mode);
+}
+
+function hasUnsavedPracticeContent() {
+  const textFields = ['j-what','j-team-role-text','j-tomorrow','j-prepare','j-coach-note'];
+  for (let i = 0; i < textFields.length; i++) {
+    if ((document.getElementById(textFields[i])?.value || '').trim() !== '') return true;
+  }
+  const repIds = ['jr-swings-value','jr-gb-value','jr-throws-value','jr-pitches-value'];
+  for (let i = 0; i < repIds.length; i++) {
+    if ((parseInt(document.getElementById(repIds[i])?.value) || 0) > 0) return true;
+  }
+  if (typeof pendingMedia !== 'undefined' && Array.isArray(pendingMedia) && pendingMedia.length > 0) return true;
+  if ((document.getElementById('j-grade')?.value || '').trim() !== '') return true;
+  return false;
+}
+
+function clearPracticeDraft() {
+  ['j-what','j-team-role-text','j-tomorrow','j-prepare','j-grade','j-result','j-coach-note'].forEach(function(id) {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  try { resetRepChips(); } catch (_) {}
+  try { resetGradeResultChips(); } catch (_) {}
+  try { resetSoloWorkType(); } catch (_) {}
+  if (typeof pendingMedia !== 'undefined') {
+    pendingMedia = [];
+    try { renderMediaPreview(); } catch (_) {}
+  }
 }
 function applyPracticeModeVisibility(mode) {
   const isSolo = (mode === 'solo');
