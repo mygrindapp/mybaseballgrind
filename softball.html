@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v108';
+    const CACHE = 'ybg-mygrind-v109';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2845,9 +2845,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           color: #E67E22;
           background: transparent;
         }
-        /* "▶ WATCH" video button styled like a proper action CTA
-           (Apple Fitness+ / Nike Training Club pattern) — orange tint,
-           uppercase, separated from the lift body by a clear divider. */
+        /* "▶ Watch" video button — green action CTA (Coach Young
+           2026-05-11: "change the watch button to green to have more of
+           an action"). Green = go/action universally; orange was reading
+           more like a "warning" tone next to the orange focus accent. */
         .wo-lift-video {
           font-family: 'Barlow Condensed', sans-serif;
           font-size: 12px !important;
@@ -2855,11 +2856,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           letter-spacing: 1.5px;
           text-transform: uppercase;
           padding: 0 16px !important;
-          background: rgba(230,126,34,0.08) !important;
-          color: #E67E22 !important;
+          background: rgba(39,174,96,0.12) !important;
+          color: #27AE60 !important;
           white-space: nowrap;
         }
-        .wo-lift-video:hover { background: rgba(230,126,34,0.18) !important; }
+        .wo-lift-video:hover { background: rgba(39,174,96,0.22) !important; }
       </style>
       <div id="j-workout-section" style="display:none; border:1px solid var(--border); border-radius:3px; padding:16px; margin-bottom:20px;">
         <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:6px;">🏋️ Weight Room / Gym</div>
@@ -2869,14 +2870,14 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <label>What kind of workout?</label>
         <input type="hidden" id="j-wo-focus" value="">
         <div id="j-wo-focus-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:4px;">
-          <button type="button" class="wo-focus-chip" data-focus="lower-power" onclick="selectWoFocus('lower-power')">💥 Lower Power</button>
-          <button type="button" class="wo-focus-chip" data-focus="rotational"  onclick="selectWoFocus('rotational')">🔄 Rotational</button>
-          <button type="button" class="wo-focus-chip" data-focus="upper"       onclick="selectWoFocus('upper')">💪 Upper Body</button>
-          <button type="button" class="wo-focus-chip" data-focus="core"        onclick="selectWoFocus('core')">🤸 Core / Anti-Rotation</button>
-          <button type="button" class="wo-focus-chip" data-focus="speed-plyo"  onclick="selectWoFocus('speed-plyo')">⚡ Speed / Plyo</button>
-          <button type="button" class="wo-focus-chip" data-focus="mobility"    onclick="selectWoFocus('mobility')">🧘 Mobility</button>
-          <button type="button" class="wo-focus-chip" data-focus="mixed"       onclick="selectWoFocus('mixed')">🔀 Mixed / Conditioning</button>
-          <button type="button" class="wo-focus-chip" data-focus="other"       onclick="selectWoFocus('other')">🛠️ Other / Custom</button>
+          <button type="button" class="wo-focus-chip" data-focus="lower-power" onclick="selectWoFocus('lower-power')">Lower Power</button>
+          <button type="button" class="wo-focus-chip" data-focus="rotational"  onclick="selectWoFocus('rotational')">Rotational</button>
+          <button type="button" class="wo-focus-chip" data-focus="upper"       onclick="selectWoFocus('upper')">Upper Body</button>
+          <button type="button" class="wo-focus-chip" data-focus="core"        onclick="selectWoFocus('core')">Core / Anti-Rotation</button>
+          <button type="button" class="wo-focus-chip" data-focus="speed-plyo"  onclick="selectWoFocus('speed-plyo')">Speed / Plyo</button>
+          <button type="button" class="wo-focus-chip" data-focus="mobility"    onclick="selectWoFocus('mobility')">Mobility</button>
+          <button type="button" class="wo-focus-chip" data-focus="mixed"       onclick="selectWoFocus('mixed')">Mixed / Conditioning</button>
+          <button type="button" class="wo-focus-chip" data-focus="other"       onclick="selectWoFocus('other')">Other / Custom</button>
         </div>
 
         <!-- Why this matters — populated by selectWoFocus(). Sport-specific
@@ -2889,14 +2890,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div id="j-wo-suggested-chips" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
         </div>
 
-        <!-- Intensity chips (was a select) -->
+        <!-- Intensity — anchored to "reps left in the tank" (RIR) so it
+             actually means something. Coach Young 2026-05-11: "light /
+             moderate / heavy doesn't really relate to anything — that
+             is just a perception." RIR is the standard strength-training
+             anchor: how many reps could you have done if you kept going. -->
         <div style="margin-top:14px;">
-          <label>Intensity</label>
+          <label>Intensity <span style="color:var(--grey); font-weight:400; text-transform:none; letter-spacing:0.5px;">— reps left in the tank at the end of a set</span></label>
           <input type="hidden" id="j-wo-intensity" value="">
-          <div id="j-wo-intensity-row" style="display:flex; gap:6px;">
-            <button type="button" class="wo-intensity-chip" data-intensity="light"    onclick="selectWoIntensity('light')">Light</button>
-            <button type="button" class="wo-intensity-chip" data-intensity="moderate" onclick="selectWoIntensity('moderate')">Moderate</button>
-            <button type="button" class="wo-intensity-chip" data-intensity="heavy"    onclick="selectWoIntensity('heavy')">Heavy</button>
+          <div id="j-wo-intensity-row" style="display:flex; gap:6px; flex-wrap:wrap;">
+            <button type="button" class="wo-intensity-chip" data-intensity="easy"     onclick="selectWoIntensity('easy')">Easy · 6+ left</button>
+            <button type="button" class="wo-intensity-chip" data-intensity="working"  onclick="selectWoIntensity('working')">Working · 2-4 left</button>
+            <button type="button" class="wo-intensity-chip" data-intensity="hard"     onclick="selectWoIntensity('hard')">Hard · 0-1 left</button>
           </div>
         </div>
 
