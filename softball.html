@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v112';
+    const CACHE = 'ybg-mygrind-v113';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2956,6 +2956,37 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="margin-top:18px; margin-bottom:0;">
           <label class="wo-section-label">Duration <span class="wo-section-hint">— minutes</span></label>
           <input type="number" id="j-wo-duration" min="0" max="600" step="5" placeholder="e.g. 60" style="margin-bottom:0;">
+        </div>
+      </div>
+
+      <!-- ── POST-WORKOUT RECOVERY CHECKLIST ── Coach Young 2026-05-11:
+           "Need to add post workout stretching, cool down and protein."
+           Mirrors the pre-workout warm-up card — same default-open-until-
+           done, manual hide, and pill-collapse pattern. Shown only when
+           type === 'workout'. State persists per-day in localStorage so
+           the player sees yesterday's recovery work reset at midnight. -->
+      <div class="card" id="j-cooldown-section" style="display:none; margin-top:20px; margin-bottom:16px; border-left:3px solid #27AE60;">
+        <div id="cooldown-expanded">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
+            <div class="card-title" style="margin-bottom:0;">🧘 Post-Workout Recovery</div>
+            <button type="button" id="cooldown-collapse-btn" onclick="collapseCooldown()" style="background:transparent; border:1px solid #1E8449; color:#27AE60; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer; flex-shrink:0;">▲ Hide</button>
+          </div>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
+            What you do in the 60 minutes after lifting is what locks in the work. <strong style="color:#27AE60;">Resets at midnight.</strong>
+          </div>
+          <div id="cooldown-list"></div>
+          <div id="cooldown-progress" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
+        </div>
+
+        <div id="cooldown-pill" onclick="expandCooldown()" style="display:none; padding:14px 16px; background:rgba(100,100,100,0.10); border:1px solid var(--border); border-radius:4px; cursor:pointer; user-select:none; align-items:center; justify-content:space-between; gap:12px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <span style="font-size:18px;">🧘</span>
+            <div>
+              <div id="cooldown-pill-title" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); line-height:1;">Recovery — 0 of 5</div>
+              <div id="cooldown-pill-sub" style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:3px;">Tap to expand · Resets at midnight</div>
+            </div>
+          </div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Tap to expand</div>
         </div>
       </div>
 
@@ -7300,8 +7331,9 @@ function toggleGameStats() {
 
   // Re-evaluate Arm Care visibility on every entry-type change.
   try { updateArmCareVisibility(); } catch(e) {}
-  // Workout warm-up visibility — shown only when type === 'workout'.
+  // Workout warm-up + cool-down visibility — shown only when type === 'workout'.
   try { updateWarmupVisibility(); } catch(e) {}
+  try { updateCooldownVisibility(); } catch(e) {}
   // Practice copy + team-role visibility — must run AFTER the practice
   // branch above so it can override the default "What did I work on?"
   // label when mode === 'team'. Also handles hiding the team-role block
@@ -8716,8 +8748,9 @@ function renderAll() {
   // Refresh Arm Care visibility — covers the case where a quick-log save
   // logged a throwing entry without changing the j-type dropdown.
   try { updateArmCareVisibility(); } catch(e) {}
-  // Refresh Workout warm-up visibility for the same reason.
+  // Refresh Workout warm-up + cool-down visibility for the same reason.
   try { updateWarmupVisibility(); } catch(e) {}
+  try { updateCooldownVisibility(); } catch(e) {}
   // Refresh Training Volume aggregates + arm-load tier on Dashboard + My Stats.
   try { renderTrainingVolume(); } catch(e) { console.warn('[MG] training volume:', e); }
   // Refresh Workout Volume counter on Dashboard.
@@ -11844,6 +11877,141 @@ function updateWarmupVisibility() {
   const type = document.getElementById('j-type')?.value || '';
   sec.style.display = (type === 'workout') ? 'block' : 'none';
   if (type === 'workout') renderWarmup();
+}
+
+// ─── POST-WORKOUT RECOVERY ─────────────────────────────────
+// Coach Young 2026-05-11: "Need to add post workout stretching, cool
+// down and protein." Mirrors the pre-workout warmup pattern exactly —
+// same daily reset, hide button, tri-state pill collapse.
+const WORKOUT_COOLDOWN_ITEMS = [
+  { id: 'cooldown', label: 'Cool down — 5 min easy walk or bike',                     icon: '🚶' },
+  { id: 'stretch',  label: 'Static stretching — 30s+ holds on legs, hips, back, chest', icon: '🧘' },
+  { id: 'foamroll', label: 'Foam roll — quads, hamstrings, back, lats (5 min)',        icon: '🟦' },
+  { id: 'protein',  label: 'Protein within 60 min — shake, meal, or chicken + rice',   icon: '🥩' },
+  { id: 'hydrate',  label: 'Hydrate — 16-20 oz water minimum',                         icon: '💧' }
+];
+
+function cooldownKey() {
+  const d = new Date();
+  return 'ybg_cooldown_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function getCooldownState() {
+  try { return JSON.parse(localStorage.getItem(cooldownKey()) || '{}'); }
+  catch(e) { return {}; }
+}
+function setCooldownState(s) {
+  try { localStorage.setItem(cooldownKey(), JSON.stringify(s)); } catch(e) {}
+}
+
+function renderCooldown() {
+  try {
+    const list = document.getElementById('cooldown-list');
+    const prog = document.getElementById('cooldown-progress');
+    if (!list) return;
+
+    const state = getCooldownState();
+    let done = 0;
+    list.innerHTML = WORKOUT_COOLDOWN_ITEMS.map(function(item) {
+      const isDone = !!state[item.id];
+      if (isDone) done++;
+      return '<div style="display:flex; align-items:center; gap:10px; padding:10px 12px; margin-bottom:6px; ' +
+             'background:' + (isDone ? 'rgba(39,174,96,0.12)' : 'var(--card2)') + '; ' +
+             'border:1px solid ' + (isDone ? '#27AE60' : 'var(--border)') + '; ' +
+             'border-radius:4px; transition:all 0.15s; user-select:none;">' +
+               '<div onclick="toggleCooldown(\'' + item.id + '\')" style="display:flex; align-items:center; gap:10px; flex:1; cursor:pointer; min-width:0;">' +
+                 '<div style="width:22px; height:22px; border-radius:50%; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; ' +
+                   'background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; ' +
+                   'color:white; font-size:13px; font-weight:800; flex-shrink:0;">' + (isDone ? '✓' : '') + '</div>' +
+                 '<div style="flex:1; font-family:\'Barlow\'; font-size:13px; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; ' +
+                   'text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' +
+                   '<span style="margin-right:6px;">' + item.icon + '</span>' + item.label +
+                 '</div>' +
+               '</div>' +
+             '</div>';
+    }).join('');
+
+    const total = WORKOUT_COOLDOWN_ITEMS.length;
+    if (prog) {
+      if (done === total) {
+        prog.innerHTML = '✅ FULL RECOVERY LOCKED IN';
+        prog.style.color = '#27AE60';
+      } else {
+        prog.innerHTML = done + ' of ' + total + ' complete';
+        prog.style.color = 'var(--grey)';
+      }
+    }
+
+    const allDone     = (done === total);
+    const pill        = document.getElementById('cooldown-pill');
+    const expanded    = document.getElementById('cooldown-expanded');
+    const collapseBtn = document.getElementById('cooldown-collapse-btn');
+    const pillTitle   = document.getElementById('cooldown-pill-title');
+    const pillSub     = document.getElementById('cooldown-pill-sub');
+
+    if (pill && expanded) {
+      const userDisplay = pill.dataset.userDisplay || '';
+      let isCollapsed;
+      if (userDisplay === 'expand')        isCollapsed = false;
+      else if (userDisplay === 'collapse') isCollapsed = true;
+      else                                 isCollapsed = allDone;
+
+      pill.style.display     = isCollapsed ? 'flex'  : 'none';
+      expanded.style.display = isCollapsed ? 'none'  : 'block';
+      if (collapseBtn) collapseBtn.style.display = 'inline-block';
+
+      if (allDone) {
+        pill.style.background = 'rgba(39,174,96,0.12)';
+        pill.style.borderColor = '#27AE60';
+        if (pillTitle) { pillTitle.style.color = '#27AE60'; pillTitle.textContent = 'Recovery — Locked In'; }
+        if (pillSub)     pillSub.textContent = '5 of 5 complete · Resets at midnight';
+      } else {
+        pill.style.background = 'rgba(100,100,100,0.10)';
+        pill.style.borderColor = 'var(--border)';
+        if (pillTitle) { pillTitle.style.color = 'var(--grey)'; pillTitle.textContent = 'Recovery — ' + done + ' of ' + total; }
+        if (pillSub)     pillSub.textContent = 'Tap to expand · Resets at midnight';
+      }
+    }
+  } catch(err) {
+    try { console.warn('[renderCooldown]', err); } catch(e) {}
+  }
+}
+
+function expandCooldown() {
+  const pill = document.getElementById('cooldown-pill');
+  if (pill) pill.dataset.userDisplay = 'expand';
+  renderCooldown();
+}
+
+function collapseCooldown() {
+  const pill = document.getElementById('cooldown-pill');
+  if (pill) pill.dataset.userDisplay = 'collapse';
+  renderCooldown();
+}
+
+function toggleCooldown(id) {
+  const state = getCooldownState();
+  state[id] = !state[id];
+  setCooldownState(state);
+  ybgHaptic(15);
+  const pill = document.getElementById('cooldown-pill');
+  if (pill) pill.dataset.userDisplay = '';
+  renderCooldown();
+
+  const allDone = WORKOUT_COOLDOWN_ITEMS.every(function(it) { return state[it.id]; });
+  const celebKey = cooldownKey() + '_celebrated';
+  if (allDone && !localStorage.getItem(celebKey)) {
+    localStorage.setItem(celebKey, '1');
+    ybgHaptic([40, 60, 40, 60, 40]);
+    if (typeof showShareToast === 'function') showShareToast('✅ Recovery locked in — that\'s how the work sticks.');
+  }
+}
+
+function updateCooldownVisibility() {
+  const sec = document.getElementById('j-cooldown-section');
+  if (!sec) return;
+  const type = document.getElementById('j-type')?.value || '';
+  sec.style.display = (type === 'workout') ? 'block' : 'none';
+  if (type === 'workout') renderCooldown();
 }
 
 // ─── MONTH FOCUS CHECKLIST ────────────────────────────────
