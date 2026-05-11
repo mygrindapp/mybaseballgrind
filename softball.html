@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v114';
+    const CACHE = 'ybg-mygrind-v115';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2074,7 +2074,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          the player has logged at least one workout. -->
     <div id="dash-workout-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #E67E22;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">🏋️ Workouts</div>
+        <div class="card-title" style="margin:0;">🏋️ Gym</div>
         <div id="dash-workout-last" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);"></div>
       </div>
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
@@ -2368,7 +2368,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <option value="practice">Practice</option>
             <option value="instructor">Instructor</option>
             <option value="game">Game</option>
-            <option value="workout">Workout / Weight Room</option>
+            <option value="workout">Gym</option>
             <option value="reflection">Reflection</option>
             <option value="offday">😴 Off Day</option>
           </select>
@@ -2466,7 +2466,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
              default open until all are checked off." -->
         <div id="warmup-expanded">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
-            <div class="card-title" style="margin-bottom:0;">🏋️ Pre-Workout Warm-up</div>
+            <div class="card-title" style="margin-bottom:0;">🏋️ Pre-Gym Warm-up</div>
             <button type="button" id="warmup-collapse-btn" onclick="collapseWarmup()" style="background:transparent; border:1px solid #B95E15; color:#E67E22; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer; flex-shrink:0;">▲ Hide</button>
           </div>
           <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
@@ -2908,7 +2908,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         }
       </style>
       <div id="j-workout-section" style="display:none; border:1px solid var(--border); border-radius:3px; padding:18px; margin-bottom:20px;">
-        <div style="font-family:'Barlow Condensed'; font-size:20px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:8px;">🏋️ Weight Room / Gym</div>
+        <div style="font-family:'Barlow Condensed'; font-size:20px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:8px;">🏋️ Gym Session</div>
         <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:18px; line-height:1.55;">Strength + conditioning built for baseball / softball — rotational power, lower-body explosiveness, arm health. Off-season is where seasons are won.</div>
 
         <!-- Session-type chips — Coach Young 2026-05-11 iteration 3:
@@ -2968,7 +2968,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div class="card" id="j-cooldown-section" style="display:none; margin-top:20px; margin-bottom:16px; border-left:3px solid #27AE60;">
         <div id="cooldown-expanded">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
-            <div class="card-title" style="margin-bottom:0;">🧘 Post-Workout Recovery</div>
+            <div class="card-title" style="margin-bottom:0;">🧘 Post-Gym Recovery</div>
             <button type="button" id="cooldown-collapse-btn" onclick="collapseCooldown()" style="background:transparent; border:1px solid #1E8449; color:#27AE60; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:4px; cursor:pointer; flex-shrink:0;">▲ Hide</button>
           </div>
           <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">
@@ -7317,7 +7317,7 @@ function toggleGameStats() {
     // title." Placeholder covers the three ways players name a session:
     // muscle group (Leg Day), push/pull split (Push Day), focus area
     // (Rotational Power).
-    if (titleLb) titleLb.textContent = 'Workout Title';
+    if (titleLb) titleLb.textContent = 'Gym Title';
     if (titleEl) titleEl.placeholder = 'e.g. Leg Day · Push Day · Rotational Power';
   }
 
@@ -8152,7 +8152,7 @@ function renderEntries() {
     practice:   'Practice',
     game:       'Game',
     instructor: 'Instructor Session',
-    workout:    'Workout',
+    workout:    'Gym',
     reflection: 'Reflection',
     offday:     'Off Day'
   };
@@ -8327,7 +8327,7 @@ function renderEntries() {
       <!-- WORKOUT / WEIGHT ROOM BOX -->
       ${e.workout ? `
         <div style="margin:12px 0; background:rgba(230,126,34,0.06); border:1px solid #3A2008; border-radius:3px; padding:14px 16px;">
-          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:10px;">🏋️ Weight Room</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:10px;">🏋️ Gym</div>
           ${e.workout.focus || e.workout.intensity ? `
             <div style="display:flex; gap:14px; flex-wrap:wrap; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#E67E22; margin-bottom:10px;">
               ${e.workout.focus     ? `<div>Focus: <span style="color:var(--light);">${e.workout.focus}</span></div>` : ''}
