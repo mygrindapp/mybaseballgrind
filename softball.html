@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v105';
+    const CACHE = 'ybg-mygrind-v106';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7205,10 +7205,16 @@ function toggleGameStats() {
     if (whatEl)  whatEl.placeholder  = 'Even if you didn\'t train, what was on your mind about your game? How did your body feel? What did you watch, read, or learn?';
     if (tmrwLb)  tmrwLb.textContent  = 'What am I bringing back tomorrow?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What\'s the one thing I want to attack when I get back to the grind?';
+  } else if (isWorkout) {
+    // Workout title only — j-what / j-tomorrow / grade / coach-note are
+    // hidden, so we only need to flavor the title. Coach Young 2026-05-11:
+    // "Change example from reflection to today's muscle group or workout
+    // title." Placeholder covers the three ways players name a session:
+    // muscle group (Leg Day), push/pull split (Push Day), focus area
+    // (Rotational Power).
+    if (titleLb) titleLb.textContent = 'Workout Title';
+    if (titleEl) titleEl.placeholder = 'e.g. Leg Day · Push Day · Rotational Power';
   }
-  // (Workout branch removed 2026-05-11 — j-what / j-tomorrow / grade /
-  // coach-note are now hidden for workout entries, so re-flavoring their
-  // labels was dead code. The workout section is the entire surface.)
 
   // Reset game displays when not game
   if (!isGame) {
