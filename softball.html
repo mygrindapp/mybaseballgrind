@@ -1157,7 +1157,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v116';
+    const CACHE = 'ybg-mygrind-v117';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6951,6 +6951,23 @@ function saveEntry() {
   if (avgDisp) avgDisp.style.display = 'none';
   pendingMedia = [];
   renderMediaPreview();
+
+  // Make sure the new entry is visible in the current filter window.
+  // Coach Young 2026-05-11 walkthrough: "I logged my gym session but
+  // nothing showed up in entry." Root cause was a stale Pick Date
+  // filter from a previous session hiding the new entry. If the entry's
+  // date doesn't pass the current filter, jump back to 'today' so the
+  // player actually sees what just saved. Back-dated entries already
+  // get their own toast that names the date, so the filter stays put
+  // for those (matches the earlier ba6b910 decision to not yank the
+  // player off their current view for back-dates).
+  try {
+    if (_filteredEntries([entry]).length === 0) {
+      if (typeof setEntriesFilter === 'function') setEntriesFilter('today');
+      else _entriesFilter = 'today';
+    }
+  } catch (_) {}
+
   renderAll();
 
   // Post-save UX (Coach Young 2026-05-11 iteration 2): confirm with a
