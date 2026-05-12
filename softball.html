@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v136';
+    const CACHE = 'ybg-mygrind-v137';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3472,20 +3472,32 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
 
-      <!-- GROUP 2: 60-Yard + Velocity — standalone inline inputs. They
-           autosave on input so no log button needed. Styled as plain
-           inputs (not display tiles) so the editing affordance is clear. -->
-      <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Speed & Velocity <span style="text-transform:none; letter-spacing:0.5px; font-weight:500;">— updates automatically</span></div>
-      <div class="form-row" style="margin-bottom:18px;">
+      <!-- GROUP 2: 60-Yard + Arm Strength — standalone inline inputs.
+           Coach Young 2026-05-11: dropped the radar-only "Velocity in
+           MPH" field — most HS players can't measure it. Replaced with
+           a self-assessable arm-strength tier dropdown. The 60-yard is
+           something a player CAN time themselves with a phone stopwatch
+           or get from a coach, so it stays as a free-form input. -->
+      <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Speed & Arm Strength <span style="text-transform:none; letter-spacing:0.5px; font-weight:500;">— updates automatically</span></div>
+      <div class="form-row" style="margin-bottom:8px;">
         <div>
           <label>60-Yard Dash (sec)</label>
           <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="margin-bottom:0;">
         </div>
         <div>
-          <label>Velocity (mph)</label>
-          <input type="text" id="pl-velo" placeholder="e.g. 78" oninput="saveProfile()" style="margin-bottom:0;">
+          <label>Arm Strength</label>
+          <select id="pl-velo" onchange="saveProfile(); updateArmStrengthTip()" style="margin-bottom:0;">
+            <option value="">-- Pick a tier --</option>
+            <option value="developing">🔨 Developing</option>
+            <option value="average">✓ Average</option>
+            <option value="above">⭐ Above Average</option>
+            <option value="elite">🔥 Elite</option>
+          </select>
         </div>
       </div>
+      <!-- Per-tier recommendation. Updates from updateArmStrengthTip()
+           when the player picks a tier. Hidden until something is chosen. -->
+      <div id="pl-arm-tip" style="display:none; margin-bottom:18px; padding:10px 12px; background:rgba(39,174,96,0.06); border-left:2px solid #5A8A3A; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.5;"></div>
 
       <!-- GROUP 3: New check-in form. Height + Weight + Check-In + Notes
            + Log button. Single visual group on a subtle background so it
@@ -10103,7 +10115,34 @@ function loadProfile() {
     }
     updateDashboardName(p.name);
     updateProfileDisplay(p.name, p.pos, p.school);
+    // Re-render the arm-strength tip if a tier was saved.
+    try { updateArmStrengthTip(); } catch(e) {}
   } catch(e) {}
+}
+
+// Per-tier arm-strength recommendation. Coach Young 2026-05-11: "It's
+// hard to find what your arm speed is without a radar so this should
+// be something a player can judge. Instead of velocity, maybe good or
+// above average — give recommendations." Self-assessable tiers with
+// actionable advice per level so the field becomes development guidance,
+// not a vanity metric.
+function updateArmStrengthTip() {
+  const sel = document.getElementById('pl-velo');
+  const tip = document.getElementById('pl-arm-tip');
+  if (!sel || !tip) return;
+  const tips = {
+    'developing': '🔨 <strong>Developing.</strong> Build with J-Bands daily + long toss 3×/week. Track distance — improvement = your radar gun.',
+    'average':    '✓ <strong>Average.</strong> Solid for HS. Maintain with J-Bands + long toss 2–3×/week. Add med-ball rotational throws to push velo.',
+    'above':      '⭐ <strong>Above Average.</strong> Coaches notice. Periodize: in-season maintenance, off-season velocity blocks. Long toss + pulldowns add the next 2–3 mph.',
+    'elite':      '🔥 <strong>Elite.</strong> Protect what you have. Arm care + sleep + recovery now beat more throwing. Add throws only with a plan.'
+  };
+  const v = sel.value;
+  if (tips[v]) {
+    tip.innerHTML = tips[v];
+    tip.style.display = 'block';
+  } else {
+    tip.style.display = 'none';
+  }
 }
 
 function updateDashboardName(name) {
