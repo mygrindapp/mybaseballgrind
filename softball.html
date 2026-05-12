@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v122';
+    const CACHE = 'ybg-mygrind-v123';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -11619,12 +11619,15 @@ function renderArmCare() {
     const pillSub     = document.getElementById('arm-care-pill-sub');
     const collapseBtn = document.getElementById('arm-care-collapse-btn');
 
-    // Arm care = simple reminder checklist (Coach Young 2026-05-11).
-    // No mutual exclusion, no auto-collapse to REST pill — the only
-    // auto-collapse trigger is literal 5/5 complete. Rest day is just
-    // one of the 5 items the player might check.
+    // Arm care collapses to a pill on two triggers (Coach Young
+    // 2026-05-11 iteration: "Arm Shoulder Care should collapse after
+    // all check boxes are filled. If rest day is checked, collapse.
+    // This will make it cleaner"):
+    //   1) All items checked → green "Done for Today" pill
+    //   2) Active Rest item checked → blue "Rest Day" pill
+    // Both keep the section out of the way so the form stays clean.
     const allDone  = total > 0 && done === total;
-    const restOnly = false; // disabled — REST pill auto-collapse removed
+    const restOnly = !!state['rest'];
 
     // Determine which view to show based on user's pin + auto rules.
     let showCompressed;
@@ -11639,6 +11642,11 @@ function renderArmCare() {
         bg = 'rgba(39,174,96,0.12)'; border = '#27AE60'; color = '#27AE60';
         icon = '💪'; title = 'Arm Care — Done for Today';
         sub  = done + ' of ' + total + ' complete · Resets at midnight';
+      } else if (restOnly) {
+        // Active Rest pill — blue tone (rest is intentional, not lazy).
+        bg = 'rgba(93,173,226,0.12)'; border = '#5DADE2'; color = '#5DADE2';
+        icon = '⛔'; title = 'Arm Care — Rest Day';
+        sub  = 'No throwing today · Resets at midnight';
       } else {
         // Manual-collapse / partial state — gentle grey reminder pill.
         bg = 'var(--card2)'; border = 'var(--border)'; color = 'var(--grey)';
