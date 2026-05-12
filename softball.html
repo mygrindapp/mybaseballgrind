@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v124';
+    const CACHE = 'ybg-mygrind-v125';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4121,6 +4121,42 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div style="font-family:'Bebas Neue'; font-size:22px; color:var(--light); line-height:1;" id="disp-kpct">-</div>
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:var(--grey); margin-top:2px;">K%</div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══ BATTING AVERAGE SAMPLE SIZE — IS IT REAL YET? ══
+         Coach Young 2026-05-11: "Find what is a good amount of ABs
+         you need to have an accurate or real average. Create the
+         context on this page."
+         Educational card sourced from sabermetric research (FanGraphs
+         Sample Size library, Russell Carleton's stabilization work)
+         scaled down to high school context. Auto-updates the
+         reliability tier from the player's current st-ab value. -->
+    <div class="card" id="ba-sample-size-card" style="margin-bottom:16px;">
+      <div class="card-title">📊 Is Your Average Real Yet?</div>
+
+      <!-- Dynamic — current player's AB + reliability tier. Updated by
+           updateBaSampleSize() called at the end of calcStats(). -->
+      <div style="margin-bottom:14px; padding:12px 14px; background:var(--card2); border-left:3px solid var(--gold-dark); border-radius:2px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase;">Your Sample</div>
+        <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1.1;" id="ba-sample-current-text">— AB</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-top:6px; line-height:1.5;" id="ba-sample-current-tier">Log a game in the Daily Journal to start the count.</div>
+      </div>
+
+      <!-- Static — explanation + HS thresholds + example -->
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
+        Your average tells the truth only when you've had enough at-bats. Sabermetric research (FanGraphs) sets the full stabilization point at <strong style="color:var(--gold);">910 AB</strong> — where batting average reliably reflects your real skill. That's multi-year college / pro level.
+      </div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-top:12px; margin-bottom:6px;">For high school baseball / softball:</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
+        <div>• <strong>Under 20 AB</strong> — too small. One hit moves you 50 points.</div>
+        <div>• <strong>20–49 AB</strong> — trend forming, not stable.</div>
+        <div>• <strong>50–99 AB</strong> — meaningful for a HS season.</div>
+        <div>• <strong>100+ AB</strong> — solid sample. The number is real.</div>
+        <div>• <strong>910+ AB</strong> — statistically stable (sabermetric standard).</div>
+      </div>
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
+        <strong style="color:var(--gold);">Example:</strong> .340 after 10 at-bats means almost nothing. .340 after 80 at-bats — now you're talking.
       </div>
     </div>
 
@@ -9077,6 +9113,27 @@ function s(id) { return (document.getElementById(id)?.value || '').trim(); }
 function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 function fmt(n, d) { return isNaN(n) || !isFinite(n) ? '---' : n.toFixed(d); }
 
+// Reliability tier for batting-average sample size. Educates the
+// player about WHEN their AVG is meaningful — sabermetric research
+// (FanGraphs / Russell Carleton) sets full stabilization at 910 AB;
+// scaled down to HS context here. Coach Young 2026-05-11.
+function updateBaSampleSize(ab) {
+  const num   = parseInt(ab) || 0;
+  const txtEl = document.getElementById('ba-sample-current-text');
+  const tier  = document.getElementById('ba-sample-current-tier');
+  if (txtEl) txtEl.textContent = num + ' AB';
+  if (!tier) return;
+  let label, color;
+  if (num === 0)       { label = 'No at-bats logged yet. Log a game in the Daily Journal to start the count.'; color = 'var(--grey)'; }
+  else if (num < 20)   { label = '🚨 Too small — luck more than skill. Need 20+ for a real trend.';            color = '#E67E22'; }
+  else if (num < 50)   { label = '⚠️ Trend forming — not stable yet. Push past 50 for a meaningful read.';     color = '#E67E22'; }
+  else if (num < 100)  { label = '✓ Decent sample — meaningful for the HS season.';                            color = '#5DADE2'; }
+  else if (num < 910)  { label = '✓✓ Solid sample — the number is real.';                                      color = '#27AE60'; }
+  else                 { label = '✓✓✓ Statistically stable — sabermetric standard.';                            color = '#27AE60'; }
+  tier.textContent = label;
+  tier.style.color = color;
+}
+
 function calcStats() {
   // ── BATTING ──
   const ab  = g('st-ab'), h  = g('st-h'),  bb  = g('st-bb');
@@ -9122,6 +9179,11 @@ function calcStats() {
   colorStat('disp-obp', parseFloat(fmt(obp,3)), [.280,.320,.370,.420], false);
   colorStat('disp-slg', parseFloat(fmt(slg,3)), [.300,.400,.500,.600], false);
   colorStat('disp-ops', parseFloat(fmt(ops,3)), [.600,.700,.800,.900], false);
+
+  // Sample-size reliability tier — Coach Young 2026-05-11. Scales
+  // HS season AB counts against the sabermetric stabilization point
+  // (910 AB) so the player sees whether their average is real yet.
+  try { updateBaSampleSize(ab); } catch (e) {}
 
   // ── PITCHING ──
   const ip  = g('st-ip'), er = g('st-er'), pk = g('st-pk');
