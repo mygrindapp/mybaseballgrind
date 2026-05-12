@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v141';
+    const CACHE = 'ybg-mygrind-v142';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2442,6 +2442,16 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            options (and adds Reflection), so the sub was redundant.
            The gold bar didn't carry any meaning. -->
     </div>
+
+    <!-- ── REMINDER BANNER STACK ── Coach Young 2026-05-11: "There
+         should be a reminder or pop up to update grades when quarter
+         and semester grades come out. Also the reminder for weight and
+         height should pop up on journal. Show on Journal because that's
+         where the player is daily."
+         Populated by renderJournalReminders() — fires on tab open + on
+         load. Each banner is dismissable (per-window for grades, per-
+         due-date for H/W) so it doesn't nag forever. -->
+    <div id="journal-reminders"></div>
 
     <!-- ── DAILY QUOTE (rotates each day) — bigger format for journal ── -->
     <div id="daily-quote-card" class="card" style="margin-bottom:20px; background:linear-gradient(135deg,#1A0010,#0E000A); border-left:4px solid var(--gold); padding:24px 26px;">
@@ -10270,6 +10280,17 @@ function saveHWEntry() {
   log.push(entry);
   saveHWLog(log);
 
+  // Reset Journal-reminder dismiss flags now that a check-in has landed
+  // (Coach Young 2026-05-11). Without this, a dismissed H/W banner
+  // could stay dismissed forever; clearing on commit lets the next
+  // 3/6-month overdue cycle re-fire the reminder cleanly.
+  try {
+    Object.keys(localStorage).forEach(function(k) {
+      if (k.indexOf('ybg_reminder_dismiss_hw_') === 0) localStorage.removeItem(k);
+    });
+    if (typeof renderJournalReminders === 'function') renderJournalReminders();
+  } catch (e) {}
+
   // Clear inputs
   ['hw-feet','hw-inches','hw-weight','hw-notes'].forEach(id => {
     const el = document.getElementById(id);
@@ -10380,6 +10401,9 @@ loadGradesUI();
 loadGrades();
 renderHWTracker();
 updateSubscriptionCard();
+// Journal page is the default active panel — paint reminder banners on
+// load so the player sees grade-update / H&W-overdue prompts on landing.
+try { renderJournalReminders(); } catch (e) {}
 const _sf = document.getElementById('social-share-footer');
 if (_sf) _sf.style.display = 'block';
 </script>
@@ -14526,6 +14550,150 @@ function mgTab(panel, tabId) {
     }
   }
   if (typeof showPanel === 'function') showPanel(panel);
+  // Refresh Journal reminder banners when the player lands on Journal
+  // (Coach Young 2026-05-11). Cheap to call; no-op when panel isn't journal.
+  if (panel === 'journal') {
+    try { renderJournalReminders(); } catch (e) {}
+  }
+}
+
+// ─── JOURNAL REMINDER BANNERS ─────────────────────────────
+// Coach Young 2026-05-11: surface grade-update + height/weight check-in
+// reminders on the Journal page (where the player is daily) instead of
+// burying them on Profile. Each banner is dismissable per-window so it
+// doesn't nag forever.
+//
+// GRADE WINDOWS (researched US HS quarter/semester schedules — varies
+// by district but clusters around these dates):
+//   Q1:     Oct 25 – Nov 15  (id 'q1')
+//   Q2/S1:  Jan 05 – Jan 25  (id 'q2')   ← mid-year report cards
+//   Q3:     Mar 20 – Apr 10  (id 'q3')
+//   Q4/S2:  May 25 – Jun 20  (id 'q4')   ← end-of-year final grades
+// Each window keyed by year+id so it re-fires next school year.
+function _currentGradeWindow() {
+  const now = new Date();
+  const m = now.getMonth(); // 0=Jan
+  const d = now.getDate();
+  const test = function(sm, sd, em, ed) {
+    const after  = (m > sm) || (m === sm && d >= sd);
+    const before = (m < em) || (m === em && d <= ed);
+    return after && before;
+  };
+  if (test(9, 25, 10, 15)) return 'q1';
+  if (test(0,  5,  0, 25)) return 'q2';
+  if (test(2, 20,  3, 10)) return 'q3';
+  if (test(4, 25,  5, 20)) return 'q4';
+  return null;
+}
+
+// Reads the H/W history from localStorage to detect an overdue check-in.
+// Returns { type, daysOverdue } or null. Uses the SAME 3-month threshold
+// as the existing Profile reminder so the two surfaces stay in sync.
+function _hwOverdue() {
+  try {
+    const raw = localStorage.getItem('ybg_hw_log');
+    const log = raw ? JSON.parse(raw) : [];
+    if (!Array.isArray(log) || log.length === 0) {
+      // No check-in yet — nag with a "start your baseline" reminder.
+      return { type: 'start', daysOverdue: null };
+    }
+    // Find the most recent dateTs (entries may be unordered).
+    let latestTs = 0;
+    log.forEach(function(e) { if (e && e.dateTs && e.dateTs > latestTs) latestTs = e.dateTs; });
+    if (!latestTs) return null;
+    const daysSince = Math.floor((Date.now() - latestTs) / (1000 * 60 * 60 * 24));
+    if (daysSince >= 180) return { type: '6month', daysOverdue: daysSince - 180 };
+    if (daysSince >= 90)  return { type: '3month', daysOverdue: daysSince - 90 };
+    return null;
+  } catch (e) { return null; }
+}
+
+function _reminderDismissed(key) {
+  try { return localStorage.getItem('ybg_reminder_dismiss_' + key) === '1'; }
+  catch (e) { return false; }
+}
+function dismissJournalReminder(key) {
+  try { localStorage.setItem('ybg_reminder_dismiss_' + key, '1'); } catch (e) {}
+  try { renderJournalReminders(); } catch (e) {}
+}
+
+function renderJournalReminders() {
+  const container = document.getElementById('journal-reminders');
+  if (!container) return;
+  const now = new Date();
+  const banners = [];
+
+  // 1) GRADE-UPDATE reminder — fires during the 4 grade-card windows
+  //    per school year. Keyed by year+window so it re-nags next year.
+  const win = _currentGradeWindow();
+  if (win) {
+    const key = 'grade_' + now.getFullYear() + '_' + win;
+    if (!_reminderDismissed(key)) {
+      const labels = { q1: 'Q1 report cards', q2: 'mid-year (Q2 / Semester 1) report cards', q3: 'Q3 report cards', q4: 'year-end (Q4 / Semester 2) report cards' };
+      banners.push({
+        key: key,
+        bg: 'rgba(168,217,123,0.10)',
+        border: '#5A8A3A',
+        accent: '#A8D97B',
+        icon: '📚',
+        title: 'Time to update your grades',
+        body: 'Around now is when ' + labels[win] + ' come out. Pull every grade in your 6 classes and update them in Profile so your GPA + eligibility stay accurate.',
+        cta: 'Open Profile →',
+        action: "mgTab('players','tab-players')"
+      });
+    }
+  }
+
+  // 2) HEIGHT/WEIGHT check-in reminder — overdue past 3-month or
+  //    6-month mark (matches Profile reminder thresholds).
+  const hw = _hwOverdue();
+  if (hw) {
+    let body, key;
+    if (hw.type === 'start') {
+      key = 'hw_start';
+      body = 'Log your first height + weight check-in so we can track your physical development as a baseline. Takes 30 seconds.';
+    } else if (hw.type === '3month') {
+      key = 'hw_3month_' + Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 30));
+      body = 'It\'s been over 90 days since your last check-in. Pick "3-Month" in Profile and log your current height + weight — growing players gain fast.';
+    } else {
+      key = 'hw_6month_' + Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 30));
+      body = 'It\'s been over 6 months since your last check-in. Log your current height + weight — coaches care about the year-over-year change.';
+    }
+    if (!_reminderDismissed(key)) {
+      banners.push({
+        key: key,
+        bg: 'rgba(39,174,96,0.10)',
+        border: '#27AE60',
+        accent: '#58D68D',
+        icon: '📏',
+        title: 'Height & weight check-in',
+        body: body,
+        cta: 'Open Profile →',
+        action: "mgTab('players','tab-players')"
+      });
+    }
+  }
+
+  // Render
+  if (banners.length === 0) {
+    container.innerHTML = '';
+    container.style.marginBottom = '0';
+    return;
+  }
+  container.style.marginBottom = '16px';
+  container.innerHTML = banners.map(function(b) {
+    return '<div style="background:' + b.bg + '; border:1px solid ' + b.border + '; border-radius:4px; padding:14px 16px; margin-bottom:10px; display:flex; align-items:flex-start; gap:12px;">' +
+             '<span style="font-size:22px; flex-shrink:0;">' + b.icon + '</span>' +
+             '<div style="flex:1; min-width:0;">' +
+               '<div style="font-family:\'Barlow Condensed\'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:' + b.accent + ';">' + b.title + '</div>' +
+               '<div style="font-family:\'Barlow\'; font-size:13px; color:var(--light); line-height:1.5; margin-top:4px;">' + b.body + '</div>' +
+               '<div style="display:flex; gap:10px; margin-top:10px;">' +
+                 '<button onclick="' + b.action + '" style="background:' + b.accent + '; border:none; color:var(--dark); font-family:\'Barlow Condensed\'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer;">' + b.cta + '</button>' +
+                 '<button onclick="dismissJournalReminder(\'' + b.key + '\')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 12px; border-radius:3px; cursor:pointer;">Dismiss</button>' +
+               '</div>' +
+             '</div>' +
+           '</div>';
+  }).join('');
 }
 
 function toggleMoreMenu() {
