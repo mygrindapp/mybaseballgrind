@@ -9,6 +9,11 @@
 ### P0 — Polish leftover from the audit
 1. **Fix duplicate `escapeHtml()` in `signup.html`** — defined at lines 3264 + 3417. Consolidate to one definition. ~5 min.
 2. **Fix the SMS preview URL in `signup.html`** — `buildSmsForPlayer()` (line ~3344) hardcodes `mygrind.app/start/abc123`. Should use `mygrindapp.com/onboarding.html?name=...` so the preview matches what Twilio will actually send when Phase 3b unblocks. ~10 min.
+
+### P0 — Subscription / cancellation policy (added 2026-05-11)
+3. **Stripe webhook → parent cancellation email.** When `customer.subscription.deleted` (or `customer.subscription.updated` with `cancel_at_period_end=true`) fires, send a confirmation email to the billing email on file via Resend. Body: "Your MyGrind subscription has been canceled. You keep access through {period_end_date}. Your player's journal will be held for 90 days — re-subscribe within that window to restore everything." Update `api/stripe-webhook.js` to handle these events; pull billing email from the Stripe `customer` object. The user-facing policy is already live in Settings (commit `717fa44`) — without this backend hookup, the parent-notification promise doesn't fire. ~1-2 hr.
+4. **90-day retention purge job.** Scheduled Vercel cron (or Firebase Cloud Function) that runs daily, finds accounts canceled >90 days ago, and permanently deletes: Redis subscription record, Firebase `entries` / `goals` / `profile` collections for that uid, and any Resend audience entry. Add a `canceled_at` timestamp to the Redis subscription record at cancellation time so the purge job has a reliable signal. Surface "Account permanently deleted on {date}" email at the 90-day mark. The user-facing policy promises this in Settings — backend job has to honor it. ~3-4 hr including testing.
+
 <!-- Phase 6 placeholder buttons fixed 2026-05-02 — Share + Settings now open real modals. -->
 
 ### P1 — Real-user walks (per CLAUDE.md verification protocol)
