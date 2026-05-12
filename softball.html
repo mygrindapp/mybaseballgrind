@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v131';
+    const CACHE = 'ybg-mygrind-v132';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3694,60 +3694,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     </div>
 
     <!-- ── MANAGE SUBSCRIPTION ── -->
-    <div class="card" id="subscription-card" style="margin-bottom:16px;">
-      <div class="card-title">⚙️ Manage My Subscription</div>
-
-      <!-- Trial status — shown during trial -->
-      <div id="sub-trial-info" style="display:none; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:2px; padding:14px 16px; margin-bottom:16px;">
-        <!-- Stack label + buttons vertically so they never overflow a narrow card -->
-        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">⏳ Free Trial Active</div>
-        <div id="sub-trial-days" style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.5; margin-bottom:12px;"></div>
-        <!-- Buttons in a grid so they're always side-by-side at equal width, never push out of card -->
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-          <button onclick="goToPurchase('monthly')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">$9.99 / mo</button>
-          <button onclick="goToPurchase('annual')" style="background:var(--gold); border:none; color:#080808; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">⚾ $99.99 / yr</button>
-        </div>
-      </div>
-
-      <!-- Paid status — shown when subscribed -->
-      <div id="sub-paid-info" style="display:none; background:rgba(39,174,96,0.06); border:1px solid #1A4A1A; border-radius:2px; padding:14px 16px; margin-bottom:16px;">
-        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60; margin-bottom:4px;">✅ Active Subscription</div>
-        <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6;">Your subscription is active. You have full access to all features.</div>
-      </div>
-
-      <!-- Cancel / Manage options -->
-      <div style="margin-bottom:16px;">
-        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:10px;">Manage Billing</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-          <a href="https://billing.stripe.com/p/login/4gM5kFgiu53D1yq8eZ4gg04" id="stripe-portal-btn" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center; min-width:0;">
-            💳 Manage Billing
-          </a>
-          <a href="mailto:support@mygrindapp.com?subject=Cancel%20My%20Subscription&body=Please%20cancel%20my%20My%20Grind%20subscription.%0A%0AEmail%20used%20to%20register%3A%20" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center; min-width:0;">
-            ✉️ Email to Cancel
-          </a>
-        </div>
-        <div style="background:rgba(var(--accent-rgb), 0.04); border:1px solid #1E1A00; border-radius:2px; padding:12px 14px;">
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); line-height:1.7;">
-            <strong style="color:var(--light);">Cancel anytime</strong> — no penalties, no fees. If you cancel during your billing period you keep access until the end of that period. Questions? Email <a href="mailto:support@mygrindapp.com" style="color:var(--gold); word-break:break-all;">support@mygrindapp.com</a>
-          </div>
-        </div>
-      </div>
-
-      <!-- Account info -->
-      <!-- Labels on their own line so long emails never push the card wider than its container -->
-      <div style="border-top:1px solid var(--border); padding-top:14px;">
-        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Account Info</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); line-height:1.8;">
-          <div style="margin-bottom:4px;">
-            Registered email:<br>
-            <span id="sub-email-display" style="display:inline-block; color:var(--gold); font-family:'Barlow Condensed'; letter-spacing:0.5px; word-break:break-all; overflow-wrap:anywhere; max-width:100%;">—</span>
-          </div>
-          <div>
-            Access type: <span id="sub-plan-display" style="color:var(--light);">—</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Subscription card moved to Settings 2026-05-11 (Coach Young:
+         "This shouldn't show on this page. Cancellation under settings.").
+         Player profile stays focused on identity, academics, and player
+         data; billing lives with Settings/Account. -->
 
   </div>
 
@@ -4638,6 +4588,80 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
       <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
         Goes straight to support@mygrindapp.com
+      </div>
+    </div>
+
+    <!-- ── SUBSCRIPTION & BILLING ──
+         Moved from Profile 2026-05-11 (Coach Young: "Cancellation under
+         settings"). Updated copy reflects the parent-billing / player-
+         cancel flow and a 90-day journal recovery window. -->
+    <div class="card" id="subscription-card" style="margin-bottom:16px;">
+      <div class="card-title">💳 Subscription & Billing</div>
+
+      <!-- Trial status — shown during trial -->
+      <div id="sub-trial-info" style="display:none; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:2px; padding:14px 16px; margin-bottom:16px;">
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">⏳ Free Trial Active</div>
+        <div id="sub-trial-days" style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.5; margin-bottom:12px;"></div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <button onclick="goToPurchase('monthly')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">$9.99 / mo</button>
+          <button onclick="goToPurchase('annual')" style="background:var(--gold); border:none; color:#080808; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:2px; cursor:pointer; white-space:nowrap;">⚾ $99.99 / yr</button>
+        </div>
+      </div>
+
+      <!-- Paid status — shown when subscribed -->
+      <div id="sub-paid-info" style="display:none; background:rgba(39,174,96,0.06); border:1px solid #1A4A1A; border-radius:2px; padding:14px 16px; margin-bottom:16px;">
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60; margin-bottom:4px;">✅ Active Subscription</div>
+        <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6;">Your subscription is active. You have full access to all features.</div>
+      </div>
+
+      <!-- Cancel / Manage options -->
+      <div style="margin-bottom:16px;">
+        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:10px;">Manage Billing</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
+          <a href="https://billing.stripe.com/p/login/4gM5kFgiu53D1yq8eZ4gg04" id="stripe-portal-btn" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center; min-width:0;">
+            💳 Manage Billing
+          </a>
+          <a href="mailto:support@mygrindapp.com?subject=Cancel%20My%20Subscription&body=Please%20cancel%20my%20My%20Grind%20subscription.%0A%0AEmail%20used%20to%20register%3A%20" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center; min-width:0;">
+            ✉️ Email to Cancel
+          </a>
+        </div>
+      </div>
+
+      <!-- Cancellation Policy — Coach Young 2026-05-11:
+           Player can cancel from inside the app (this is their journal).
+           Parent (billing email on file) gets the cancellation
+           confirmation by email. After cancellation, journal data is
+           preserved for 90 days — if the player re-subscribes within
+           that window, everything restores: entries, stats, goals,
+           grades, photos. Past 90 days, account data is purged. -->
+      <div style="background:rgba(var(--accent-rgb), 0.04); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px; margin-bottom:16px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">📋 Cancellation Policy</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7; margin-bottom:10px;">
+          <strong style="color:var(--gold);">Cancel anytime</strong> — no penalties, no fees. You keep access until the end of your current billing period.
+        </div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7; margin-bottom:10px;">
+          <strong style="color:var(--gold);">Parent notification.</strong> The billing email on file (usually a parent) gets the cancellation confirmation by email. If you're a player and you cancel from inside the app, your parent will know — no surprise charges, no hidden moves.
+        </div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
+          <strong style="color:var(--gold);">90-day journal recovery.</strong> After cancellation we hold your journal — entries, stats, goals, grades — for <strong>90 days</strong>. Re-subscribe within that window and everything comes back exactly where you left it. After 90 days, account data is permanently deleted.
+        </div>
+        <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); line-height:1.6; margin-top:10px;">
+          Questions? Email <a href="mailto:support@mygrindapp.com" style="color:var(--gold); word-break:break-all;">support@mygrindapp.com</a>
+        </div>
+      </div>
+
+      <!-- Account info -->
+      <div style="border-top:1px solid var(--border); padding-top:14px;">
+        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Account Info</div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); line-height:1.8;">
+          <div style="margin-bottom:4px;">
+            Registered email:<br>
+            <span id="sub-email-display" style="display:inline-block; color:var(--gold); font-family:'Barlow Condensed'; letter-spacing:0.5px; word-break:break-all; overflow-wrap:anywhere; max-width:100%;">—</span>
+          </div>
+          <div>
+            Access type: <span id="sub-plan-display" style="color:var(--light);">—</span>
+          </div>
+        </div>
       </div>
     </div>
 
