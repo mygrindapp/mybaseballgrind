@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v121';
+    const CACHE = 'ybg-mygrind-v122';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3304,6 +3304,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div class="gold-line"></div>
     </div>
     <div class="scroll-hint">Tap any month to expand weekly prescriptions</div>
+
+    <!-- Missed-entry helper (Coach Young 2026-05-11): point players to
+         the journal's date picker so they can back-date a missed log. -->
+    <div onclick="mgTab('journal','tab-journal')" style="margin-top:16px; padding:14px 16px; background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); border-radius:4px; cursor:pointer; display:flex; align-items:center; gap:12px;">
+      <span style="font-size:22px;">📝</span>
+      <div style="flex:1; min-width:0;">
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); line-height:1;">Missed an entry?</div>
+        <div style="font-family:'Barlow'; font-size:12px; color:var(--light); margin-top:4px; line-height:1.4;">Open the Daily Journal, pick the past date in the date picker, and log it like you would today.</div>
+      </div>
+      <span style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">Go →</span>
+    </div>
+
     <div style="margin-top:16px;" id="calendar-months"></div>
   </div>
 
@@ -7281,6 +7293,13 @@ function toggleGameStats() {
   // switching back to practice restores the prior choice.
   const practiceModeRow = document.getElementById('practice-mode-row');
   if (practiceModeRow) practiceModeRow.style.display = isPrac ? 'block' : 'none';
+  // Solo work-type chips were leaking onto game / gym / reflection /
+  // off day entries (Coach Young 2026-05-11) because their visibility
+  // was only managed inside applyPracticeModeVisibility, which early-
+  // returns when type !== 'practice'. Hide it explicitly here on
+  // every type change.
+  const soloWorkRowEl = document.getElementById('solo-work-row');
+  if (soloWorkRowEl && !isPrac) soloWorkRowEl.style.display = 'none';
 
   // Note for head coach — only meaningful for game/practice. Instructor
   // entries have their own #j-inst-note inside the instructor card.
