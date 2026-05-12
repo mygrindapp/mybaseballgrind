@@ -684,6 +684,13 @@
   .btn-danger:hover { background: rgba(192,57,43,0.1); }
   .btn-sm { padding: 11px 16px; font-size: 11px; }
 
+  /* Sport-scoped visibility — Coach Young 2026-05-11. Any element marked
+     [data-softball-only] hides when the app is in baseball mode. The
+     sport toggle writes data-sport="baseball|softball" to <html>, so
+     this is pure CSS — no JS sync needed. Reusable for any future
+     softball-specific UI (slapper checkbox is the first user). */
+  html[data-sport="baseball"] [data-softball-only] { display: none !important; }
+
   /* ── MOBILE TAP-TARGET FLOOR ── Coach Young 2026-05-11.
      Players use this app one-handed on a phone. Every interactive
      element needs to clear Apple's 44pt minimum so a thumb can hit it
@@ -1226,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v137';
+    const CACHE = 'ybg-mygrind-v138';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3566,9 +3573,12 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ═══ 4) PLAYER DETAIL (About Me) — positions, bats/throws, 60-yd, velo, bio ════ -->
+    <!-- ═══ 4) ON THE FIELD — positions, bats/throws, season, goals ═══════
+         Coach Young 2026-05-11: "The About Me heading doesn't make
+         sense here since it's talking about positions played." Renamed
+         to "On the Field" which actually describes the contents. -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">⚾ About Me</div>
+      <div class="card-title">⚾ On the Field</div>
 
       <div class="form-row">
         <div>
@@ -3621,7 +3631,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <option value="L/R">Left / Right</option>
             <option value="S/R">Switch Hitter / Right</option>
           </select>
-          <label style="display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-top:8px;cursor:pointer;">
+          <!-- Slapper is a softball-only term (Coach Young 2026-05-11).
+               Hidden when data-sport="baseball" via CSS rule below. -->
+          <label data-softball-only="true" style="display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:10px 12px;margin-top:8px;cursor:pointer;">
             <input type="checkbox" id="pl-slapper" onchange="saveProfile()" style="accent-color:var(--gold);width:18px;height:18px;margin:0;">
             <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;color:var(--light);">I am a Slapper</span>
           </label>
