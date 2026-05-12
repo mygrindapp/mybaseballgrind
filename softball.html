@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v130';
+    const CACHE = 'ybg-mygrind-v131';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1661,7 +1661,7 @@ function dismissIosBanner() {
     <div style="text-align:center; margin-bottom:20px;">
       <div style="font-size:40px; line-height:1;">📚</div>
       <div style="font-family:'Bebas Neue'; font-size:28px; letter-spacing:2px; color:var(--gold); margin-top:6px; line-height:1;">GPA CHECK</div>
-      <div data-mg-text="No Grades · No {Sport} — That's the rule." style="font-family:'Barlow'; font-size:13px; color:#F4F4F4; margin-top:8px;">No Grades · No Baseball — That's the rule.</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:#F4F4F4; margin-top:8px;">No Grades · No Game — That's the rule.</div>
     </div>
 
     <div style="background:#1A0010; border-left:3px solid var(--gold); padding:12px 16px; margin-bottom:18px; font-family:'Barlow'; font-size:13px; color:#AAA; line-height:1.6;">
@@ -1684,8 +1684,8 @@ function dismissIosBanner() {
     <button id="grade-nag-submit" onclick="submitGradeNag()" disabled style="width:100%; background:#231F1C; color:#666; font-family:'Barlow Condensed'; font-size:14px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:14px; border:1px solid #2A2A2A; border-radius:4px; cursor:not-allowed; transition:all 0.2s;">
       Pick an option above
     </button>
-    <div data-mg-text="📚 No Grades · No {Sport} — The Grind" style="text-align:center; margin-top:12px; font-family:'Barlow'; font-size:11px; color:#555;">
-      📚 No Grades · No Baseball — The Grind
+    <div style="text-align:center; margin-top:12px; font-family:'Barlow'; font-size:11px; color:#555;">
+      📚 No Grades · No Game — The Grind
     </div>
   </div>
 </div>
@@ -2034,7 +2034,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="dash-subject-pills" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
 
       <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.4; font-style:italic; margin-top:4px;">
-        No grades · No baseball. Pull every grade. Slipping? Handle it today.
+        No grades · No game. Pull every grade. Slipping? Handle it today.
       </div>
     </div>
 
@@ -3620,7 +3620,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg,#141A14,#101410); border:2px solid #5A8A3A; box-shadow:0 0 0 1px rgba(168,217,123,0.08);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
         <span style="background:#5A8A3A; color:#F4F4F4; font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:3px 9px; border-radius:2px;">Priority #1</span>
-        <div class="card-title" data-mg-text="📚 Academics — No Grades · No {Sport}" style="color:#A8D97B; margin:0;">📚 Academics — No Grades · No Baseball</div>
+        <div class="card-title" style="color:#A8D97B; margin:0;">📚 Academics — No Grades · No Game</div>
       </div>
 
       <div style="background:rgba(168,217,123,0.06); border:1px solid #1A3A1A; border-radius:2px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--light); line-height:1.7;">
