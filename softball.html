@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v134';
+    const CACHE = 'ybg-mygrind-v135';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3448,6 +3448,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); line-height:1.5;">Log every 3 or 6 months — growing players gain size + strength, and the record matters to coaches.</div>
       </div>
 
+      <!-- H/W check-in group — height/weight + check-in type/notes + log
+           button live together (Coach Young 2026-05-11 iteration: "Check
+           in for height and weight should be under height and weight").
+           Button is required — it writes the check-in to the history
+           table for growth tracking. -->
       <div class="form-row" style="margin-bottom:12px;">
         <div>
           <label>Height</label>
@@ -3461,24 +3466,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <input type="number" id="hw-weight" placeholder="lbs" min="80" max="350" style="margin-bottom:0;">
         </div>
       </div>
-
-      <!-- 60-yard dash + Velocity — Coach Young 2026-05-11: "Move this
-           under weight and measurements." Live alongside H/W as current
-           performance markers, updating inline (no check-in history). -->
       <div class="form-row" style="margin-bottom:12px;">
-        <div>
-          <label>60-Yard Dash Time</label>
-          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">Seconds — update each time you get timed</div>
-        </div>
-        <div>
-          <label>Velocity / Arm Speed</label>
-          <input type="text" id="pl-velo" placeholder="e.g. 78 mph" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">MPH — fastball or throw velocity</div>
-        </div>
-      </div>
-
-      <div class="form-row" style="margin-bottom:14px;">
         <div>
           <label>Check-In</label>
           <select id="hw-type" style="margin-bottom:0;">
@@ -3494,9 +3482,30 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <input type="text" id="hw-notes" placeholder="e.g. After fall block" style="margin-bottom:0;">
         </div>
       </div>
-      <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; margin-bottom:14px;">
-        📏 &nbsp;Log Measurements
+      <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; width:100%; margin-bottom:16px;">
+        📏 &nbsp;Log Check-In
       </button>
+
+      <!-- 60-yard dash + Velocity — current performance markers, not part
+           of the H/W check-in flow. They autosave inline (oninput) so no
+           button needed. Eyebrow separator + small spacing makes the
+           distinction obvious. -->
+      <div style="border-top:1px solid var(--border); padding-top:12px; margin-bottom:8px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#27AE60;">⚡ Current Speed & Velocity</div>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:2px;">Updates automatically — no need to log a check-in.</div>
+      </div>
+      <div class="form-row" style="margin-bottom:14px;">
+        <div>
+          <label>60-Yard Dash Time</label>
+          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">Seconds</div>
+        </div>
+        <div>
+          <label>Velocity / Arm Speed</label>
+          <input type="text" id="pl-velo" placeholder="e.g. 78 mph" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">MPH (fastball or throw)</div>
+        </div>
+      </div>
 
       <!-- CURRENT STATS DISPLAY -->
       <div id="hw-current" style="display:none; margin-bottom:14px;">
