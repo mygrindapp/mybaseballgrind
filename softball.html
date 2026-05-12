@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v133';
+    const CACHE = 'ybg-mygrind-v134';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3461,6 +3461,23 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <input type="number" id="hw-weight" placeholder="lbs" min="80" max="350" style="margin-bottom:0;">
         </div>
       </div>
+
+      <!-- 60-yard dash + Velocity — Coach Young 2026-05-11: "Move this
+           under weight and measurements." Live alongside H/W as current
+           performance markers, updating inline (no check-in history). -->
+      <div class="form-row" style="margin-bottom:12px;">
+        <div>
+          <label>60-Yard Dash Time</label>
+          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">Seconds — update each time you get timed</div>
+        </div>
+        <div>
+          <label>Velocity / Arm Speed</label>
+          <input type="text" id="pl-velo" placeholder="e.g. 78 mph" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">MPH — fastball or throw velocity</div>
+        </div>
+      </div>
+
       <div class="form-row" style="margin-bottom:14px;">
         <div>
           <label>Check-In</label>
@@ -3587,19 +3604,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </label>
           <label style="margin-top:14px;">Current Season</label>
           <input type="text" id="pl-season" placeholder="e.g. Spring 2026" oninput="saveProfile()">
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div>
-          <label>60-Yard Dash Time</label>
-          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:22px; letter-spacing:2px; text-align:center;">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">Seconds — update each time you get timed</div>
-        </div>
-        <div>
-          <label>Velocity / Arm Speed</label>
-          <input type="text" id="pl-velo" placeholder="e.g. 78 mph" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:22px; letter-spacing:2px; text-align:center;">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">MPH — fastball or throw velocity</div>
         </div>
       </div>
 
