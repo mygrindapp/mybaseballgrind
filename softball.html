@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v128';
+    const CACHE = 'ybg-mygrind-v129';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4124,44 +4124,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ══ BATTING AVERAGE SAMPLE SIZE — IS IT REAL YET? ══
-         Coach Young 2026-05-11: "Find what is a good amount of ABs
-         you need to have an accurate or real average. Create the
-         context on this page."
-         Educational card sourced from sabermetric research (FanGraphs
-         Sample Size library, Russell Carleton's stabilization work)
-         scaled down to high school context. Auto-updates the
-         reliability tier from the player's current st-ab value. -->
-    <div class="card" id="ba-sample-size-card" style="margin-bottom:16px;">
-      <div class="card-title">📊 Is Your Average Real Yet?</div>
-
-      <!-- Dynamic — current player's AB + reliability tier. Updated by
-           updateBaSampleSize() called at the end of calcStats(). -->
-      <div style="margin-bottom:14px; padding:12px 14px; background:var(--card2); border-left:3px solid var(--gold-dark); border-radius:2px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase;">Your Sample</div>
-        <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1.1;" id="ba-sample-current-text">— AB</div>
-        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-top:6px; line-height:1.5;" id="ba-sample-current-tier">Log a game in the Daily Journal to start the count.</div>
-      </div>
-
-      <!-- Static — explanation + HS thresholds + example -->
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
-        Your average tells the truth only when you've had enough at-bats. A typical HS hitter gets <strong style="color:var(--gold);">60–130 AB</strong> in a full season (20–30 games × 3–4 AB).
-      </div>
-      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-top:12px; margin-bottom:6px;">HS reliability tiers:</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
-        <div>• <strong>Under 15 AB</strong> — way too small. One hit moves you 50 points.</div>
-        <div>• <strong>15–39 AB</strong> — trend forming (about 5–13 games in).</div>
-        <div>• <strong>40–79 AB</strong> — meaningful HS sample (~half a season).</div>
-        <div>• <strong>80+ AB</strong> — solid HS workload. The number is real.</div>
-      </div>
-      <div style="margin-top:14px; padding:10px 12px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
-        <strong style="color:var(--gold);">Example:</strong> .340 after 10 at-bats means almost nothing. .340 after 50 at-bats — now you're talking.
-      </div>
-      <div style="margin-top:10px; font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; font-style:italic;">
-        Sabermetric note: full statistical stability sits at ~910 AB (FanGraphs) — multi-year college / pro level, well beyond HS.
-      </div>
-    </div>
-
     <!-- ══ PITCHING STAT DISPLAY ══ -->
     <div class="card" id="pitching-avg-card" style="margin-bottom:3px; padding-bottom:0; border-bottom:none; border-radius:3px 3px 0 0; display:none;">
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#5DADE2; margin-bottom:12px;">⚾ Pitching</div>
@@ -4186,42 +4148,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey);">BB/9</div>
           <div style="font-family:'Barlow'; font-size:10px; color:var(--border); margin-top:2px;">Walks per 9</div>
         </div>
-      </div>
-    </div>
-
-    <!-- ══ PITCHING SAMPLE SIZE — IS IT REAL YET? ══
-         Coach Young 2026-05-11: parallel to the batting sample-size
-         card. Pitching stabilizes much slower than batting — WHIP needs
-         ~100 IP for reliability (FanGraphs), ERA approaches stability
-         around 300 IP, and BABIP-against takes ~3 years. K-rate
-         stabilizes the fastest (~70 batters faced).
-         Same dynamic+static structure as the batting card. Hidden when
-         the player hasn't pitched (display synced to pitching-avg-card
-         via calcStats / updatePitchSampleSize). -->
-    <div class="card" id="pitch-sample-size-card" style="margin-bottom:16px; display:none;">
-      <div class="card-title" style="color:#5DADE2;">📊 Is Your ERA Real Yet?</div>
-
-      <div style="margin-bottom:14px; padding:12px 14px; background:var(--card2); border-left:3px solid #2A4A66; border-radius:2px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase;">Your Sample</div>
-        <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1.1;" id="pitch-sample-current-text">— IP</div>
-        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-top:6px; line-height:1.5;" id="pitch-sample-current-tier">Pitch in a game and log it in the Daily Journal to start the count.</div>
-      </div>
-
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
-        Pitching stats are noisier than batting. A typical HS pitcher logs <strong style="color:#5DADE2;">30–50 IP</strong> in a season (~1/3 of a 25-game schedule × 4–7 IP per start).
-      </div>
-      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#5DADE2; text-transform:uppercase; margin-top:12px; margin-bottom:6px;">HS reliability tiers:</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
-        <div>• <strong>Under 5 IP</strong> — way too small. One bad inning trashes the ERA.</div>
-        <div>• <strong>5–14 IP</strong> — a few starts in, not stable yet.</div>
-        <div>• <strong>15–29 IP</strong> — meaningful HS sample (~half-season of starts).</div>
-        <div>• <strong>30+ IP</strong> — solid HS workload. The number is real.</div>
-      </div>
-      <div style="margin-top:14px; padding:10px 12px; background:rgba(93,173,226,0.06); border-left:2px solid #2A4A66; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
-        <strong style="color:#5DADE2;">Example:</strong> 1.50 ERA after 3 IP means almost nothing — that's 9 outs of luck. Same 1.50 over 25 IP? That's a real pitcher.
-      </div>
-      <div style="margin-top:10px; font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; font-style:italic;">
-        Sabermetric note: WHIP stabilizes around 100 IP, ERA around 300 IP (FanGraphs) — multi-year college / pro level, well beyond HS.
       </div>
     </div>
 
@@ -4285,6 +4211,35 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
+    <!-- ══ BATTING AVERAGE SAMPLE SIZE — IS IT REAL YET? ══
+         Coach Young 2026-05-11: moved here from above the display cards
+         so it sits between the batting + pitching entry sections,
+         closer to the underlying AB count that drives the tier. -->
+    <div class="card" id="ba-sample-size-card" style="margin-bottom:16px;">
+      <div class="card-title">📊 Is Your Average Real Yet?</div>
+      <div style="margin-bottom:14px; padding:12px 14px; background:var(--card2); border-left:3px solid var(--gold-dark); border-radius:2px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase;">Your Sample</div>
+        <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1.1;" id="ba-sample-current-text">— AB</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-top:6px; line-height:1.5;" id="ba-sample-current-tier">Log a game in the Daily Journal to start the count.</div>
+      </div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
+        Your average tells the truth only when you've had enough at-bats. A typical HS hitter gets <strong style="color:var(--gold);">60–130 AB</strong> in a full season (20–30 games × 3–4 AB).
+      </div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-top:12px; margin-bottom:6px;">HS reliability tiers:</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
+        <div>• <strong>Under 15 AB</strong> — way too small. One hit moves you 50 points.</div>
+        <div>• <strong>15–39 AB</strong> — trend forming (about 5–13 games in).</div>
+        <div>• <strong>40–79 AB</strong> — meaningful HS sample (~half a season).</div>
+        <div>• <strong>80+ AB</strong> — solid HS workload. The number is real.</div>
+      </div>
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
+        <strong style="color:var(--gold);">Example:</strong> .340 after 10 at-bats means almost nothing. .340 after 50 at-bats — now you're talking.
+      </div>
+      <div style="margin-top:10px; font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; font-style:italic;">
+        Sabermetric note: full statistical stability sits at ~910 AB (FanGraphs) — multi-year college / pro level, well beyond HS.
+      </div>
+    </div>
+
     <!-- ── PITCHING ENTRY ── -->
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title">⚾ My Pitching Stats <span style="font-size:10px; color:var(--grey); font-weight:400; letter-spacing:0; text-transform:none;">(pitchers only — fastball, drop ball, rise ball, circle change)</span></div>
@@ -4298,6 +4253,35 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div><label>Hits Allowed (H)</label><input type="number" id="st-ph" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <div><label>Saves (SV)</label><input type="number" id="st-sv" placeholder="0" min="0" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <div><label>Complete Games (CG)</label><input type="number" id="st-cg" placeholder="0" min="0" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+      </div>
+    </div>
+
+    <!-- ══ PITCHING SAMPLE SIZE — IS IT REAL YET? ══
+         Coach Young 2026-05-11: moved here from above the display cards
+         so it sits between the pitching + fielding entry sections,
+         next to the underlying IP count that drives the tier. -->
+    <div class="card" id="pitch-sample-size-card" style="margin-bottom:16px; display:none;">
+      <div class="card-title" style="color:#5DADE2;">📊 Is Your ERA Real Yet?</div>
+      <div style="margin-bottom:14px; padding:12px 14px; background:var(--card2); border-left:3px solid #2A4A66; border-radius:2px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase;">Your Sample</div>
+        <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1.1;" id="pitch-sample-current-text">— IP</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-top:6px; line-height:1.5;" id="pitch-sample-current-tier">Pitch in a game and log it in the Daily Journal to start the count.</div>
+      </div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
+        Pitching stats are noisier than batting. A typical HS pitcher logs <strong style="color:#5DADE2;">30–50 IP</strong> in a season (~1/3 of a 25-game schedule × 4–7 IP per start).
+      </div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#5DADE2; text-transform:uppercase; margin-top:12px; margin-bottom:6px;">HS reliability tiers:</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
+        <div>• <strong>Under 5 IP</strong> — way too small. One bad inning trashes the ERA.</div>
+        <div>• <strong>5–14 IP</strong> — a few starts in, not stable yet.</div>
+        <div>• <strong>15–29 IP</strong> — meaningful HS sample (~half-season of starts).</div>
+        <div>• <strong>30+ IP</strong> — solid HS workload. The number is real.</div>
+      </div>
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(93,173,226,0.06); border-left:2px solid #2A4A66; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
+        <strong style="color:#5DADE2;">Example:</strong> 1.50 ERA after 3 IP means almost nothing — that's 9 outs of luck. Same 1.50 over 25 IP? That's a real pitcher.
+      </div>
+      <div style="margin-top:10px; font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; font-style:italic;">
+        Sabermetric note: WHIP stabilizes around 100 IP, ERA around 300 IP (FanGraphs) — multi-year college / pro level, well beyond HS.
       </div>
     </div>
 
