@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v132';
+    const CACHE = 'ybg-mygrind-v133';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3407,17 +3407,24 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ═══ 2) BASICS — Age, Grade, High School ═══════════════════════════ -->
-    <!-- Surfaced above Academics so a coach/recruiter sees WHO the player is immediately. -->
+    <!-- ═══ 2) BASICS + PHYSICAL DEVELOPMENT — combined card ══════════════
+         Coach Young 2026-05-11: "Basics height and weight and physical
+         development be in one block. It seems it takes up a lot of room."
+         Merged from two separate cards. Drops the heavy green-card
+         treatment + descriptive blurb so the section uses ~40% less
+         vertical space. Functionality intact (saveHWEntry, history
+         table, reminder). -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">🎒 The Basics</div>
+      <div class="card-title">🎒 Basics & Physical</div>
+
+      <!-- Basics row -->
       <div class="form-row">
         <div>
-          <label>My Age</label>
+          <label>Age</label>
           <input type="number" id="pl-age" placeholder="e.g. 15" min="5" max="25" oninput="saveProfile()">
         </div>
         <div>
-          <label>My Grade</label>
+          <label>Grade</label>
           <select id="pl-grade" onchange="saveProfile()">
             <option value="">-- Select --</option>
             <option>8th Grade</option>
@@ -3432,85 +3439,80 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </select>
         </div>
       </div>
-      <label>My High School / Team</label>
-      <input type="text" id="pl-school" placeholder="e.g. Canyon High School" oninput="saveProfile()">
-    </div>
+      <label>High School / Team</label>
+      <input type="text" id="pl-school" placeholder="e.g. Canyon High School" oninput="saveProfile()" style="margin-bottom:16px;">
 
-    <!-- ═══ 3) PHYSICAL — Height & Weight tracker ═══════════════════════════ -->
-    <!-- Placed next to the identity cluster (photo, name, basics) — physical development IS identity. -->
-    <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg,#141A14,#101410); border-color:#2A3A2A;">
-      <div class="card-title" style="color:#27AE60;">📏 My Height & Weight — Physical Development</div>
-
-      <div style="background:rgba(39,174,96,0.06); border:1px solid #1A3A1A; border-radius:2px; padding:14px 16px; margin-bottom:20px; font-size:13px; color:var(--light); line-height:1.7;">
-        Track your physical development every <strong style="color:#58D68D;">3 months</strong> and <strong style="color:#58D68D;">6 months</strong>. Growing players gain strength and size — documenting it keeps you and your coach on the same page.
+      <!-- Physical Development subsection -->
+      <div style="border-top:1px solid var(--border); padding-top:14px; margin-bottom:12px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#27AE60; margin-bottom:4px;">📏 Height & Weight · Physical Development</div>
+        <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); line-height:1.5;">Log every 3 or 6 months — growing players gain size + strength, and the record matters to coaches.</div>
       </div>
 
-      <!-- LOG NEW ENTRY -->
       <div class="form-row" style="margin-bottom:12px;">
         <div>
-          <label>My Height</label>
+          <label>Height</label>
           <div style="display:flex; gap:6px;">
             <input type="number" id="hw-feet" placeholder="Ft" min="4" max="7" style="width:70px; margin-bottom:0;">
             <input type="number" id="hw-inches" placeholder="In" min="0" max="11" style="flex:1; margin-bottom:0;">
           </div>
         </div>
         <div>
-          <label>My Weight (lbs)</label>
+          <label>Weight (lbs)</label>
           <input type="number" id="hw-weight" placeholder="lbs" min="80" max="350" style="margin-bottom:0;">
         </div>
       </div>
-      <div class="form-row" style="margin-bottom:16px;">
+      <div class="form-row" style="margin-bottom:14px;">
         <div>
-          <label>Check-In Type</label>
+          <label>Check-In</label>
           <select id="hw-type" style="margin-bottom:0;">
-            <option value="3month">3-Month Check-In</option>
-            <option value="6month">6-Month Check-In</option>
+            <option value="3month">3-Month</option>
+            <option value="6month">6-Month</option>
             <option value="start">Season Start</option>
             <option value="end">Season End</option>
-            <option value="manual">Manual Entry</option>
+            <option value="manual">Manual</option>
           </select>
         </div>
         <div>
-          <label>Notes (optional)</label>
-          <input type="text" id="hw-notes" placeholder="e.g. After fall training block" style="margin-bottom:0;">
+          <label>Notes</label>
+          <input type="text" id="hw-notes" placeholder="e.g. After fall block" style="margin-bottom:0;">
         </div>
       </div>
-      <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; margin-bottom:20px;">
-        📏 &nbsp;Log My Measurements
+      <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; margin-bottom:14px;">
+        📏 &nbsp;Log Measurements
       </button>
 
       <!-- CURRENT STATS DISPLAY -->
-      <div id="hw-current" style="display:none; margin-bottom:20px;">
-        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px; margin-bottom:3px;">
-          <div style="background:var(--card); padding:16px 12px; text-align:center; border-radius:2px;">
-            <div style="font-family:'Bebas Neue'; font-size:32px; color:#27AE60; line-height:1;" id="hw-disp-height">—</div>
-            <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Height</div>
+      <div id="hw-current" style="display:none; margin-bottom:14px;">
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">
+          <div style="background:var(--card2); padding:12px 8px; text-align:center; border-radius:2px;">
+            <div style="font-family:'Bebas Neue'; font-size:28px; color:#27AE60; line-height:1;" id="hw-disp-height">—</div>
+            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Height</div>
           </div>
-          <div style="background:var(--card); padding:16px 12px; text-align:center; border-radius:2px;">
-            <div style="font-family:'Bebas Neue'; font-size:32px; color:#27AE60; line-height:1;" id="hw-disp-weight">—</div>
-            <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Weight (lbs)</div>
+          <div style="background:var(--card2); padding:12px 8px; text-align:center; border-radius:2px;">
+            <div style="font-family:'Bebas Neue'; font-size:28px; color:#27AE60; line-height:1;" id="hw-disp-weight">—</div>
+            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Weight (lbs)</div>
           </div>
-          <div style="background:var(--card); padding:16px 12px; text-align:center; border-radius:2px;">
-            <div style="font-family:'Bebas Neue'; font-size:32px; color:var(--gold); line-height:1;" id="hw-disp-gain">—</div>
-            <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-top:4px;">lbs Gained</div>
+          <div style="background:var(--card2); padding:12px 8px; text-align:center; border-radius:2px;">
+            <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--gold); line-height:1;" id="hw-disp-gain">—</div>
+            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">lbs Gained</div>
           </div>
         </div>
       </div>
 
       <!-- HISTORY TABLE -->
       <div id="hw-history" style="display:none;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:10px;">📋 My Check-In History</div>
+        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">📋 Check-In History</div>
         <div style="overflow-x:auto;">
           <table style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
               <tr style="border-bottom:1px solid var(--gold-dark);">
-                <th style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:8px 10px; text-align:left;">Date</th>
-                <th style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:8px 10px; text-align:center;">Type</th>
-                <th style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:8px 10px; text-align:center;">Height</th>
-                <th style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:8px 10px; text-align:center;">Weight</th>
-                <th style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:8px 10px; text-align:center;">Change</th>
-                <th style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:8px 10px; text-align:center;">Notes</th>
-                <th style="padding:8px 10px;"></th>
+                <th style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:6px 8px; text-align:left;">Date</th>
+                <th style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:6px 8px; text-align:center;">Type</th>
+                <th style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:6px 8px; text-align:center;">Height</th>
+                <th style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:6px 8px; text-align:center;">Weight</th>
+                <th style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:6px 8px; text-align:center;">Change</th>
+                <th style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); padding:6px 8px; text-align:center;">Notes</th>
+                <th style="padding:6px 8px;"></th>
               </tr>
             </thead>
             <tbody id="hw-tbody"></tbody>
@@ -3519,7 +3521,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <!-- NEXT CHECK-IN REMINDER -->
-      <div id="hw-reminder" style="display:none; margin-top:16px; padding:12px 16px; background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); border-radius:2px; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1px; color:var(--gold-light);">
+      <div id="hw-reminder" style="display:none; margin-top:12px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); border-radius:2px; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1px; color:var(--gold-light);">
         ⏰ &nbsp;<span id="hw-reminder-text"></span>
       </div>
     </div>
