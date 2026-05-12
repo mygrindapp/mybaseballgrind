@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v147';
+    const CACHE = 'ybg-mygrind-v148';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2491,8 +2491,23 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <option value="game">Game</option>
             <option value="workout">Gym</option>
             <option value="reflection" selected>Reflection</option>
-            <option value="offday">😴 Off Day</option>
+            <option value="offday">😴 Off Day (full rest)</option>
           </select>
+        </div>
+      </div>
+
+      <!-- ── OFF DAY INFO BANNER ── Coach Young 2026-05-12 walkthrough:
+           "I want it to be clear an off day is no practice, game,
+           instructor, or gym. However reflection is still live. I don't
+           want confusion where they think the off day is just that
+           section." Shows only when type === 'offday'. Visibility wired
+           in toggleGameStats(). -->
+      <div id="j-offday-info" style="display:none; padding:14px 16px; margin-bottom:18px; background:rgba(93,173,226,0.08); border-left:3px solid #5DADE2; border-radius:3px;">
+        <div style="font-family:'Bebas Neue',cursive; font-size:18px; letter-spacing:2px; color:#5DADE2; line-height:1; margin-bottom:6px;">😴 OFF DAY = FULL REST</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.55;">
+          No practice. No game. No instructor session. No gym. Your body and mind get the day off the grind.
+          <br><br>
+          You can still <strong style="color:#5DADE2;">reflect on the day</strong> below — that's how you close the book. Off Day still counts toward your streak.
         </div>
       </div>
 
@@ -7672,6 +7687,13 @@ function toggleGameStats() {
     const resultEl = document.getElementById('j-result');
     if (resultEl) resultEl.value = '';
   }
+
+  // Off Day info banner — visible only when type === 'offday' so the
+  // player understands "off day = full rest, no practice/game/instructor/
+  // gym" and doesn't confuse the entry section itself with the off day.
+  // (Coach Young 2026-05-12 walkthrough.)
+  const offdayInfo = document.getElementById('j-offday-info');
+  if (offdayInfo) offdayInfo.style.display = isOffDay ? 'block' : 'none';
 
   // Re-evaluate Arm Care visibility on every entry-type change.
   try { updateArmCareVisibility(); } catch(e) {}
