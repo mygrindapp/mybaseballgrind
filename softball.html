@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v142';
+    const CACHE = 'ybg-mygrind-v143';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -10404,6 +10404,13 @@ updateSubscriptionCard();
 // Journal page is the default active panel — paint reminder banners on
 // load so the player sees grade-update / H&W-overdue prompts on landing.
 try { renderJournalReminders(); } catch (e) {}
+// Clean slate on every load — browsers (esp. iOS PWA) restore form
+// field values from the previous session. Coach Young 2026-05-11:
+// "When you log back in the journal should be clean and ready for next
+// entry. Right now the screen is showing the inputs on page."
+// cancelEdit() is safe on a fresh load (editingEntryId is null) — it
+// just clears all journal compose fields + resets chip selections.
+try { cancelEdit(); } catch (e) {}
 const _sf = document.getElementById('social-share-footer');
 if (_sf) _sf.style.display = 'block';
 </script>
