@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v144';
+    const CACHE = 'ybg-mygrind-v145';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2490,7 +2490,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <option value="instructor">Instructor</option>
             <option value="game">Game</option>
             <option value="workout">Gym</option>
-            <option value="reflection">Reflection</option>
+            <option value="reflection" selected>Reflection</option>
             <option value="offday">😴 Off Day</option>
           </select>
         </div>
@@ -8633,19 +8633,38 @@ function renderEntries() {
     // date is different or doesn't exist).
     const nextEntry = entries[idx + 1];
     const isLastTodayEntry = e.date === todayDateStr && (!nextEntry || nextEntry.date !== todayDateStr);
+    // Training Volume card — Coach Young 2026-05-11: "On the practice
+    // what reps is this talking about, could be confusing." Added a
+    // per-category breakdown line below each total so the player can
+    // see exactly what's being summed (swings + ground balls + throws
+    // + pitches). Label tightened from "Reps Today" → "Total Training
+    // Reps" so the scope is unambiguous.
+    const _t = repStats ? repStats.today  : { swings:0, gb:0, throws:0, pitches:0 };
+    const _w = repStats ? repStats.last7  : { swings:0, gb:0, throws:0, pitches:0 };
+    const _breakdown = function(b) {
+      const parts = [];
+      if (b.swings  > 0) parts.push('🏏 ' + b.swings.toLocaleString());
+      if (b.gb      > 0) parts.push('⚾ ' + b.gb.toLocaleString());
+      if (b.throws  > 0) parts.push('🎯 ' + b.throws.toLocaleString());
+      if (b.pitches > 0) parts.push('⚡ ' + b.pitches.toLocaleString());
+      return parts.length ? parts.join(' · ') : '—';
+    };
     const todayTotalsCard = (isLastTodayEntry && repStats && repStats.todayTotal > 0) ? (
       '<div style="margin:14px 0 24px; padding:16px 18px; border:1px solid var(--gold-dark); border-radius:3px; background:linear-gradient(135deg,#1A0012,#0E0006);">' +
         '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">📊 Today\'s Grind — Training Volume</div>' +
         '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">' +
           '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:3px;">' +
             '<div style="font-family:\'Bebas Neue\'; font-size:32px; line-height:1; color:var(--white);">' + repStats.todayTotal.toLocaleString() + '</div>' +
-            '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Reps Today</div>' +
+            '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Total Training Reps · Today</div>' +
+            '<div style="font-family:\'Barlow Condensed\'; font-size:11px; letter-spacing:1px; color:var(--light); margin-top:6px;">' + _breakdown(_t) + '</div>' +
           '</div>' +
           '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:3px;">' +
             '<div style="font-family:\'Bebas Neue\'; font-size:32px; line-height:1; color:var(--gold);">' + week7Total.toLocaleString() + '</div>' +
-            '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Reps Last 7 Days</div>' +
+            '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Total Training Reps · Last 7 Days</div>' +
+            '<div style="font-family:\'Barlow Condensed\'; font-size:11px; letter-spacing:1px; color:var(--light); margin-top:6px;">' + _breakdown(_w) + '</div>' +
           '</div>' +
         '</div>' +
+        '<div style="font-family:\'Barlow\'; font-size:11px; color:var(--grey); line-height:1.4; margin-top:10px; text-align:center;">🏏 Swings · ⚾ Ground Balls · 🎯 Throws · ⚡ Pitches</div>' +
       '</div>'
     ) : '';
 
@@ -10417,6 +10436,16 @@ try { renderJournalReminders(); } catch (e) {}
 // cancelEdit() is safe on a fresh load (editingEntryId is null) — it
 // just clears all journal compose fields + resets chip selections.
 try { cancelEdit(); } catch (e) {}
+// Default entry type = Reflection on fresh load (Coach Young 2026-05-11:
+// "Have reflection be the first thing that opens, in case they just want
+// to write something"). HTML default's <option selected> handles fresh
+// loads; this explicit set also overrides any browser PWA value
+// restoration. toggleGameStats() re-renders the form to match the type.
+try {
+  const _typeEl = document.getElementById('j-type');
+  if (_typeEl) { _typeEl.value = 'reflection'; }
+  if (typeof toggleGameStats === 'function') toggleGameStats();
+} catch (e) {}
 const _sf = document.getElementById('social-share-footer');
 if (_sf) _sf.style.display = 'block';
 </script>
