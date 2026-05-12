@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v129';
+    const CACHE = 'ybg-mygrind-v130';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2007,6 +2007,35 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div class="section-sub">The Daily Work Starts Here</div>
       <div id="dashboard-player-name" style="font-family:'Bebas Neue'; font-size:22px; letter-spacing:2px; color:var(--gold); margin-top:4px; display:none;"></div>
       <div class="gold-line"></div>
+    </div>
+
+    <!-- ══ ACADEMICS SUMMARY — TOP OF DASHBOARD ══
+         Coach Young 2026-05-11: "I want academics to be on the top of
+         dashboard. Make this a really important part of their journey."
+         Surfaces the player's current GPA + eligibility status across
+         NCAA D1 / D2 / NAIA / JUCO at a glance. Tap "Manage" → Profile
+         tab for full grade entry. Source of truth stays in Profile;
+         this is a read-only view rendered by renderDashAcademics(). -->
+    <div class="card" id="dash-academics-card" style="margin-bottom:18px; background:linear-gradient(135deg,#141A14,#101410); border-left:3px solid #5A8A3A; cursor:pointer;" onclick="mgTab('players','tab-players')">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+        <div class="card-title" style="color:#A8D97B; margin:0; font-size:18px;">📚 Academics</div>
+        <span style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Manage in Profile →</span>
+      </div>
+
+      <div style="display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:center; margin-bottom:14px;">
+        <div style="text-align:center; padding:10px 16px; background:var(--card2); border-radius:3px; border-top:2px solid #5A8A3A; min-width:90px;">
+          <div id="dash-gpa-display" style="font-family:'Bebas Neue'; font-size:32px; color:var(--white); line-height:1;">—</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:3px;">GPA</div>
+          <div id="dash-gpa-target" style="font-family:'Barlow'; font-size:10px; color:var(--grey); margin-top:2px;">Target —</div>
+        </div>
+        <div id="dash-elig-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:6px;"></div>
+      </div>
+
+      <div id="dash-subject-pills" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
+
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.4; font-style:italic; margin-top:4px;">
+        No grades · No baseball. Pull every grade. Slipping? Handle it today.
+      </div>
     </div>
 
     <!-- ── TODAY'S PLAN — checkable daily schedule derived from the
@@ -3576,8 +3605,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <textarea id="pl-bio" placeholder="Strengths, goals, areas to improve, coach notes..." oninput="saveProfile()"></textarea>
     </div>
 
-    <!-- ═══ 5) ACADEMICS — Grades live below identity & about-me ═══════════════ -->
-    <!-- "No Grades · No Baseball" stays a Priority #1 card via styling, but the natural reading order is: who I am → what I do on the field → my academic reality. -->
+    <!-- ═══ 5) ACADEMICS — Grades live below identity & about-me ═══════════════
+         Coach Young 2026-05-11: "academics is a really important part of
+         their journey. They have 6 classes normally in school. You need
+         certain classes to take to go to certain schools. Check internet
+         for these classes and gpa to qualify."
+         Expanded from 5 → 6 subjects mapped to NCAA core categories
+         (4yr Eng / 3yr Math / 2yr Sci / 2yr Social / 4yr additional +
+         Elective). Per-subject custom class name + grade. Eligibility
+         panel surfaces NCAA D1/D2/D3, NAIA, JUCO pass/fail based on
+         current GPA (research-sourced thresholds).
+         Phase 2 (full 16-core tracker + weighted GPA + jr-year lockin
+         alert) deferred to MyGrind Pro per Coach 2026-05-11. -->
     <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg,#141A14,#101410); border:2px solid #5A8A3A; box-shadow:0 0 0 1px rgba(168,217,123,0.08);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
         <span style="background:#5A8A3A; color:#F4F4F4; font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:3px 9px; border-radius:2px;">Priority #1</span>
@@ -3603,28 +3642,48 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
 
-      <!-- Subject grades -->
-      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">📖 Monthly Grade Check</div>
+      <!-- College Eligibility Status — NCAA D1/D2/D3, NAIA, JUCO.
+           Updated live from current GPA. Sources cited at bottom. -->
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">🎓 College Eligibility Status</div>
+      <div id="elig-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:8px;"></div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:18px; font-style:italic;">
+        Note: NCAA uses a CORE-COURSE GPA (only specific classes count), not your overall school GPA. The status above is a quick read using your overall GPA — the full core-course tracker is part of MyGrind Pro.
+        <a href="https://www.ncsasports.org/ncaa-eligibility-center/gpa-requirements" target="_blank" rel="noopener" style="color:#A8D97B;">Source</a>
+      </div>
+
+      <!-- 6 Subjects — NCAA-core-mapped categories. Custom class name +
+           grade per slot. HS typically loads 6 classes per term. -->
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">📖 My 6 Classes</div>
       <div id="grade-checks">
-        <div class="grade-row">
-          <div class="grade-label">English / Language Arts</div>
-          <select class="subject-grade" style="width:80px; margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">English<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 4 yr</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. AP English Lit" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row">
-          <div class="grade-label">Math</div>
-          <select class="subject-grade" style="width:80px; margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Math<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 3 yr (Alg 1+)</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Algebra 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row">
-          <div class="grade-label">Science</div>
-          <select class="subject-grade" style="width:80px; margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Natural Science<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr (1 lab)</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Biology" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row">
-          <div class="grade-label">History / Social Studies</div>
-          <select class="subject-grade" style="width:80px; margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Social Studies<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. US History" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row">
-          <div class="grade-label">Elective / PE</div>
-          <select class="subject-grade" style="width:80px; margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Foreign Language<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · additional</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Spanish 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        </div>
+        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Elective<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">PE / Arts / Other</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Weight Training" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
       </div>
     </div>
@@ -8743,9 +8802,94 @@ function renderPlayers() {
 
 // ─── GOALS ────────────────────────────────────────────────
 function renderGrades() {
-  // Save all subject grades to localStorage
+  // Save all subject grades + custom class names to localStorage.
+  // Coach Young 2026-05-11: expanded to 6 NCAA-mapped subjects with
+  // custom class names per slot.
   const grades = [...document.querySelectorAll('.subject-grade')].map(s => s.value);
+  const names  = [...document.querySelectorAll('.subject-name')].map(s => s.value);
   try { localStorage.setItem('ybg_subject_grades', JSON.stringify(grades)); } catch(e) {}
+  try { localStorage.setItem('ybg_subject_names',  JSON.stringify(names)); } catch(e) {}
+  try { renderEligibility(); } catch(e) {}
+  try { renderDashAcademics(); } catch(e) {}
+}
+
+// ─── COLLEGE ELIGIBILITY ──────────────────────────────────
+// Coach Young 2026-05-11: research-sourced thresholds (NCAA / NAIA /
+// JUCO). Phase 1 uses overall GPA as a quick proxy — the NCAA-accurate
+// "core-course GPA" needs a full 16-course tracker which is Pro.
+//   NCAA D1: 2.3+   · NCAA D2: 2.2+   · NCAA D3: school-specific
+//   NAIA:    2.3+   · JUCO:    open / school-specific
+function computeEligibility(gpa) {
+  const g = parseFloat(gpa);
+  const valid = !isNaN(g) && g > 0;
+  return {
+    d1:   { ok: valid && g >= 2.3,  label: 'NCAA D1', sub: '2.3 GPA' },
+    d2:   { ok: valid && g >= 2.2,  label: 'NCAA D2', sub: '2.2 GPA' },
+    d3:   { ok: valid,              label: 'NCAA D3', sub: 'School-specific', neutral: true },
+    naia: { ok: valid && g >= 2.3,  label: 'NAIA',    sub: '2.3 GPA' },
+    juco: { ok: valid,              label: 'JUCO',    sub: 'Open',    neutral: true }
+  };
+}
+
+function _eligTileHTML(tier, compact) {
+  const padding = compact ? '6px 8px' : '8px 10px';
+  const titleSize = compact ? '11px' : '12px';
+  const subSize = compact ? '9px' : '10px';
+  let bg, border, color, icon;
+  if (tier.neutral) {
+    bg = 'rgba(168,217,123,0.05)'; border = '#1A3A1A'; color = '#A8D97B'; icon = 'ℹ️';
+  } else if (tier.ok) {
+    bg = 'rgba(39,174,96,0.10)';   border = '#27AE60'; color = '#58D68D'; icon = '✅';
+  } else {
+    bg = 'rgba(192,57,43,0.08)';   border = '#7A2F26'; color = '#E57373'; icon = '⚠️';
+  }
+  return '<div style="padding:' + padding + '; background:' + bg + '; border:1px solid ' + border + '; border-radius:3px;">' +
+           '<div style="font-family:\'Barlow Condensed\'; font-size:' + titleSize + '; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:' + color + ';">' + icon + ' ' + tier.label + '</div>' +
+           '<div style="font-family:\'Barlow\'; font-size:' + subSize + '; color:var(--grey); margin-top:2px;">' + tier.sub + '</div>' +
+         '</div>';
+}
+
+function renderEligibility() {
+  const grid = document.getElementById('elig-grid');
+  if (!grid) return;
+  const gpa = (state && state.gpa && state.gpa.current) || document.getElementById('gpa-current')?.value || '';
+  const e = computeEligibility(gpa);
+  grid.innerHTML = _eligTileHTML(e.d1) + _eligTileHTML(e.d2) + _eligTileHTML(e.naia) + _eligTileHTML(e.d3) + _eligTileHTML(e.juco);
+}
+
+function renderDashAcademics() {
+  const card = document.getElementById('dash-academics-card');
+  if (!card) return;
+  const gpaCur = (state && state.gpa && state.gpa.current) || '';
+  const gpaTgt = (state && state.gpa && state.gpa.target)  || '';
+  const gpaEl  = document.getElementById('dash-gpa-display');
+  const tgtEl  = document.getElementById('dash-gpa-target');
+  if (gpaEl) gpaEl.textContent = gpaCur || '—';
+  if (tgtEl) tgtEl.textContent = gpaTgt ? 'Target ' + gpaTgt : 'Target —';
+
+  // Eligibility tiles (compact for dashboard)
+  const elig = computeEligibility(gpaCur);
+  const grid = document.getElementById('dash-elig-grid');
+  if (grid) grid.innerHTML = _eligTileHTML(elig.d1, true) + _eligTileHTML(elig.d2, true) + _eligTileHTML(elig.naia, true) + _eligTileHTML(elig.juco, true);
+
+  // Subject grade pills — read directly from saved grades
+  const pills = document.getElementById('dash-subject-pills');
+  if (pills) {
+    let grades = [];
+    let names  = [];
+    try { grades = JSON.parse(localStorage.getItem('ybg_subject_grades') || '[]'); } catch(e) {}
+    try { names  = JSON.parse(localStorage.getItem('ybg_subject_names')  || '[]'); } catch(e) {}
+    const fallbackLabels = ['Eng', 'Math', 'Sci', 'Social', 'For Lang', 'Elective'];
+    const tiles = fallbackLabels.map(function(fallback, i) {
+      const g = grades[i] || '—';
+      const n = (names[i] && names[i].trim()) || fallback;
+      const gColor = (g === 'A') ? '#58D68D' : (g === 'B') ? '#A8D97B' : (g === 'C') ? '#E67E22' : (g === 'D' || g === 'F') ? '#E57373' : 'var(--grey)';
+      return '<div style="padding:6px 10px; background:var(--card2); border:1px solid var(--border); border-radius:3px; font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--light);">' +
+               n + ' <span style="color:' + gColor + '; margin-left:4px;">' + g + '</span>' +
+             '</div>';
+    }).join('');
+    pills.innerHTML = tiles;
+  }
 }
 
 function updateSubscriptionCard() {
@@ -8954,6 +9098,9 @@ function saveGPA() {
   document.getElementById('gpa-target-display').textContent = tgt || '—';
   // Persist to localStorage so it survives reloads
   try { saveState(); } catch(e) {}
+  // Refresh eligibility tiles + dashboard summary card.
+  try { renderEligibility(); } catch(e) {}
+  try { renderDashAcademics(); } catch(e) {}
   // Visual confirmation
   const btn = document.querySelector('button[onclick="saveGPA()"]');
   if (btn) {
@@ -8993,6 +9140,23 @@ function loadGradesUI() {
         }
       }
     } catch(e) {}
+    // Restore custom class names (Coach Young 2026-05-11 — 6 NCAA-mapped
+    // subjects per term, each with a free-form class name).
+    try {
+      const savedNames = localStorage.getItem('ybg_subject_names');
+      if (savedNames) {
+        const arr = JSON.parse(savedNames);
+        if (Array.isArray(arr)) {
+          const inputs = document.querySelectorAll('.subject-name');
+          inputs.forEach(function(inp, i) {
+            if (arr[i]) inp.value = arr[i];
+          });
+        }
+      }
+    } catch(e) {}
+    // Paint the eligibility + dashboard tiles with current state.
+    try { renderEligibility(); } catch(e) {}
+    try { renderDashAcademics(); } catch(e) {}
   } catch(e) { try { console.warn('[YBG] loadGradesUI failed:', e); } catch(_) {} }
 }
 
