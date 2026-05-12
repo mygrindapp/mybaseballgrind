@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v135';
+    const CACHE = 'ybg-mygrind-v136';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3442,73 +3442,20 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <label>High School / Team</label>
       <input type="text" id="pl-school" placeholder="e.g. Canyon High School" oninput="saveProfile()" style="margin-bottom:16px;">
 
-      <!-- Physical Development subsection -->
+      <!-- Physical Development subsection — Coach Young 2026-05-11
+           iteration 3: "Reorganize so it makes sense and flows better."
+           Three clean groups now, top to bottom:
+             1) Current snapshot (display tiles — read-only summary)
+             2) Speed + Velocity (autosave inline inputs)
+             3) New Check-In form + Log button (commits to history)
+             4) History table + reminder. -->
       <div style="border-top:1px solid var(--border); padding-top:14px; margin-bottom:12px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#27AE60; margin-bottom:4px;">📏 Height & Weight · Physical Development</div>
-        <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); line-height:1.5;">Log every 3 or 6 months — growing players gain size + strength, and the record matters to coaches.</div>
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#27AE60;">📏 Physical Development</div>
       </div>
 
-      <!-- H/W check-in group — height/weight + check-in type/notes + log
-           button live together (Coach Young 2026-05-11 iteration: "Check
-           in for height and weight should be under height and weight").
-           Button is required — it writes the check-in to the history
-           table for growth tracking. -->
-      <div class="form-row" style="margin-bottom:12px;">
-        <div>
-          <label>Height</label>
-          <div style="display:flex; gap:6px;">
-            <input type="number" id="hw-feet" placeholder="Ft" min="4" max="7" style="width:70px; margin-bottom:0;">
-            <input type="number" id="hw-inches" placeholder="In" min="0" max="11" style="flex:1; margin-bottom:0;">
-          </div>
-        </div>
-        <div>
-          <label>Weight (lbs)</label>
-          <input type="number" id="hw-weight" placeholder="lbs" min="80" max="350" style="margin-bottom:0;">
-        </div>
-      </div>
-      <div class="form-row" style="margin-bottom:12px;">
-        <div>
-          <label>Check-In</label>
-          <select id="hw-type" style="margin-bottom:0;">
-            <option value="3month">3-Month</option>
-            <option value="6month">6-Month</option>
-            <option value="start">Season Start</option>
-            <option value="end">Season End</option>
-            <option value="manual">Manual</option>
-          </select>
-        </div>
-        <div>
-          <label>Notes</label>
-          <input type="text" id="hw-notes" placeholder="e.g. After fall block" style="margin-bottom:0;">
-        </div>
-      </div>
-      <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; width:100%; margin-bottom:16px;">
-        📏 &nbsp;Log Check-In
-      </button>
-
-      <!-- 60-yard dash + Velocity — current performance markers, not part
-           of the H/W check-in flow. They autosave inline (oninput) so no
-           button needed. Eyebrow separator + small spacing makes the
-           distinction obvious. -->
-      <div style="border-top:1px solid var(--border); padding-top:12px; margin-bottom:8px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#27AE60;">⚡ Current Speed & Velocity</div>
-        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:2px;">Updates automatically — no need to log a check-in.</div>
-      </div>
-      <div class="form-row" style="margin-bottom:14px;">
-        <div>
-          <label>60-Yard Dash Time</label>
-          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">Seconds</div>
-        </div>
-        <div>
-          <label>Velocity / Arm Speed</label>
-          <input type="text" id="pl-velo" placeholder="e.g. 78 mph" oninput="saveProfile()" style="font-family:'Bebas Neue'; font-size:20px; letter-spacing:2px; text-align:center; margin-bottom:0;">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px;">MPH (fastball or throw)</div>
-        </div>
-      </div>
-
-      <!-- CURRENT STATS DISPLAY -->
+      <!-- GROUP 1: Current snapshot tiles. Shown after first check-in. -->
       <div id="hw-current" style="display:none; margin-bottom:14px;">
+        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Current</div>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">
           <div style="background:var(--card2); padding:12px 8px; text-align:center; border-radius:2px;">
             <div style="font-family:'Bebas Neue'; font-size:28px; color:#27AE60; line-height:1;" id="hw-disp-height">—</div>
@@ -3523,6 +3470,61 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">lbs Gained</div>
           </div>
         </div>
+      </div>
+
+      <!-- GROUP 2: 60-Yard + Velocity — standalone inline inputs. They
+           autosave on input so no log button needed. Styled as plain
+           inputs (not display tiles) so the editing affordance is clear. -->
+      <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Speed & Velocity <span style="text-transform:none; letter-spacing:0.5px; font-weight:500;">— updates automatically</span></div>
+      <div class="form-row" style="margin-bottom:18px;">
+        <div>
+          <label>60-Yard Dash (sec)</label>
+          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="margin-bottom:0;">
+        </div>
+        <div>
+          <label>Velocity (mph)</label>
+          <input type="text" id="pl-velo" placeholder="e.g. 78" oninput="saveProfile()" style="margin-bottom:0;">
+        </div>
+      </div>
+
+      <!-- GROUP 3: New check-in form. Height + Weight + Check-In + Notes
+           + Log button. Single visual group on a subtle background so it
+           reads as one logical commit action. -->
+      <div style="background:rgba(39,174,96,0.04); border:1px solid #1A3A1A; border-radius:3px; padding:14px; margin-bottom:14px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#58D68D; margin-bottom:10px;">📝 New Check-In</div>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Log every 3 or 6 months — coaches care about growth.</div>
+        <div class="form-row" style="margin-bottom:10px;">
+          <div>
+            <label>Height</label>
+            <div style="display:flex; gap:6px;">
+              <input type="number" id="hw-feet" placeholder="Ft" min="4" max="7" style="width:70px; margin-bottom:0;">
+              <input type="number" id="hw-inches" placeholder="In" min="0" max="11" style="flex:1; margin-bottom:0;">
+            </div>
+          </div>
+          <div>
+            <label>Weight (lbs)</label>
+            <input type="number" id="hw-weight" placeholder="lbs" min="80" max="350" style="margin-bottom:0;">
+          </div>
+        </div>
+        <div class="form-row" style="margin-bottom:12px;">
+          <div>
+            <label>Check-In Type</label>
+            <select id="hw-type" style="margin-bottom:0;">
+              <option value="3month">3-Month</option>
+              <option value="6month">6-Month</option>
+              <option value="start">Season Start</option>
+              <option value="end">Season End</option>
+              <option value="manual">Manual</option>
+            </select>
+          </div>
+          <div>
+            <label>Notes</label>
+            <input type="text" id="hw-notes" placeholder="e.g. After fall block" style="margin-bottom:0;">
+          </div>
+        </div>
+        <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; width:100%;">
+          📏 &nbsp;Log Check-In
+        </button>
       </div>
 
       <!-- HISTORY TABLE -->
