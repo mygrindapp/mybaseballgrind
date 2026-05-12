@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v125';
+    const CACHE = 'ybg-mygrind-v126';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4184,6 +4184,41 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey);">BB/9</div>
           <div style="font-family:'Barlow'; font-size:10px; color:var(--border); margin-top:2px;">Walks per 9</div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══ PITCHING SAMPLE SIZE — IS IT REAL YET? ══
+         Coach Young 2026-05-11: parallel to the batting sample-size
+         card. Pitching stabilizes much slower than batting — WHIP needs
+         ~100 IP for reliability (FanGraphs), ERA approaches stability
+         around 300 IP, and BABIP-against takes ~3 years. K-rate
+         stabilizes the fastest (~70 batters faced).
+         Same dynamic+static structure as the batting card. Hidden when
+         the player hasn't pitched (display synced to pitching-avg-card
+         via calcStats / updatePitchSampleSize). -->
+    <div class="card" id="pitch-sample-size-card" style="margin-bottom:16px; display:none;">
+      <div class="card-title" style="color:#5DADE2;">📊 Is Your ERA Real Yet?</div>
+
+      <div style="margin-bottom:14px; padding:12px 14px; background:var(--card2); border-left:3px solid #2A4A66; border-radius:2px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase;">Your Sample</div>
+        <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1.1;" id="pitch-sample-current-text">— IP</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-top:6px; line-height:1.5;" id="pitch-sample-current-tier">Pitch in a game and log it in the Daily Journal to start the count.</div>
+      </div>
+
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
+        Pitching stats are noisier than batting. Sabermetric research (FanGraphs) shows <strong style="color:#5DADE2;">WHIP needs ~100 IP</strong> to be reliable and <strong style="color:#5DADE2;">ERA approaches stability around 300 IP</strong>. BABIP-against takes ~3 seasons. Strikeout rate (K%) stabilizes fastest — useful info inside 70 batters faced.
+      </div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#5DADE2; text-transform:uppercase; margin-top:12px; margin-bottom:6px;">For high school pitchers:</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
+        <div>• <strong>Under 10 IP</strong> — way too small. One bad inning trashes the ERA.</div>
+        <div>• <strong>10–24 IP</strong> — trend forming, not stable.</div>
+        <div>• <strong>25–49 IP</strong> — meaningful for a HS season.</div>
+        <div>• <strong>50–99 IP</strong> — solid HS sample.</div>
+        <div>• <strong>100+ IP</strong> — WHIP becomes reliable (sabermetric).</div>
+        <div>• <strong>300+ IP</strong> — ERA approaches statistical stability.</div>
+      </div>
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(93,173,226,0.06); border-left:2px solid #2A4A66; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
+        <strong style="color:#5DADE2;">Example:</strong> 1.50 ERA after 5 IP means almost nothing — that's 7 outs of luck. Same 1.50 over 40 IP? That's a real pitcher.
       </div>
     </div>
 
@@ -9113,6 +9148,31 @@ function s(id) { return (document.getElementById(id)?.value || '').trim(); }
 function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 function fmt(n, d) { return isNaN(n) || !isFinite(n) ? '---' : n.toFixed(d); }
 
+// Reliability tier for pitching IP sample size. Coach Young 2026-05-11.
+// Sabermetric research (FanGraphs): WHIP reliable around 100 IP, ERA
+// approaches stability at ~300 IP, BABIP-against takes 3 years, K-rate
+// is fastest (~70 BF). Scaled to HS innings-per-season here.
+function updatePitchSampleSize(ip) {
+  const num   = parseFloat(ip) || 0;
+  const txtEl = document.getElementById('pitch-sample-current-text');
+  const tier  = document.getElementById('pitch-sample-current-tier');
+  const card  = document.getElementById('pitch-sample-size-card');
+  // Card visibility — mirror the pitching display card. Both gate on IP > 0.
+  if (card) card.style.display = num > 0 ? 'block' : 'none';
+  if (txtEl) txtEl.textContent = (num % 1 === 0 ? num.toFixed(0) : num.toFixed(1)) + ' IP';
+  if (!tier) return;
+  let label, color;
+  if (num === 0)        { label = 'No innings logged yet. Pitch a game in the Daily Journal to start the count.'; color = 'var(--grey)'; }
+  else if (num < 10)    { label = '🚨 Way too small — one bad inning trashes the ERA. Need 10+ IP for a trend.';   color = '#E67E22'; }
+  else if (num < 25)    { label = '⚠️ Trend forming — not stable yet. Push past 25 IP for a meaningful read.';     color = '#E67E22'; }
+  else if (num < 50)    { label = '✓ Decent sample — meaningful for the HS season.';                                color = '#5DADE2'; }
+  else if (num < 100)   { label = '✓✓ Solid HS sample — the number is real.';                                       color = '#27AE60'; }
+  else if (num < 300)   { label = '✓✓✓ WHIP-reliable — sabermetric threshold (~100 IP).';                            color = '#27AE60'; }
+  else                  { label = '✓✓✓✓ ERA approaches statistical stability.';                                       color = '#27AE60'; }
+  tier.textContent = label;
+  tier.style.color = color;
+}
+
 // Reliability tier for batting-average sample size. Educates the
 // player about WHEN their AVG is meaningful — sabermetric research
 // (FanGraphs / Russell Carleton) sets full stabilization at 910 AB;
@@ -9199,6 +9259,10 @@ function calcStats() {
   set('disp-bb9',  !isNaN(bb9)  ? fmt(bb9,  1) : '---');
   colorStat('disp-era',  parseFloat(fmt(era, 2)),  [5,4,3,2],     true);
   colorStat('disp-whip', parseFloat(fmt(whip,2)),  [2,1.5,1.2,1], true);
+
+  // Pitching sample-size reliability — Coach Young 2026-05-11. Same
+  // pattern as the batting AVG card. Mirrors pitching-avg-card visibility.
+  try { updatePitchSampleSize(ip); } catch (e) {}
 
   // Show/hide pitching card
   const pitchCard = document.getElementById('pitching-avg-card');
