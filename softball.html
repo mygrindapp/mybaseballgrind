@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v126';
+    const CACHE = 'ybg-mygrind-v127';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4149,14 +4149,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-top:12px; margin-bottom:6px;">For high school baseball / softball:</div>
       <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
-        <div>• <strong>Under 20 AB</strong> — too small. One hit moves you 50 points.</div>
-        <div>• <strong>20–49 AB</strong> — trend forming, not stable.</div>
-        <div>• <strong>50–99 AB</strong> — meaningful for a HS season.</div>
-        <div>• <strong>100+ AB</strong> — solid sample. The number is real.</div>
+        <div>• <strong>Under 15 AB</strong> — way too small. One hit moves you 50 points.</div>
+        <div>• <strong>15–39 AB</strong> — trend forming (about 5–13 games in).</div>
+        <div>• <strong>40–79 AB</strong> — meaningful HS sample (~half a season).</div>
+        <div>• <strong>80–149 AB</strong> — solid HS workload (full-season everyday starter).</div>
+        <div>• <strong>150+ AB</strong> — heavy HS / college-level sample.</div>
         <div>• <strong>910+ AB</strong> — statistically stable (sabermetric standard).</div>
       </div>
       <div style="margin-top:14px; padding:10px 12px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
-        <strong style="color:var(--gold);">Example:</strong> .340 after 10 at-bats means almost nothing. .340 after 80 at-bats — now you're talking.
+        <strong style="color:var(--gold);">Example:</strong> .340 after 10 at-bats means almost nothing. .340 after 50 at-bats — now you're talking.
       </div>
     </div>
 
@@ -4208,17 +4209,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7;">
         Pitching stats are noisier than batting. Sabermetric research (FanGraphs) shows <strong style="color:#5DADE2;">WHIP needs ~100 IP</strong> to be reliable and <strong style="color:#5DADE2;">ERA approaches stability around 300 IP</strong>. BABIP-against takes ~3 seasons. Strikeout rate (K%) stabilizes fastest — useful info inside 70 batters faced.
       </div>
-      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#5DADE2; text-transform:uppercase; margin-top:12px; margin-bottom:6px;">For high school pitchers:</div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#5DADE2; text-transform:uppercase; margin-top:12px; margin-bottom:6px;">For high school pitchers (about 1/3 of a 25-game season):</div>
       <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.8;">
-        <div>• <strong>Under 10 IP</strong> — way too small. One bad inning trashes the ERA.</div>
-        <div>• <strong>10–24 IP</strong> — trend forming, not stable.</div>
-        <div>• <strong>25–49 IP</strong> — meaningful for a HS season.</div>
-        <div>• <strong>50–99 IP</strong> — solid HS sample.</div>
+        <div>• <strong>Under 5 IP</strong> — way too small. One bad inning trashes the ERA.</div>
+        <div>• <strong>5–14 IP</strong> — a few starts in, not stable yet.</div>
+        <div>• <strong>15–29 IP</strong> — meaningful HS sample (~half-season of starts).</div>
+        <div>• <strong>30–49 IP</strong> — solid HS workload (full-season HS starter).</div>
+        <div>• <strong>50–99 IP</strong> — heavy HS / college-level sample.</div>
         <div>• <strong>100+ IP</strong> — WHIP becomes reliable (sabermetric).</div>
         <div>• <strong>300+ IP</strong> — ERA approaches statistical stability.</div>
       </div>
       <div style="margin-top:14px; padding:10px 12px; background:rgba(93,173,226,0.06); border-left:2px solid #2A4A66; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
-        <strong style="color:#5DADE2;">Example:</strong> 1.50 ERA after 5 IP means almost nothing — that's 7 outs of luck. Same 1.50 over 40 IP? That's a real pitcher.
+        <strong style="color:#5DADE2;">Example:</strong> 1.50 ERA after 3 IP means almost nothing — that's 9 outs of luck. Same 1.50 over 25 IP? That's a real pitcher.
       </div>
     </div>
 
@@ -9148,35 +9150,40 @@ function s(id) { return (document.getElementById(id)?.value || '').trim(); }
 function set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 function fmt(n, d) { return isNaN(n) || !isFinite(n) ? '---' : n.toFixed(d); }
 
-// Reliability tier for pitching IP sample size. Coach Young 2026-05-11.
-// Sabermetric research (FanGraphs): WHIP reliable around 100 IP, ERA
-// approaches stability at ~300 IP, BABIP-against takes 3 years, K-rate
-// is fastest (~70 BF). Scaled to HS innings-per-season here.
+// Reliability tier for pitching IP sample size. Coach Young 2026-05-11
+// iteration 2: original thresholds (100 IP = WHIP-reliable) were
+// college/pro-scaled — a typical HS pitcher logs 30-50 IP across a
+// full 25-game season (1/3 of games, 4-7 IP per start). Tiers
+// rescaled so a HS player actually sees their tier change as the
+// season progresses. Sabermetric stability points (100 IP for WHIP,
+// 300 IP for ERA) preserved as higher tiers for multi-year reference.
 function updatePitchSampleSize(ip) {
   const num   = parseFloat(ip) || 0;
   const txtEl = document.getElementById('pitch-sample-current-text');
   const tier  = document.getElementById('pitch-sample-current-tier');
   const card  = document.getElementById('pitch-sample-size-card');
-  // Card visibility — mirror the pitching display card. Both gate on IP > 0.
   if (card) card.style.display = num > 0 ? 'block' : 'none';
   if (txtEl) txtEl.textContent = (num % 1 === 0 ? num.toFixed(0) : num.toFixed(1)) + ' IP';
   if (!tier) return;
   let label, color;
-  if (num === 0)        { label = 'No innings logged yet. Pitch a game in the Daily Journal to start the count.'; color = 'var(--grey)'; }
-  else if (num < 10)    { label = '🚨 Way too small — one bad inning trashes the ERA. Need 10+ IP for a trend.';   color = '#E67E22'; }
-  else if (num < 25)    { label = '⚠️ Trend forming — not stable yet. Push past 25 IP for a meaningful read.';     color = '#E67E22'; }
-  else if (num < 50)    { label = '✓ Decent sample — meaningful for the HS season.';                                color = '#5DADE2'; }
-  else if (num < 100)   { label = '✓✓ Solid HS sample — the number is real.';                                       color = '#27AE60'; }
-  else if (num < 300)   { label = '✓✓✓ WHIP-reliable — sabermetric threshold (~100 IP).';                            color = '#27AE60'; }
-  else                  { label = '✓✓✓✓ ERA approaches statistical stability.';                                       color = '#27AE60'; }
+  if (num === 0)        { label = 'No innings logged yet. Pitch a game in the Daily Journal to start the count.';   color = 'var(--grey)'; }
+  else if (num < 5)     { label = '🚨 Way too small — one bad inning trashes the ERA. Need 5+ IP for a trend.';      color = '#E67E22'; }
+  else if (num < 15)    { label = '⚠️ A few starts in — not stable yet. Push past 15 IP for a meaningful read.';     color = '#E67E22'; }
+  else if (num < 30)    { label = '✓ Decent HS sample — half-season of starts.';                                     color = '#5DADE2'; }
+  else if (num < 50)    { label = '✓✓ Solid HS sample — full-season workload for a HS starter.';                     color = '#27AE60'; }
+  else if (num < 100)   { label = '✓✓✓ Heavy HS workload / college-level sample.';                                    color = '#27AE60'; }
+  else if (num < 300)   { label = '✓✓✓✓ WHIP-reliable — sabermetric threshold (~100 IP).';                             color = '#27AE60'; }
+  else                  { label = '✓✓✓✓✓ ERA approaches statistical stability (~300 IP).';                              color = '#27AE60'; }
   tier.textContent = label;
   tier.style.color = color;
 }
 
-// Reliability tier for batting-average sample size. Educates the
-// player about WHEN their AVG is meaningful — sabermetric research
-// (FanGraphs / Russell Carleton) sets full stabilization at 910 AB;
-// scaled down to HS context here. Coach Young 2026-05-11.
+// Reliability tier for batting-average sample size. Coach Young
+// 2026-05-11 iteration 2: rescaled to HS reality — a typical HS hitter
+// logs 60-130 AB across a 20-30 game season (3-4 AB per game). The
+// old "100+ AB = solid" threshold was too easy and didn't differentiate
+// the everyday starter (80-120 AB) from heavier workloads. 910 AB
+// stabilization preserved as the multi-year sabermetric reference.
 function updateBaSampleSize(ab) {
   const num   = parseInt(ab) || 0;
   const txtEl = document.getElementById('ba-sample-current-text');
@@ -9184,12 +9191,13 @@ function updateBaSampleSize(ab) {
   if (txtEl) txtEl.textContent = num + ' AB';
   if (!tier) return;
   let label, color;
-  if (num === 0)       { label = 'No at-bats logged yet. Log a game in the Daily Journal to start the count.'; color = 'var(--grey)'; }
-  else if (num < 20)   { label = '🚨 Too small — luck more than skill. Need 20+ for a real trend.';            color = '#E67E22'; }
-  else if (num < 50)   { label = '⚠️ Trend forming — not stable yet. Push past 50 for a meaningful read.';     color = '#E67E22'; }
-  else if (num < 100)  { label = '✓ Decent sample — meaningful for the HS season.';                            color = '#5DADE2'; }
-  else if (num < 910)  { label = '✓✓ Solid sample — the number is real.';                                      color = '#27AE60'; }
-  else                 { label = '✓✓✓ Statistically stable — sabermetric standard.';                            color = '#27AE60'; }
+  if (num === 0)       { label = 'No at-bats logged yet. Log a game in the Daily Journal to start the count.';      color = 'var(--grey)'; }
+  else if (num < 15)   { label = '🚨 Way too small — one hit moves you 50 points. Need 15+ for a trend.';            color = '#E67E22'; }
+  else if (num < 40)   { label = '⚠️ Trend forming — 5-13 games in. Push past 40 for a meaningful read.';            color = '#E67E22'; }
+  else if (num < 80)   { label = '✓ Decent HS sample — half-season of at-bats.';                                    color = '#5DADE2'; }
+  else if (num < 150)  { label = '✓✓ Solid HS sample — full-season workload for an everyday starter.';              color = '#27AE60'; }
+  else if (num < 910)  { label = '✓✓✓ Heavy HS workload / college-level sample.';                                    color = '#27AE60'; }
+  else                 { label = '✓✓✓✓ Statistically stable — sabermetric standard (~910 AB).';                       color = '#27AE60'; }
   tier.textContent = label;
   tier.style.color = color;
 }
