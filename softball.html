@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v143';
+    const CACHE = 'ybg-mygrind-v144';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1927,8 +1927,14 @@ function dismissIosBanner() {
   padding-bottom: env(safe-area-inset-bottom, 0px);
   max-width: 100%;
 ">
-  <button class="tab-btn mg-tab" id="tab-dashboard" onclick="mgTab('dashboard','tab-dashboard')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <span style="font-size:20px;line-height:1;display:inline-flex;align-items:center;justify-content:center;height:20px;"><svg width="18" height="18" viewBox="0 0 24 24" style="display:block;fill:currentColor;"><polygon points="3,3 21,3 21,13 12,22 3,13"/></svg></span>Home
+  <!-- Bottom nav reordered 2026-05-11 (Coach Young): Profile · Journal ·
+       Stats · Dashboard · More. Baseball-themed emoji set replaces the
+       generic 👤 / pentagon-SVG icons — 🧢 cap = player, 📓 notebook =
+       journal, 📊 chart = stats, 🏟️ stadium = "home base" for the
+       Dashboard. Same IDs preserved so every mgTab() call continues
+       to work without code changes. -->
+  <button class="tab-btn mg-tab" id="tab-players"  onclick="mgTab('players','tab-players')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+    <span style="font-size:20px;line-height:1;">🧢</span>Profile
   </button>
   <button class="tab-btn mg-tab" id="tab-journal"  onclick="mgTab('journal','tab-journal')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid var(--gold);color:var(--gold);cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <span style="font-size:20px;line-height:1;">📓</span>Journal
@@ -1936,11 +1942,11 @@ function dismissIosBanner() {
   <button class="tab-btn mg-tab" id="tab-stats"    onclick="mgTab('stats','tab-stats')"    style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <span style="font-size:20px;line-height:1;">📊</span>Stats
   </button>
-  <button class="tab-btn mg-tab" id="tab-players"  onclick="mgTab('players','tab-players')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <span style="font-size:20px;line-height:1;">👤</span>Profile
+  <button class="tab-btn mg-tab" id="tab-dashboard" onclick="mgTab('dashboard','tab-dashboard')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+    <span style="font-size:20px;line-height:1;">🏟️</span>Dashboard
   </button>
   <button class="tab-btn mg-tab" id="tab-more"     onclick="toggleMoreMenu()"               style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <span style="font-size:20px;line-height:1;">···</span>More
+    <span style="font-size:20px;line-height:1;">⚾</span>More
   </button>
 </nav>
 
