@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v148';
+    const CACHE = 'ybg-mygrind-v149';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7578,10 +7578,16 @@ function toggleGameStats() {
   // are all hidden for workouts — the workout section + warm-up + arm
   // care are the only meaningful surfaces. Title stays visible so the
   // player can name a session (e.g. "Leg Day").
-  const hideOthers = isInstructor || isWorkout;
+  // Off Day strips the form down to pure reflection — Coach Young 2026-05-12:
+  // "If off day is selected hide input sections on all sections except
+  // reflection. Rest day means rest." Title + j-what + j-tomorrow + the
+  // j-reflect-extra "How do I prepare" textarea remain; everything else
+  // (Grade chips, Coach/Parent comment) gets hidden.
+  const hideOthers = isInstructor || isWorkout || isOffDay;
   const instructorHideList = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
   const workoutHideList    = ['j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
-  const fieldsToHide = isInstructor ? instructorHideList : (isWorkout ? workoutHideList : []);
+  const offdayHideList     = ['j-team-role', 'j-coach-section', 'j-grade-row'];
+  const fieldsToHide = isInstructor ? instructorHideList : (isWorkout ? workoutHideList : (isOffDay ? offdayHideList : []));
   // Restoration set — union of both hide lists so prevDisplay can
   // restore correctly when the user switches AWAY from workout/instructor.
   const allRestorable = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
