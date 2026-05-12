@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v138';
+    const CACHE = 'ybg-mygrind-v139';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3611,10 +3611,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             <label style="display:flex; align-items:center; gap:8px; background:var(--card2); border:1px solid var(--border); border-radius:2px; padding:8px 10px; cursor:pointer;">
               <input type="checkbox" value="RF"   onchange="savePositions()" style="accent-color:var(--gold); width:16px; height:16px;"> <span style="font-size:13px;">Right Field</span>
             </label>
-            <label style="display:flex; align-items:center; gap:8px; background:var(--card2); border:1px solid var(--border); border-radius:2px; padding:8px 10px; cursor:pointer;">
+            <!-- DP (Designated Player) + FLEX are softball-only positions
+                 — hidden on baseball side via [data-softball-only] +
+                 the global html[data-sport="baseball"] CSS rule. -->
+            <label data-softball-only="true" style="display:flex; align-items:center; gap:8px; background:var(--card2); border:1px solid var(--border); border-radius:2px; padding:8px 10px; cursor:pointer;">
               <input type="checkbox" value="DP"   onchange="savePositions()" style="accent-color:var(--gold); width:16px; height:16px;"> <span style="font-size:13px;">DP</span>
             </label>
-            <label style="display:flex; align-items:center; gap:8px; background:var(--card2); border:1px solid var(--border); border-radius:2px; padding:8px 10px; cursor:pointer;">
+            <label data-softball-only="true" style="display:flex; align-items:center; gap:8px; background:var(--card2); border:1px solid var(--border); border-radius:2px; padding:8px 10px; cursor:pointer;">
               <input type="checkbox" value="FLEX" onchange="savePositions()" style="accent-color:var(--gold); width:16px; height:16px;"> <span style="font-size:13px;">Flex</span>
             </label>
           </div>
@@ -4292,7 +4295,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
     <!-- ── PITCHING ENTRY ── -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">⚾ My Pitching Stats <span style="font-size:10px; color:var(--grey); font-weight:400; letter-spacing:0; text-transform:none;">(pitchers only — fastball, drop ball, rise ball, circle change)</span></div>
+      <div class="card-title">⚾ My Pitching Stats <span style="font-size:10px; color:var(--grey); font-weight:400; letter-spacing:0; text-transform:none;">(pitchers only)</span></div>
       <div class="grid-3">
         <div><label>Innings Pitched (IP)</label><input type="number" id="st-ip" placeholder="0.0" step="0.1" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <div><label>Wins (W)</label><input type="number" id="st-w" placeholder="0" min="0" style="cursor:not-allowed; opacity:0.85;" readonly></div>
@@ -8888,11 +8891,11 @@ function computeEligibility(gpa) {
   const g = parseFloat(gpa);
   const valid = !isNaN(g) && g > 0;
   return {
-    d1:   { ok: valid && g >= 2.3,  label: 'NCAA D1', sub: '2.3 GPA' },
-    d2:   { ok: valid && g >= 2.2,  label: 'NCAA D2', sub: '2.2 GPA' },
+    d1:   { ok: valid && g >= 2.3,  label: 'NCAA D1', sub: 'Needs 2.3 GPA' },
+    d2:   { ok: valid && g >= 2.2,  label: 'NCAA D2', sub: 'Needs 2.2 GPA' },
     d3:   { ok: valid,              label: 'NCAA D3', sub: 'School-specific', neutral: true },
-    naia: { ok: valid && g >= 2.3,  label: 'NAIA',    sub: '2.3 GPA' },
-    juco: { ok: valid,              label: 'JUCO',    sub: 'Open',    neutral: true }
+    naia: { ok: valid && g >= 2.3,  label: 'NAIA',    sub: 'Needs 2.3 GPA' },
+    juco: { ok: valid,              label: 'JUCO',    sub: 'Open admissions', neutral: true }
   };
 }
 
