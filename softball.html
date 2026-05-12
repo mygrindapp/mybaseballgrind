@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v139';
+    const CACHE = 'ybg-mygrind-v140';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8882,20 +8882,48 @@ function renderGrades() {
 }
 
 // ─── COLLEGE ELIGIBILITY ──────────────────────────────────
-// Coach Young 2026-05-11: research-sourced thresholds (NCAA / NAIA /
-// JUCO). Phase 1 uses overall GPA as a quick proxy — the NCAA-accurate
-// "core-course GPA" needs a full 16-course tracker which is Pro.
-//   NCAA D1: 2.3+   · NCAA D2: 2.2+   · NCAA D3: school-specific
-//   NAIA:    2.3+   · JUCO:    open / school-specific
+// Coach Young 2026-05-11 iteration 2: "The GPA seems very low. When my
+// son was getting recruited they wanted him to 3.5 or better." Right —
+// the 2.3 floor is the NCAA bare-minimum eligibility check, NOT the
+// recruiting bar. Research confirms (NCSA, NextCommit, College
+// Openings 2026): actual recruits at D1/D2/NAIA cluster around 3.0+,
+// and top academic D3 / Ivy targets 3.5+.
+//
+// Tiers now show RANGES with three states per division:
+//   ✅ ok    — at or above the recruit-competitive bar
+//   ⚠️ warn  — eligible but below the typical recruit average
+//   ❌ bad   — below the NCAA minimum eligibility floor
+//   ℹ️ neutral — no GPA logged yet (school-specific cases use the
+//                neutral state too)
 function computeEligibility(gpa) {
   const g = parseFloat(gpa);
   const valid = !isNaN(g) && g > 0;
+  // Helper for divisions with a hard NCAA minimum + a recruit-competitive bar.
+  const tier = function(label, sub, min, comp) {
+    if (!valid) return { label: label, sub: sub, neutral: true };
+    if (g >= comp) return { label: label, sub: sub, ok: true };
+    if (g >= min)  return { label: label, sub: sub, warn: true };
+    return { label: label, sub: sub, bad: true };
+  };
   return {
-    d1:   { ok: valid && g >= 2.3,  label: 'NCAA D1', sub: 'Needs 2.3 GPA' },
-    d2:   { ok: valid && g >= 2.2,  label: 'NCAA D2', sub: 'Needs 2.2 GPA' },
-    d3:   { ok: valid,              label: 'NCAA D3', sub: 'School-specific', neutral: true },
-    naia: { ok: valid && g >= 2.3,  label: 'NAIA',    sub: 'Needs 2.3 GPA' },
-    juco: { ok: valid,              label: 'JUCO',    sub: 'Open admissions', neutral: true }
+    d1:   tier('NCAA D1', 'Min 2.3 · Recruits 3.0+',                2.3, 3.0),
+    d2:   tier('NCAA D2', 'Min 2.2 · Recruits 2.8+',                2.2, 2.8),
+    d3: (function() {
+      // D3 has no NCAA minimum but admissions-based — competitive
+      // recruits at non-Ivy D3s cluster around 3.0+; high-academic D3
+      // and Ivy targets 3.5+. No "bad" state since no NCAA floor.
+      if (!valid)        return { label: 'NCAA D3', sub: 'Recruits 3.0+ · Top 3.5+', neutral: true };
+      if (g >= 3.0)      return { label: 'NCAA D3', sub: 'Recruits 3.0+ · Top 3.5+', ok: true };
+      return                     { label: 'NCAA D3', sub: 'Recruits 3.0+ · Top 3.5+', warn: true };
+    })(),
+    naia: tier('NAIA',    'Min 2.3 · Recruits 3.0+',                2.3, 3.0),
+    juco: (function() {
+      // JUCO admissions are open / school-specific. 2.5+ keeps doors
+      // open for transferring up to D1/D2 later.
+      if (!valid)        return { label: 'JUCO', sub: 'Open · 2.5+ to transfer up', neutral: true };
+      if (g >= 2.5)      return { label: 'JUCO', sub: 'Open · 2.5+ to transfer up', ok: true };
+      return                     { label: 'JUCO', sub: 'Open · 2.5+ to transfer up', warn: true };
+    })()
   };
 }
 
@@ -8908,8 +8936,10 @@ function _eligTileHTML(tier, compact) {
     bg = 'rgba(168,217,123,0.05)'; border = '#1A3A1A'; color = '#A8D97B'; icon = 'ℹ️';
   } else if (tier.ok) {
     bg = 'rgba(39,174,96,0.10)';   border = '#27AE60'; color = '#58D68D'; icon = '✅';
+  } else if (tier.warn) {
+    bg = 'rgba(230,126,34,0.08)';  border = '#B95E15'; color = '#E67E22'; icon = '⚠️';
   } else {
-    bg = 'rgba(192,57,43,0.08)';   border = '#7A2F26'; color = '#E57373'; icon = '⚠️';
+    bg = 'rgba(192,57,43,0.08)';   border = '#7A2F26'; color = '#E57373'; icon = '❌';
   }
   return '<div style="padding:' + padding + '; background:' + bg + '; border:1px solid ' + border + '; border-radius:3px;">' +
            '<div style="font-family:\'Barlow Condensed\'; font-size:' + titleSize + '; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:' + color + ';">' + icon + ' ' + tier.label + '</div>' +
