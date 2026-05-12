@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v140';
+    const CACHE = 'ybg-mygrind-v141';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3671,18 +3671,25 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         "Pull every grade right now. If anything is slipping, handle it today — not next week."
       </div>
 
-      <!-- GPA row -->
+      <!-- GPA row — Coach Young 2026-05-11 iteration 3: "The GPA shouldn't
+           be editable. It should come from the grades they input for class.
+           There should be an honest path with no manipulation."
+           Current GPA is now AUTO-COMPUTED from the 6 subject grades below.
+           Target stays editable (it's a goal, not a fact).
+           pl-gpa-current is hidden (kept as the state-write target so
+           computeEligibility / dashboard render keep working). -->
       <div class="grid-2" style="margin-bottom:18px;">
         <div style="text-align:center; padding:14px 10px; background:var(--card2); border-radius:3px; border-top:2px solid #2A3A2A;">
           <div class="gpa-num" id="gpa-display" style="font-size:38px;">—</div>
           <div class="gpa-label" style="margin-top:4px;">Current GPA · Target: <span id="gpa-target-display">—</span></div>
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:6px; line-height:1.4; font-style:italic;">Auto-calculated from your grades below</div>
         </div>
         <div>
-          <label>My GPA</label>
-          <input type="number" id="gpa-current" step="0.1" min="0" max="4.0" placeholder="e.g. 3.2">
+          <input type="hidden" id="gpa-current">
           <label>Target GPA</label>
           <input type="number" id="gpa-target" step="0.1" min="0" max="4.0" placeholder="e.g. 3.5">
-          <button class="btn btn-gold btn-sm" onclick="saveGPA()" style="margin-top:4px;">Save GPA</button>
+          <button class="btn btn-gold btn-sm" onclick="saveGPA()" style="margin-top:4px;">Save Target</button>
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:10px; line-height:1.5;">Set the GPA you're chasing. We'll auto-compute your current GPA from the class grades below — no manual override.</div>
         </div>
       </div>
 
@@ -3702,32 +3709,32 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">English<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 4 yr</span></div>
           <input type="text" class="subject-name" placeholder="e.g. AP English Lit" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Math<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 3 yr (Alg 1+)</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Algebra 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Natural Science<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr (1 lab)</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Biology" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Social Studies<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr</span></div>
           <input type="text" class="subject-name" placeholder="e.g. US History" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Foreign Language<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · additional</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Spanish 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Elective<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">PE / Arts / Other</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Weight Training" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
       </div>
     </div>
@@ -8877,6 +8884,35 @@ function renderGrades() {
   const names  = [...document.querySelectorAll('.subject-name')].map(s => s.value);
   try { localStorage.setItem('ybg_subject_grades', JSON.stringify(grades)); } catch(e) {}
   try { localStorage.setItem('ybg_subject_names',  JSON.stringify(names)); } catch(e) {}
+
+  // Auto-compute Current GPA from the subject grades (Coach Young
+  // 2026-05-11 iteration 3: "The GPA shouldn't be editable. It should
+  // come from the grades they input. Honest path with no manipulation.")
+  // Standard unweighted 4.0 scale. Empty/unselected subjects skipped so
+  // a partially-filled term doesn't penalize the player.
+  const gradePoints = { 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0 };
+  let total = 0, count = 0;
+  grades.forEach(function(g) {
+    if (gradePoints[g] !== undefined) { total += gradePoints[g]; count++; }
+  });
+  if (count > 0) {
+    const computed = (total / count).toFixed(2);
+    if (state && state.gpa) state.gpa.current = computed;
+    const hidden  = document.getElementById('gpa-current');
+    const display = document.getElementById('gpa-display');
+    if (hidden)  hidden.value = computed;
+    if (display) display.textContent = computed;
+    try { saveState(); } catch(e) {}
+  } else {
+    // No grades entered yet — clear the display so we don't show a stale value.
+    if (state && state.gpa) state.gpa.current = '';
+    const hidden  = document.getElementById('gpa-current');
+    const display = document.getElementById('gpa-display');
+    if (hidden)  hidden.value = '';
+    if (display) display.textContent = '—';
+    try { saveState(); } catch(e) {}
+  }
+
   try { renderEligibility(); } catch(e) {}
   try { renderDashAcademics(); } catch(e) {}
 }
@@ -9188,11 +9224,11 @@ function renderGoals() {
 
 // ─── GPA ──────────────────────────────────────────────────
 function saveGPA() {
-  const cur = document.getElementById('gpa-current').value;
+  // Only Target GPA is editable now — current GPA is auto-computed from
+  // class grades by renderGrades() (Coach Young 2026-05-11). Manual
+  // current-GPA path was removed to prevent self-manipulation.
   const tgt = document.getElementById('gpa-target').value;
-  state.gpa.current = cur;
   state.gpa.target = tgt;
-  document.getElementById('gpa-display').textContent = cur || '—';
   document.getElementById('gpa-target-display').textContent = tgt || '—';
   // Persist to localStorage so it survives reloads
   try { saveState(); } catch(e) {}
@@ -9252,6 +9288,10 @@ function loadGradesUI() {
         }
       }
     } catch(e) {}
+    // Auto-compute Current GPA from the restored subject grades. Coach
+    // Young 2026-05-11: current GPA is no longer manually editable —
+    // renderGrades() handles the compute + state write + display update.
+    try { renderGrades(); } catch(e) {}
     // Paint the eligibility + dashboard tiles with current state.
     try { renderEligibility(); } catch(e) {}
     try { renderDashAcademics(); } catch(e) {}
