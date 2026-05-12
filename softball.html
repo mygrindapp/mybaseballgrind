@@ -1226,7 +1226,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v123';
+    const CACHE = 'ybg-mygrind-v124';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4024,9 +4024,19 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div style="font-family:'Bebas Neue'; font-size:28px; letter-spacing:2px; color:var(--white); line-height:1;" id="st-nameplate">— Enter Your Info Below —</div>
         <div style="font-family:'Barlow Condensed'; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-top:2px;" id="st-subplate">Position · Team · Season</div>
       </div>
-      <button onclick="document.getElementById('stats-entry-section').scrollIntoView({behavior:'smooth'})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 16px; border-radius:2px; cursor:pointer; white-space:nowrap;">
-        ✏️ Enter / Edit Stats
-      </button>
+      <!-- Read-only badge — Coach Young 2026-05-11: "Change Enter button
+           and replace it with: stats can't be edited, you need to go in
+           journal and find game to edit and stats will update here."
+           Was a tappable "Enter / Edit Stats" button that implied
+           editability; now a clear non-interactive badge that points to
+           the source of truth (Game entries in the journal). -->
+      <div style="display:flex; align-items:center; gap:8px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px; padding:8px 14px; white-space:nowrap;">
+        <span style="font-size:14px;">🔒</span>
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; line-height:1.2;">
+          <div style="color:var(--gold);">Read-Only</div>
+          <div style="color:var(--grey); font-weight:600; letter-spacing:0.5px; text-transform:none; font-size:11px; margin-top:2px;">Edit games in the journal · Stats update here</div>
+        </div>
+      </div>
     </div>
 
     <!-- ══ BATTING STAT DISPLAY ══ -->
