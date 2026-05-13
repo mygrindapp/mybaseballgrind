@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v150';
+    const CACHE = 'ybg-mygrind-v151';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7546,10 +7546,18 @@ function applyOffDayLock() {
   const entryDate = dateInputToEntryFormat(dateInput && dateInput.value);
   const locked = !editing && hasOffDayOnDate(entryDate);
   if (locked) {
+    // Off Day itself stays enabled so the player can still create/replace
+    // a rest-day entry — only the training-type entries (game, practice,
+    // instructor, gym) get blocked. Reflection is always allowed.
+    // Coach Young 2026-05-12: "When you select off day you should be able
+    // to select save entry." (Earlier version disabled 'offday' too,
+    // which silently reverted the dropdown to Reflection and made save
+    // appear broken.)
+    const allowed = { reflection: true, offday: true };
     Array.from(sel.options).forEach(function(o) {
-      o.disabled = (o.value !== 'reflection');
+      o.disabled = !allowed[o.value];
     });
-    if (sel.value !== 'reflection') sel.value = 'reflection';
+    if (!allowed[sel.value]) sel.value = 'reflection';
     if (dateEl) dateEl.textContent = entryDate;
     if (banner) banner.style.display = 'block';
   } else {
