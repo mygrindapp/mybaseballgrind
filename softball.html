@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v152';
+    const CACHE = 'ybg-mygrind-v153';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7001,6 +7001,23 @@ function saveEntry() {
   // alert which made the form feel like a game.
   if (!title && type !== 'practice' && type !== 'instructor' && type !== 'offday' && type !== 'workout') { alert('Please add a title or opponent.'); return; }
 
+  // Hard duplicate-off-day guard — Coach Young 2026-05-12. Even if rapid
+  // save clicks bypass the dropdown lock, this catches the save attempt
+  // and refuses to write a second off-day for the same date.
+  if (type === 'offday' && !editingEntryId) {
+    const _entryDate = date
+      ? new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    const _dup = state.entries.some(function(e) {
+      return e && e.type === 'offday' && e.date === _entryDate;
+    });
+    if (_dup) {
+      alert('You already logged an Off Day for ' + _entryDate + '.\n\nDelete the existing Off Day first if you want to log a new one.');
+      try { applyOffDayLock(); } catch(_) {}
+      return;
+    }
+  }
+
   // Reps-without-context guard — Coach Young 2026-05-10 walkthrough.
   // A practice entry with rep chips tapped but no reflection / grade /
   // photos / coach comment is streak-padding, not journaling. Block
@@ -7536,28 +7553,46 @@ function hasOffDayOnDate(dateStr) {
   });
 }
 
+let _applyingOffDayLock = false;
 function applyOffDayLock() {
-  const sel    = document.getElementById('j-type');
-  const banner = document.getElementById('j-offday-lock');
-  const dateEl = document.getElementById('j-offday-lock-date');
-  if (!sel) return;
-  const editing = typeof editingEntryId !== 'undefined' && editingEntryId;
-  const dateInput = document.getElementById('j-date');
-  const entryDate = dateInputToEntryFormat(dateInput && dateInput.value);
-  const locked = !editing && hasOffDayOnDate(entryDate);
-  if (locked) {
-    // Off Day already exists for this date — block every type except
-    // Reflection. Coach Young 2026-05-12: "Make off day only able to
-    // choose once during that day."
-    Array.from(sel.options).forEach(function(o) {
-      o.disabled = (o.value !== 'reflection');
-    });
-    if (sel.value !== 'reflection') sel.value = 'reflection';
-    if (dateEl) dateEl.textContent = entryDate;
-    if (banner) banner.style.display = 'block';
-  } else {
-    Array.from(sel.options).forEach(function(o) { o.disabled = false; });
-    if (banner) banner.style.display = 'none';
+  // Recursion guard — toggleGameStats() calls applyOffDayLock() at its
+  // top, and we now call toggleGameStats() back when we force-revert
+  // the dropdown value (so the form actually re-renders into Reflection
+  // layout). Without this flag those two would bounce forever.
+  if (_applyingOffDayLock) return;
+  _applyingOffDayLock = true;
+  try {
+    const sel    = document.getElementById('j-type');
+    const banner = document.getElementById('j-offday-lock');
+    const dateEl = document.getElementById('j-offday-lock-date');
+    if (!sel) return;
+    const editing = typeof editingEntryId !== 'undefined' && editingEntryId;
+    const dateInput = document.getElementById('j-date');
+    const entryDate = dateInputToEntryFormat(dateInput && dateInput.value);
+    const locked = !editing && hasOffDayOnDate(entryDate);
+    if (locked) {
+      // Off Day already exists for this date — block every type except
+      // Reflection. Coach Young 2026-05-12: "Make off day only able to
+      // choose once during that day."
+      Array.from(sel.options).forEach(function(o) {
+        o.disabled = (o.value !== 'reflection');
+      });
+      if (sel.value !== 'reflection') {
+        sel.value = 'reflection';
+        // Force the form to re-render into Reflection layout. Without
+        // this, the previously-rendered Off Day banner / info card stays
+        // visible even though j-type.value has flipped to reflection,
+        // which made the lock feel half-applied during the walkthrough.
+        try { toggleGameStats(); } catch(_) {}
+      }
+      if (dateEl) dateEl.textContent = entryDate;
+      if (banner) banner.style.display = 'block';
+    } else {
+      Array.from(sel.options).forEach(function(o) { o.disabled = false; });
+      if (banner) banner.style.display = 'none';
+    }
+  } finally {
+    _applyingOffDayLock = false;
   }
 }
 
