@@ -5169,6 +5169,24 @@ window.addEventListener('DOMContentLoaded', () => {
   } catch (e) { /* old browser — fall through */ }
 
   loadState();
+
+  // ?promo=<code> auto-applies a promo code from the URL (used by the
+  // launch-day broadcast email so the link is one-click — code is already
+  // attached when the user lands). Param is uppercased + stripped from
+  // the URL so a refresh doesn't re-apply. Screen 5's restorePromoCode()
+  // picks it up from state on render and auto-expands the promo details.
+  try {
+    var qsPromo = new URLSearchParams(window.location.search);
+    var promoParam = qsPromo.get('promo');
+    if (promoParam) {
+      state.promoCode = promoParam.trim().toUpperCase().slice(0, 40);
+      saveState();
+      qsPromo.delete('promo');
+      var cleanPromo = window.location.pathname + (qsPromo.toString() ? '?' + qsPromo.toString() : '');
+      window.history.replaceState(null, '', cleanPromo);
+    }
+  } catch (e) { /* old browser — fall through */ }
+
   if (!state.startedAt) {
     state.startedAt = new Date().toISOString();
     saveState();
