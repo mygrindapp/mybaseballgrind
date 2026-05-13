@@ -1259,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v164';
+    const CACHE = 'ybg-mygrind-v165';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -11690,12 +11690,37 @@ function updateStreakDisplay() {
   const el = document.getElementById('dash-streak');
   if (el) el.textContent = streak;
 
-  // 🔥 flame appears whenever the player has any active streak (1+ days
-  // of consecutive journal entries). Hidden at streak === 0 so it isn't a
-  // decoration showing when the user has done nothing. Coach Young
-  // 2026-05-09: lowered from 3 -> 1 so any actual streak earns the flame.
+  // Tier-based streak emoji — Coach Young 2026-05-12:
+  // "On dashboard's streak fire should show only if you truly have a
+  // streak. If you have no streak maybe a cold or frozen emoji. Once
+  // you have 3 or more entries in the week it can start showing
+  // Flames. If you log every day it should show diamonds."
+  //
+  //   🧊 cold     — no streak AND fewer than 3 entries the last 7 days
+  //   🔥 flame    — heating up (any active streak, or 3+ entries this week)
+  //   💎 diamond  — logging every day (streak ≥ 7)
+  let entriesLast7 = 0;
+  try {
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const sevenStart = new Date(today); sevenStart.setDate(today.getDate() - 6);
+    entriesLast7 = ((state && state.entries) || []).filter(function(e) {
+      if (!e || !e.date) return false;
+      const d = parseEntryDate(e.date);
+      return d && d >= sevenStart;
+    }).length;
+  } catch (_) {}
+
   const flame = document.getElementById('streak-flame');
-  if (flame) flame.style.display = streak >= 1 ? 'block' : 'none';
+  if (flame) {
+    let emoji = '🧊';
+    if (streak >= 7)                              emoji = '💎';
+    else if (streak >= 1 || entriesLast7 >= 3)    emoji = '🔥';
+    flame.textContent = emoji;
+    flame.style.display = 'block';
+    // Cold tier reads as inactive — softer opacity reinforces "work to do."
+    flame.style.opacity = (emoji === '🧊') ? '0.55' : '1';
+  }
 
   // Check for milestones
   checkMilestones(streak);
