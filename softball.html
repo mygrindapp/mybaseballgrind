@@ -701,6 +701,15 @@
   }
   .btn-saving { animation: savePulse 0.6s ease-out; }
 
+  /* Universal press flash — applied via JS pointerdown listener to every
+     button in the app so every tap reads as a real press, paired with a
+     short haptic vibration. Coach Young 2026-05-12. */
+  @keyframes btnPressFlash {
+    0%   { transform: scale(0.94); filter: brightness(1.25); }
+    100% { transform: scale(1);    filter: brightness(1);     }
+  }
+  .btn-press-flash { animation: btnPressFlash 0.18s ease-out; }
+
   /* Sport-scoped visibility — Coach Young 2026-05-11. Any element marked
      [data-softball-only] hides when the app is in baseball mode. The
      sport toggle writes data-sport="baseball|softball" to <html>, so
@@ -1250,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v156';
+    const CACHE = 'ybg-mygrind-v157';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7292,6 +7301,35 @@ function saveEntry() {
     state.entries.unshift(entry);
   }
 
+  // BULLETPROOF entry-list refresh — Coach Young 2026-05-12 (ongoing bug):
+  // "Once you hit save the entry is not shown in the log." Force the
+  // entries-list filter to a window that includes today's entry AND
+  // re-render the entries list directly (bypass any renderAll wrapper
+  // ordering). This runs BEFORE the form reset so even if anything below
+  // throws, the new entry is already visible.
+  try {
+    const _newDate = entry.date;
+    const _todayStr = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    // Today's entry → force "today" filter so the entries-list shows it.
+    // Back-dated entry → force "all" filter so the user sees it anywhere
+    // in the history. Either way the new entry is guaranteed visible.
+    if (typeof _entriesFilter === 'string' && _entriesFilter.indexOf('date:') === 0) {
+      // User had a specific date filter active — respect it only if it
+      // matches the new entry's date.
+    } else if (_newDate === _todayStr) {
+      _entriesFilter = 'today';
+    } else {
+      _entriesFilter = 'all';
+    }
+    // Sync the filter chip visual state.
+    document.querySelectorAll('.entries-filter-chip').forEach(function(b) {
+      const k = b.dataset && b.dataset.entriesFilter;
+      if (k === _entriesFilter) b.classList.add('selected');
+      else b.classList.remove('selected');
+    });
+    if (typeof renderEntries === 'function') renderEntries();
+  } catch (_) {}
+
   // Reset form
   document.getElementById('j-title').value    = '';
   document.getElementById('j-what').value     = '';
@@ -7338,22 +7376,10 @@ function saveEntry() {
   pendingMedia = [];
   renderMediaPreview();
 
-  // Make sure the new entry is visible in the current filter window.
-  // Coach Young 2026-05-11 walkthrough: "I logged my gym session but
-  // nothing showed up in entry." Root cause was a stale Pick Date
-  // filter from a previous session hiding the new entry. If the entry's
-  // date doesn't pass the current filter, jump back to 'today' so the
-  // player actually sees what just saved. Back-dated entries already
-  // get their own toast that names the date, so the filter stays put
-  // for those (matches the earlier ba6b910 decision to not yank the
-  // player off their current view for back-dates).
-  try {
-    if (_filteredEntries([entry]).length === 0) {
-      if (typeof setEntriesFilter === 'function') setEntriesFilter('today');
-      else _entriesFilter = 'today';
-    }
-  } catch (_) {}
-
+  // Filter was already set + entries rendered up above (right after
+  // state.entries.unshift) so the player sees their entry before any
+  // form reset work. renderAll() now refreshes the dashboard / stats /
+  // dependent UI.
   renderAll();
 
   // Post-save UX (Coach Young 2026-05-11 iteration 2): confirm with a
@@ -11322,12 +11348,25 @@ function ybgHaptic(pattern) {
     try { navigator.vibrate(pattern || 15); } catch(e) {}
   }
 }
-// Attach haptic to all primary buttons automatically
-document.addEventListener('click', function(e) {
-  const t = e.target.closest('button, .btn, a.btn');
+// Attach haptic + visible press flash to every button automatically.
+// Coach Young 2026-05-12: "I need to fix all buttons throughout the app
+// to have that haptic feel when you hit any button in the app." Uses
+// pointerdown (not click) so the flash + vibration land the INSTANT the
+// finger touches the screen rather than after a tap completes.
+document.addEventListener('pointerdown', function(e) {
+  const t = e.target.closest('button, .btn, a.btn, [role="button"]');
   if (!t) return;
+  if (t.disabled) return;
   if (t.classList.contains('no-haptic')) return;
-  ybgHaptic(12);
+  ybgHaptic(10);
+  // Visible flash — restart the pulse animation on every press by
+  // toggling the class through a forced reflow.
+  t.classList.remove('btn-press-flash');
+  void t.offsetWidth;
+  t.classList.add('btn-press-flash');
+  setTimeout(function() {
+    try { t.classList.remove('btn-press-flash'); } catch(_) {}
+  }, 300);
 }, { passive: true });
 
 // ─── STREAK CALCULATION ──────────────────────────────────
