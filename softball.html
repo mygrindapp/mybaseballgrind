@@ -1259,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v158';
+    const CACHE = 'ybg-mygrind-v159';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2528,12 +2528,12 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            add an entry they have to deselect off day." Shows when an
            Off Day entry already exists for the date in #j-date.
            Visibility + dropdown disable wired in applyOffDayLock(). -->
-      <div id="j-offday-lock" style="display:none; padding:16px; margin-bottom:18px; background:rgba(231,76,60,0.08); border:1px solid #C0392B; border-radius:3px;">
-        <div style="font-family:'Bebas Neue',cursive; font-size:18px; letter-spacing:2px; color:#E74C3C; line-height:1; margin-bottom:8px;">🔒 OFF DAY LOCKED FOR <span id="j-offday-lock-date">THIS DATE</span></div>
+      <div id="j-offday-lock" style="display:none; padding:16px; margin-bottom:18px; background:rgba(93,173,226,0.06); border:1px solid #5DADE2; border-radius:3px;">
+        <div style="font-family:'Bebas Neue',cursive; font-size:18px; letter-spacing:2px; color:#5DADE2; line-height:1; margin-bottom:8px;">😴 OFF DAY ALREADY LOGGED — <span id="j-offday-lock-date">THIS DATE</span></div>
         <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.55;">
-          You already logged an <strong style="color:#E74C3C;">Off Day</strong> for this date — rest is rest. Only <strong style="color:var(--gold);">Reflection</strong> entries are allowed.
+          <strong style="color:#D4C29B;">Reflection is still open</strong> — pick Reflection above to journal your thoughts.
           <br><br>
-          To log a Practice, Game, Instructor session, or Gym entry instead, scroll down to your entries list and <strong>delete the Off Day entry</strong> first.
+          Practice, Game, Instructor, and Gym entries are blocked for this date. To swap to one of those, scroll down to your entries list and <strong>delete the Off Day entry</strong> first.
         </div>
       </div>
 
@@ -2719,6 +2719,80 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
 
+      <!-- ── REFLECTION INTRO + MINDSET CHECK-IN ──
+           Coach Young 2026-05-12 walkthrough: "Make those boxes more
+           reflection theme. Check the top reflection apps areas on the
+           internet and get their style. Keep in mind this is a baseball
+           and softball accountability journal."
+           Pattern borrowed from Day One / Stoic / Reflectly: open with a
+           mood check-in + an italic invitation to slow down. Keeps the
+           MyGrind dark + gold palette but uses a softer cream accent and
+           italic copy so the section reads as contemplative, not
+           transactional. Visibility wired in toggleGameStats(). -->
+      <div id="j-reflection-intro" style="display:none; padding:18px 20px; margin-bottom:20px; background:linear-gradient(135deg,#15110D,#0E0A06); border:1px solid #4A3F2E; border-left:3px solid #D4C29B; border-radius:4px;">
+        <div style="font-family:'Bebas Neue',cursive; font-size:22px; letter-spacing:3px; color:#D4C29B; line-height:1; margin-bottom:8px;">🪞 REFLECTION</div>
+        <div style="font-family:'Lora',Georgia,serif; font-style:italic; font-size:14px; color:#C9BFB1; line-height:1.6; margin-bottom:18px;">Take a breath. Get honest with yourself. This journal doesn't lie — and neither should you.</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#D4C29B; margin-bottom:10px;">How are you feeling about the grind today?</div>
+        <div id="j-mindset-chips" style="display:flex; flex-wrap:wrap; gap:6px;">
+          <button type="button" class="mindset-chip" data-mindset="fired" onclick="selectMindset('fired', this)">🔥 Fired up</button>
+          <button type="button" class="mindset-chip" data-mindset="calm" onclick="selectMindset('calm', this)">😌 Calm</button>
+          <button type="button" class="mindset-chip" data-mindset="grateful" onclick="selectMindset('grateful', this)">🙏 Grateful</button>
+          <button type="button" class="mindset-chip" data-mindset="neutral" onclick="selectMindset('neutral', this)">😐 Neutral</button>
+          <button type="button" class="mindset-chip" data-mindset="frustrated" onclick="selectMindset('frustrated', this)">😤 Frustrated</button>
+          <button type="button" class="mindset-chip" data-mindset="down" onclick="selectMindset('down', this)">😞 Down</button>
+        </div>
+        <input type="hidden" id="j-mindset" value="">
+      </div>
+
+      <style>
+        .mindset-chip {
+          background: transparent;
+          border: 1px solid #4A3F2E;
+          color: #C9BFB1;
+          font-family: 'Barlow Condensed', sans-serif;
+          font-size: 13px;
+          font-weight: 700;
+          letter-spacing: 1px;
+          text-transform: uppercase;
+          padding: 9px 13px;
+          border-radius: 3px;
+          cursor: pointer;
+          transition: all 0.15s;
+        }
+        .mindset-chip:hover { background: rgba(212,194,155,0.06); }
+        .mindset-chip.selected {
+          background: #D4C29B;
+          color: #161210;
+          border-color: #D4C29B;
+        }
+        /* Reflection theme — softer label treatment when the form is in
+           reflection mode. Activated by data-reflection-active on body. */
+        body[data-reflection-active="1"] #j-what-label,
+        body[data-reflection-active="1"] #j-tomorrow-label,
+        body[data-reflection-active="1"] #j-reflect-extra label,
+        body[data-reflection-active="1"] #j-title-label {
+          font-style: italic;
+          font-family: 'Lora', Georgia, serif;
+          color: #D4C29B;
+          letter-spacing: 0.3px;
+          text-transform: none;
+          font-size: 14px;
+        }
+        body[data-reflection-active="1"] #j-what,
+        body[data-reflection-active="1"] #j-tomorrow,
+        body[data-reflection-active="1"] #j-prepare,
+        body[data-reflection-active="1"] #j-title {
+          min-height: 90px;
+          line-height: 1.6;
+          background: #14100C;
+          border: 1px solid #3A3225;
+          border-left: 2px solid #D4C29B;
+        }
+        body[data-reflection-active="1"] #j-title {
+          min-height: 0;
+        }
+      </style>
+
       <div id="j-title-wrapper" style="display:none;">
         <label id="j-title-label">Title</label>
         <input type="text" id="j-title" placeholder="e.g. End of Week Reflection">
@@ -2736,10 +2810,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
       <label id="j-tomorrow-label">What am I taking into the next practice or game?</label>
       <textarea id="j-tomorrow" inputmode="text" placeholder="What is one thing I want to carry forward and keep working on?"></textarea>
-      <!-- Reflection-only third prompt -->
+      <!-- Reflection-only third prompt — Coach Young 2026-05-12 redesign:
+           prompt softened from "How do I prepare" (transactional) to
+           something more identity / character focused. Same id so save/
+           edit paths continue to work without migration. -->
       <div id="j-reflect-extra" style="display:none;">
-        <label>How do I prepare for what's next?</label>
-        <textarea id="j-prepare" inputmode="text" placeholder="What do I need to work on? What is my focus going into the next practice, game, or week?"></textarea>
+        <label>What's one thing you're carrying into tomorrow?</label>
+        <textarea id="j-prepare" inputmode="text" placeholder="A mindset, a lesson, a small win, a person to thank, a habit to keep. One thing — make it real."></textarea>
       </div>
 
       <!-- Grade + Result selectors — replaced <select> dropdowns with chip
@@ -7037,12 +7114,13 @@ function saveEntry() {
   const commentRole = document.getElementById('j-comment-role').value;
   const commentText = document.getElementById('j-comment-text').value.trim();
 
-  // Title required for game / reflection. Practice / instructor / offday /
-  // workout hide the title field by default OR have their own structured
-  // fields (lifts log for workout), so a title isn't required. Coach Young
-  // 2026-05-11: workout was blocking save with the "title or opponent"
-  // alert which made the form feel like a game.
-  if (!title && type !== 'practice' && type !== 'instructor' && type !== 'offday' && type !== 'workout') { alert('Please add a title or opponent.'); return; }
+  // Title required only for Game entries (where the "Opponent" makes a
+  // title meaningful). Every other entry type has its own structured
+  // fields or free-flowing prompts where a title is overhead. Coach
+  // Young 2026-05-12: "When I try to add a reflection it doesn't allow
+  // me" — title was being required for reflection and quietly blocking
+  // save when the player left it empty.
+  if (!title && type === 'game') { alert('Add an opponent or title for this game.'); return; }
 
   // Hard duplicate-off-day guard — Coach Young 2026-05-12. Even if rapid
   // save clicks bypass the dropdown lock, this catches the save attempt
@@ -7141,6 +7219,9 @@ function saveEntry() {
       return (s === 'softball') ? 'softball' : 'baseball';
     } catch (e) { return 'baseball'; }
   })();
+  // Mindset captured from the Reflection intro emoji picker (Coach Young
+  // 2026-05-12 redesign). Empty string for non-reflection entries.
+  const mindset = (document.getElementById('j-mindset')?.value || '').trim();
   const entry = {
     id:        Date.now(),
     date:      date ? new Date(date + 'T12:00:00').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Today',
@@ -7150,6 +7231,7 @@ function saveEntry() {
     media:     [...pendingMedia],
     comments:  []
   };
+  if (mindset && type === 'reflection') entry.mindset = mindset;
 
   // Capture rep counter values for Practice + Instructor entries.
   // No type gate (was previously 'practice' only — bug fixed 2026-05-08:
@@ -7360,6 +7442,7 @@ function saveEntry() {
   if (resultEl) resultEl.value = '';
   // Clear chip visual selections after wiping the hidden inputs above.
   try { resetGradeResultChips(); } catch (_) {}
+  try { resetMindsetChips(); } catch (_) {}
   // Reset practice mode back to default 'team' for the next entry.
   try { setPracticeMode('team'); } catch (_) {}
   // Reset the date back to today — otherwise the form keeps showing
@@ -7768,16 +7851,22 @@ function toggleGameStats() {
   // are all hidden for workouts — the workout section + warm-up + arm
   // care are the only meaningful surfaces. Title stays visible so the
   // player can name a session (e.g. "Leg Day").
-  // Off Day strips the form down to pure reflection — Coach Young 2026-05-12:
-  // "If off day is selected hide input sections on all sections except
-  // reflection. Rest day means rest." Title + j-what + j-tomorrow + the
-  // j-reflect-extra "How do I prepare" textarea remain; everything else
-  // (Grade chips, Coach/Parent comment) gets hidden.
-  const hideOthers = isInstructor || isWorkout || isOffDay;
+  // Per-type hide lists. Coach Young walkthroughs:
+  // - Off Day (2026-05-12): "Hide input sections on all sections except
+  //   reflection. Rest day means rest."
+  // - Reflection (2026-05-12): reflection is contemplative, not a training
+  //   debrief. Hide the Grade chips ("How did I perform today?") and the
+  //   Coach/Parent comment section — those are training-context fields.
+  // - Instructor / Workout pre-existing.
+  const hideOthers = isInstructor || isWorkout || isOffDay || isReflect;
   const instructorHideList = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
   const workoutHideList    = ['j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
   const offdayHideList     = ['j-team-role', 'j-coach-section', 'j-grade-row'];
-  const fieldsToHide = isInstructor ? instructorHideList : (isWorkout ? workoutHideList : (isOffDay ? offdayHideList : []));
+  const reflectionHideList = ['j-team-role', 'j-coach-section', 'j-grade-row'];
+  const fieldsToHide = isInstructor ? instructorHideList
+                    : (isWorkout    ? workoutHideList
+                    : (isOffDay     ? offdayHideList
+                    : (isReflect    ? reflectionHideList : [])));
   // Restoration set — union of both hide lists so prevDisplay can
   // restore correctly when the user switches AWAY from workout/instructor.
   const allRestorable = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
@@ -7844,15 +7933,17 @@ function toggleGameStats() {
     if (tmrwLb)  tmrwLb.textContent  = 'What am I taking into the next practice or game?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing I want to carry forward and keep working on?';
   } else if (isReflect) {
-    // Reflection — for post-game thoughts, weekly check-ins, mental-
-    // game work. Off-day journaling moved to its own type 2026-05-11
-    // (Coach Young walkthrough) so this copy can stay focused.
-    if (titleLb) titleLb.textContent = 'Reflection Title';
-    if (titleEl) titleEl.placeholder = 'e.g. This week\'s check-in · Honest reflection after tonight\'s game';
-    if (whatLb)  whatLb.textContent  = 'What\'s on my mind?';
-    if (whatEl)  whatEl.placeholder  = 'Honest thoughts. How do I feel about where I am right now? Am I putting in the work? Am I showing up for my team?';
-    if (tmrwLb)  tmrwLb.textContent  = 'What do I need to be honest with myself about?';
-    if (tmrwEl)  tmrwEl.placeholder  = 'What areas of my game need real attention? What have I been avoiding? Be straight with yourself — this journal does not lie.';
+    // Reflection — contemplative prompts inspired by Day One / Stoic /
+    // Reflectly, scoped to baseball + softball accountability. Title is
+    // optional now (Coach Young 2026-05-12: title field was blocking
+    // save). Each prompt invites a specific kind of honest thought
+    // instead of one big "what's on your mind" box.
+    if (titleLb) titleLb.textContent = 'Give this reflection a name (optional)';
+    if (titleEl) titleEl.placeholder = 'e.g. Sunday check-in · Post-game honest take';
+    if (whatLb)  whatLb.textContent  = "What's sitting with you today?";
+    if (whatEl)  whatEl.placeholder  = 'The thoughts you can\'t shake. The frustration, the spark, the doubt, the pride. Get it out of your head and onto the page.';
+    if (tmrwLb)  tmrwLb.textContent  = 'What did today teach you about yourself?';
+    if (tmrwEl)  tmrwEl.placeholder  = 'Toughness, focus, mindset, response to failure. What did you learn about the player and person you\'re becoming?';
   } else if (isOffDay) {
     // Off Day — no practice, no game, no workout, no instructor.
     // Player still journals so the day isn't a black hole in their
@@ -7890,6 +7981,17 @@ function toggleGameStats() {
   // (Coach Young 2026-05-12 walkthrough.)
   const offdayInfo = document.getElementById('j-offday-info');
   if (offdayInfo) offdayInfo.style.display = isOffDay ? 'block' : 'none';
+
+  // Reflection intro + mindset picker — visible only when type === 'reflection'.
+  // Also sets body[data-reflection-active] so the reflection-themed CSS
+  // (italic prompts, softer borders, larger textareas) activates only
+  // for reflection. Coach Young 2026-05-12 walkthrough.
+  const reflectionIntro = document.getElementById('j-reflection-intro');
+  if (reflectionIntro) reflectionIntro.style.display = isReflect ? 'block' : 'none';
+  try {
+    if (isReflect) document.body.setAttribute('data-reflection-active', '1');
+    else           document.body.removeAttribute('data-reflection-active');
+  } catch(_) {}
 
   // Re-evaluate Arm Care visibility on every entry-type change.
   try { updateArmCareVisibility(); } catch(e) {}
@@ -8120,6 +8222,22 @@ function resetGradeResultChips() {
     const row = document.getElementById(id);
     if (row) row.querySelectorAll('button').forEach(function(b) { b.classList.remove('selected'); });
   });
+}
+
+// Mindset picker for the Reflection intro section. Coach Young 2026-05-12
+// redesign — emoji-based check-in inspired by Day One / Stoic / Reflectly.
+function selectMindset(val, btnEl) {
+  const row = document.getElementById('j-mindset-chips');
+  if (row) row.querySelectorAll('.mindset-chip').forEach(function(b) { b.classList.remove('selected'); });
+  if (btnEl) btnEl.classList.add('selected');
+  const hidden = document.getElementById('j-mindset');
+  if (hidden) hidden.value = val || '';
+}
+function resetMindsetChips() {
+  const row = document.getElementById('j-mindset-chips');
+  if (row) row.querySelectorAll('.mindset-chip').forEach(function(b) { b.classList.remove('selected'); });
+  const hidden = document.getElementById('j-mindset');
+  if (hidden) hidden.value = '';
 }
 
 // ── PRACTICE MODE (team / solo) ───────────────────────
