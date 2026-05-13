@@ -1259,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v160';
+    const CACHE = 'ybg-mygrind-v161';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2543,12 +2543,16 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            want confusion where they think the off day is just that
            section." Shows only when type === 'offday'. Visibility wired
            in toggleGameStats(). -->
-      <div id="j-offday-info" style="display:none; padding:14px 16px; margin-bottom:18px; background:rgba(93,173,226,0.08); border-left:3px solid #5DADE2; border-radius:3px;">
-        <div style="font-family:'Bebas Neue',cursive; font-size:18px; letter-spacing:2px; color:#5DADE2; line-height:1; margin-bottom:6px;">😴 OFF DAY = FULL REST</div>
-        <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.55;">
-          No practice. No game. No instructor session. No gym. Your body and mind get the day off the grind.
-          <br><br>
-          You can still <strong style="color:#5DADE2;">reflect on the day</strong> below — that's how you close the book. Off Day still counts toward your streak.
+      <div id="j-offday-info" style="display:none; padding:18px 20px; margin-bottom:18px; background:rgba(93,173,226,0.08); border-left:3px solid #5DADE2; border-radius:3px; text-align:center;">
+        <div style="font-family:'Bebas Neue',cursive; font-size:26px; letter-spacing:3px; color:#5DADE2; line-height:1; margin-bottom:10px;">😴 OFF DAY</div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:16px;">
+          No practice. No game. No instructor session. No gym.<br>
+          Your body and mind get the day off the grind.
+        </div>
+        <button type="button" onclick="saveEntry()" style="display:inline-block; min-width:200px; padding:13px 26px; background:var(--gold); color:var(--black); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; border:none; border-radius:3px; cursor:pointer; margin-right:8px;">📓 Save Off Day</button>
+        <button type="button" onclick="switchToReflection()" style="display:inline-block; min-width:200px; padding:13px 26px; background:transparent; color:#D4C29B; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; border:1px solid #D4C29B; border-radius:3px; cursor:pointer;">🪞 Add a Reflection Instead</button>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-top:14px;">
+          Off Day counts toward your streak. Tap <strong style="color:#D4C29B;">Reflection</strong> only if you want to journal your thoughts on the rest day.
         </div>
       </div>
 
@@ -7862,7 +7866,11 @@ function toggleGameStats() {
   const hideOthers = isInstructor || isWorkout || isOffDay || isReflect;
   const instructorHideList = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
   const workoutHideList    = ['j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
-  const offdayHideList     = ['j-team-role', 'j-coach-section', 'j-grade-row'];
+  // Off Day strips the form to just the info banner + Save / Switch-to-
+  // Reflection buttons inside the banner itself. Coach Young 2026-05-12
+  // v2: "When Off Day is selected, there is no need for input fields;
+  // they should disappear. Maybe a button to enter reflection."
+  const offdayHideList     = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-reflect-extra', 'j-coach-section', 'j-grade-row'];
   const reflectionHideList = ['j-team-role', 'j-coach-section', 'j-grade-row'];
   const fieldsToHide = isInstructor ? instructorHideList
                     : (isWorkout    ? workoutHideList
@@ -7870,7 +7878,7 @@ function toggleGameStats() {
                     : (isReflect    ? reflectionHideList : [])));
   // Restoration set — union of both hide lists so prevDisplay can
   // restore correctly when the user switches AWAY from workout/instructor.
-  const allRestorable = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-coach-section', 'j-grade-row'];
+  const allRestorable = ['j-title-wrapper', 'j-what-label', 'j-what', 'j-team-role', 'j-tomorrow-label', 'j-tomorrow', 'j-reflect-extra', 'j-coach-section', 'j-grade-row'];
   allRestorable.forEach(function(fid) {
     const el = document.getElementById(fid);
     if (!el) return;
@@ -7984,6 +7992,16 @@ function toggleGameStats() {
   // (Coach Young 2026-05-12 walkthrough.)
   const offdayInfo = document.getElementById('j-offday-info');
   if (offdayInfo) offdayInfo.style.display = isOffDay ? 'block' : 'none';
+
+  // Hide the bottom Save Entry button when Off Day is active — the Off
+  // Day banner has its own Save / Switch-to-Reflection buttons. Coach
+  // Young 2026-05-12 v2.
+  try {
+    const _saveRow = document.getElementById('save-entry-btn');
+    if (_saveRow && _saveRow.parentElement) {
+      _saveRow.parentElement.style.display = isOffDay ? 'none' : 'flex';
+    }
+  } catch(_) {}
 
   // Reflection intro + mindset picker — visible only when type === 'reflection'.
   // Also sets body[data-reflection-active] so the reflection-themed CSS
@@ -8225,6 +8243,22 @@ function resetGradeResultChips() {
     const row = document.getElementById(id);
     if (row) row.querySelectorAll('button').forEach(function(b) { b.classList.remove('selected'); });
   });
+}
+
+// Switch the entry-type dropdown from Off Day to Reflection in one tap.
+// Coach Young 2026-05-12 v2: "When Off Day is selected... maybe a button
+// to enter reflection." Wired to the button inside the Off Day info card.
+function switchToReflection() {
+  const sel = document.getElementById('j-type');
+  if (!sel) return;
+  sel.value = 'reflection';
+  try { toggleGameStats(); } catch(_) {}
+  // Scroll the reflection intro into view so the player lands on the
+  // mindset chips, not still scrolled at the empty Off Day banner.
+  try {
+    const intro = document.getElementById('j-reflection-intro');
+    if (intro) intro.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } catch(_) {}
 }
 
 // Mindset picker for the Reflection intro section. Coach Young 2026-05-12
