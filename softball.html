@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v151';
+    const CACHE = 'ybg-mygrind-v152';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7546,18 +7546,13 @@ function applyOffDayLock() {
   const entryDate = dateInputToEntryFormat(dateInput && dateInput.value);
   const locked = !editing && hasOffDayOnDate(entryDate);
   if (locked) {
-    // Off Day itself stays enabled so the player can still create/replace
-    // a rest-day entry — only the training-type entries (game, practice,
-    // instructor, gym) get blocked. Reflection is always allowed.
-    // Coach Young 2026-05-12: "When you select off day you should be able
-    // to select save entry." (Earlier version disabled 'offday' too,
-    // which silently reverted the dropdown to Reflection and made save
-    // appear broken.)
-    const allowed = { reflection: true, offday: true };
+    // Off Day already exists for this date — block every type except
+    // Reflection. Coach Young 2026-05-12: "Make off day only able to
+    // choose once during that day."
     Array.from(sel.options).forEach(function(o) {
-      o.disabled = !allowed[o.value];
+      o.disabled = (o.value !== 'reflection');
     });
-    if (!allowed[sel.value]) sel.value = 'reflection';
+    if (sel.value !== 'reflection') sel.value = 'reflection';
     if (dateEl) dateEl.textContent = entryDate;
     if (banner) banner.style.display = 'block';
   } else {
@@ -9474,6 +9469,11 @@ function renderAll() {
   accumulateGameStats();
   // Refresh the dashboard snapshot cards (Recent Entries, Hitting Stats)
   try { renderDashboardSnapshots(); } catch(e) { console.warn('[MG] dashboard snapshot:', e); }
+  // Refresh Off Day lock — keeps the entry-type dropdown + lock banner
+  // in sync with the current state of state.entries. Critical for the
+  // delete path: removing the Off Day entry releases the lock without
+  // a page refresh (Coach Young 2026-05-12).
+  try { applyOffDayLock(); } catch(e) {}
   // Refresh Arm Care visibility — covers the case where a quick-log save
   // logged a throwing entry without changing the j-type dropdown.
   try { updateArmCareVisibility(); } catch(e) {}
