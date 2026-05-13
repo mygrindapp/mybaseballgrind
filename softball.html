@@ -684,6 +684,23 @@
   .btn-danger:hover { background: rgba(192,57,43,0.1); }
   .btn-sm { padding: 11px 16px; font-size: 11px; }
 
+  /* Press state — Coach Young 2026-05-12 walkthrough: "the save entry
+     button should feel like a button." :hover never fires on mobile so
+     buttons had zero tap feedback. :active gives a 50ms compress + tint
+     so every tap reads as a real press, on every .btn site-wide. */
+  .btn:active { transform: scale(0.97); transition: transform 0.05s; }
+  .btn-gold:active { background: var(--gold-dark); }
+  .btn-outline:active { background: rgba(var(--accent-rgb), 0.18); }
+  .btn-danger:active { background: rgba(192,57,43,0.2); }
+
+  /* Save Entry "✓ Saved" pulse — briefly flashes the button after save
+     so the player has tactile + visual confirmation. */
+  @keyframes savePulse {
+    0%   { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.6); }
+    100% { box-shadow: 0 0 0 14px rgba(var(--accent-rgb), 0);   }
+  }
+  .btn-saving { animation: savePulse 0.6s ease-out; }
+
   /* Sport-scoped visibility — Coach Young 2026-05-11. Any element marked
      [data-softball-only] hides when the app is in baseball mode. The
      sport toggle writes data-sport="baseball|softball" to <html>, so
@@ -1233,7 +1250,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v154';
+    const CACHE = 'ybg-mygrind-v155';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6958,6 +6975,23 @@ function cancelEdit() {
 
 // ── SAVE ENTRY ────────────────────────────────────────
 function saveEntry() {
+  // Immediate tap feedback — haptic + pulse animation on the button so
+  // the press registers visibly before any save work runs. Coach Young
+  // 2026-05-12: "The save entry button should feel like a button."
+  try { ybgHaptic(12); } catch(_) {}
+  try {
+    const _saveBtn = document.getElementById('save-entry-btn');
+    if (_saveBtn) {
+      _saveBtn.classList.remove('btn-saving');
+      // Force reflow so the animation restarts on every tap.
+      void _saveBtn.offsetWidth;
+      _saveBtn.classList.add('btn-saving');
+      setTimeout(function() {
+        try { _saveBtn.classList.remove('btn-saving'); } catch(_) {}
+      }, 700);
+    }
+  } catch(_) {}
+
   // Firebase cloud save hook — runs after local save
   setTimeout(function() {
     try {
