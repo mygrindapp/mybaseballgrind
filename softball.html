@@ -1259,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v165';
+    const CACHE = 'ybg-mygrind-v166';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2322,7 +2322,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
                 <option value="Win State Championship|team">Win State Championship</option>
               </optgroup>
               <optgroup label="🎯 Roster &amp; Travel">
+                <option value="Make My Middle School Team|team">Make My Middle School Team</option>
                 <option value="Make the Travel Team|team">Make the Travel Team</option>
+                <option value="Make the JV Team|team">Make the JV Team</option>
                 <option value="Make Varsity|team">Make Varsity</option>
                 <option value="Earn a Starting Spot|team">Earn a Starting Spot</option>
                 <option value="Make Showcase Team Roster|team">Make Showcase Team Roster</option>
@@ -2350,6 +2352,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
               <optgroup label="⚾ Pitching Milestones">
                 <option value="Throw a No-Hitter|pitching">Throw a No-Hitter</option>
                 <option value="Earn ERA Under 2.50|pitching">Earn ERA Under 2.50</option>
+                <option value="Hit 60+ MPH on the Mound|pitching">Hit 60+ MPH on the Mound</option>
+                <option value="Hit 70+ MPH on the Mound|pitching">Hit 70+ MPH on the Mound</option>
+                <option value="Hit 75+ MPH on the Mound|pitching">Hit 75+ MPH on the Mound</option>
                 <option value="Hit 80+ MPH on the Mound|pitching">Hit 80+ MPH on the Mound</option>
                 <option value="Hit 85+ MPH on the Mound|pitching">Hit 85+ MPH on the Mound</option>
                 <option value="Hit 90+ MPH on the Mound|pitching">Hit 90+ MPH on the Mound</option>
@@ -2361,6 +2366,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
                 <option value="Master Two New Defensive Positions|fielding">Master Two New Defensive Positions</option>
               </optgroup>
               <optgroup label="💪 Strength &amp; Speed">
+                <option value="Run a Sub-8.0 60-Yard|strength">Run a Sub-8.0 60-Yard</option>
+                <option value="Run a Sub-7.5 60-Yard|strength">Run a Sub-7.5 60-Yard</option>
                 <option value="Run a Sub-7.0 60-Yard|strength">Run a Sub-7.0 60-Yard</option>
                 <option value="Run a Sub-6.7 60-Yard|strength">Run a Sub-6.7 60-Yard</option>
                 <option value="Add 10 lbs of Lean Muscle|strength">Add 10 lbs of Lean Muscle</option>
@@ -3628,6 +3635,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <label>Grade</label>
           <select id="pl-grade" onchange="saveProfile()">
             <option value="">-- Select --</option>
+            <option>6th Grade</option>
+            <option>7th Grade</option>
             <option>8th Grade</option>
             <option>9th Grade (Freshman)</option>
             <option>10th Grade (Sophomore)</option>
@@ -3640,8 +3649,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </select>
         </div>
       </div>
-      <label>High School / Team</label>
-      <input type="text" id="pl-school" placeholder="e.g. Canyon High School" oninput="saveProfile()" style="margin-bottom:16px;">
+      <label>School / Team</label>
+      <input type="text" id="pl-school" placeholder="e.g. Canyon HS · Sierra Vista MS · USC · Travel team name" oninput="saveProfile()" style="margin-bottom:16px;">
 
       <!-- Physical Development subsection — Coach Young 2026-05-11
            iteration 3: "Reorganize so it makes sense and flows better."
