@@ -1250,7 +1250,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v155';
+    const CACHE = 'ybg-mygrind-v156';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7381,27 +7381,32 @@ function saveEntry() {
     }
   } catch (_) {}
 
-  // Defensive second render — Coach Young 2026-05-12 walkthrough: "still
-  // I need to refresh for everything to show up". The applyOffDayLock
-  // path mutates the form on the same tick as renderEntries, so a second
-  // renderAll on the next tick guarantees the entries list reflects the
-  // latest state after every lock / form change settles.
-  setTimeout(function() { try { renderAll(); } catch(_) {} }, 0);
-
-  // Scroll the new entry into view + flash it gold so the player sees
-  // exactly where it landed. Coach Young 2026-05-11: "When I save entry
-  // it shows up but it takes a long time it should show up immediately."
-  // Real cause was the player was still scrolled to the (now-empty) form
-  // and had to manually scroll down to find the entry below.
-  setTimeout(function() {
-    try {
-      const newCard = document.querySelector('.entry-card[data-entry-id="' + entry.id + '"]');
-      if (!newCard) return;
-      newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      newCard.classList.add('entry-flash');
-      setTimeout(function() { newCard.classList.remove('entry-flash'); }, 1600);
-    } catch (_) {}
-  }, 60);
+  // Immediate scroll to entries-list so the player sees the saved entry
+  // the instant Save fires. Coach Young 2026-05-12 (ongoing bug):
+  // "Once you hit save the entry is not shown in the log. I shouldn't
+  // have to refresh the page for it to show." Synchronous scroll to the
+  // entries-list container guarantees the new entry is brought into
+  // view, regardless of what the form section above does. Uses
+  // requestAnimationFrame so the scroll happens after the browser has
+  // painted the renderAll() output.
+  try {
+    requestAnimationFrame(function() {
+      try {
+        const entriesList = document.getElementById('entries-list');
+        if (entriesList) {
+          entriesList.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // Gold flash on the new card for visual confirmation.
+        const newCard = document.querySelector('.entry-card[data-entry-id="' + entry.id + '"]');
+        if (newCard) {
+          newCard.classList.add('entry-flash');
+          setTimeout(function() {
+            try { newCard.classList.remove('entry-flash'); } catch(_) {}
+          }, 1600);
+        }
+      } catch(_) {}
+    });
+  } catch(_) {}
 }
 
 function deleteEntry(id) {
@@ -7620,14 +7625,9 @@ function applyOffDayLock() {
       });
       if (sel.value !== 'reflection') {
         sel.value = 'reflection';
-        // Defer form re-render to next tick — applyOffDayLock fires from
-        // inside renderAll() and the inline toggleGameStats() was running
-        // before renderEntries had a chance to paint the new entry card,
-        // making the saved entry feel like it required a refresh.
-        // Deferring lets the entries-list paint first, then the form
-        // catches up on the next event-loop tick.
-        // (Coach Young 2026-05-12 walkthrough.)
-        setTimeout(function() { try { toggleGameStats(); } catch(_) {} }, 0);
+        // Re-render the form synchronously so the layout matches the new
+        // value. Recursion is blocked by _applyingOffDayLock.
+        try { toggleGameStats(); } catch(_) {}
       }
       if (dateEl) dateEl.textContent = entryDate;
       if (banner) banner.style.display = 'block';
