@@ -82,7 +82,7 @@
 <meta property="og:site_name" content="My Grind">
 
 <!-- ── FONTS ── -->
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
 
 <script>
   // Sport detection runs synchronously in <head> so the palette resolves
@@ -359,7 +359,17 @@
   body {
     background: #181614;
     color: #F5F0EB;
-    font-family: 'Barlow', sans-serif;
+    /* Modern system-font stack — matches what top mobile apps (Instagram,
+       Strava, Day One, Linear, Notion) ship. Falls back to SF Pro on
+       iOS, Segoe UI / Roboto on other platforms, then Inter as the
+       loaded webfont, then Barlow as the legacy fallback. Gives every
+       body-text surface a native-app feel.
+       Coach Young 2026-05-12: "make sure fonts are fonts that the top
+       apps use in their apps." */
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, Inter, 'Barlow', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-tap-highlight-color: transparent;
     min-height: 100vh;
     min-height: -webkit-fill-available;
     overflow-x: hidden;
@@ -367,6 +377,19 @@
     padding-bottom: env(safe-area-inset-bottom, 0px);
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* Native-feel tap targets — Coach Young 2026-05-12:
+     - touch-action: manipulation kills the 300ms double-tap zoom delay
+       browsers default to, so every tap registers instantly.
+     - -webkit-tap-highlight-color: transparent removes the dull grey
+       flash iOS Safari paints over taps; the JS btn-press-flash +
+       :active states are crisper feedback. */
+  button, .btn, a, [role="button"], select, label, .rep-chip, .grade-chip,
+  .result-chip, .practice-mode-chip, .solo-work-chip, .mindset-chip,
+  .entries-filter-chip {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Standalone (installed) mode tweaks */
@@ -646,9 +669,15 @@
     background: var(--card2);
     border: 1px solid #3D3530;
     color: var(--white);
-    font-family: 'Barlow', sans-serif;
-    font-size: 15px;
-    padding: 11px 14px;
+    /* Inherits the modern system stack from body — feels like a native
+       iOS / Android text field instead of a webfont input. */
+    font-family: inherit;
+    /* 16px font-size is the iOS Safari threshold below which focusing
+       an input triggers a forced viewport zoom. Was 15px, which forced
+       the zoom on every form tap — janky keyboard UX. Coach Young
+       2026-05-12 fix. */
+    font-size: 16px;
+    padding: 12px 14px;
     border-radius: 3px;
     margin-bottom: 16px;
     outline: none;
@@ -1259,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v166';
+    const CACHE = 'ybg-mygrind-v167';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
