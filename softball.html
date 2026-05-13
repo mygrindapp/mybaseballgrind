@@ -1259,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v162';
+    const CACHE = 'ybg-mygrind-v163';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2227,6 +2227,35 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <div id="dash-workout-season" style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1;">0</div>
           <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Season</div>
         </div>
+      </div>
+    </div>
+
+    <!-- ══ REST DAYS — counts offday-type journal entries ══
+         Coach Young 2026-05-12: "The rest days should accumulate on
+         dashboard so you can see how many you have had." Symmetric with
+         the Gym card above. Hidden until the player has logged at least
+         one Off Day. Blue accent matches the Off Day badge palette. -->
+    <div id="dash-restday-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <div class="card-title" style="margin:0;">😴 Rest Days</div>
+        <div id="dash-restday-last" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-restday-7d" style="font-family:'Bebas Neue'; font-size:28px; color:#5DADE2; line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Last 7 Days</div>
+        </div>
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-restday-month" style="font-family:'Bebas Neue'; font-size:28px; color:#5DADE2; line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">This Month</div>
+        </div>
+        <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+          <div id="dash-restday-season" style="font-family:'Bebas Neue'; font-size:28px; color:var(--white); line-height:1;">0</div>
+          <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Season</div>
+        </div>
+      </div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
+        Recovery is part of the work. Rest days keep you in the game.
       </div>
     </div>
 
@@ -6530,6 +6559,7 @@ function showPanel(id) {
   if (id === 'dashboard') {
     try { renderTrainingVolume(); } catch (e) {}
     try { renderWorkoutVolume();  } catch (e) {}
+    try { renderRestDayVolume();  } catch (e) {}
     try { renderDashboardSnapshots(); } catch (e) {}
     try { renderMonthFocus();     } catch (e) {}
     try { renderTodayPlan();      } catch (e) {}
@@ -9756,6 +9786,8 @@ function renderAll() {
   try { renderTrainingVolume(); } catch(e) { console.warn('[MG] training volume:', e); }
   // Refresh Workout Volume counter on Dashboard.
   try { renderWorkoutVolume(); } catch(e) { console.warn('[MG] workout volume:', e); }
+  // Refresh Rest Day counter on Dashboard.
+  try { renderRestDayVolume(); } catch(e) { console.warn('[MG] rest day volume:', e); }
 }
 
 // ───────────────────────────────────────────────────────
@@ -10466,6 +10498,66 @@ function renderWorkoutVolume() {
 
     card.style.display = '';
   } catch (err) { try { console.warn('[workout vol]', err); } catch (e) {} }
+}
+
+// ═══════════════════════════════════════════════════════
+// REST DAY VOLUME — counts offday-type journal entries
+// Coach Young 2026-05-12: "The rest days should accumulate on
+// dashboard so you can see how many you have had." Mirrors
+// renderWorkoutVolume() exactly so the visual story (last 7d / this
+// month / season + "Last: N days ago" hint) reads consistently across
+// the two consistency cards on the Dashboard.
+// ═══════════════════════════════════════════════════════
+function renderRestDayVolume() {
+  try {
+    const card = document.getElementById('dash-restday-card');
+    if (!card) return;
+    const entries = (state && state.entries) || [];
+    const rests = entries.filter(function(e) { return e && e.type === 'offday'; });
+
+    if (rests.length === 0) {
+      card.style.display = 'none';
+      return;
+    }
+
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const sevenStart = new Date(today); sevenStart.setDate(today.getDate() - 6);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    let last7 = 0, monthToDate = 0;
+    let mostRecent = null;
+    rests.forEach(function(e) {
+      const d = parseEntryDate(e.date);
+      if (!d || isNaN(d.getTime())) return;
+      if (d >= sevenStart) last7++;
+      if (d >= monthStart) monthToDate++;
+      if (!mostRecent || d > mostRecent) mostRecent = d;
+    });
+
+    const set = function(id, val) {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(val);
+    };
+    set('dash-restday-7d',     last7);
+    set('dash-restday-month',  monthToDate);
+    set('dash-restday-season', rests.length);
+
+    const lastEl = document.getElementById('dash-restday-last');
+    if (lastEl) {
+      if (!mostRecent) {
+        lastEl.textContent = '';
+      } else {
+        const diffMs = today - new Date(mostRecent.getFullYear(), mostRecent.getMonth(), mostRecent.getDate());
+        const days   = Math.round(diffMs / (1000 * 60 * 60 * 24));
+        if (days <= 0)      lastEl.textContent = 'Last: Today';
+        else if (days === 1) lastEl.textContent = 'Last: Yesterday';
+        else                 lastEl.textContent = 'Last: ' + days + ' days ago';
+      }
+    }
+
+    card.style.display = '';
+  } catch (err) { try { console.warn('[rest day vol]', err); } catch (e) {} }
 }
 
 // ═══════════════════════════════════════════════════════
