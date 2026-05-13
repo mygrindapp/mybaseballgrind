@@ -2473,8 +2473,9 @@ select.field-input {
          Stripe Payment Link `prefilled_promo_code` URL param. Accepts free
          text — Stripe silently rejects invalid codes on the checkout page
          so we don't need to validate against the API here.
-         Active codes (as of 2026-05-07): MYGRIND6 (6 months free, capped
-         at 250) and FOREVERYOUNG2026 (lifetime free, capped at 10). When a
+         Active codes (as of 2026-05-13): FOUNDERMYGRIND (6 months free,
+         capped at 100 — the founder cohort) and FOREVERYOUNG2026 (lifetime
+         free, capped at 10). MYGRIND6 was deactivated 2026-05-13. When a
          known code is entered, applyPromoMessaging() also rewrites the
          trial copy on this screen + Screen 7 so we don't promise a 14-day
          trial when the user has 6 months / forever. -->
@@ -2506,8 +2507,8 @@ select.field-input {
 
     <!-- Promise block — the trust contract.
          The title + first/third lines are rewritten by applyPromoMessaging()
-         when a recognized promo code is entered, so a parent on MYGRIND6 or
-         FOREVERYOUNG2026 sees their actual free window (6 months / forever)
+         when a recognized promo code is entered, so a parent on FOUNDERMYGRIND
+         or FOREVERYOUNG2026 sees their actual free window (6 months / forever)
          instead of the default 14-day trial copy. -->
     <div class="promise-block">
       <div class="promise-block-title" id="s5_promise_title">What happens at day 14?</div>
@@ -4777,7 +4778,7 @@ function onResendInvite(playerIndex) {
 
 // Stripe Payment Links (LIVE mode). One link per (Single|Family) × (Annual|Monthly).
 // Each link is pre-configured in Stripe with the right product, price, and
-// success/cancel URLs. The MYGRIND6 promotion code is auto-accepted on all 4.
+// success/cancel URLs. The FOUNDERMYGRIND promotion code is auto-accepted on all 4.
 const STRIPE_PAYMENT_LINKS = {
   single_annual:  'https://buy.stripe.com/28EdRb5DQanXfpg0Mx4gg05',
   single_monthly: 'https://buy.stripe.com/4gM7sN2rE9jT5OG3YJ4gg06',
@@ -4796,10 +4797,10 @@ const STRIPE_PAYMENT_LINKS = {
 // passed through to Stripe (Stripe accepts/rejects them at checkout) but
 // the trial copy stays at the default 14-day promise.
 const PROMO_INFO = {
-  'MYGRIND6': {
+  'FOUNDERMYGRIND': {
     kind: 'months',
     durationLabel: '6 months',
-    summary: '✓ Code "MYGRIND6" applied — your first 6 months are free.'
+    summary: '✓ Founder code applied — your first 6 months are free. Welcome to the first 100.'
   },
   'FOREVERYOUNG2026': {
     kind: 'lifetime',
