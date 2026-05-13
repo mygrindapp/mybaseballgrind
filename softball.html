@@ -1233,7 +1233,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v153';
+    const CACHE = 'ybg-mygrind-v154';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7347,6 +7347,13 @@ function saveEntry() {
     }
   } catch (_) {}
 
+  // Defensive second render — Coach Young 2026-05-12 walkthrough: "still
+  // I need to refresh for everything to show up". The applyOffDayLock
+  // path mutates the form on the same tick as renderEntries, so a second
+  // renderAll on the next tick guarantees the entries list reflects the
+  // latest state after every lock / form change settles.
+  setTimeout(function() { try { renderAll(); } catch(_) {} }, 0);
+
   // Scroll the new entry into view + flash it gold so the player sees
   // exactly where it landed. Coach Young 2026-05-11: "When I save entry
   // it shows up but it takes a long time it should show up immediately."
@@ -7579,11 +7586,14 @@ function applyOffDayLock() {
       });
       if (sel.value !== 'reflection') {
         sel.value = 'reflection';
-        // Force the form to re-render into Reflection layout. Without
-        // this, the previously-rendered Off Day banner / info card stays
-        // visible even though j-type.value has flipped to reflection,
-        // which made the lock feel half-applied during the walkthrough.
-        try { toggleGameStats(); } catch(_) {}
+        // Defer form re-render to next tick — applyOffDayLock fires from
+        // inside renderAll() and the inline toggleGameStats() was running
+        // before renderEntries had a chance to paint the new entry card,
+        // making the saved entry feel like it required a refresh.
+        // Deferring lets the entries-list paint first, then the form
+        // catches up on the next event-loop tick.
+        // (Coach Young 2026-05-12 walkthrough.)
+        setTimeout(function() { try { toggleGameStats(); } catch(_) {} }, 0);
       }
       if (dateEl) dateEl.textContent = entryDate;
       if (banner) banner.style.display = 'block';
