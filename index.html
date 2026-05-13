@@ -542,6 +542,55 @@
 
   .hp { position: absolute; left: -5000px; width: 1px; height: 1px; overflow: hidden; }
 
+  /* ── FOUNDER NOTE ── personal letter from Coach, sits above the form */
+  .founder-note {
+    max-width: 560px;
+    margin: 48px auto 0;
+    padding: 22px 22px 20px;
+    background: rgba(20, 20, 20, 0.55);
+    border: 1px solid rgba(201,168,76,0.22);
+    border-left: 3px solid var(--gold);
+    border-radius: 3px;
+    text-align: left;
+    opacity: 0; transform: translateY(18px);
+  }
+  .founder-note.show { animation: fadeUp 0.7s ease-out forwards; }
+
+  .founder-note .fn-eyebrow {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+  .founder-note p {
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    color: var(--light);
+    line-height: 1.6;
+    margin-bottom: 12px;
+  }
+  .founder-note p:last-of-type { margin-bottom: 0; }
+  .founder-note strong { color: var(--white); font-weight: 700; }
+  .founder-note .fn-code {
+    display: inline-block;
+    font-family: 'SF Mono', 'Roboto Mono', Menlo, monospace;
+    font-size: 13px;
+    color: var(--gold);
+    background: rgba(201,168,76,0.10);
+    border: 1px solid rgba(201,168,76,0.25);
+    padding: 1px 8px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+  }
+  .founder-note .fn-signature {
+    margin-top: 14px;
+    font-family: 'Barlow', sans-serif;
+    font-size: 14px;
+    color: var(--gold);
+    font-style: italic;
+  }
+
   /* ── THANK YOU ── */
   .thank-you {
     display: none;
@@ -626,7 +675,7 @@
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; }
-    .logo-wrap, .subhead, .form-section, footer { opacity: 1 !important; transform: none !important; }
+    .logo-wrap, .subhead, .founder-note, .form-section, footer { opacity: 1 !important; transform: none !important; }
     .accent-underline { width: 220px !important; opacity: 1 !important; }
     .cursor { display: none !important; }
     /* In reduced-motion mode, skip the typewriter — show text immediately */
@@ -666,10 +715,23 @@
     </p>
   </section>
 
+  <!-- Founder note — added 2026-05-13 to support the FOUNDERMYGRIND offer
+       (6 months free, capped at 100). Personal letter from Coach Young
+       reframes the form below from "join waitlist" to "reserve your spot."
+       Stripe enforces the 100 cap on actual redemptions; this page just
+       captures the email + tags the contact in Mailchimp. -->
+  <aside class="founder-note" id="founder-note">
+    <div class="fn-eyebrow">A note from Coach Young</div>
+    <p>I built MyGrind for my own kids &mdash; and for the parents I see every weekend trying to do this the right way.</p>
+    <p>To kick this off, the <strong>first 100 families</strong> to reserve a spot get <strong>6 months free</strong>, on me. No credit card today. When we open, I&rsquo;ll send you the link with the founder code <span class="fn-code">FOUNDERMYGRIND</span> already waiting on your name.</p>
+    <p>Leave your email below &mdash; that&rsquo;s how I&rsquo;ll know to hold your spot.</p>
+    <div class="fn-signature">&mdash; Coach Mike Young</div>
+  </aside>
+
   <section class="form-section" id="form-section">
 
     <div id="form-wrapper">
-      <div class="form-pre">Be First To Know</div>
+      <div class="form-pre">Reserve Your 6 Months Free</div>
 
       <div class="form-card">
         <form
@@ -681,7 +743,7 @@
         >
           <div class="form-row">
             <input type="email" name="EMAIL" id="EMAIL" placeholder="your@email.com" required autocomplete="email" />
-            <button type="submit" name="subscribe">Notify Me</button>
+            <button type="submit" name="subscribe">Reserve My Spot</button>
           </div>
 
           <input type="hidden" name="tags" value="2216797">
@@ -692,13 +754,13 @@
         </form>
 
         <p class="form-error" id="form-error" role="alert" aria-live="polite"></p>
-        <p class="form-trust">No spam. We'll only reach out when there's something real to share.</p>
+        <p class="form-trust">First 100 only. No credit card. We&rsquo;ll email you the founder code the day MyGrind opens.</p>
       </div>
     </div>
 
     <div id="thank-you" class="thank-you" role="status" aria-live="polite">
-      <div class="check">You're on the list.</div>
-      <p>We'll let you know the day MyGrind opens. Check your email for a quick confirmation.</p>
+      <div class="check">Your spot is held.</div>
+      <p>I&rsquo;ll personally email you the founder code the day MyGrind opens. Check your inbox for a quick confirmation. &mdash; Coach Young</p>
     </div>
 
     <iframe name="mc_iframe" style="display:none;" title="mailchimp"></iframe>
@@ -769,6 +831,7 @@
     function afterTypewriter() {
       document.getElementById('underline').classList.add('draw');
       setTimeout(function () { document.getElementById('subhead').classList.add('show'); },      350);
+      setTimeout(function () { document.getElementById('founder-note').classList.add('show'); }, 500);
       setTimeout(function () { document.getElementById('form-section').classList.add('show'); }, 650);
       setTimeout(function () { document.getElementById('footer').classList.add('show'); },       950);
       // 🎯 Logo zooms in (3.2s entrance starting at +1550ms after typewriter)
