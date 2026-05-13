@@ -1259,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v157';
+    const CACHE = 'ybg-mygrind-v158';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7328,6 +7328,23 @@ function saveEntry() {
       else b.classList.remove('selected');
     });
     if (typeof renderEntries === 'function') renderEntries();
+
+    // LAST-RESORT verification — Coach Young 2026-05-12 (repeated bug):
+    // confirm the new entry actually landed in the rendered DOM. If
+    // _filteredEntries() rejected it (sport tag mismatch / weird filter
+    // state) the player sees the "Nothing logged today" empty state
+    // even though the entry IS in state.entries. Fall back to 'all'
+    // filter which has no date OR sport filtering at this point.
+    const _check = document.querySelector('.entry-card[data-entry-id="' + entry.id + '"]');
+    if (!_check) {
+      _entriesFilter = 'all';
+      document.querySelectorAll('.entries-filter-chip').forEach(function(b) {
+        const k = b.dataset && b.dataset.entriesFilter;
+        if (k === 'all') b.classList.add('selected');
+        else b.classList.remove('selected');
+      });
+      if (typeof renderEntries === 'function') renderEntries();
+    }
   } catch (_) {}
 
   // Reset form
@@ -8758,7 +8775,7 @@ function renderEntries() {
     }
     container.innerHTML =
       '<div class="empty-state" style="padding:30px 20px;">' +
-        '<div class="empty-icon">📭</div>' +
+        '<div class="empty-icon">📓</div>' +
         '<h3>Nothing logged ' + label + ' yet</h3>' +
         '<p style="font-size:15px;">' + hint + '</p>' +
       '</div>';
