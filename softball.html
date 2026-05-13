@@ -1259,7 +1259,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v159';
+    const CACHE = 'ybg-mygrind-v160';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2732,7 +2732,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="j-reflection-intro" style="display:none; padding:18px 20px; margin-bottom:20px; background:linear-gradient(135deg,#15110D,#0E0A06); border:1px solid #4A3F2E; border-left:3px solid #D4C29B; border-radius:4px;">
         <div style="font-family:'Bebas Neue',cursive; font-size:22px; letter-spacing:3px; color:#D4C29B; line-height:1; margin-bottom:8px;">🪞 REFLECTION</div>
         <div style="font-family:'Lora',Georgia,serif; font-style:italic; font-size:14px; color:#C9BFB1; line-height:1.6; margin-bottom:18px;">Take a breath. Get honest with yourself. This journal doesn't lie — and neither should you.</div>
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#D4C29B; margin-bottom:10px;">How are you feeling about the grind today?</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#D4C29B; margin-bottom:10px;">How are you feeling about the grind right now?</div>
         <div id="j-mindset-chips" style="display:flex; flex-wrap:wrap; gap:6px;">
           <button type="button" class="mindset-chip" data-mindset="fired" onclick="selectMindset('fired', this)">🔥 Fired up</button>
           <button type="button" class="mindset-chip" data-mindset="calm" onclick="selectMindset('calm', this)">😌 Calm</button>
@@ -2810,13 +2810,14 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
       <label id="j-tomorrow-label">What am I taking into the next practice or game?</label>
       <textarea id="j-tomorrow" inputmode="text" placeholder="What is one thing I want to carry forward and keep working on?"></textarea>
-      <!-- Reflection-only third prompt — Coach Young 2026-05-12 redesign:
-           prompt softened from "How do I prepare" (transactional) to
-           something more identity / character focused. Same id so save/
-           edit paths continue to work without migration. -->
+      <!-- Reflection-only third prompt — Coach Young 2026-05-12 v2:
+           timeframe opened up beyond "tomorrow" so a player reflecting
+           on a tough week or a hot stretch can carry the takeaway into
+           the next game, next week, or the rest of the season. Same id
+           so save/edit paths continue to work without migration. -->
       <div id="j-reflect-extra" style="display:none;">
-        <label>What's one thing you're carrying into tomorrow?</label>
-        <textarea id="j-prepare" inputmode="text" placeholder="A mindset, a lesson, a small win, a person to thank, a habit to keep. One thing — make it real."></textarea>
+        <label>What are you carrying forward?</label>
+        <textarea id="j-prepare" inputmode="text" placeholder="Into the next game, next week, the rest of the season — wherever you're headed. A mindset, an adjustment, a person to thank, a habit to lock in. One thing — make it real."></textarea>
       </div>
 
       <!-- Grade + Result selectors — replaced <select> dropdowns with chip
@@ -7933,17 +7934,19 @@ function toggleGameStats() {
     if (tmrwLb)  tmrwLb.textContent  = 'What am I taking into the next practice or game?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing I want to carry forward and keep working on?';
   } else if (isReflect) {
-    // Reflection — contemplative prompts inspired by Day One / Stoic /
-    // Reflectly, scoped to baseball + softball accountability. Title is
-    // optional now (Coach Young 2026-05-12: title field was blocking
-    // save). Each prompt invites a specific kind of honest thought
-    // instead of one big "what's on your mind" box.
+    // Reflection — open-ended timeframe (Coach Young 2026-05-12 v2):
+    // "The questions about reflection shouldn't be about today or
+    // tomorrow. It could be about this week or yesterday or next week
+    // or tomorrow. They could've had a bad week and next week they're
+    // going to have to refocus." Prompts now invite reflection on any
+    // stretch — a game, a week, a slump, a recent run — instead of
+    // locking the player to a single day.
     if (titleLb) titleLb.textContent = 'Give this reflection a name (optional)';
-    if (titleEl) titleEl.placeholder = 'e.g. Sunday check-in · Post-game honest take';
-    if (whatLb)  whatLb.textContent  = "What's sitting with you today?";
-    if (whatEl)  whatEl.placeholder  = 'The thoughts you can\'t shake. The frustration, the spark, the doubt, the pride. Get it out of your head and onto the page.';
-    if (tmrwLb)  tmrwLb.textContent  = 'What did today teach you about yourself?';
-    if (tmrwEl)  tmrwEl.placeholder  = 'Toughness, focus, mindset, response to failure. What did you learn about the player and person you\'re becoming?';
+    if (titleEl) titleEl.placeholder = 'e.g. Tough week · Post-game honest take · Mid-season check-in';
+    if (whatLb)  whatLb.textContent  = "What's been on your mind?";
+    if (whatEl)  whatEl.placeholder  = "The thoughts you can't shake — about a tough stretch, a recent win, a slump you're working through, a game that stuck with you, or just where your head is at right now.";
+    if (tmrwLb)  tmrwLb.textContent  = 'What is this stretch teaching you?';
+    if (tmrwEl)  tmrwEl.placeholder  = 'Could be from one game, a tough week, a hot streak, or the season so far. What have you learned about how you compete, respond to failure, or show up for your team?';
   } else if (isOffDay) {
     // Off Day — no practice, no game, no workout, no instructor.
     // Player still journals so the day isn't a black hole in their
