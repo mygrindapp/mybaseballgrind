@@ -34,7 +34,7 @@
 Phase 5 backend is now in place. Upgrade the Settings modal from read-only to support inline email/phone updates and a Stripe billing-portal link. Currently the modal points users at support@mygrindapp.com for changes.
 
 ### P3 — DNS migration so the digest can email real parents
-Move nameservers from Namecheap Web Hosting DNS to Cloudflare → verify `mygrindapp.com` in Resend → set `RESEND_FROM=MyGrind <notifications@mygrindapp.com>` in Vercel → delete `WEEKLY_DIGEST_TEST_EMAIL`. ~1 hr active + 24-48hr propagation. Risk: must capture all current records (A → 216.198.79.1, MX → jellyfish.systems for support@, root SPF) before changing nameservers, or website + support@ email goes down.
+Move nameservers from Namecheap Web Hosting DNS to Cloudflare → verify `mygrindapp.com` in Resend → set `RESEND_FROM=MyGrind <notifications@mygrindapp.com>` in Vercel → delete `WEEKLY_DIGEST_TEST_EMAIL`. ~1 hr active + 24-48hr propagation. Risk: must capture all current records before changing nameservers, or website + `@mygrindapp.com` mail goes down. Current records to preserve (verified 2026-05-13): A → 216.198.79.1 (Vercel apex); MX → mx1.privateemail.com + mx2.privateemail.com (priority 10); TXT SPF → `v=spf1 +mx +a +ip4:192.64.118.103 +include:spf.web-hosting.com +include:spf.privateemail.com ~all`; TXT DKIM at `default._domainkey`; TXT DMARC at `_dmarc` → `v=DMARC1; p=none;`. When verifying with Resend, the SPF will need to grow to `include:_spf.resend.com` and a new Resend DKIM TXT record will need to land.
 
 ### P5 — Phase 7 (Player dashboard)
 `onboarding.html` S14 currently shows a holding-screen overlay. Phase 7 is the real player dashboard — likely a stripped-down `softball.html` for the kid side or a new `player-dashboard.html`.
@@ -76,6 +76,14 @@ If beta users aren't logging entries daily:
 ## ✅ Recently Shipped (last 7 days)
 
 *Move shipped items here from "This Week" so you have a record of progress.*
+
+### 2026-05-13 (Founder Offer + Email Stack — 3 commits + heavy ops work)
+- Stripe coupon swap: `MYGRIND6` deactivated, new `FOUNDERMYGRIND` promotion code live (0/100, 6 months free). Coupon renamed "MyGrind Founders - 6 Month Free."
+- `signup.html` — PROMO_INFO entry swapped, Screen 5 confirmation copy now reads "Founder code applied — your first 6 months are free. Welcome to the first 100." Added `?promo=<code>` URL param handler so launch-day email links land users on Screen 5 with the code already applied and the trial copy already flipped (commits `d229215`, `08eb626`).
+- `index.html` — reframed as a founder offer. New `.founder-note` block between hero and form with a personal letter from Coach pitching FOUNDERMYGRIND. CTA copy swaps: "Notify Me" → "Reserve My Spot", "Be First To Know" → "Reserve Your 6 Months Free", trust line + success message rewritten in Coach's voice. Animation extended to fade in the founder note at 500ms (commit `a8fa3bb`).
+- Email deliverability — SPF installed via cPanel suggested record, DMARC auto-validated, DKIM + PTR were already valid. All four green.
+- Email routing untangled — MX has been pointing to Private Email all along (mx1/mx2.privateemail.com), not jellyfish.systems as old memory claimed. cPanel `coach@`/`support@` mailboxes were dead-letter boxes (could send, couldn't receive); deleted. Private Email confirmed as single source of truth. `coach@` Auto-Forward → Gmail configured.
+- Decisions #31, #32, #33 locked (founder-letter voice for pre-launch, Stripe enforces the cap not the page/email, Private Email is sole inbound mailbox system).
 
 ### 2026-05-12 (Journal polish + Dashboard reorg + age band audit — 21 commits, SW v145 → v167)
 - ✅ **Off Day flow built end-to-end** — 😴 dropdown label "(full rest)", blue info banner, lock system (when an Off Day exists, training types are disabled; only Reflection allowed), hard duplicate guard inside saveEntry (8 duplicate Off Days seen in walkthrough was the trigger), instant unlock on delete wired into renderAll, recursion-safe applyOffDayLock with _applyingOffDayLock flag. Commits `c3775b6`, `a793477`, `723da84`, `a51d7d5`, `8cfe1bb`, `d841895`, `b06d6ec`.
