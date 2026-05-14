@@ -1774,6 +1774,17 @@ select.field-input {
   text-transform: uppercase;
   color: #8A7E70;
 }
+.phone-confirm-consent {
+  font-family: 'Barlow', sans-serif;
+  font-size: 12px;
+  color: #A89880;
+  line-height: 1.5;
+  margin: 0 0 18px 0;
+  text-align: left;
+}
+.phone-confirm-consent strong {
+  color: #C9A84C;
+}
 .phone-confirm-buttons {
   display: flex;
   gap: 12px;
@@ -2836,6 +2847,9 @@ select.field-input {
     <div class="phone-confirm-list" id="phone_confirm_list">
       <!-- Populated by buildPhoneConfirmList() -->
     </div>
+    <p class="phone-confirm-consent">
+      By tapping <strong>Yes, send</strong>, I authorize MyGrind to send a one-time invite SMS to the player number(s) above with a link to join MyGrind. I have the authority to provide these numbers. Standard message and data rates may apply. Recipients may reply STOP to opt out.
+    </p>
     <div class="phone-confirm-buttons">
       <button type="button" class="phone-confirm-edit"   onclick="onPhoneConfirmEdit()">Edit</button>
       <button type="button" class="phone-confirm-send"   onclick="onPhoneConfirmSend()">Yes, send</button>
