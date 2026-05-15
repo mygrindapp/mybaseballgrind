@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v169';
+    const CACHE = 'ybg-mygrind-v170';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -12654,7 +12654,7 @@ function setArmCareState(s) {
 //   'collapsed'— user pinned it closed (tapped "▲ Hide" at any state).
 // Resets on page reload. Daily state key is still the source of truth
 // for WHICH items are checked; this only controls the view shape.
-let _armCareViewMode = 'auto';
+let _armCareViewMode = 'collapsed';
 function expandArmCare() {
   _armCareViewMode = 'expanded';
   renderArmCare();
@@ -13181,7 +13181,7 @@ function renderWarmup() {
       let isCollapsed;
       if (userDisplay === 'expand')        isCollapsed = false;
       else if (userDisplay === 'collapse') isCollapsed = true;
-      else                                 isCollapsed = allDone; // auto
+      else                                 isCollapsed = true; // default closed; player taps to expand
 
       pill.style.display     = isCollapsed ? 'flex'  : 'none';
       expanded.style.display = isCollapsed ? 'none'  : 'block';
@@ -13331,7 +13331,7 @@ function renderCooldown() {
       let isCollapsed;
       if (userDisplay === 'expand')        isCollapsed = false;
       else if (userDisplay === 'collapse') isCollapsed = true;
-      else                                 isCollapsed = allDone;
+      else                                 isCollapsed = true; // default closed; player taps to expand
 
       pill.style.display     = isCollapsed ? 'flex'  : 'none';
       expanded.style.display = isCollapsed ? 'none'  : 'block';
