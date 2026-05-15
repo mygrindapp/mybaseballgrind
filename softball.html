@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v181';
+    const CACHE = 'ybg-mygrind-v182';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6713,12 +6713,14 @@ function buildCalendar() {
       const introHTML = parsed.intro
         ? '<div class="week-content" style="margin-bottom:12px;">' + parsed.intro + '</div>'
         : '';
-      const bulletsHTML = parsed.bullets.map((b, bi) => {
-        const id = 'M' + i + '-W' + wi + '-B' + bi;
-        const isDone = !!checks[id];
-        return '<div data-cal-id="' + id + '" data-done="' + (isDone ? '1' : '0') + '" onclick="toggleCalendarCheck(\'' + id + '\')" style="display:flex; align-items:flex-start; gap:10px; padding:10px 12px; margin-bottom:6px; background:var(--card2); border:1px solid var(--border); border-radius:4px; cursor:pointer; user-select:none;">' +
-                 '<div data-cal-box style="width:18px; height:18px; border-radius:3px; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0; margin-top:2px;">' + (isDone ? '✓' : '') + '</div>' +
-                 '<div data-cal-text style="flex:1; font-family:\'Barlow\'; font-size:13px; line-height:1.55; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; text-decoration:' + (isDone ? 'line-through' : 'none') + ';">' + b + '</div>' +
+      // Calendar bullets render as a read-only prescription list, not a
+      // checklist. Coach Young 2026-05-14: the journal is where players
+      // mark their work; the calendar is the playbook. Same pattern as
+      // the Month Focus card on the Dashboard.
+      const bulletsHTML = parsed.bullets.map((b) => {
+        return '<div style="display:flex; align-items:flex-start; gap:10px; padding:10px 12px; margin-bottom:6px; background:var(--card2); border:1px solid var(--border); border-radius:4px; user-select:none;">' +
+                 '<div style="color:var(--gold); font-size:14px; font-weight:700; flex-shrink:0; line-height:1.55; padding-top:1px;">▸</div>' +
+                 '<div style="flex:1; font-family:\'Barlow\'; font-size:13px; line-height:1.55; color:var(--light);">' + b + '</div>' +
                '</div>';
       }).join('');
       return '<div class="week-block">' +
