@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v167';
+    const CACHE = 'ybg-mygrind-v168';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3679,7 +3679,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
       <label>School / Team</label>
-      <input type="text" id="pl-school" placeholder="e.g. Canyon HS · Sierra Vista MS · USC · Travel team name" oninput="saveProfile()" style="margin-bottom:16px;">
+      <input type="text" id="pl-school" placeholder="e.g. Middle School · High School · College · Travel Team" oninput="saveProfile()" style="margin-bottom:16px;">
 
       <!-- Physical Development subsection — Coach Young 2026-05-11
            iteration 3: "Reorganize so it makes sense and flows better."
