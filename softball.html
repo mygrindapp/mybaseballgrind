@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v174';
+    const CACHE = 'ybg-mygrind-v175';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2151,16 +2151,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <div class="card">
-        <div class="card-title">🗒️ Coach's Note — April</div>
-        <div class="coach-note" style="margin:0; font-size:13px;">
-          "The season is long, but it goes fast. You will blink and it will be June. Take it one game at a time — stay present, stay humble, and play for your team. The best players I have ever coached were the ones who made everyone around them better. Be that player."
-          <br><br>— The Grind
-        </div>
+        <div class="card-title" id="dash-coach-note-title">🗒️ Coach's Note</div>
+        <div class="coach-note" id="dash-coach-note-body" style="margin:0; font-size:13px;"></div>
       </div>
     </div>
 
-    <div class="alert alert-gold">
-      ⚾ &nbsp;<strong>APRIL</strong> — In-Season · One Game at a Time. Stay present. Team first.
+    <div class="alert alert-gold" id="dash-month-banner">
+      ⚾ &nbsp;<strong>MAY</strong> · In-Season
     </div>
 
     <div class="grid-3" style="margin-bottom:20px;">
@@ -6609,6 +6606,7 @@ function showPanel(id) {
     try { renderRestDayVolume();  } catch (e) {}
     try { renderDashboardSnapshots(); } catch (e) {}
     try { renderMonthFocus();     } catch (e) {}
+    try { renderDashMonthCard();  } catch (e) {}
     try { renderTodayPlan();      } catch (e) {}
   }
   // Roll the date-picker cap forward when the journal becomes active —
@@ -12238,6 +12236,7 @@ if (_originalRenderAll) {
     try { renderArmCare();        } catch(e) { try { console.warn('[armcare]', e); } catch(err) {} }
     try { renderWarmup();         } catch(e) { try { console.warn('[warmup]', e); } catch(err) {} }
     try { renderMonthFocus();     } catch(e) { try { console.warn('[monthfocus]', e); } catch(err) {} }
+    try { renderDashMonthCard();  } catch(e) { try { console.warn('[dash-month-card]', e); } catch(err) {} }
     try { renderTodayPlan();      } catch(e) { try { console.warn('[todayplan]', e); } catch(err) {} }
     // Persist state to localStorage so nothing is lost when the browser closes
     try { if (typeof saveState === 'function') saveState(); } catch(e) {}
@@ -13431,6 +13430,34 @@ function renderMonthFocus() {
              '</div>';
     }).join('');
   } catch(err) { try { console.warn('[monthfocus]', err); } catch(e) {} }
+}
+
+// ─── DASHBOARD MONTH CARD ─────────────────────────────────
+// Pulls the current month's data from the months[] array (Jan-Dec)
+// and renders the Coach's Note title + body + the top month banner
+// dynamically. Without this, all three surfaces stay hardcoded to
+// whatever month they were last edited in (was stuck on April).
+function renderDashMonthCard() {
+  try {
+    if (typeof months !== 'object' || !Array.isArray(months)) return;
+    const idx = new Date().getMonth();
+    const m = months[idx];
+    if (!m) return;
+    const titleCase = m.name.charAt(0) + m.name.slice(1).toLowerCase();
+    const typeLabels = {
+      'offseason':  'Off-Season',
+      'preseason':  'Pre-Season',
+      'season':     'In-Season',
+      'transition': 'Transition'
+    };
+    const typeLabel = typeLabels[m.type] || (m.type || '');
+    const titleEl  = document.getElementById('dash-coach-note-title');
+    const bodyEl   = document.getElementById('dash-coach-note-body');
+    const bannerEl = document.getElementById('dash-month-banner');
+    if (titleEl)  titleEl.textContent  = "🗒️ Coach's Note · " + titleCase;
+    if (bodyEl && m.note) bodyEl.innerHTML = '"' + m.note + '"<br><br>— The Grind';
+    if (bannerEl) bannerEl.innerHTML = '⚾ &nbsp;<strong>' + m.name + '</strong> · ' + typeLabel + ' · ' + (m.focus || '');
+  } catch(err) { try { console.warn('[dash-month-card]', err); } catch(e) {} }
 }
 function toggleMonthFocus(id) {
   const state = getMonthFocusState();
