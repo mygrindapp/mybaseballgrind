@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v180';
+    const CACHE = 'ybg-mygrind-v181';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2158,6 +2158,18 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
     <div class="alert alert-gold" id="dash-month-banner">
       ⚾ &nbsp;<strong>MAY</strong> · In-Season
+    </div>
+
+    <!-- ── THIS WEEK'S PRESCRIPTION ── Sampled live from the 12-month
+         calendar so the player sees today's recommended training right
+         on the dashboard. Tapping "See full month" jumps to the calendar
+         tab. Coach Young 2026-05-14 walkthrough. -->
+    <div class="card" id="dash-week-card" style="margin-bottom:18px; border-left:3px solid var(--gold);">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
+        <div class="card-title" id="dash-week-title" style="margin:0; font-size:16px;">📋 This Week</div>
+        <button onclick="mgTab('calendar', null)" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 10px; border-radius:3px; cursor:pointer; white-space:nowrap;">See Full Month →</button>
+      </div>
+      <div id="dash-week-body" style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6;"></div>
     </div>
 
     <div class="grid-3" style="margin-bottom:20px;">
@@ -3566,6 +3578,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
   <!-- ══════════════════════════════════════════ CALENDAR ══ -->
   <div class="panel" id="panel-calendar">
+    <!-- Back-to-dashboard affordance added 2026-05-14 walkthrough.
+         Calendar opens from the More menu, so the bottom-nav tabs are the
+         only way back. This explicit back pill removes the guesswork. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
       <div class="section-title">12-MONTH <span>CALENDAR</span></div>
       <div class="section-sub">Training Prescriptions · Built from 20+ Years of Player Development</div>
@@ -6615,6 +6631,7 @@ function showPanel(id) {
     try { renderDashboardSnapshots(); } catch (e) {}
     try { renderMonthFocus();     } catch (e) {}
     try { renderDashMonthCard();  } catch (e) {}
+    try { renderDashWeekSample(); } catch (e) {}
     try { renderTodayPlan();      } catch (e) {}
   }
   // Roll the date-picker cap forward when the journal becomes active —
@@ -12285,6 +12302,7 @@ if (_originalRenderAll) {
     try { renderWarmup();         } catch(e) { try { console.warn('[warmup]', e); } catch(err) {} }
     try { renderMonthFocus();     } catch(e) { try { console.warn('[monthfocus]', e); } catch(err) {} }
     try { renderDashMonthCard();  } catch(e) { try { console.warn('[dash-month-card]', e); } catch(err) {} }
+    try { renderDashWeekSample(); } catch(e) { try { console.warn('[dash-week]', e); } catch(err) {} }
     try { renderTodayPlan();      } catch(e) { try { console.warn('[todayplan]', e); } catch(err) {} }
     // Persist state to localStorage so nothing is lost when the browser closes
     try { if (typeof saveState === 'function') saveState(); } catch(e) {}
@@ -13506,6 +13524,43 @@ function renderDashMonthCard() {
     if (bodyEl && m.note) bodyEl.innerHTML = '"' + m.note + '"<br><br>— The Grind';
     if (bannerEl) bannerEl.innerHTML = '⚾ &nbsp;<strong>' + m.name + '</strong> · ' + typeLabel + ' · ' + (m.focus || '');
   } catch(err) { try { console.warn('[dash-month-card]', err); } catch(e) {} }
+}
+
+// ─── DASHBOARD "THIS WEEK" SAMPLE ─────────────────────────
+// Pulls the current month + current week-of-month from months[].weeks
+// and renders a sampled view of this week's training prescription so
+// the player doesn't have to open the calendar tab to see what they
+// should be doing today. Coach Young 2026-05-14 walkthrough.
+function renderDashWeekSample() {
+  try {
+    if (typeof months !== 'object' || !Array.isArray(months)) return;
+    const now = new Date();
+    const m = months[now.getMonth()];
+    if (!m || !m.weeks || !m.weeks.length) return;
+    // Day-of-month → week index. Days 1-7 = week 0, 8-14 = week 1, etc.
+    // Cap at the last week so end-of-month days don't index past the array.
+    const weekIdx = Math.min(Math.floor((now.getDate() - 1) / 7), m.weeks.length - 1);
+    const week = m.weeks[weekIdx];
+    const titleEl = document.getElementById('dash-week-title');
+    const bodyEl  = document.getElementById('dash-week-body');
+    if (titleEl) titleEl.textContent = '📋 This Week · ' + (week.title || '');
+    if (bodyEl) {
+      const parts = (week.content || '').split('\n\n');
+      const intro = parts[0] || '';
+      const bulletLines = (parts.slice(1).join('\n') || '').split('\n').filter(function(l) { return l.trim().length; });
+      const SHOWN = 4;
+      const shown = bulletLines.slice(0, SHOWN);
+      let html = '';
+      if (intro) html += '<div style="margin-bottom:10px; color:var(--grey); font-style:italic; line-height:1.5;">' + intro + '</div>';
+      shown.forEach(function(b) {
+        html += '<div style="margin-bottom:6px;">' + b + '</div>';
+      });
+      if (bulletLines.length > SHOWN) {
+        html += '<div style="font-family:\'Barlow Condensed\',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-top:10px;">+ ' + (bulletLines.length - SHOWN) + ' more this week · See full month →</div>';
+      }
+      bodyEl.innerHTML = html;
+    }
+  } catch(err) { try { console.warn('[dash-week]', err); } catch(e) {} }
 }
 function toggleMonthFocus(id) {
   const state = getMonthFocusState();
