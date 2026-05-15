@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v168';
+    const CACHE = 'ybg-mygrind-v169';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3640,7 +3640,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <!-- Name input below the hero, since the display above shows whatever they type here -->
       <div style="margin-top:18px; padding-top:18px; border-top:1px solid var(--border);">
         <label>My Name</label>
-        <input type="text" id="pl-name" placeholder="First Last" oninput="saveProfile()">
+        <input type="text" id="pl-name" placeholder="Your name" oninput="saveProfile()">
       </div>
     </div>
 
@@ -3652,7 +3652,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          vertical space. Functionality intact (saveHWEntry, history
          table, reminder). -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">🎒 Basics & Physical</div>
+      <div class="card-title">Basics & Physical</div>
 
       <!-- Basics row -->
       <div class="form-row">
@@ -3770,7 +3770,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </div>
           <div>
             <label>Notes</label>
-            <input type="text" id="hw-notes" placeholder="e.g. After fall block" style="margin-bottom:0;">
+            <input type="text" id="hw-notes" placeholder="e.g. Up 8 lbs after summer training" style="margin-bottom:0;">
           </div>
         </div>
         <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; width:100%;">
@@ -10730,6 +10730,27 @@ function saveProfile() {
   updateProfileDisplay(profile.name, profile.pos, profile.school);
 }
 
+// Bridge onboarding profile (mg_player_profile, written by onboarding.html)
+// into the softball profile shape on first run. Without this, a player who
+// just completed onboarding sees an empty Profile tab even though the parent
+// already provided their name, age, team, and position.
+function bridgeFromOnboarding() {
+  try {
+    if (localStorage.getItem('ybg_softball_profile')) return;
+    const raw = localStorage.getItem('mg_player_profile');
+    if (!raw) return;
+    const ob = JSON.parse(raw);
+    if (!ob || !ob.name) return;
+    const bridged = {
+      name:   ob.name || '',
+      age:    ob.age || '',
+      school: ob.team || '',
+      pos:    Array.isArray(ob.position) ? ob.position.join(' / ') : ''
+    };
+    localStorage.setItem('ybg_softball_profile', JSON.stringify(bridged));
+  } catch(e) {}
+}
+
 function loadProfile() {
   try {
     const saved = localStorage.getItem('ybg_softball_profile');
@@ -10942,6 +10963,7 @@ function renderHWTracker() {
 // ─── START ────────────────────────────────────────────────
 init();
 initStats();
+bridgeFromOnboarding();
 loadProfile();
 loadProfilePic();
 loadGradesUI();
