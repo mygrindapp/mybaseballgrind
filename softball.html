@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v173';
+    const CACHE = 'ybg-mygrind-v174';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2081,7 +2081,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          Coach Young 2026-05-11: "I want academics to be on the top of
          dashboard. Make this a really important part of their journey."
          Surfaces the player's current GPA + eligibility status across
-         NCAA D1 / D2 / NAIA / JUCO at a glance. Tap "Manage" → Profile
+         NCAA D1 / D2 / D3 / NAIA / JUCO at a glance. Tap "Manage" → Profile
          tab for full grade entry. Source of truth stays in Profile;
          this is a read-only view rendered by renderDashAcademics(). -->
     <div class="card" id="dash-academics-card" style="margin-bottom:18px; background:linear-gradient(135deg,#141A14,#101410); border-left:3px solid #5A8A3A; cursor:pointer;" onclick="mgTab('players','tab-players')">
@@ -9478,7 +9478,7 @@ function renderEligibility() {
   if (!grid) return;
   const gpa = (state && state.gpa && state.gpa.current) || document.getElementById('gpa-current')?.value || '';
   const e = computeEligibility(gpa);
-  grid.innerHTML = _eligTileHTML(e.d1) + _eligTileHTML(e.d2) + _eligTileHTML(e.naia) + _eligTileHTML(e.d3) + _eligTileHTML(e.juco);
+  grid.innerHTML = _eligTileHTML(e.d1) + _eligTileHTML(e.d2) + _eligTileHTML(e.d3) + _eligTileHTML(e.naia) + _eligTileHTML(e.juco);
 }
 
 function renderDashAcademics() {
@@ -9494,7 +9494,7 @@ function renderDashAcademics() {
   // Eligibility tiles (compact for dashboard)
   const elig = computeEligibility(gpaCur);
   const grid = document.getElementById('dash-elig-grid');
-  if (grid) grid.innerHTML = _eligTileHTML(elig.d1, true) + _eligTileHTML(elig.d2, true) + _eligTileHTML(elig.naia, true) + _eligTileHTML(elig.juco, true);
+  if (grid) grid.innerHTML = _eligTileHTML(elig.d1, true) + _eligTileHTML(elig.d2, true) + _eligTileHTML(elig.d3, true) + _eligTileHTML(elig.naia, true) + _eligTileHTML(elig.juco, true);
 
   // Subject grade pills — read directly from saved grades
   const pills = document.getElementById('dash-subject-pills');
