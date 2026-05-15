@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v171';
+    const CACHE = 'ybg-mygrind-v172';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2620,7 +2620,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="j-offday-info" style="display:none; padding:18px 20px; margin-bottom:18px; background:rgba(93,173,226,0.08); border-left:3px solid #5DADE2; border-radius:3px;">
         <div style="font-family:'Bebas Neue',cursive; font-size:22px; letter-spacing:2.5px; color:#5DADE2; line-height:1; margin-bottom:8px;">😴 OFF DAY = FULL REST</div>
         <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6;">
-          No practice. No game. No instructor. No gym. Today is for <strong style="color:#5DADE2;">rest, recovery, family, and the people who fill your cup</strong>. Off Day still counts toward your streak.
+          No practice. No game. No instructor. No gym. Today is for <strong style="color:#5DADE2;">rest, recovery, family, and the people in your corner</strong>. Off Day still counts toward your streak.
           <br><br>
           Want to journal your thoughts on top of the rest day? After you save this, switch the entry type to <strong style="color:#D4C29B;">Reflection</strong> and log one too — Reflection is an addition, not a replacement.
         </div>
@@ -8051,8 +8051,8 @@ function toggleGameStats() {
     if (tmrwEl)  tmrwEl.placeholder  = 'Sleep, food, hydration, stretching, ice. What does your body need today and what are you giving it?';
     const prepLbOff = document.getElementById('j-prepare-label');
     const prepElOff = document.getElementById('j-prepare');
-    if (prepLbOff) prepLbOff.textContent = 'Who or what filled your cup today?';
-    if (prepElOff) prepElOff.placeholder = 'Family, friends, faith, fun — the people and moments outside the game that make you whole. Rest is more than no-baseball; it\'s filling back up.';
+    if (prepLbOff) prepLbOff.textContent = 'Who was in your corner today?';
+    if (prepElOff) prepElOff.placeholder = 'Family, friends, faith, fun. The people and moments outside the game that keep you whole. Rest is more than no-baseball. It\'s filling back up.';
   } else if (isWorkout) {
     // Workout title only — j-what / j-tomorrow / grade / coach-note are
     // hidden, so we only need to flavor the title. Coach Young 2026-05-11:
