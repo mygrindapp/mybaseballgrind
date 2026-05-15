@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v172';
+    const CACHE = 'ybg-mygrind-v173';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2144,10 +2144,10 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          the player sees, not buried under stats and recent entries. -->
     <div class="grid-2" style="margin-bottom:18px;">
       <div class="card">
-        <div class="card-title">📋 This Month — April Focus</div>
-        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-bottom:8px; line-height:1.5;">Tap each one as you live it this month. Resets when the month flips.</div>
+        <div class="card-title">📋 This Month's Focus</div>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-bottom:8px; line-height:1.5;">These are the standards. Live them every day.</div>
         <div id="month-focus-list" style="font-size:14px; color:var(--light); line-height:1.5;"></div>
-        <div id="month-focus-progress" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:center; margin-top:10px;"></div>
+        <div id="month-focus-progress" style="display:none;"></div>
       </div>
 
       <div class="card">
@@ -13398,11 +13398,11 @@ function updateCooldownVisibility() {
 // they live it. State is keyed by year+month so it auto-resets when
 // the calendar month flips.
 const MONTH_FOCUS_ITEMS = [
-  { id: 'compete', label: 'Compete — One Game at a Time' },
-  { id: 'team',    label: 'Team First — not stats, not scouts' },
-  { id: 'journal', label: 'Post-Game Journal — every game' },
+  { id: 'compete', label: 'Compete one game at a time' },
+  { id: 'team',    label: 'Team first. Not stats, not scouts.' },
+  { id: 'journal', label: 'Post-game journal every game' },
   { id: 'coaches', label: 'Talk to your coaches weekly' },
-  { id: 'gpa',     label: 'GPA check — No Grades, No {Sport}' }  // {Sport} resolved at render time
+  { id: 'gpa',     label: 'No grades, no {Sport}. Stay on top of GPA.' }  // {Sport} resolved at render time
 ];
 function monthFocusKey() {
   const d = new Date();
@@ -13418,24 +13418,18 @@ function setMonthFocusState(s) {
 function renderMonthFocus() {
   try {
     const list = document.getElementById('month-focus-list');
-    const prog = document.getElementById('month-focus-progress');
     if (!list) return;
     const sportName = (function() {
       try { return localStorage.getItem('mg_sport') === 'softball' ? 'Softball' : 'Baseball'; }
       catch(e) { return 'Baseball'; }
     })();
-    const state = getMonthFocusState();
-    let done = 0;
     list.innerHTML = MONTH_FOCUS_ITEMS.map(function(item) {
-      const isDone = !!state[item.id];
-      if (isDone) done++;
       const label = item.label.replace('{Sport}', sportName);
-      return '<div onclick="toggleMonthFocus(\'' + item.id + '\')" style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border); cursor:pointer; user-select:none;">' +
-               '<div style="width:18px; height:18px; border-radius:3px; border:2px solid ' + (isDone ? '#27AE60' : '#444') + '; background:' + (isDone ? '#27AE60' : 'transparent') + '; display:flex; align-items:center; justify-content:center; color:white; font-size:11px; font-weight:800; flex-shrink:0;">' + (isDone ? '✓' : '') + '</div>' +
-               '<div style="flex:1; font-family:\'Barlow\'; font-size:14px; color:' + (isDone ? 'var(--grey)' : 'var(--light)') + '; text-decoration:' + (isDone ? 'line-through' : 'none') + '; line-height:1.5;">' + label + '</div>' +
+      return '<div style="display:flex; align-items:flex-start; gap:10px; padding:10px 0; border-bottom:1px solid var(--border); user-select:none;">' +
+               '<div style="color:var(--gold); font-size:14px; font-weight:700; flex-shrink:0; line-height:1.5; padding-top:1px;">▸</div>' +
+               '<div style="flex:1; font-family:\'Barlow\'; font-size:14px; color:var(--light); line-height:1.5;">' + label + '</div>' +
              '</div>';
     }).join('');
-    if (prog) prog.textContent = done + ' of ' + MONTH_FOCUS_ITEMS.length + ' complete';
   } catch(err) { try { console.warn('[monthfocus]', err); } catch(e) {} }
 }
 function toggleMonthFocus(id) {
