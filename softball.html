@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v170';
+    const CACHE = 'ybg-mygrind-v171';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7198,7 +7198,7 @@ function saveEntry() {
   // Young 2026-05-12: "When I try to add a reflection it doesn't allow
   // me" — title was being required for reflection and quietly blocking
   // save when the player left it empty.
-  if (!title && type === 'game') { alert('Add an opponent or title for this game.'); return; }
+  if (!title && type === 'game') { alert('Add the opponent for this game.'); return; }
 
   // Hard duplicate-off-day guard — Coach Young 2026-05-12. Even if rapid
   // save clicks bypass the dropdown lock, this catches the save attempt
@@ -8008,10 +8008,10 @@ function toggleGameStats() {
   }
 
   if (isGame) {
-    if (titleLb) titleLb.textContent = 'Title / Opponent';
-    if (titleEl) titleEl.placeholder = 'e.g. vs Valencia HS – W 6-4';
+    if (titleLb) titleLb.textContent = 'Opponent';
+    if (titleEl) titleEl.placeholder = 'e.g. Team played · W 6-4';
     if (whatLb)  whatLb.textContent  = 'What happened? What did I do for my team?';
-    if (whatEl)  whatEl.placeholder  = 'Describe the game — what went well, what did not, how did you compete?';
+    if (whatEl)  whatEl.placeholder  = 'Describe the game. What went well, what did not, and how did you compete?';
     if (tmrwLb)  tmrwLb.textContent  = 'What am I taking into tomorrow?';
     if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing to carry forward from this game?';
   } else if (isPrac) {
