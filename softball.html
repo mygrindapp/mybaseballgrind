@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v175';
+    const CACHE = 'ybg-mygrind-v176';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -11934,7 +11934,13 @@ function buildWeeklyRecap() {
   const weekAgo = new Date();
   weekAgo.setDate(now.getDate() - 7);
 
-  let games = 0, practices = 0, reflections = 0, total = 0;
+  // Per-type counters — covers every entry type the app actually supports
+  // (game / practice / instructor / solo / workout / reflection / offday)
+  // so the family recap coordinates with what the player logs across the
+  // dashboard. Coach Young 2026-05-14 walkthrough: "Share With Family had
+  // more progress points — make them coordinate."
+  let games = 0, practices = 0, instructorSessions = 0, soloSessions = 0,
+      workouts = 0, reflections = 0, offDays = 0, total = 0;
   state.entries.forEach(function(e) {
     // Use parseEntryDate so 'Today' literals from quick-log path don't get
     // NaN'd out of the count. (2026-05-08 audit fix.)
@@ -11942,9 +11948,13 @@ function buildWeeklyRecap() {
     if (!d || isNaN(d.getTime())) return;
     if (d >= weekAgo && d <= now) {
       total++;
-      if (e.type === 'game') games++;
-      else if (e.type === 'practice') practices++;
+      if      (e.type === 'game')       games++;
+      else if (e.type === 'practice')   practices++;
+      else if (e.type === 'instructor') instructorSessions++;
+      else if (e.type === 'solo')       soloSessions++;
+      else if (e.type === 'workout')    workouts++;
       else if (e.type === 'reflection') reflections++;
+      else if (e.type === 'offday')     offDays++;
     }
   });
 
@@ -11992,11 +12002,28 @@ function buildWeeklyRecap() {
         '<div style="font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Current Streak</div>' +
       '</div>' +
     '</div>' +
-    '<div style="font-size:13px; color:var(--light);">' +
-      _ball + ' Games: <strong style="color:var(--gold);">' + games + '</strong> &nbsp;·&nbsp; ' +
-      '🏏 Practices: <strong style="color:var(--gold);">' + practices + '</strong> &nbsp;·&nbsp; ' +
-      '💭 Reflections: <strong style="color:var(--gold);">' + reflections + '</strong>' +
-    '</div>' +
+    // Per-type breakdown. Only show types with count > 0 so the recap
+    // stays readable and doesn't bury the player in zeros. Order matches
+    // how the player flows through the app: game/practice are primary,
+    // then instructor/solo/workout supplemental, then reflection/offday
+    // close out the week.
+    (function() {
+      const rows = [
+        { count: games,              icon: _ball,  label: 'Games' },
+        { count: practices,          icon: '🏏',    label: 'Practices' },
+        { count: instructorSessions, icon: '👨‍🏫',  label: 'Instructor' },
+        { count: soloSessions,       icon: '🎯',    label: 'Solo Work' },
+        { count: workouts,           icon: '💪',    label: 'Workouts' },
+        { count: reflections,        icon: '💭',    label: 'Reflections' },
+        { count: offDays,            icon: '😴',    label: 'Off Days' }
+      ].filter(function(r) { return r.count > 0; });
+      if (!rows.length) return '<div style="font-size:13px; color:var(--grey); margin-top:4px;">No entries logged this week yet.</div>';
+      return '<div style="font-size:13px; color:var(--light); line-height:1.8;">' +
+        rows.map(function(r) {
+          return r.icon + ' ' + r.label + ': <strong style="color:var(--gold);">' + r.count + '</strong>';
+        }).join(' &nbsp;·&nbsp; ') +
+      '</div>';
+    })() +
     '<div style="font-size:13px; color:var(--light); margin-top:6px;">' +
       '🏆 Active Goals: <strong style="color:var(--gold);">' + goalsActive + '</strong>' +
     '</div>' +
@@ -12029,13 +12056,26 @@ function buildWeeklyRecap() {
   // Coach-text snippets appended below so parents see exactly what their
   // kid reached out to their instructor about this week.
   let plain =
-    name + "'s Week — MY GRIND Recap " + _ball + "\n\n" +
+    name + "'s Week · MY GRIND Recap " + _ball + "\n\n" +
     "Entries this week: " + total + "\n" +
-    "Games logged: " + games + "\n" +
-    "Practices logged: " + practices + "\n" +
-    "Reflections: " + reflections + "\n" +
     "Current streak: " + streak + " days 🔥\n" +
     "Active goals: " + goalsActive + "\n";
+  // Per-type breakdown — same coordination as the HTML view above.
+  const _plainRows = [
+    { count: games,              icon: _ball,  label: 'Games' },
+    { count: practices,          icon: '🏏',    label: 'Practices' },
+    { count: instructorSessions, icon: '👨‍🏫',  label: 'Instructor' },
+    { count: soloSessions,       icon: '🎯',    label: 'Solo Work' },
+    { count: workouts,           icon: '💪',    label: 'Workouts' },
+    { count: reflections,        icon: '💭',    label: 'Reflections' },
+    { count: offDays,            icon: '😴',    label: 'Off Days' }
+  ].filter(function(r) { return r.count > 0; });
+  if (_plainRows.length) {
+    plain += "\n";
+    _plainRows.forEach(function(r) {
+      plain += r.icon + " " + r.label + ": " + r.count + "\n";
+    });
+  }
   if (notesThisWeek.length) {
     plain += "\n📝 Notes to Coach (" + notesThisWeek.length + ")\n";
     notesThisWeek.slice(-3).forEach(function(t) {
