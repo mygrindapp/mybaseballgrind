@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v176';
+    const CACHE = 'ybg-mygrind-v177';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2465,10 +2465,6 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div id="dash-last-game" style="font-family:'Barlow'; font-size:14px; color:var(--grey); padding-top:12px; border-top:1px solid var(--border); line-height:1.6;"></div>
     </div>
 
-    <!-- Photobook entry point moved to sit alongside Share With Family
-         at the bottom of the dashboard 2026-05-12 (Coach Young reorg) —
-         keeps Game Stats + Fielding grouped as a "Performance" pair. -->
-
     <!-- ── FIELDING SNAPSHOT (only shows if game entries with fielding data exist) ── -->
     <div id="dash-fielding-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
@@ -2495,19 +2491,12 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ── PHOTOBOOK ENTRY POINT ── Moved alongside Share With Family at
-         the bottom of the dashboard 2026-05-12 (Coach Young reorg) so
-         the "Reports & memories" surfaces sit as one section. -->
-    <button onclick="openPhotobook()" class="card" style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:16px; padding:14px 18px; background:var(--card); border:1px solid var(--border); border-radius:6px; cursor:pointer; text-align:left;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="font-size:24px; line-height:1;">📷</div>
-        <div>
-          <div style="font-family:'Bebas Neue'; font-size:18px; letter-spacing:1.5px; color:var(--gold); line-height:1;">My Photobook</div>
-          <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:var(--grey); margin-top:3px;">Every photo + video across all entries</div>
-        </div>
-      </div>
-      <div style="font-family:'Bebas Neue'; font-size:20px; color:var(--gold); line-height:1;">→</div>
-    </button>
+    <!-- Photobook entry point removed 2026-05-14 walkthrough per Coach:
+         localStorage strips media dataUrls on save (5MB cap), so photos
+         vanish on reload. Cloud-synced photos belong in MyGrind Pro
+         (Phase 7b V2). No "coming soon" UI in the live app per the
+         aspirational-UI memory rule. openPhotobook() + #photobook-overlay
+         modal kept in code but dormant — revive or replace when Pro ships. -->
 
     <!-- ── WEEK RECAP + SHARE WITH FAMILY ── Merged 2026-05-12 (Coach
          Young walkthrough). Two cards used to sit here side by side
