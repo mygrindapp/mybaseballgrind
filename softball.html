@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v194';
+    const CACHE = 'ybg-mygrind-v195';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2170,9 +2170,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          tab for full grade entry. Source of truth stays in Profile;
          this is a read-only view rendered by renderDashAcademics(). -->
     <div class="card" id="dash-academics-card" style="margin-bottom:18px; background:linear-gradient(135deg,#141A14,#101410); border-left:3px solid #5A8A3A; cursor:pointer;" onclick="mgTab('players','tab-players')">
+      <!-- Summer-mode eyebrow (hidden by default, revealed by renderDashAcademics
+           when isAcademicsSummerMode() returns true). Phase 2A spec, Coach Young
+           2026-05-16: when school is out (June-August), card flips to "Spring
+           [Year] Final Grades · Locked" treatment so the dashboard doesn't feel
+           stale asking for grades that don't exist yet. -->
+      <div id="dash-academics-summer-badge" style="display:none; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2.5px; color:#9A7A30; text-transform:uppercase; margin-bottom:8px;">🔒 <span id="dash-academics-summer-badge-text">Spring · Final Grades · Locked</span></div>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
-        <div class="card-title" style="color:#A8D97B; margin:0; font-size:18px;">📚 Academics</div>
-        <span style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Manage in Profile →</span>
+        <div id="dash-academics-title" class="card-title" style="color:#A8D97B; margin:0; font-size:18px;">📚 Academics</div>
+        <span id="dash-academics-manage-label" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Manage in Profile →</span>
       </div>
 
       <div style="display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:center; margin-bottom:14px;">
@@ -2186,7 +2192,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
       <div id="dash-subject-pills" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
 
-      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.4; font-style:italic; margin-top:4px;">
+      <div id="dash-academics-tagline" style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.4; font-style:italic; margin-top:4px;">
         No grades · No game. Pull every grade. Slipping? Handle it today.
       </div>
     </div>
@@ -9607,9 +9613,45 @@ function renderEligibility() {
   grid.innerHTML = _eligTileHTML(e.d1) + _eligTileHTML(e.d2) + _eligTileHTML(e.d3) + _eligTileHTML(e.naia) + _eligTileHTML(e.juco);
 }
 
+// Phase 2A summer mode (Coach Young 2026-05-16 spec): when the calendar
+// month is June, July, or August, the player has no new grades to enter
+// — school is out. The card flips to a frozen "Spring [Year] Final
+// Grades · Locked" view so the dashboard doesn't feel stale asking for
+// data that doesn't exist yet. Phase 2B (Pro tier) will replace this
+// month-window heuristic with player-entered school start/end dates.
+function isAcademicsSummerMode() {
+  const m = new Date().getMonth(); // 0=Jan, 5=Jun, 6=Jul, 7=Aug
+  return m === 5 || m === 6 || m === 7;
+}
+
 function renderDashAcademics() {
   const card = document.getElementById('dash-academics-card');
   if (!card) return;
+
+  // Summer-mode swap — apply BEFORE rendering grades so the locked
+  // visual treatment is in place when the values paint.
+  const summer = isAcademicsSummerMode();
+  const titleEl   = document.getElementById('dash-academics-title');
+  const manageEl  = document.getElementById('dash-academics-manage-label');
+  const taglineEl = document.getElementById('dash-academics-tagline');
+  const badgeEl   = document.getElementById('dash-academics-summer-badge');
+  const badgeTxt  = document.getElementById('dash-academics-summer-badge-text');
+  if (summer) {
+    const yr = new Date().getFullYear();
+    if (badgeEl)   badgeEl.style.display = 'block';
+    if (badgeTxt)  badgeTxt.textContent  = 'Spring ' + yr + ' · Final Grades · Locked';
+    if (titleEl)   titleEl.textContent   = '📚 Academics · Summer Break';
+    if (manageEl)  manageEl.textContent  = 'Locked Until Fall';
+    if (taglineEl) taglineEl.textContent = "School's out. Spring grades are locked in. Use this summer to set yourself up: AP prep, summer reading, ACT or SAT date on the calendar. Fall is closer than you think.";
+    card.style.borderLeftColor = '#9A7A30';
+  } else {
+    if (badgeEl)   badgeEl.style.display = 'none';
+    if (titleEl)   titleEl.textContent   = '📚 Academics';
+    if (manageEl)  manageEl.textContent  = 'Manage in Profile →';
+    if (taglineEl) taglineEl.textContent = 'No grades · No game. Pull every grade. Slipping? Handle it today.';
+    card.style.borderLeftColor = '#5A8A3A';
+  }
+
   const gpaCur = (state && state.gpa && state.gpa.current) || '';
   const gpaTgt = (state && state.gpa && state.gpa.target)  || '';
   const gpaEl  = document.getElementById('dash-gpa-display');
