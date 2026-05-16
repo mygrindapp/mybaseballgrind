@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v193';
+    const CACHE = 'ybg-mygrind-v194';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -9394,12 +9394,16 @@ function renderEntries() {
       ${e.tomorrow ? `<div class="entry-text" style="margin-top:10px; color:var(--gold-light);"><em>Tomorrow → ${e.tomorrow}</em></div>` : ''}
       ${e.prepare  ? `<div class="entry-text" style="margin-top:10px; color:#5DADE2;"><em>My Preparation Plan → ${e.prepare}</em></div>` : ''}
 
-      <!-- NOTE FOR HEAD COACH (game/practice entries only — instructor
-           entries surface their own noteForCoach inside the instructor box) -->
+      <!-- NOTE FOR HEAD COACH (game/practice entries only. Instructor
+           entries surface their own noteForCoach inside the instructor box.)
+           Share button added 2026-05-16: Coach Feedback panel is hidden
+           until August, so players send notes manually via text/email/
+           AirDrop using the device share sheet. -->
       ${e.coachNote ? `
         <div style="margin-top:14px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px;">
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">📝 Note for Coach</div>
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6;">${e.coachNote}</div>
+          <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:10px;">${e.coachNote}</div>
+          <button onclick="shareCoachNote(${e.id}); event.stopPropagation();" style="background:var(--gold); border:none; color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer;">📤 &nbsp;Send to Coach</button>
         </div>
       ` : ''}
 
@@ -11209,6 +11213,45 @@ function shareNative() {
     navigator.share(shareData);
   } else {
     copyReferralLink();
+  }
+}
+
+// ── SHARE COACH NOTE ─────────────────────────────────────
+// Coach Feedback panel is hidden until August 2026 per the
+// 2026-05-16 walkthrough (coach-facing dashboard is the August sprint).
+// Until then, players surface their saved coach notes by sharing them
+// manually via the device share sheet (text / email / AirDrop). This
+// pulls entry.coachNote and opens the OS share UI with a pre-formatted
+// message ready to send.
+function shareCoachNote(entryId) {
+  try {
+    const entry = state.entries.find(function(e) { return e.id === entryId; });
+    if (!entry || !entry.coachNote) return;
+
+    const playerName = (state.profile && state.profile.name) || '';
+    const dateStr    = entry.date || 'recent';
+    const typeRaw    = entry.type || 'entry';
+    const typeLabel  = typeRaw.charAt(0).toUpperCase() + typeRaw.slice(1);
+
+    const message =
+      'Coach, here is a note I left for you in my MyGrind journal:\n\n' +
+      '"' + entry.coachNote + '"\n\n' +
+      'From my ' + typeLabel + ' on ' + dateStr + '.' +
+      (playerName ? '\n\n' + playerName : '');
+
+    if (navigator.share) {
+      navigator.share({
+        title: 'Note for Coach',
+        text: message
+      }).catch(function() { /* user dismissed share sheet, no-op */ });
+    } else {
+      // Fallback: copy to clipboard + open SMS composer
+      try { navigator.clipboard.writeText(message); } catch (e) {}
+      window.location.href = 'sms:?body=' + encodeURIComponent(message);
+    }
+    try { ybgHaptic(15); } catch (e) {}
+  } catch (err) {
+    try { console.warn('[shareCoachNote]', err); } catch (e) {}
   }
 }
 </script>
