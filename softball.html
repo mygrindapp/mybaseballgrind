@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v190';
+    const CACHE = 'ybg-mygrind-v191';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1723,7 +1723,7 @@ function dismissIosBanner() {
     <div style="text-align:center; margin-bottom:20px;">
       <div style="font-size:40px; line-height:1;">📚</div>
       <div style="font-family:'Bebas Neue'; font-size:28px; letter-spacing:2px; color:var(--gold); margin-top:6px; line-height:1;">GPA CHECK</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:#F4F4F4; margin-top:8px;">No Grades · No Game — That's the rule.</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:#F4F4F4; margin-top:8px;">No Grades · No Game. That's the rule.</div>
     </div>
 
     <div style="background:#1A0010; border-left:3px solid var(--gold); padding:12px 16px; margin-bottom:18px; font-family:'Barlow'; font-size:13px; color:#AAA; line-height:1.6;">
@@ -1747,7 +1747,7 @@ function dismissIosBanner() {
       Pick an option above
     </button>
     <div style="text-align:center; margin-top:12px; font-family:'Barlow'; font-size:11px; color:#555;">
-      📚 No Grades · No Game — The Grind
+      📚 No Grades · No Game · The Grind
     </div>
   </div>
 </div>
@@ -4783,7 +4783,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
         <div style="background:var(--card2); border-radius:3px; padding:12px 14px; border-left:3px solid var(--gold);">
           <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px;">🏆 Goals & Grades</div>
-          <div data-mg-text="No Grades · No {Sport}" style="font-family:'Barlow'; font-size:14px; color:var(--grey);">No Grades · No Baseball</div>
+          <div data-mg-text="No Grades · No Game" style="font-family:'Barlow'; font-size:14px; color:var(--grey);">No Grades · No Game</div>
         </div>
         <div style="background:var(--card2); border-radius:3px; padding:12px 14px; border-left:3px solid var(--gold);">
           <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px;">📏 Physical Dev</div>
@@ -5393,7 +5393,7 @@ const months = [
     weeks: [
       { title: "Week 1 — Regular Season Closes", content: "This is the week regular season wraps for most teams. League title games, playoff seeding, last regular-season games for non-playoff teams.\n\n🏋️ MON · WED — Maintenance Lifting: Stay consistent. Your legs power everything. Do not let them go.\n⚾ EVERY DAY — Hitting: Daily tee or soft toss. Quality over quantity. Save the body for the games.\n🩹 DAILY — Arm and Shoulder Care: Bands every morning. Your arm has worked since February.\n🏆 PLAYOFFS — If you made it, rest the off-day and study your seed and bracket. If not, your season is closing this week. Finish on your terms.\n😴 SUNDAY — Rest. Family. Recharge." },
       { title: "Week 2 — Playoffs Begin or Off-Ramp Starts", content: "CIF Southern Section playoff prelims start around May 14. For non-playoff teams, your three weeks of throwing rest starts this week.\n\n🏋️ MON · WED — Maintenance (Playoff Teams): Light maintenance. Keep the body fresh. If your season is over, no heavy lifting either. You are in rest mode.\n⚾ PLAYOFF TEAMS — Daily hitting plus game prep. Treat every game like the last one.\n🛌 OFF-RAMP TEAMS — Season is done. Step away. No throwing, no bullpens. Sleep, walk, stretch. Recovery starts now.\n📚 GRADES — Finals are coming. Pull every grade and handle it now.\n😴 SUNDAY — Family. Always." },
-      { title: "Week 3 — Finals Week + Mid-Playoffs", content: "Finals week for most schools. Playoff teams have games. Non-playoff teams are deep into rest.\n\n📚 FINALS — Handle your classroom first. No grades, no baseball.\n⚾ PLAYOFF TEAMS — Hitting between games. 20 to 30 focused tee swings is enough during finals week.\n🛌 OFF-RAMP TEAMS — Still no throwing. Mobility, sleep, family time. Body audit if anything hurts.\n🩹 DAILY — Arm care continues for anyone still in. Bands every morning.\n😴 SUNDAY — Step away. Family. The season is closing." },
+      { title: "Week 3 — Finals Week + Mid-Playoffs", content: "Finals week for most schools. Playoff teams have games. Non-playoff teams are deep into rest.\n\n📚 FINALS — Handle your classroom first. No grades, no game.\n⚾ PLAYOFF TEAMS — Hitting between games. 20 to 30 focused tee swings is enough during finals week.\n🛌 OFF-RAMP TEAMS — Still no throwing. Mobility, sleep, family time. Body audit if anything hurts.\n🩹 DAILY — Arm care continues for anyone still in. Bands every morning.\n😴 SUNDAY — Step away. Family. The season is closing." },
       { title: "Week 4 — Playoff Finals and Season Ends for Most", content: "CIF Southern Section finals are May 29-30. State regionals start June 2. For most players, the season is officially over this week.\n\n🏆 STILL IN — Playoff games. Showcase what you have built since February.\n⚾ PLAYOFF TEAMS — Hitting plus arm care. Same routine. Trust it.\n🛌 OFF-RAMP TEAMS — Final week of rest before light hitting returns in June. Sleep nine hours. See your trainer if anything still aches.\n📓 SEASON REVIEW — Write it down while it is fresh. Best moment, hardest moment, what grew.\n😴 SUNDAY — Family. Rest. The next chapter starts in June." }
     ],
     note: "May is season-ending month. For non-playoff teams, regular season ends week 1 and the three-week rest from throwing starts week 2. For playoff teams, you grind through CIF playoffs into late May or early June, then your rest starts. Either way: hit every day until your season ends, then step fully away from the throwing program. Your arm has earned it. June through Thanksgiving is when you build, but only after recovery is real."
@@ -5427,7 +5427,7 @@ const months = [
       { title: "Week 1 — Escalate the Build", content: "The base is set from late June and July. Now the intensity climbs.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Heavy compound lifts. Squats, deadlifts, bench press, rows, pull-ups. Build your legs and posterior chain. Progressive overload every week. Track your numbers.\n⚾ MON to SAT — Hitting (Wood Bat, Every Day): All swings with wood from now through December. Tee, soft toss, front toss, wood only. Minimum 50 swings daily.\n🤸 WED — Active recovery: stretching, mobility, light cardio.\n😴 SUNDAY — Rest. Family. Absolutely non-negotiable. Your body needs this day." },
       { title: "Week 2 — Speed and Explosion", content: "Explosion is bat speed. Explosion is arm strength. Build it now.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Add box jumps, broad jumps, med ball rotational work alongside compound lifts. Train like an athlete.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): 75 swings. Film your sessions. Send to your instructor. Implement feedback the next day — not next week, the next day.\n🏃 WED — Sprint work: 10-yard, 30-yard, 60-yard dashes. Time yourself. Track it. You should be getting faster.\n😴 SUNDAY — Rest. Family dinner. Church. Something that fills you up." },
       { title: "Week 3 — Wood Bats Every Single Day", content: "The players who swing wood every day in August show up to March with a different bat path than everyone else.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Same program. Progressive overload — add weight each week.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): 75–100 swings. Tee one day, soft toss the next, front toss the next. Rotate. Never mindless reps.\n🤸 WED — Mobility, flexibility, arm & shoulder care maintenance.\n😴 SUNDAY — Rest. Your body is working harder right now than at any other point in the year. Sunday is how you keep doing it." },
-      { title: "Week 4 — Reflect on Last Season", content: "Pull your game journals from this past season. Top 3 improvements. Top 2 things to fix. Write it down and bring it to your instructor.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Best week of the month. Try to hit a personal best on one lift.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): 100 swings. Film your best session of the week. This is August work — it shows up in March.\n📚 — School is starting back up. Pull your grades from day one. No grades, no baseball.\n😴 SUNDAY — Family. Rest. Reflect on what you are building." }
+      { title: "Week 4 — Reflect on Last Season", content: "Pull your game journals from this past season. Top 3 improvements. Top 2 things to fix. Write it down and bring it to your instructor.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Best week of the month. Try to hit a personal best on one lift.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): 100 swings. Film your best session of the week. This is August work — it shows up in March.\n📚 — School is starting back up. Pull your grades from day one. No grades, no game.\n😴 SUNDAY — Family. Rest. Reflect on what you are building." }
     ],
     note: "August is where the build hits its stride. June handled the rest, July got you moving, August is when intensity climbs. The players who push the weight room hard, swing wood every day, and add speed work to the program are the ones who show up to opening day looking different. Hit every day. Lift four days a week. Rest on Sunday. Repeat."
   },
@@ -5448,7 +5448,7 @@ const months = [
     weeks: [
       { title: "Week 1 — Peak Month: Weight Room Hard", content: "Your heaviest lifts of the entire off-season happen in October. This is the window — take advantage of it.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Max effort. Heaviest squats, deadlifts, bench, rows of the off-season. Recruit a training partner — push each other to places you would not go alone.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): 100 swings. High-rep sessions. These October swings become March batting averages.\n🤸 WED — Mobility, ladder drills, position-specific footwork.\n😴 SUNDAY — Rest. Family. October Sundays are special — the weather is turning and the people who love you want to spend time with you." },
       { title: "Week 2 — Explosion and Footwork", content: "Strength is built. Now make it athletic.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Add plyometric work — box jumps, broad jumps, lateral bounds — alongside compound lifts.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): Film every session this week. Identify one mechanical thing to fix and work on it every day.\n🏃 WED — Ladder drills 3x. Infielders: DP footwork and range. Outfielders: drop-step and first-step reads. Pitchers: hip and core explosion.\n😴 SUNDAY — Rest and family. Always." },
-      { title: "Week 3 — Wood Bats + Instructional Work", content: "October swings are investments in March results. Treat every swing that way.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Try to hit a personal best this week on your strongest lift.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): Book a lesson with your instructor this week. Bring what you have been working on. Implement feedback immediately.\n📚 — Mid-terms are here. Pull every grade. No grades, no baseball — handle it before it becomes a problem.\n😴 SUNDAY — Rest. Family. Lunch somewhere good." },
+      { title: "Week 3 — Wood Bats + Instructional Work", content: "October swings are investments in March results. Treat every swing that way.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Try to hit a personal best this week on your strongest lift.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): Book a lesson with your instructor this week. Bring what you have been working on. Implement feedback immediately.\n📚 — Mid-terms are here. Pull every grade. No grades, no game — handle it before it becomes a problem.\n😴 SUNDAY — Rest. Family. Lunch somewhere good." },
       { title: "Week 4 — Build Toward November", content: "October ends and November shifts gears — but you finish October strong.\n\n🏋️ MON · TUE · THU · FRI — Weight Room: Strongest week of the month. Leave nothing in the tank.\n⚾ MON–SAT — Hitting (Wood Bat, Every Day): 100 swings. Strong finish to peak month. Film your best session.\n📋 — What did you build in October? Write it down. Strength numbers, swing reps, miles run. See the work on paper.\n😴 SUNDAY — Rest and family. You put in your hardest month of the off-season. This Sunday, you earned the couch." }
     ],
     note: "Most players are asleep in October. That is your advantage. Peak strength month — push the weight room like it is your job. Swing wood every day. And give Sunday to your family, your faith, and your rest. That is the full picture of what it takes to show up in March looking like a different player."
@@ -6859,7 +6859,7 @@ function buildCalendar() {
               <input type="number" step="0.1" min="0" max="4" placeholder="0.0" style="width:80px; margin-bottom:0; padding:6px 10px; font-size:13px;">
             </div>
             <div style="align-self:flex-end;">
-              <div data-mg-text="No Grades, No {Sport}." style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:1px; color:var(--grey); padding-bottom:6px;">No Grades, No Baseball.</div>
+              <div data-mg-text="No Grades, No Game." style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:1px; color:var(--grey); padding-bottom:6px;">No Grades, No Game.</div>
             </div>
           </div>
         </div>
@@ -11941,7 +11941,7 @@ const YBG_QUOTES = [
   { q: "The best hitters in baseball fail 7 out of 10 times. They keep swinging.",                  a: "The Grind" },
   { q: "A great teammate is worth more than a great player. Be both.",                              a: "The Grind" },
   { q: "Your mental game is your biggest advantage. Protect it. Train it.",                         a: "The Grind" },
-  { q: "No grades, no baseball. That is not a threat. That is reality.",                            a: "The Grind" },
+  { q: "No grades, no game. That is not a threat. That is reality.",                            a: "The Grind" },
   { q: "Scouts watch how you run to first base after a groundout. Run hard. Always.",               a: "The Grind" },
   { q: "You are not too good for the basics. Nobody is.",                                           a: "The Grind" },
   { q: "Sleep is a performance tool. Treat it like one.",                                           a: "The Grind" },
@@ -13581,7 +13581,7 @@ const MONTH_FOCUS_ITEMS = [
   { id: 'team',    label: 'Team first. Not stats, not scouts.' },
   { id: 'journal', label: 'Post-game journal every game' },
   { id: 'coaches', label: 'Talk to your coaches weekly' },
-  { id: 'gpa',     label: 'No grades, no {Sport}. Stay on top of GPA.' }  // {Sport} resolved at render time
+  { id: 'gpa',     label: 'No grades, no game. Stay on top of GPA.' }
 ];
 function monthFocusKey() {
   const d = new Date();
@@ -13924,9 +13924,9 @@ function selectGradeNagOption(btn) {
   if (msg) {
     let text = '';
     if (val === 'all-a')    text = '🏆 <strong>That\'s it.</strong> The field is where you play. The classroom is where you earn the field. Keep stacking.';
-    if (val === 'a-b')      text = '✅ <strong>Solid.</strong> Don\'t get comfortable — pick one class this week and push it up.';
+    if (val === 'a-b')      text = '✅ <strong>Solid.</strong> Don\'t get comfortable. Pick one class this week and push it up.';
     if (val === 'slipping') text = '⚠️ <strong>Catch it now.</strong> Talk to that teacher before Friday. A 15-minute check-in saves a whole semester.';
-    if (val === 'help')     text = '🆘 <strong>Ask for help today.</strong> Not next week. Talk to your teacher, a parent, or your coach. No grades, no baseball — but nobody expects you to figure it out alone.';
+    if (val === 'help')     text = '🆘 <strong>Ask for help today.</strong> Not next week. Talk to your teacher, a parent, or your coach. No grades, no game. Nobody expects you to figure it out alone.';
     msg.innerHTML = text;
     msg.style.display = 'block';
   }
@@ -15617,7 +15617,7 @@ var YBG_QOTD = [
   { q: "Slapping is a skill. Bunting is an art. Master both and coaches have no answer for you.", a: "The Grind" },
   { q: "A great teammate is worth more than a great player. Be both.", a: "The Grind" },
   { q: "Your mental game is your biggest advantage. Protect it. Train it.", a: "The Grind" },
-  { q: "No Grades · No Baseball. That is not a threat. That is reality.", a: "The Grind" },
+  { q: "No Grades · No Game. That is not a threat. That is reality.", a: "The Grind" },
   { q: "The game will humble you. Journal it. Learn it. Come back better tomorrow.", a: "The Grind" },
   { q: "Losing stings. Learning from it lasts.", a: "The Grind" },
   { q: "The DP and Flex is one of the most strategic positions in sports. Know your role cold.", a: "The Grind" },
