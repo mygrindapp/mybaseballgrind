@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v183';
+    const CACHE = 'ybg-mygrind-v184';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2019,9 +2019,7 @@ function dismissIosBanner() {
   animation:slideUpMenu 0.2s ease;
 ">
   <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#444;padding:6px 20px 10px;">More</div>
-  <button onclick="mgTab('calendar',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center;">📅</span> Training Calendar
-  </button>
+  <!-- Training Calendar removed from More menu 2026-05-16 — redundant with the 12-Month Training Calendar tile on the Dashboard. -->
   <button onclick="mgTab('team',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">👥</span> My Team
   </button>
@@ -2032,6 +2030,83 @@ function dismissIosBanner() {
   <button onclick="mgTab('settings',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">⚙️</span> Settings
   </button>
+
+  <!-- ── HELP & SUPPORT (added 2026-05-16) ── -->
+  <div style="height:1px; background:#2A2A2A; margin:8px 16px;"></div>
+  <button onclick="openHelpModal();closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:20px;width:28px;text-align:center;">❓</span> Help &amp; FAQ
+  </button>
+  <a href="mailto:support@mygrindapp.com?subject=MyGrind%20App%20Feedback&body=Hi%20MyGrind%20Team%2C%0A%0ATell%20us%20what%27s%20on%20your%20mind%20(bug%2C%20suggestion%2C%20question)%3A%0A%0A%0A%0A--%0AApp%3A%20MyGrind%202026.1" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:20px;width:28px;text-align:center;">✉️</span> Send Feedback
+  </a>
+  <a href="mailto:hello@mygrindapp.com?subject=MyGrind%20Feature%20Request&body=Hi%20MyGrind%20Team%2C%0A%0AI%27d%20love%20to%20see%20this%20in%20the%20app%3A%0A%0A%0A%0AWhy%20it%20matters%20to%20me%3A%0A%0A%0A%0A--%0AApp%3A%20MyGrind%202026.1" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:20px;width:28px;text-align:center;">💡</span> Suggest a Feature
+  </a>
+</div>
+
+<!-- ── HELP & FAQ MODAL (added 2026-05-16) ──
+     Accordion-style FAQ using native <details>. No JS framework, no extra
+     accessibility code. Tap a question to expand the answer. -->
+<div id="help-modal" style="display:none; position:fixed; inset:0; background:rgba(14,11,9,0.92); z-index:9999; align-items:flex-start; justify-content:center; padding:0; backdrop-filter:blur(8px); overflow-y:auto;" onclick="closeHelpModal(event)">
+  <div id="help-modal-panel" style="background:linear-gradient(180deg,#180010,#0E0006); border:1px solid var(--gold-dark); border-radius:8px; width:100%; max-width:520px; margin:40px 16px; padding:28px 24px 32px; animation:slideUp 0.3s ease; box-sizing:border-box;" onclick="event.stopPropagation()">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:2px; color:var(--gold); line-height:1;">❓ Help &amp; FAQ</div>
+      <button onclick="closeHelpModal()" aria-label="Close" style="background:transparent; border:none; color:var(--grey); font-size:24px; line-height:1; cursor:pointer; padding:4px 8px;">×</button>
+    </div>
+
+    <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:20px;">
+      Tap a question to expand. Still stuck? Use Send Feedback from the More menu and we will get back to you fast.
+    </div>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">How do I add a new entry?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Tap the gold + button on your Dashboard or open the Journal tab. Pick the entry type that fits today: game, practice, hitting, fielding, weightlifting, reflection, or off day.</div>
+    </details>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">How does Coach Feedback work?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">If your team is set up in My Team, your coach can send you direct messages that land as a card on your Dashboard. You also get a text on your phone with a link to read the full reply.</div>
+    </details>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">Can I switch between baseball and softball?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Yes. Open Settings and find the Sport toggle. The app re-themes live. Your entries stay, and the icons and stat categories adapt to the sport you pick.</div>
+    </details>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">How do I share progress with family?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Open the Share With Family card on your Dashboard. You can text, email, or copy a recap link. Your parents also get a weekly summary every Monday morning automatically.</div>
+    </details>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">How do I export my data?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Open Settings, then Backup &amp; Restore, then Export. You get a file with everything: entries, goals, grades, photos. Save it somewhere safe like your phone, email, or a cloud drive.</div>
+    </details>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">Where do I manage my subscription?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">For most players, billing is on your parent. If you need to change a card or cancel, ask them to open the email link Stripe sent. If you signed up as an adult on your own plan, you will see a Manage Billing button right inside Settings.</div>
+    </details>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">What if I forget my account or lose access?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Tap Send Feedback in the More menu and email <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a> with your name and your parent's email. We will recover it for you.</div>
+    </details>
+
+    <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
+      <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">How do I contact support?</summary>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Tap Send Feedback in the More menu. It opens a pre-filled email to <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a>. We answer fast.</div>
+    </details>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:18px;">
+      <a href="mailto:support@mygrindapp.com?subject=MyGrind%20App%20Feedback&body=Hi%20MyGrind%20Team%2C%0A%0A" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center;">
+        ✉️ Send Feedback
+      </a>
+      <a href="mailto:hello@mygrindapp.com?subject=MyGrind%20Feature%20Request&body=Hi%20MyGrind%20Team%2C%0A%0A" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center;">
+        💡 Suggest a Feature
+      </a>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -11544,6 +11619,21 @@ function closeShareModal(event) {
   if (modal) modal.style.display = 'none';
   document.body.style.overflow = '';
   currentSharePlatform = null;
+}
+
+// ── HELP & FAQ MODAL ──
+// Opened from the More menu. Native <details> handles the accordion.
+function openHelpModal() {
+  const modal = document.getElementById('help-modal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeHelpModal(event) {
+  if (event && event.target !== document.getElementById('help-modal')) return;
+  const modal = document.getElementById('help-modal');
+  if (modal) modal.style.display = 'none';
+  document.body.style.overflow = '';
 }
 
 function executeShare() {
