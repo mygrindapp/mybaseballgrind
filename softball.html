@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v184';
+    const CACHE = 'ybg-mygrind-v185';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4085,6 +4085,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
   <!-- ══════════════════════════════════════════ TEAM ══ -->
   <div class="panel" id="panel-team">
+    <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
       <div class="section-title">MY <span>TEAM</span></div>
       <div class="section-sub" id="team-panel-sub">Join a team · or create one as a coach</div>
@@ -4331,6 +4333,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
   <!-- ══════════════════════════════════════════ COACH FEEDBACK ══ -->
   <div class="panel" id="panel-coach-feedback">
+    <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
       <div class="section-title">COACH <span>FEEDBACK</span></div>
       <div class="section-sub">Send a structured note to your coach or instructor</div>
@@ -4818,6 +4822,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
   <!-- ══════════════════════════════════════════ SETTINGS ══ -->
   <div class="panel" id="panel-settings">
+    <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
       <div class="section-title">⚙️ <span>SETTINGS</span></div>
       <div class="section-sub">Notifications · Preferences · Account</div>
