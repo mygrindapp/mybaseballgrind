@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v189';
+    const CACHE = 'ybg-mygrind-v190';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3552,9 +3552,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         📅 Logging for <span id="backdate-banner-date">—</span><span id="backdate-banner-suffix" style="font-weight:600; color:#C0681E; margin-left:6px;"></span>
       </div>
 
-      <!-- Editing banner — shown when user is editing a saved past entry. -->
-      <div id="editing-banner" style="display:none; margin-bottom:12px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); border-radius:3px; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">
-        ✏️ Editing entry from <span id="editing-banner-date">—</span>
+      <!-- Editing banner — shown when user is editing a saved past entry.
+           Upgraded 2026-05-16 walkthrough: previous version was too subtle.
+           Now a hero block with gold gradient, thick left border, larger
+           Bebas Neue heading, and explanatory body copy so the player
+           clearly understands they are replacing an existing entry, not
+           creating a new one. -->
+      <div id="editing-banner" style="display:none; margin-bottom:16px; padding:18px 20px; background:linear-gradient(135deg, rgba(var(--accent-rgb), 0.18), rgba(var(--accent-rgb), 0.04)); border:2px solid var(--gold); border-left:6px solid var(--gold); border-radius:4px; box-shadow:0 4px 16px rgba(var(--accent-rgb), 0.15);">
+        <div style="font-family:'Bebas Neue', sans-serif; font-size:22px; letter-spacing:2.5px; color:var(--gold); line-height:1; margin-bottom:6px;">✏️ EDIT MODE</div>
+        <div style="font-family:'Barlow Condensed', sans-serif; font-size:13px; font-weight:600; letter-spacing:0.5px; color:#F5EDE0; line-height:1.5;">You are editing the entry from <span id="editing-banner-date" style="color:var(--gold); font-weight:800;">—</span>. Your changes will replace the original. Tap <strong style="color:var(--gold);">Cancel</strong> below to discard.</div>
       </div>
       <!-- Save Entry no longer a full-width gold banner (Coach Young
            2026-05-11). Was visually overpowering and made "YOUR ENTRIES"
