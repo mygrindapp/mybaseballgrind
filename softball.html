@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>MyGrind · Sports Journal</title>
+<title>MyGrind · Players Journal</title>
 
 
 <script>
@@ -59,20 +59,20 @@
 
 <!-- ── OPEN GRAPH (sharing previews) ── -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="MyGrind · Sports Journal App">
+<meta property="og:title" content="MyGrind · Players Journal App">
 <meta property="og:description" content="The daily training journal for baseball and softball players, parents, and coaches. 7-Day Free Trial. No credit card required.">
 <meta property="og:url" content="https://mygrindapp.com/softball.html">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://raw.githubusercontent.com/youngsbaseball/mybaseballgrind/main/icon.png">
 <meta property="og:image:width" content="512">
 <meta property="og:image:height" content="512">
-<meta property="og:image:alt" content="MyGrind Sports Journal App Icon">
+<meta property="og:image:alt" content="MyGrind Players Journal App Icon">
 <meta property="og:site_name" content="My Grind">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MyGrind · Sports Journal App">
+<meta name="twitter:title" content="MyGrind · Players Journal App">
 <meta name="twitter:description" content="The daily training journal for baseball and softball families. 7-Day Free Trial.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/youngsbaseball/mybaseballgrind/main/icon.png">
-<meta name="twitter:image:alt" content="MyGrind Sports Journal App">
+<meta name="twitter:image:alt" content="MyGrind Players Journal App">
 <!-- ── COPYRIGHT & OWNERSHIP ── -->
 <meta name="copyright" content="© 2026 My Grind · All Rights Reserved">
 <meta name="reply-to" content="support@mygrindapp.com">
@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v186';
+    const CACHE = 'ybg-mygrind-v187';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1372,7 +1372,7 @@ function dismissIosBanner() {
 <div id="ybg-splash" style="position:fixed; inset:0; z-index:99999; background:#161210; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.5s ease;">
   <img data-mg-img="mark_white" alt="MyGrind" style="width:140px; height:140px; animation:ybgPulse 1.2s ease-in-out infinite;">
   <img data-mg-img="logo" alt="MyGrind" style="height:72px; width:auto; max-width:80vw; margin-top:28px;">
-  <div data-mg-text="{Sport} Journal" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; color:#666; margin-top:6px; text-transform:uppercase;">Sports Journal</div>
+  <div data-mg-text="Players Journal" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; color:#666; margin-top:6px; text-transform:uppercase;">Players Journal</div>
 </div>
 <style>
   @keyframes ybgPulse {
@@ -1417,7 +1417,7 @@ function dismissIosBanner() {
           </div>
         </div>
         <div>
-          <div data-mg-text="MyGrind · {Sport} Journal App" style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; color:#F4F4F4; letter-spacing:0.5px;">MyGrind · Sports Journal App</div>
+          <div data-mg-text="MyGrind · Players Journal App" style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; color:#F4F4F4; letter-spacing:0.5px;">MyGrind · Players Journal App</div>
           <div style="font-family:'Barlow',sans-serif; font-size:11px; color:#555; margin-top:1px;">7-Day Free Trial · No Credit Card Required</div>
         </div>
       </div>
@@ -1762,7 +1762,7 @@ function dismissIosBanner() {
     <div style="background:linear-gradient(135deg,#1A0012,#140008); border-bottom:1px solid #2A0018; padding:24px 28px; text-align:center;">
       <img data-mg-img="mark_white" alt="MyGrind" style="width:56px; height:56px; display:block; margin:0 auto 12px;">
       <div style="font-family:'Bebas Neue',cursive; font-size:34px; letter-spacing:3px; color:#F4F4F4; line-height:1;">MY <span style="color:var(--gold);">GRIND</span></div>
-      <div data-mg-text="2026 Annual {Sport} Journal" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#555; margin-top:4px;">2026 Annual Sports Journal</div>
+      <div data-mg-text="2026 Annual Players Journal" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#555; margin-top:4px;">2026 Annual Players Journal</div>
     </div>
 
     <div style="padding:28px;">
@@ -2027,9 +2027,14 @@ function dismissIosBanner() {
   <!-- <button onclick="mgTab('team',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">👥</span> My Team
   </button> -->
-  <button onclick="mgTab('coach-feedback',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+  <!-- Coach Feedback button hidden 2026-05-16: coach-facing section deferred
+       to August 2026 post-launch sprint. Phase 7b V1 (player → coach SMS via
+       coach-reply.html) still works end-to-end, but the in-app entry point is
+       hidden so players do not initiate flows the coach side cannot fully
+       receive yet at scale. Panel at #panel-coach-feedback remains in DOM. -->
+  <!-- <button onclick="mgTab('coach-feedback',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">💬</span> Coach Feedback
-  </button>
+  </button> -->
   <!-- Share tab removed 2026-05-08 — milestone share modal still works via shareMilestone(). -->
   <button onclick="mgTab('settings',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">⚙️</span> Settings
