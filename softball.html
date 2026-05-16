@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v192';
+    const CACHE = 'ybg-mygrind-v193';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1451,7 +1451,7 @@ function dismissIosBanner() {
 <div id="install-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9998; background:linear-gradient(135deg,#1A0010,#161210); border-top:1px solid var(--gold-dark, #8B6914); padding:14px 20px; align-items:center; gap:14px; flex-wrap:wrap;">
   <div style="flex:1; min-width:0;">
     <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:2px;">⚾ Install My Grind</div>
-    <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#AAAAAA; line-height:1.4;">Add to your home screen for the full app experience — works offline too.</div>
+    <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#AAAAAA; line-height:1.4;">Add to your home screen for the full app experience. Works offline too.</div>
   </div>
   <div style="display:flex; gap:8px; flex-shrink:0;">
     <button onclick="installApp()" style="background:var(--gold); border:none; color:#161210; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:2px; cursor:pointer; white-space:nowrap;">Install App</button>
@@ -1501,7 +1501,7 @@ function dismissIosBanner() {
   <div style="display:flex; align-items:center; gap:10px;">
     <span style="font-size:16px;">⏳</span>
     <div>
-      <span style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#F4F4F4;">Free Trial — </span>
+      <span style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#F4F4F4;">Free Trial · </span>
       <span style="font-family:'Bebas Neue',cursive; font-size:20px; color:var(--gold);" id="trial-days-count">7</span>
       <span style="font-family:'Barlow Condensed',sans-serif; font-size:13px; color:var(--gold);" id="trial-days-word"> days</span>
       <span style="font-family:'Barlow Condensed',sans-serif; font-size:13px; color:#777;"> remaining · </span>
@@ -1514,7 +1514,7 @@ function dismissIosBanner() {
       $9.99 / mo
     </button>
     <button onclick="goToPurchase('annual')" style="background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:8px 16px; border:none; border-radius:2px; cursor:pointer; white-space:nowrap;">
-      ⚾ &nbsp;$99.99 / yr — Best Value
+      ⚾ &nbsp;$99.99 / yr · Best Value
     </button>
   </div>
 </div>
@@ -1524,7 +1524,7 @@ function dismissIosBanner() {
   <span style="font-size:24px;">✅</span>
   <div>
     <div style="font-family:'Bebas Neue',cursive; font-size:20px; letter-spacing:2px; color:#27AE60;">FULL ACCESS UNLOCKED</div>
-    <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1px; color:#777;">Welcome to My Grind — no limits, all year.</div>
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1px; color:#777;">Welcome to MyGrind. No limits, all year.</div>
   </div>
 </div>
 
@@ -2432,7 +2432,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <!-- Full preset menu dropdown -->
           <div style="margin-top:12px;">
             <select id="goal-preset-menu" onchange="addPresetGoalFromMenu(this)" style="width:100%; font-size:14px; padding:11px; background:#1E1A17; border:1px solid var(--border); color:var(--light); border-radius:3px;">
-              <option value="">📋 Browse Full Goal Menu — pick to add…</option>
+              <option value="">📋 Browse Full Goal Menu · pick to add…</option>
               <optgroup label="🏆 Team Accolades">
                 <option value="Make All-Stars|team">Make All-Stars</option>
                 <option value="Make All-League|team">Make All-League</option>
@@ -2542,7 +2542,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <!-- ── GAME STATS SNAPSHOT (only shows if game entries exist) ── -->
     <div id="dash-stats-card" class="card" style="display:none; margin-top:16px; border-left:3px solid var(--gold);">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">⚾ Hitting Stats — Season</div>
+        <div class="card-title" style="margin:0;">⚾ Hitting Stats · Season</div>
         <button onclick="showPanel('stats')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer;">Full Stats</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:14px;">
@@ -2565,7 +2565,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <!-- ── FIELDING SNAPSHOT (only shows if game entries with fielding data exist) ── -->
     <div id="dash-fielding-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">🧤 Fielding — Season</div>
+        <div class="card-title" style="margin:0;">🧤 Fielding · Season</div>
         <button onclick="showPanel('stats')" style="background:transparent; border:1px solid var(--border); color:#5DADE2; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer;">Full Stats</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
@@ -2855,7 +2855,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
              unless the user taps the compressed pill to re-open it. -->
         <div id="arm-care-expanded">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
-            <div class="card-title" style="margin-bottom:0;">💪 Arm & Shoulder Care — Today</div>
+            <div class="card-title" style="margin-bottom:0;">💪 Arm & Shoulder Care · Today</div>
             <!-- Collapse button — only visible when all 5 are checked AND
                  the user has expanded the pill back open. Lets them re-hide
                  the list manually instead of having to uncheck/recheck. -->
@@ -3026,11 +3026,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <label>How did I perform today?</label>
         <input type="hidden" id="j-grade" value="">
         <div id="j-grade-chips" style="display:flex; flex-wrap:wrap; gap:6px;">
-          <button type="button" class="grade-chip" data-val="A" onclick="selectGradeChip('A', this)">A — Excellent</button>
-          <button type="button" class="grade-chip" data-val="B" onclick="selectGradeChip('B', this)">B — Good</button>
-          <button type="button" class="grade-chip" data-val="C" onclick="selectGradeChip('C', this)">C — Average</button>
-          <button type="button" class="grade-chip" data-val="D" onclick="selectGradeChip('D', this)">D — Below Avg</button>
-          <button type="button" class="grade-chip" data-val="F" onclick="selectGradeChip('F', this)">F — Struggled</button>
+          <button type="button" class="grade-chip" data-val="A" onclick="selectGradeChip('A', this)">A · Excellent</button>
+          <button type="button" class="grade-chip" data-val="B" onclick="selectGradeChip('B', this)">B · Good</button>
+          <button type="button" class="grade-chip" data-val="C" onclick="selectGradeChip('C', this)">C · Average</button>
+          <button type="button" class="grade-chip" data-val="D" onclick="selectGradeChip('D', this)">D · Below Avg</button>
+          <button type="button" class="grade-chip" data-val="F" onclick="selectGradeChip('F', this)">F · Struggled</button>
         </div>
       </div>
 
@@ -3038,9 +3038,9 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <label>How did the game end?</label>
         <input type="hidden" id="j-result" value="">
         <div id="j-result-chips" style="display:flex; flex-wrap:wrap; gap:6px;">
-          <button type="button" class="result-chip" data-val="W" onclick="selectResultChip('W', this)">W — Win</button>
-          <button type="button" class="result-chip" data-val="L" onclick="selectResultChip('L', this)">L — Loss</button>
-          <button type="button" class="result-chip" data-val="T" onclick="selectResultChip('T', this)">T — Tie</button>
+          <button type="button" class="result-chip" data-val="W" onclick="selectResultChip('W', this)">W · Win</button>
+          <button type="button" class="result-chip" data-val="L" onclick="selectResultChip('L', this)">L · Loss</button>
+          <button type="button" class="result-chip" data-val="T" onclick="selectResultChip('T', this)">T · Tie</button>
         </div>
       </div>
 
@@ -3698,7 +3698,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   <div class="panel" id="panel-players">
     <div class="section-header">
       <div class="section-title">MY <span>PROFILE</span></div>
-      <div class="section-sub">This is your journal — your info, your season, your grind</div>
+      <div class="section-sub">This is your journal. Your info, your season, your grind.</div>
       <div class="gold-line"></div>
     </div>
 
@@ -4008,7 +4008,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg,#141A14,#101410); border:2px solid #5A8A3A; box-shadow:0 0 0 1px rgba(168,217,123,0.08);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
         <span style="background:#5A8A3A; color:#F4F4F4; font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:3px 9px; border-radius:2px;">Priority #1</span>
-        <div class="card-title" style="color:#A8D97B; margin:0;">📚 Academics — No Grades · No Game</div>
+        <div class="card-title" style="color:#A8D97B; margin:0;">📚 Academics · No Grades · No Game</div>
       </div>
 
       <div style="background:rgba(168,217,123,0.06); border:1px solid #1A3A1A; border-radius:2px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--light); line-height:1.7;">
@@ -5129,7 +5129,7 @@ function saveState() {
     try {
       if (typeof window !== 'undefined' && !window.__mgQuotaWarned) {
         window.__mgQuotaWarned = true;
-        alert('⚠️ Could not save your latest changes — device storage is full. Tap Settings → Backup to download your data, then free up some space and try again.');
+        alert('⚠️ Could not save your latest changes. Device storage is full. Tap Settings → Backup to download your data, then free up some space and try again.');
       }
     } catch(e2) {}
     return false;
@@ -5182,7 +5182,7 @@ function downloadBackup() {
     setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
 
     try { localStorage.setItem('ybg_last_backup', new Date().toISOString()); } catch(e) {}
-    showBackupStatus('✅ Backup downloaded — keep that file safe.', 'ok');
+    showBackupStatus('✅ Backup downloaded. Keep that file safe.', 'ok');
     updateLastBackupDisplay();
     hideBackupNudge();
   } catch(e) {
@@ -5236,11 +5236,11 @@ function restoreBackup(payload) {
       try { localStorage.setItem(key, raw); restored++; } catch(_) {}
     });
     try { localStorage.setItem('ybg_last_backup', new Date().toISOString()); } catch(e) {}
-    showBackupStatus('✅ Restored ' + restored + ' data sections — reloading…', 'ok');
+    showBackupStatus('✅ Restored ' + restored + ' data sections. Reloading…', 'ok');
     setTimeout(function() { window.location.reload(); }, 900);
   } catch(e) {
     console.warn('[YBG] restoreBackup failed:', e);
-    showBackupStatus('⚠️ Restore failed partway through. Some data may be inconsistent — restore again or contact support.', 'err');
+    showBackupStatus('⚠️ Restore failed partway through. Some data may be inconsistent. Restore again or contact support.', 'err');
   }
 }
 
@@ -6995,7 +6995,7 @@ function _warnStorageNearCapIfNeeded() {
     if (usedRatio >= 0.80) {
       window._ybgStorageWarnedThisSession = true;
       if (typeof showShareToast === 'function') {
-        showShareToast('⚠ Storage almost full — open Settings → Backup to save your journal.');
+        showShareToast('⚠ Storage almost full. Open Settings → Backup to save your journal.');
       }
     }
   } catch (e) {}
@@ -7296,7 +7296,7 @@ function saveEntry() {
       const picked = new Date(date + 'T00:00:00');
       const nowEnd = new Date(); nowEnd.setHours(23, 59, 59, 999);
       if (!isNaN(picked.getTime()) && picked > nowEnd) {
-        alert('Date is in the future. The journal records what happened — pick today or earlier.');
+        alert('Date is in the future. The journal records what happened. Pick today or earlier.');
         return;
       }
     } catch (_) {}
@@ -12317,7 +12317,7 @@ function sendParentRecap() {
       try { document.body.removeChild(a); } catch(e) {}
     }, 200);
     if (typeof showShareToast === 'function') {
-      showShareToast('📧 Email opened — come back when you\'ve sent it!');
+      showShareToast('📧 Email opened. Come back when you\'ve sent it.');
     }
   } catch(err) {
     // Fallback
@@ -13020,7 +13020,7 @@ function toggleArmCare(id) {
   if (allDone && !localStorage.getItem(celebKey)) {
     localStorage.setItem(celebKey, '1');
     ybgHaptic([40, 60, 40, 60, 40]);
-    if (typeof showShareToast === 'function') showShareToast('✅ Arm & Shoulder Care Complete — That\'s the standard.');
+    if (typeof showShareToast === 'function') showShareToast('✅ Arm & Shoulder Care Complete. That\'s the standard.');
   }
 }
 
@@ -13452,7 +13452,7 @@ function toggleWarmup(id) {
   if (allDone && !localStorage.getItem(celebKey)) {
     localStorage.setItem(celebKey, '1');
     ybgHaptic([40, 60, 40, 60, 40]);
-    if (typeof showShareToast === 'function') showShareToast('✅ Warm-up complete — go lift.');
+    if (typeof showShareToast === 'function') showShareToast('✅ Warm-up complete. Go lift.');
   }
 }
 
@@ -13599,7 +13599,7 @@ function toggleCooldown(id) {
   if (allDone && !localStorage.getItem(celebKey)) {
     localStorage.setItem(celebKey, '1');
     ybgHaptic([40, 60, 40, 60, 40]);
-    if (typeof showShareToast === 'function') showShareToast('✅ Recovery locked in — that\'s how the work sticks.');
+    if (typeof showShareToast === 'function') showShareToast('✅ Recovery locked in. That\'s how the work sticks.');
   }
 }
 
