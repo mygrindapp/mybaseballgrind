@@ -696,6 +696,23 @@
   textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
   select option { background: var(--card2); }
 
+  /* Custom select chevron — Coach Young 2026-05-17 walkthrough: default
+     browser chevron renders dark on a dark background and disappears.
+     Strip the native chevron and paint a gold one in its place. Encoded
+     inline SVG keeps this offline-capable (no asset request). */
+  select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C9A84C' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    background-size: 16px 16px;
+    padding-right: 40px;
+  }
+  /* Hide the legacy IE/Edge dropdown arrow if it sneaks through. */
+  select::-ms-expand { display: none; }
+
   /* ── BUTTONS ── */
   .btn {
     display: inline-flex;
@@ -1296,7 +1313,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v201';
+    const CACHE = 'ybg-mygrind-v202';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
