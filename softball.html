@@ -367,6 +367,12 @@
        Coach Young 2026-05-12: "make sure fonts are fonts that the top
        apps use in their apps." */
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', 'Segoe UI', Roboto, Inter, 'Barlow', system-ui, sans-serif;
+    /* Explicit baseline font-size bumped 2026-05-17 (Coach Young walkthrough)
+       so any inherited text reads larger on phones. Inline-style overrides
+       (font-size:11/12/13px) still win for badges/labels — flag specific
+       spots in follow-up for surgical bumps. */
+    font-size: 16px;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-tap-highlight-color: transparent;
@@ -1288,7 +1294,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v198';
+    const CACHE = 'ybg-mygrind-v199';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1470,11 +1476,14 @@ function dismissIosBanner() {
 </svg>
 <style>
   /* Lucide icon helper class — applies sane defaults for inline icons.
-     Override size/color at callsite when needed. */
+     Override size/color at callsite when needed. line-height:1 matches
+     the line-box behavior of the emojis these icons replace, so swap
+     sites don't inflate parent flex/button heights. */
   .mg-icon {
     display: inline-block;
     vertical-align: -0.15em;
     flex-shrink: 0;
+    line-height: 1;
   }
 </style>
 <script>
@@ -2106,6 +2115,12 @@ function dismissIosBanner() {
   height: 62px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   max-width: 100%;
+  /* iOS Safari stability: forces the nav onto its own GPU layer so
+     position:fixed doesn't drift on scroll when the address bar
+     hides/reveals. Coach Young 2026-05-17 walkthrough. */
+  transform: translateZ(0);
+  -webkit-transform: translateZ(0);
+  will-change: transform;
 ">
   <!-- Bottom nav reordered 2026-05-16 (Coach Young walkthrough): Dashboard ·
        Journal · Stats · Profile · More. Matches top-tier mobile fitness/
