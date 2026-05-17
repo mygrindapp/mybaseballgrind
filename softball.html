@@ -1325,7 +1325,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v210';
+    const CACHE = 'ybg-mygrind-v211';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2138,14 +2138,26 @@ function dismissIosBanner() {
   left: 0;
   right: 0;
   z-index: 500;
-  background: rgba(20,16,13,0.98);
-  backdrop-filter: blur(12px);
+  /* Opaque solid background — Coach Young 2026-05-17: the previous
+     rgba(0.98) + backdrop-filter: blur(12px) combo created its own
+     stacking context that broke iOS Safari position:fixed during
+     scroll, making the nav appear to drift up. Solid background +
+     hardware-accelerated transform anchors it reliably. Visually
+     near-identical on a dark theme since the original was 98% opaque. */
+  background: #14100D;
   border-top: 1px solid #2A2A2A;
   display: flex;
   align-items: stretch;
   height: 62px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   max-width: 100%;
+  /* Force the nav onto its own hardware-accelerated layer. Combined
+     with the opaque background (no backdrop-filter), this is the
+     reliable iOS Safari fixed-position pattern. */
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 ">
   <!-- Bottom nav reordered 2026-05-16 (Coach Young walkthrough): Dashboard ·
        Journal · Stats · Profile · More. Matches top-tier mobile fitness/
