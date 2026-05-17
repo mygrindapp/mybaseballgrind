@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v243';
+    const CACHE = 'ybg-mygrind-v244';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -17660,8 +17660,14 @@ if (document.readyState === 'loading') {
    switch in case dynamically-rendered inputs come in later. */
 (function suppressAutofill() {
   function applyTo(scope) {
-    var inputs = (scope || document).querySelectorAll('input:not([autocomplete])');
-    inputs.forEach(function(inp) {
+    // Coach Young 2026-05-17: extended from inputs-only to also cover
+    // <textarea> elements. Original 5-16 suppressor missed all journal-
+    // entry textareas (j-what, j-tomorrow, j-team-role-text, j-prepare,
+    // j-wo-lifts, j-inst-notes, etc.) so tapping into them still popped
+    // the iOS QuickType bar with password / credit card / location
+    // suggestions. Single selector swap.
+    var fields = (scope || document).querySelectorAll('input:not([autocomplete]), textarea:not([autocomplete])');
+    fields.forEach(function(inp) {
       var t = (inp.type || 'text').toLowerCase();
       // Skip credential-style inputs — they're already handled by explicit
       // autocomplete attrs elsewhere, but defend anyway.
