@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v225';
+    const CACHE = 'ybg-mygrind-v242';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2215,27 +2215,40 @@ function dismissIosBanner() {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
 ">
-  <!-- Bottom nav reordered 2026-05-16 (Coach Young walkthrough): Dashboard ·
-       Journal · Stats · Profile · More. Matches top-tier mobile fitness/
-       training apps (Strava, MyFitnessPal, Whoop, Apple Fitness+, Hudl)
-       which all anchor Home/Dashboard as tab 1 and place Profile near
-       the end. Dashboard becomes both the leftmost tab and the default
-       active tab on load — see window load handler below. Same IDs
-       preserved so every existing mgTab() call still works. -->
+  <!-- Bottom nav reordered 2026-05-17 (Coach Young): Dashboard · Journal ·
+       Academics · Profile · More. Academics promoted to its own tab (lifted
+       out of Profile) to prep for the MyGrind Pro upgrade — gives the
+       prescriptive layer a clean home and makes the Pro paywall a single
+       tab-level decision instead of a partial mid-Profile gate. Stats moved
+       into the More menu (rarely the daily entry point; deserved the demotion).
+       Anchor convention unchanged: Dashboard stays leftmost (matches Strava,
+       MyFitnessPal, Whoop, Apple Fitness+, Hudl). Same IDs preserved where
+       reused so existing mgTab() calls keep working. -->
   <button class="tab-btn mg-tab" id="tab-dashboard" onclick="mgTab('dashboard','tab-dashboard')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid var(--gold);color:var(--gold);cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-home"/></svg>Dashboard
   </button>
   <button class="tab-btn mg-tab" id="tab-journal"  onclick="mgTab('journal','tab-journal')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-book-open"/></svg>Journal
   </button>
+  <button class="tab-btn mg-tab" id="tab-academics" onclick="mgTab('academics','tab-academics')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+    <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg>Academics
+  </button>
   <button class="tab-btn mg-tab" id="tab-players"  onclick="mgTab('players','tab-players')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg>Profile
   </button>
+  <!-- Stats restored to the bottom nav 2026-05-17 (Coach Young). Lived
+       in the More menu briefly today but felt buried; back in the nav
+       as the last content tab before More. Bumps the nav to 6 tabs
+       (tighter than the 5-tab convention but readable on iPhone 375px). -->
   <button class="tab-btn mg-tab" id="tab-stats"    onclick="mgTab('stats','tab-stats')"    style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg>Stats
   </button>
   <button class="tab-btn mg-tab" id="tab-more"     onclick="toggleMoreMenu()"               style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <span style="font-size:20px;line-height:1;">⚾</span>More
+    <!-- Baseball emoji at 16px to match the visual weight of the 22x22
+         Lucide stroke icons on the other 5 tabs. Emojis carry built-in
+         glyph padding so a 20px ⚾ visually dominates a 22x22 SVG; 16px
+         lands proportional. Coach Young 2026-05-17. -->
+    <span style="font-size:16px;line-height:1;height:22px;display:flex;align-items:center;justify-content:center;">⚾</span>More
   </button>
 </nav>
 
@@ -2253,7 +2266,14 @@ function dismissIosBanner() {
   animation:slideUpMenu 0.2s ease;
 ">
   <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#444;padding:6px 20px 10px;">More</div>
-  <!-- Training Calendar removed from More menu 2026-05-16 — redundant with the 12-Month Training Calendar tile on the Dashboard. -->
+  <!-- Stats button + Stats|Settings divider REMOVED from More menu 2026-05-17
+       (Coach Young, second pass today). Stats was briefly moved here when
+       Academics took its bottom-nav slot, but felt buried. Restored to
+       the bottom nav as the last content tab before More — no longer
+       needs a More-menu entry. The nav grew from 5 to 6 tabs in trade.
+       Training Calendar removed earlier 2026-05-16 — redundant with the
+       12-Month Training Calendar tile on the Dashboard. -->
+
   <!-- My Team button hidden 2026-05-16: team management not ready for launch.
        Panel still wired in the DOM at #panel-team so re-enabling is a one-line
        uncomment. Coach is launching first, building out team + coach-facing
@@ -2279,9 +2299,14 @@ function dismissIosBanner() {
   <button onclick="openHelpModal();closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">❓</span> Help &amp; FAQ
   </button>
-  <a href="mailto:support@mygrindapp.com?subject=MyGrind%20App%20Feedback&body=Hi%20MyGrind%20Team%2C%0A%0ATell%20us%20what%27s%20on%20your%20mind%20(bug%2C%20suggestion%2C%20question)%3A%0A%0A%0A%0A--%0AApp%3A%20MyGrind%202026.1" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+  <!-- Send Feedback — Coach Young 2026-05-17. Was a plain mailto link to
+       support@mygrindapp.com; now routes into the Settings feedback card
+       which has a structured form (email + textarea + sendFeedback() that
+       actually posts to the backend). One canonical feedback surface
+       instead of a mailto competing with a real form. -->
+  <button onclick="openSettingsAtFeedback()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">✉️</span> Send Feedback
-  </a>
+  </button>
   <a href="mailto:hello@mygrindapp.com?subject=MyGrind%20Feature%20Request&body=Hi%20MyGrind%20Team%2C%0A%0AI%27d%20love%20to%20see%20this%20in%20the%20app%3A%0A%0A%0A%0AWhy%20it%20matters%20to%20me%3A%0A%0A%0A%0A--%0AApp%3A%20MyGrind%202026.1" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center;">💡</span> Suggest a Feature
   </a>
@@ -2342,9 +2367,13 @@ function dismissIosBanner() {
     </details>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:18px;">
-      <a href="mailto:support@mygrindapp.com?subject=MyGrind%20App%20Feedback&body=Hi%20MyGrind%20Team%2C%0A%0A" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center;">
+      <!-- Coach Young 2026-05-17: was a mailto, now routes into the
+           Settings feedback form (one canonical surface app-wide). Closes
+           the modal first so the player isn't looking at a stacked modal
+           + scrolled tab. -->
+      <button type="button" onclick="closeHelpModal(); openSettingsAtFeedback();" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; cursor:pointer; text-align:center;">
         ✉️ Send Feedback
-      </a>
+      </button>
       <a href="mailto:hello@mygrindapp.com?subject=MyGrind%20Feature%20Request&body=Hi%20MyGrind%20Team%2C%0A%0A" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center;">
         💡 Suggest a Feature
       </a>
@@ -2357,8 +2386,14 @@ function dismissIosBanner() {
   from { transform: translateY(20px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
-/* Push main content up so bottom nav doesn't cover it */
-main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important; }
+/* Push main content up so the fixed bottom nav doesn't cover it.
+   Coach Young 2026-05-17: bumped 80→220 to match the intended value from
+   the 5-16 padding rework (the 80px figure here was a stale leftover that
+   was overriding the 220px rule at line 591 because of !important). The
+   220px clearance keeps the Profile "Done" pill, Email Week/Full Journal
+   buttons, and any other bottom-of-panel CTA visible above the 62px nav
+   + the iOS home indicator. */
+main { padding-bottom: calc(220px + env(safe-area-inset-bottom, 0px)) !important; }
 #social-share-footer { margin-bottom: calc(62px + env(safe-area-inset-bottom, 0px)); }
 
 /* Coach Feedback chip buttons */
@@ -2382,6 +2417,50 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   border-color: var(--gold);
   color: var(--gold);
 }
+
+/* Kill native number-input spinner arrows app-wide. Coach Young
+   2026-05-17: the arrows are noise for short values like age,
+   height (ft / in), weight, and 60-yard times. Keeps the numeric
+   keypad on mobile, just removes the visual clutter. */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Save-button morph success state — Coach Young 2026-05-17. When a
+   save button (saveHWEntry, etc.) completes, JS adds .btn-saved-flash
+   for ~1.5s so the player sees confirmation co-located with the tap
+   instead of a disconnected toast at the top of the viewport. */
+.btn-saved-flash {
+  background: #27AE60 !important;
+  color: #FFFFFF !important;
+  border-color: #27AE60 !important;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+
+/* Persistent "Auto-saved · X ago" pill at the top of Profile. Quiet
+   visual, slim, gold accent — tells the player typing IS saving without
+   demanding attention. */
+.autosave-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #58D68D;
+  background: rgba(39, 174, 96, 0.08);
+  border: 1px solid rgba(39, 174, 96, 0.25);
+  border-radius: 999px;
+  padding: 5px 11px;
+}
 </style>
 
 <main>
@@ -2398,11 +2477,15 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <!-- ══ ACADEMICS SUMMARY — TOP OF DASHBOARD ══
          Coach Young 2026-05-11: "I want academics to be on the top of
          dashboard. Make this a really important part of their journey."
-         Surfaces the player's current GPA + eligibility status across
-         NCAA D1 / D2 / D3 / NAIA / JUCO at a glance. Tap "Manage" → Profile
-         tab for full grade entry. Source of truth stays in Profile;
-         this is a read-only view rendered by renderDashAcademics(). -->
-    <div class="card" id="dash-academics-card" style="margin-bottom:18px; background:linear-gradient(135deg,#141A14,#101410); border-left:3px solid #5A8A3A; cursor:pointer;" onclick="mgTab('players','tab-players')">
+         Coach Young 2026-05-17: now that Academics has its own bottom-nav
+         tab, this card is reframed as a STATUS SNAPSHOT that complements
+         (rather than duplicates) the workspace. Title shift "Academics"
+         → "Academic Standing" + state-aware tagline (X of 6 grades in,
+         etc.) replace the old static pull-quote. The pull-quote itself
+         lives in the dedicated tab now; repeating it here is noise.
+         Source of truth lives in #panel-academics; this remains a
+         read-only render via renderDashAcademics(). -->
+    <div class="card" id="dash-academics-card" style="margin-bottom:18px; background:linear-gradient(135deg,#141A14,#101410); border-left:3px solid #5A8A3A; cursor:pointer;" onclick="mgTab('academics','tab-academics')">
       <!-- Summer-mode eyebrow (hidden by default, revealed by renderDashAcademics
            when isAcademicsSummerMode() returns true). Phase 2A spec, Coach Young
            2026-05-16: when school is out (June-August), card flips to "Spring
@@ -2410,24 +2493,25 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            stale asking for grades that don't exist yet. -->
       <div id="dash-academics-summer-badge" style="display:none; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2.5px; color:#9A7A30; text-transform:uppercase; margin-bottom:8px;">🔒 <span id="dash-academics-summer-badge-text">Spring · Final Grades · Locked</span></div>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
-        <div id="dash-academics-title" class="card-title" style="color:#A8D97B; margin:0; font-size:18px;">📚 Academics</div>
-        <span id="dash-academics-manage-label" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Manage in Profile →</span>
+        <div id="dash-academics-title" class="card-title" style="color:#A8D97B; margin:0; font-size:22px;">📚 Academic Standing</div>
+        <span id="dash-academics-manage-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Open Academics →</span>
       </div>
 
       <div style="display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:center; margin-bottom:14px;">
-        <div style="text-align:center; padding:10px 16px; background:var(--card2); border-radius:3px; border-top:2px solid #5A8A3A; min-width:90px;">
-          <div id="dash-gpa-display" style="font-family:'Bebas Neue'; font-size:32px; color:var(--white); line-height:1;">—</div>
-          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:3px;">GPA</div>
-          <div id="dash-gpa-target" style="font-family:'Barlow'; font-size:10px; color:var(--grey); margin-top:2px;">Target —</div>
+        <div style="text-align:center; padding:14px 18px; background:var(--card2); border-radius:3px; border-top:2px solid #5A8A3A; min-width:100px;">
+          <div id="dash-gpa-display" style="font-family:'Bebas Neue'; font-size:42px; color:var(--white); line-height:1;">—</div>
+          <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">GPA</div>
+          <div id="dash-gpa-target" style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:2px;">Target —</div>
         </div>
         <div id="dash-elig-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:6px;"></div>
       </div>
 
       <div id="dash-subject-pills" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
 
-      <div id="dash-academics-tagline" style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.4; font-style:italic; margin-top:4px;">
-        No grades · No game. Pull every grade. Slipping? Handle it today.
-      </div>
+      <!-- Tagline is populated by renderDashAcademics() with a state-aware
+           nudge (X of 6 grades in, etc.). Default is intentionally empty
+           so there is no flash of stale copy before the renderer fires. -->
+      <div id="dash-academics-tagline" style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.4; font-style:italic; margin-top:4px;"></div>
     </div>
 
     <!-- Today's Plan card removed 2026-05-12 (Coach Young walkthrough):
@@ -2490,7 +2574,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          tab. Coach Young 2026-05-14 walkthrough. -->
     <div class="card" id="dash-week-card" style="margin-bottom:18px; border-left:3px solid var(--gold);">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
-        <div class="card-title" id="dash-week-title" style="margin:0; font-size:16px;">📋 This Week</div>
+        <div class="card-title" id="dash-week-title" style="margin:0; font-size:22px;">📋 This Week</div>
         <button onclick="mgTab('calendar', null)" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 10px; border-radius:3px; cursor:pointer; white-space:nowrap;">See Full Month →</button>
       </div>
       <div id="dash-week-body" style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6;"></div>
@@ -2594,7 +2678,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          the player has logged at least one workout. -->
     <div id="dash-workout-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #E67E22;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">🏋️ Gym</div>
+        <div class="card-title" style="margin:0; font-size:22px;">🏋️ Gym</div>
         <div id="dash-workout-last" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);"></div>
       </div>
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
@@ -2620,7 +2704,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          one Off Day. Blue accent matches the Off Day badge palette. -->
     <div id="dash-restday-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">😴 Rest Days</div>
+        <div class="card-title" style="margin:0; font-size:22px;">😴 Rest Days</div>
         <div id="dash-restday-last" style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);"></div>
       </div>
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;">
@@ -2781,7 +2865,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <!-- ── GAME STATS SNAPSHOT (only shows if game entries exist) ── -->
     <div id="dash-stats-card" class="card" style="display:none; margin-top:16px; border-left:3px solid var(--gold);">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">⚾ Hitting Stats · Season</div>
+        <div class="card-title" style="margin:0; font-size:22px;">⚾ Hitting Stats · Season</div>
         <button onclick="showPanel('stats')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer;">Full Stats</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:14px;">
@@ -2804,7 +2888,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
     <!-- ── FIELDING SNAPSHOT (only shows if game entries with fielding data exist) ── -->
     <div id="dash-fielding-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
-        <div class="card-title" style="margin:0;">🧤 Fielding · Season</div>
+        <div class="card-title" style="margin:0; font-size:22px;">🧤 Fielding · Season</div>
         <button onclick="showPanel('stats')" style="background:transparent; border:1px solid var(--border); color:#5DADE2; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:3px; cursor:pointer;">Full Stats</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
@@ -2857,17 +2941,26 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
          Consolidated into a single Family Share card so the parent-
          awareness story is one clean affordance. -->
     <div class="card" style="margin-top:16px; border-left:3px solid var(--gold);">
-      <div class="card-title">👨‍👩‍👦 Share With Family</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:14px;">
-        Let Mom and Dad see what you're putting in this week — or your full season journal — straight from your phone.
+      <div class="card-title" style="font-size:22px;">👨‍👩‍👦 Share With Family</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:10px;">
+        Let Mom and Dad see the work you're putting in — your streak, your training count, and your goals. Straight from your phone.
+      </div>
+      <!-- Privacy trust chip — Coach Young 2026-05-17 Tier 1 model. Sets
+           the boundary BEFORE the kid taps share so they trust the surface.
+           Pairs with the same disclosure embedded inside the recap itself. -->
+      <div style="display:inline-flex; align-items:center; gap:6px; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#58D68D; background:rgba(39,174,96,0.08); border:1px solid rgba(39,174,96,0.25); border-radius:999px; padding:5px 11px; margin-bottom:14px;">
+        🔒 Reflections + Notes Stay Yours
       </div>
       <div id="weekly-recap-body" style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.7; margin-bottom:14px;"></div>
-      <button onclick="shareWeeklyRecap()" style="width:100%; background:var(--gold); color:#161210; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px; border:none; border-radius:4px; cursor:pointer; margin-bottom:8px;">
-        📲 Text This Week to Mom/Dad
-      </button>
+      <!-- 2-button row — Coach Young 2026-05-17. Was 3 buttons (Text full-width
+           + Email half + PDF half). Email was redundant: same payload as Text,
+           and parents already get the Mailchimp digest auto every Monday 7am PT.
+           Text dropped from full-width slab to 50/50 with Full Journal so the
+           share action sits proportionate to its actual weight in the flow.
+           Primary gold fill on Text keeps the visual hierarchy clear. -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-        <button onclick="sendParentRecap()" style="background:var(--card2); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px 8px; border-radius:4px; cursor:pointer;">
-          📧 Email Week
+        <button onclick="shareWeeklyRecap()" style="background:var(--gold); border:1px solid var(--gold); color:#161210; font-family:'Barlow Condensed'; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:11px 8px; border-radius:4px; cursor:pointer;">
+          📲 Text My Week
         </button>
         <button onclick="exportJournalPDF()" style="background:var(--card2); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px 8px; border-radius:4px; cursor:pointer;">
           📄 Full Journal
@@ -3841,17 +3934,22 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ── ENTRIES HISTORY SECTION ── Coach Young 2026-05-11 walkthrough
-         iteration 3. Wrapper container makes the history feel like its
-         own surface (was: same background, read as one wall). Header
-         dialed down from a 30px Bebas section-title to a quieter list
-         eyebrow — Save Entry is the form's commit, this is just the
-         start of the list, not a competing banner. -->
-    <div style="margin-top:40px; padding:18px 18px 18px; background:rgba(0,0,0,0.22); border:1px solid var(--border); border-radius:4px;">
+    <!-- ── ENTRIES HISTORY SECTION ── Coach Young 2026-05-17 (iteration 4).
+         Was dialed DOWN in 5-11 walkthrough to keep Save Entry as the form's
+         visual anchor, but that overcorrected — on a continuous-scroll phone
+         view the subtle wrapper read as part of the form below it. Bumped
+         back up with stronger card treatment, gold-left accent, larger title
+         (22px to match the dashboard card-title bumps from today), and more
+         margin-top breathing room so the player perceives "here's where I
+         REVIEW past entries" as a distinct surface from the form above. -->
+    <div style="margin-top:56px; padding:20px 18px 18px; background:var(--card2); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:4px;">
 
-    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--border);">
-      <div style="font-family:'Barlow Condensed', sans-serif; font-size:15px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold);">📓 Your Entries</div>
-      <div style="font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">Newest first · Tap to expand</div>
+    <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--border);">
+      <div>
+        <div style="font-family:'Barlow Condensed', sans-serif; font-size:10px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--grey); margin-bottom:4px;">Review</div>
+        <div class="card-title" style="font-size:22px; color:var(--gold); margin:0;">📓 Your Entries</div>
+      </div>
+      <div style="font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:right;">Newest first<br>Tap to expand</div>
     </div>
 
     <!-- Entries filter chips — Coach Young 2026-05-11 walkthrough.
@@ -3940,6 +4038,16 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div class="section-title">MY <span>PROFILE</span></div>
       <div class="section-sub">This is your journal. Your info, your season, your grind.</div>
       <div class="gold-line"></div>
+    </div>
+
+    <!-- Persistent autosave indicator — Coach Young 2026-05-17. The prior
+         pattern relied on a flash toast that disappeared in 2s; players
+         scrolling past it missed the signal and didn't trust that typing
+         was saving. This pill stays visible, updates its timestamp on
+         every saveProfile / savePositions call, and gives quiet confirmation
+         that the journal is keeping up with their typing. -->
+    <div style="margin-bottom:14px;">
+      <span id="autosave-pill" class="autosave-pill">✓ Auto-saved · just now</span>
     </div>
 
     <!-- ═══ 1) PLAYER HERO CARD — photo + name + position display ═══════ -->
@@ -4110,14 +4218,19 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         <div class="form-row" style="margin-bottom:10px;">
           <div>
             <label>Height</label>
+            <!-- Coach Young 2026-05-17: shrunk inches from flex:1 to 80px
+                 since the value is always 0-11 (1-2 digits). Visually
+                 signals "these are short numbers" instead of giving the
+                 input the same wide space as a class name. -->
             <div style="display:flex; gap:6px;">
               <input type="number" id="hw-feet" placeholder="Ft" min="4" max="7" style="width:70px; margin-bottom:0;">
-              <input type="number" id="hw-inches" placeholder="In" min="0" max="11" style="flex:1; margin-bottom:0;">
+              <input type="number" id="hw-inches" placeholder="In" min="0" max="11" style="width:80px; margin-bottom:0;">
             </div>
           </div>
           <div>
             <label>Weight (lbs)</label>
-            <input type="number" id="hw-weight" placeholder="lbs" min="80" max="350" style="margin-bottom:0;">
+            <!-- Capped at 110px — even pro-athlete weights fit in 3 digits. -->
+            <input type="number" id="hw-weight" placeholder="lbs" min="80" max="350" style="width:110px; margin-bottom:0;">
           </div>
         </div>
         <div class="form-row" style="margin-bottom:12px;">
@@ -4246,26 +4359,79 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <textarea id="pl-bio" placeholder="Strengths, goals, areas to improve, coach notes..." oninput="saveProfile()"></textarea>
     </div>
 
-    <!-- ═══ 5) ACADEMICS — Grades live below identity & about-me ═══════════════
-         Coach Young 2026-05-11: "academics is a really important part of
-         their journey. They have 6 classes normally in school. You need
-         certain classes to take to go to certain schools. Check internet
-         for these classes and gpa to qualify."
-         Expanded from 5 → 6 subjects mapped to NCAA core categories
-         (4yr Eng / 3yr Math / 2yr Sci / 2yr Social / 4yr additional +
-         Elective). Per-subject custom class name + grade. Eligibility
-         panel surfaces NCAA D1/D2/D3, NAIA, JUCO pass/fail based on
-         current GPA (research-sourced thresholds).
-         Phase 2 (full 16-core tracker + weighted GPA + jr-year lockin
-         alert) deferred to MyGrind Pro per Coach 2026-05-11. -->
+    <!-- ═══ ACADEMICS lifted to its own tab 2026-05-17 (Coach Young) ═══════════
+         Was section 5 of the Profile panel. Moved to #panel-academics below
+         Profile in the DOM, accessed via the new "Academics" bottom-nav tab.
+         Profile now stays focused on identity (name, sport, position,
+         bats/throws, school, about-me). Pro upgrade ships as a tab-level
+         decision rather than a mid-Profile gate. -->
+
+    <!-- ── SAVE CONFIRMATION ── -->
+    <div id="profile-saved" style="display:none; background:rgba(39,174,96,0.1); border:1px solid var(--green); border-radius:2px; padding:12px 16px; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1px; color:#58D68D; margin-bottom:16px;">
+      ✅ Profile saved.
+    </div>
+
+    <!-- ── MANAGE SUBSCRIPTION ── -->
+    <!-- Subscription card moved to Settings 2026-05-11 (Coach Young:
+         "This shouldn't show on this page. Cancellation under settings.").
+         Player profile stays focused on identity and player data;
+         academics now lives in its own tab; billing lives with Settings. -->
+
+    <!-- Bottom-of-page "Done" pill — Coach Young 2026-05-17. Autosave
+         handles persistence, but long-form forms still need a closure
+         gesture or players are unsure if they "finished." This pill
+         confirms + navigates back to Dashboard in one tap. Visually
+         tied to the autosave pill at the top so the player sees the
+         same green check-mark language at the start and end of the form. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="
+      display:block;
+      width:100%;
+      margin:8px 0 18px;
+      padding:14px 18px;
+      background:rgba(39,174,96,0.10);
+      border:1px solid #27AE60;
+      border-radius:4px;
+      color:#58D68D;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      cursor:pointer;
+    ">
+      ✓ Done · Back to Dashboard
+    </button>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════ ACADEMICS ══
+       Lifted out of Profile 2026-05-17 (Coach Young) so the section gets
+       its own bottom-nav tab and the MyGrind Pro upgrade can be a clean
+       tab-level decision. All IDs preserved (gpa-display, gpa-target,
+       gpa-current, elig-grid, grade-checks, core-summary, core-pro-tease,
+       subject-name, subject-grade) so renderGrades(), saveGPA(),
+       computeEligibility(), and renderCoreAlerts() keep working
+       unchanged. Free tier shows grades + GPA + eligibility tier.
+       Pro tier (MG_PRO flag) unlocks per-slot keyword warnings and
+       core-aligned summary. Decision #40 unchanged. -->
+  <div class="panel" id="panel-academics">
+    <!-- Back-to-dashboard pill matches the panel-team / panel-settings
+         convention from the 2026-05-16 walkthrough. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
+    <div class="section-header">
+      <div class="section-title">MY <span>ACADEMICS</span></div>
+      <div class="section-sub" id="acad-page-sub">No Grades · No Game</div>
+      <div class="gold-line"></div>
+    </div>
+
     <div class="card" style="margin-bottom:16px; background:linear-gradient(135deg,#141A14,#101410); border:2px solid #5A8A3A; box-shadow:0 0 0 1px rgba(168,217,123,0.08);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;">
         <span style="background:#5A8A3A; color:#F4F4F4; font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:3px 9px; border-radius:2px;">Priority #1</span>
-        <div class="card-title" style="color:#A8D97B; margin:0;">📚 Academics · No Grades · No Game</div>
+        <div class="card-title" id="acad-card-title" style="color:#A8D97B; margin:0;">📚 Academics · No Grades · No Game</div>
       </div>
 
-      <div style="background:rgba(168,217,123,0.06); border:1px solid #1A3A1A; border-radius:2px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--light); line-height:1.7;">
-        "Pull every grade right now. If anything is slipping, handle it today — not next week."
+      <div id="acad-pull-quote" style="background:rgba(168,217,123,0.06); border:1px solid #1A3A1A; border-radius:2px; padding:12px 14px; margin-bottom:16px; font-size:13px; color:var(--light); line-height:1.7;">
+        "Pull every grade right now. If anything is slipping, handle it today, not next week."
       </div>
 
       <!-- GPA row — Coach Young 2026-05-11 iteration 3: "The GPA shouldn't
@@ -4286,7 +4452,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <label>Target GPA</label>
           <input type="number" id="gpa-target" step="0.1" min="0" max="4.0" placeholder="e.g. 3.5">
           <button class="btn btn-gold btn-sm" onclick="saveGPA()" style="margin-top:4px;">Save Target</button>
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:10px; line-height:1.5;">Set the GPA you're chasing. We'll auto-compute your current GPA from the class grades below — no manual override.</div>
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:10px; line-height:1.5;">Set the GPA you're chasing. We'll auto-compute your current GPA from the class grades below. No manual override.</div>
         </div>
       </div>
 
@@ -4295,7 +4461,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">🎓 College Eligibility Status</div>
       <div id="elig-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:8px;"></div>
       <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:18px; font-style:italic;">
-        Note: NCAA uses a CORE-COURSE GPA (only specific classes count), not your overall school GPA. The status above is a quick read using your overall GPA — the full core-course tracker is part of MyGrind Pro.
+        Note: NCAA uses a CORE-COURSE GPA (only specific classes count), not your overall school GPA. The status above is a quick read using your overall GPA. The full core-course tracker is part of MyGrind Pro.
         <a href="https://www.ncsasports.org/ncaa-eligibility-center/gpa-requirements" target="_blank" rel="noopener" style="color:#A8D97B;">Source</a>
       </div>
 
@@ -4305,47 +4471,55 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            player types a class name that doesn't match the expected
            NCAA core category (e.g. "Painting 101" in the English slot),
            a soft amber warning appears so they know it may not count
-           toward eligibility. Bottom summary tallies core-aligned count. -->
-      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">📖 My 6 Classes</div>
+           toward eligibility. Bottom summary tallies core-aligned count.
+           Coach Young 2026-05-17: header renamed from "My 6 Classes" to
+           "The 6 Required Core Classes" — the original phrasing read
+           like the player's personal schedule when these slots are
+           actually the NCAA core-course requirements. Subtitle added
+           below so a 9th-grader gets the framing without a coach
+           explaining. Typography bumped (label 11→13, sub 9→11,
+           inputs 13→16) now that Academics owns its own tab. -->
+      <div id="acad-section-title" style="font-family:'Barlow Condensed'; font-size:15px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:6px;">📖 The 6 Required Core Classes</div>
+      <div id="acad-section-sub" style="font-family:'Barlow'; font-size:13px; color:var(--grey); line-height:1.5; margin-bottom:14px; font-style:italic;">These are the NCAA core-course categories. Plug in what your school calls each class and your current grade.</div>
       <div id="grade-checks">
         <div class="grade-row" data-category="english" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">English<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 4 yr</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. AP English Lit" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-0">English</span><br><span id="acad-slot-sub-0" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 4 yr</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. AP English Lit" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="subject-warn" data-for="english" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
         <div class="grade-row" data-category="math" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Math<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 3 yr (Alg 1+)</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Algebra 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-1">Math</span><br><span id="acad-slot-sub-1" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 3 yr (Alg 1+)</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Algebra 2" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="subject-warn" data-for="math" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
         <div class="grade-row" data-category="science" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Natural Science<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr (1 lab)</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Biology" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-2">Natural Science</span><br><span id="acad-slot-sub-2" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr (1 lab)</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Biology" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="subject-warn" data-for="science" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
         <div class="grade-row" data-category="social" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Social Studies<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. US History" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-3">Social Studies</span><br><span id="acad-slot-sub-3" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. US History" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="subject-warn" data-for="social" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
         <div class="grade-row" data-category="language" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Foreign Language<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · additional</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Spanish 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-4">Foreign Language</span><br><span id="acad-slot-sub-4" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · additional</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Spanish 2" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <div class="subject-warn" data-for="language" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
         <div class="grade-row" data-category="elective" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Elective<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">PE / Arts / Other</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Weight Training" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
+          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-5">Elective</span><br><span id="acad-slot-sub-5" style="font-size:11px; color:var(--grey); letter-spacing:1px;">PE / Arts / Other</span></div>
+          <input type="text" class="subject-name" placeholder="e.g. Weight Training" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
         <!-- Elective slot is the catch-all — anything goes here, no warning. -->
@@ -4358,26 +4532,38 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
              amber warnings + summary in the free tier so casual players
              aren't nagged. Single soft upsell instead of six warnings. -->
         <div id="core-pro-tease" style="margin-top:14px; padding:14px 16px; background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--gold-dark, #8B6914); border-radius:3px; line-height:1.55;">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold,#C9A84C); margin-bottom:6px;">🎓 MyGrind Pro · Coming August 2026</div>
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:6px;">Make sure your classes actually count.</div>
-          <div style="font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
+          <div id="acad-pro-eyebrow" style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold,#C9A84C); margin-bottom:6px;">🎓 MyGrind Pro · Coming August 2026</div>
+          <div id="acad-pro-title" style="font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:6px;">Make sure your classes actually count.</div>
+          <div id="acad-pro-body" style="font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
             NCAA only counts specific core courses. Pro unlocks the full core-course tracker: per-class keyword checks, year-by-year planning, per-school targets, and a junior-year lockin alert so nothing slips through before signing day.
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ── SAVE CONFIRMATION ── -->
-    <div id="profile-saved" style="display:none; background:rgba(39,174,96,0.1); border:1px solid var(--green); border-radius:2px; padding:12px 16px; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1px; color:#58D68D; margin-bottom:16px;">
-      ✅ Profile saved.
-    </div>
-
-    <!-- ── MANAGE SUBSCRIPTION ── -->
-    <!-- Subscription card moved to Settings 2026-05-11 (Coach Young:
-         "This shouldn't show on this page. Cancellation under settings.").
-         Player profile stays focused on identity, academics, and player
-         data; billing lives with Settings/Account. -->
-
+    <!-- Bottom-of-page "Done" pill — Coach Young 2026-05-17. Mirrors the
+         pattern shipped on Profile so long-form workspace panels (Profile,
+         Academics, Stats) all close with the same green closure gesture.
+         The small grey "← Back" pill at the top stays for mid-task exits;
+         this is the "I finished" gesture. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="
+      display:block;
+      width:100%;
+      margin:8px 0 18px;
+      padding:14px 18px;
+      background:rgba(39,174,96,0.10);
+      border:1px solid #27AE60;
+      border-radius:4px;
+      color:#58D68D;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      cursor:pointer;
+    ">
+      ✓ Done · Back to Dashboard
+    </button>
   </div>
 
   <!-- ══════════════════════════════════════════ GOALS ══ -->
@@ -5011,6 +5197,28 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
 
     </div><!-- end stats-entry-section -->
 
+    <!-- Bottom-of-page "Done" pill — Coach Young 2026-05-17. Matches the
+         Profile + Academics pattern. Long-form workspace panels all close
+         with the same green closure gesture so the player has a consistent
+         "I finished, take me home" affordance. -->
+    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="
+      display:block;
+      width:100%;
+      margin:8px 0 18px;
+      padding:14px 18px;
+      background:rgba(39,174,96,0.10);
+      border:1px solid #27AE60;
+      border-radius:4px;
+      color:#58D68D;
+      font-family:'Barlow Condensed',sans-serif;
+      font-size:14px;
+      font-weight:800;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      cursor:pointer;
+    ">
+      ✓ Done · Back to Dashboard
+    </button>
 
   </div>
 
@@ -5211,77 +5419,21 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
     </div>
 
-    <!-- ── BACKUP & RESTORE ── -->
-    <div class="card" style="margin-bottom:16px; border-color:var(--gold-dark);">
-      <div class="card-title">💾 Backup &amp; Restore</div>
-      <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.7; margin-bottom:14px;">
-        Your data lives on this device. <strong style="color:var(--gold);">Download a backup file</strong> to keep it safe. If you switch phones or clear your browser, you can restore everything from that file.
-      </div>
-
-      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-        <button onclick="downloadBackup()" style="flex:1; min-width:140px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 12px; border:none; border-radius:2px; cursor:pointer;">
-          ⬇️ &nbsp;Download Backup
-        </button>
-        <button onclick="document.getElementById('restore-file-input').click()" style="flex:1; min-width:140px; background:var(--card2); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 12px; border:1px solid var(--border); border-radius:2px; cursor:pointer;">
-          ⬆️ &nbsp;Restore from File
-        </button>
-        <input type="file" id="restore-file-input" accept="application/json,.json" style="display:none;" onchange="onRestoreFilePicked(event)">
-      </div>
-
-      <div id="backup-last-display" style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; line-height:1.6;">
-        No backup yet
-      </div>
-
-      <div id="backup-status" style="display:none; margin-top:10px; padding:10px 12px; border-radius:2px; font-family:'Barlow'; font-size:13px; line-height:1.5;"></div>
-    </div>
-
-    <!-- ── ACCOUNT ── -->
-    <div class="card" style="margin-bottom:16px;">
-      <div class="card-title">👤 Account</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); line-height:1.8;">
-        Registered email: <strong id="settings-email-display" style="color:var(--gold);">—</strong><br>
-        Plan: <strong id="settings-plan-display" style="color:var(--light);">—</strong>
-      </div>
-      <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
-        <a href="https://billing.stripe.com/p/login/4gM5kFgiu53D1yq8eZ4gg04" target="_blank" style="flex:1; display:flex; align-items:center; justify-content:center; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 8px; border-radius:2px; text-decoration:none;">
-          💳 Manage Billing
-        </a>
-        <a href="mailto:support@mygrindapp.com?subject=Cancel%20My%20Subscription" style="flex:1; display:flex; align-items:center; justify-content:center; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 8px; border-radius:2px; text-decoration:none;">
-          ✉️ Email Support
-        </a>
-      </div>
-    </div>
-
-    <!-- ── FEEDBACK ── -->
-    <div class="card" style="margin-bottom:16px; border-color:var(--gold-dark);">
-      <div class="card-title">💬 Send Feedback</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.6;">
-        Found a bug? Have a feature request? Just want to share how the app is working for you? Drop me a note — I read every one.
-      </div>
-
-      <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Email <span style="color:#E57373;">*</span></label>
-      <input type="email" id="fb-email" placeholder="you@example.com" autocomplete="email" style="width:100%; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; margin-bottom:14px; box-sizing:border-box;">
-
-      <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Feedback <span style="color:#E57373;">*</span></label>
-      <textarea id="fb-message" placeholder="Tell me what's on your mind — what's working, what's broken, what would make this app better for you..." style="width:100%; min-height:120px; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; line-height:1.6; resize:vertical; box-sizing:border-box; margin-bottom:8px;"></textarea>
-
-      <div id="fb-status" style="display:none; font-family:'Barlow'; font-size:12px; padding:10px 12px; border-radius:3px; margin-bottom:10px; line-height:1.5;"></div>
-
-      <button onclick="sendFeedback()" class="btn btn-gold" style="width:100%;">
-        ✉️ &nbsp;Send Feedback
-      </button>
-
-      <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
-        Goes straight to support@mygrindapp.com
-      </div>
-    </div>
-
-    <!-- ── SUBSCRIPTION & BILLING ──
-         Moved from Profile 2026-05-11 (Coach Young: "Cancellation under
-         settings"). Updated copy reflects the parent-billing / player-
-         cancel flow and a 90-day journal recovery window. -->
+    <!-- ── SUBSCRIPTION & BILLING ── (relocated 2026-05-17 from end-of-panel
+         to here, right after App Preferences, so account/billing sits in
+         the natural "who am I + what am I paying" position rather than
+         buried at the bottom under Backup and Feedback. Card body itself
+         is unchanged from its prior bottom-of-panel location.) -->
     <div class="card" id="subscription-card" style="margin-bottom:16px;">
       <div class="card-title">💳 Subscription & Billing</div>
+
+      <!-- #sub-billing-controls wraps the trial/paid status banners, the
+           Manage Billing + Email-to-Cancel buttons, and the Cancellation
+           Policy block. JS hides this entire wrapper for dependents (kids
+           whose parent pays) so they still see the card with their account
+           info but don't see any billing CTAs they can't act on. Adults
+           (payers + creators) see the full content. Coach Young 2026-05-17. -->
+      <div id="sub-billing-controls">
 
       <!-- Trial status — shown during trial -->
       <div id="sub-trial-info" style="display:none; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:2px; padding:14px 16px; margin-bottom:16px;">
@@ -5335,6 +5487,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
       </div>
 
+      </div><!-- /#sub-billing-controls -->
+
       <!-- Account info -->
       <div style="border-top:1px solid var(--border); padding-top:14px;">
         <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Account Info</div>
@@ -5347,6 +5501,67 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
             Access type: <span id="sub-plan-display" style="color:var(--light);">—</span>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- ── BACKUP & RESTORE ── -->
+    <div class="card" style="margin-bottom:16px; border-color:var(--gold-dark);">
+      <div class="card-title">💾 Backup &amp; Restore</div>
+      <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.7; margin-bottom:14px;">
+        Your data lives on this device. <strong style="color:var(--gold);">Download a backup file</strong> to keep it safe. If you switch phones or clear your browser, you can restore everything from that file.
+      </div>
+
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
+        <button onclick="downloadBackup()" style="flex:1; min-width:140px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 12px; border:none; border-radius:2px; cursor:pointer;">
+          ⬇️ &nbsp;Download Backup
+        </button>
+        <button onclick="document.getElementById('restore-file-input').click()" style="flex:1; min-width:140px; background:var(--card2); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 12px; border:1px solid var(--border); border-radius:2px; cursor:pointer;">
+          ⬆️ &nbsp;Restore from File
+        </button>
+        <input type="file" id="restore-file-input" accept="application/json,.json" style="display:none;" onchange="onRestoreFilePicked(event)">
+      </div>
+
+      <div id="backup-last-display" style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; line-height:1.6;">
+        No backup yet
+      </div>
+
+      <div id="backup-status" style="display:none; margin-top:10px; padding:10px 12px; border-radius:2px; font-family:'Barlow'; font-size:13px; line-height:1.5;"></div>
+    </div>
+
+    <!-- Standalone Account card REMOVED 2026-05-17 — Coach Young's Settings
+         dedup pass. The Subscription & Billing card below already includes
+         "Account Info" (registered email + access type) at the bottom AND
+         the Manage Billing / cancel options. Two cards showed the same
+         email + Manage Billing button which made the panel feel longer
+         than it needed to be. The Subscription card now also stays visible
+         for dependents (with its billing controls hidden) so kid-payers
+         still see their account info — see updateSubscriptionCard(). -->
+
+    <!-- ── FEEDBACK ── -->
+    <!-- id="settings-feedback-card" added 2026-05-17: the More-menu
+         "Send Feedback" button now opens Settings and scrolls to this
+         card so feedback has one canonical surface instead of a mailto
+         link competing with a structured form. -->
+    <div class="card" id="settings-feedback-card" style="margin-bottom:16px; border-color:var(--gold-dark);">
+      <div class="card-title">💬 Send Feedback</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.6;">
+        Found a bug? Have a feature request? Just want to share how the app is working for you? Drop me a note — I read every one.
+      </div>
+
+      <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Email <span style="color:#E57373;">*</span></label>
+      <input type="email" id="fb-email" placeholder="you@example.com" autocomplete="email" style="width:100%; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; margin-bottom:14px; box-sizing:border-box;">
+
+      <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Feedback <span style="color:#E57373;">*</span></label>
+      <textarea id="fb-message" placeholder="Tell me what's on your mind — what's working, what's broken, what would make this app better for you..." style="width:100%; min-height:120px; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; line-height:1.6; resize:vertical; box-sizing:border-box; margin-bottom:8px;"></textarea>
+
+      <div id="fb-status" style="display:none; font-family:'Barlow'; font-size:12px; padding:10px 12px; border-radius:3px; margin-bottom:10px; line-height:1.5;"></div>
+
+      <button onclick="sendFeedback()" class="btn btn-gold" style="width:100%;">
+        ✉️ &nbsp;Send Feedback
+      </button>
+
+      <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
+        Goes straight to support@mygrindapp.com
       </div>
     </div>
 
@@ -6999,9 +7214,11 @@ function showPanel(id) {
     footer.style.display = showOn.includes(id) ? 'block' : 'none';
   }
   // Refresh subscription card when My Profile opens
-  if (id === 'players') { updateSubscriptionCard(); updateSettingsAccountInfo(); }
-  // Refresh settings when settings tab opens
-  if (id === 'settings') { updateSettingsAccountInfo(); loadSettings(); updateLastBackupDisplay(); }
+  if (id === 'players') { updateSubscriptionCard(); }
+  // Refresh settings when settings tab opens. updateSubscriptionCard now
+  // also paints the registered email + access type (rolled in 2026-05-17
+  // when the standalone Account card was deleted as a dedup pass).
+  if (id === 'settings') { updateSubscriptionCard(); loadSettings(); updateLastBackupDisplay(); }
   // Refresh Training Volume + arm-load card on Dashboard so totals reflect
   // entries logged since last navigation. Coach Young 2026-05-09: dashboard
   // wasn't always showing latest totals after saving an entry from Journal.
@@ -10025,7 +10242,91 @@ function renderCoreAlerts() {
 //   ❌ bad   — below the NCAA minimum eligibility floor
 //   ℹ️ neutral — no GPA logged yet (school-specific cases use the
 //                neutral state too)
+// ───────────────────────────────────────────────────────────
+// ACADEMIC CONTEXT — Coach Young 2026-05-17 (MS adaptation).
+// Single source of truth for what labels, copy, and eligibility
+// tiers appear on the Academics surface. Defaults to HS NCAA-
+// recruiting framing (6 core categories + D1/D2/D3/NAIA/JUCO);
+// flips to Middle School ("Build the Habit Early" + Travel Ball /
+// HS Prep / Honor Roll / High Honors) when state.profile.grade
+// is "Middle School"; flips to College (simplified personal GPA
+// snapshot) when state.profile.grade starts with "College".
+// renderAcademicsContext() reads this to repaint every swappable
+// element in #panel-academics; renderDashAcademics() reads it for
+// the dashboard card title + subject pill abbreviations; and
+// computeEligibility() reads it to return the right tier set.
+function getAcademicContext() {
+  let grade = '';
+  try {
+    const p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    grade = p.grade || '';
+  } catch (e) {}
+  if (grade === 'Middle School') {
+    return {
+      mode: 'ms',
+      pageSub: 'Build the Habit Early',
+      cardTitle: '📚 Academics · Build the Habit',
+      pullQuote: 'Get the GPA habit now. When you hit 9th grade, NCAA starts watching the classes that count.',
+      sectionTitle: '📖 Your 6 Middle-School Classes',
+      sectionSub: 'These are the standard MS subjects. Plug in what your school calls each class and your current grade.',
+      slots: [
+        { name: 'English',        sub: 'MS · Reading + Writing',            abbrev: 'Eng' },
+        { name: 'Math',           sub: 'MS · Pre-Algebra / Algebra',        abbrev: 'Math' },
+        { name: 'Science',        sub: 'MS · Life / Earth / Physical',      abbrev: 'Sci' },
+        { name: 'Social Studies', sub: 'MS · History / Geography',          abbrev: 'Social' },
+        { name: 'PE / Health',    sub: 'MS · Required',                     abbrev: 'PE' },
+        { name: 'Elective',       sub: 'Art · Music · Foreign Lang · etc.', abbrev: 'Elective' }
+      ],
+      proEyebrow: '🎓 MyGrind Pro · When You Hit 9th Grade',
+      proTitle:   'Get ahead of NCAA before high school starts.',
+      proBody:    'When you start 9th grade, NCAA starts counting specific core classes. Pro flips on the full core-course tracker so you walk into freshman year already a year ahead of the kids who waited.'
+    };
+  }
+  if (grade.indexOf('College') === 0) {
+    return {
+      mode: 'college',
+      pageSub: 'GPA Tracker',
+      cardTitle: '📚 Academics · GPA Tracker',
+      pullQuote: 'College athletes manage NCAA APR and eligibility through their compliance officer. This is your personal GPA snapshot.',
+      sectionTitle: '📖 Your Classes This Term',
+      sectionSub: 'Drop in your current classes and grades. We track your term GPA. For NCAA APR or progress-toward-degree questions, talk to your academic advisor.',
+      slots: [
+        { name: 'Class 1', sub: 'College · this term', abbrev: 'C1' },
+        { name: 'Class 2', sub: 'College · this term', abbrev: 'C2' },
+        { name: 'Class 3', sub: 'College · this term', abbrev: 'C3' },
+        { name: 'Class 4', sub: 'College · this term', abbrev: 'C4' },
+        { name: 'Class 5', sub: 'College · this term', abbrev: 'C5' },
+        { name: 'Class 6', sub: 'College · this term', abbrev: 'C6' }
+      ],
+      proEyebrow: '🎓 MyGrind Pro · College Toolkit (Coming Soon)',
+      proTitle:   'College academic toolkit is on the roadmap.',
+      proBody:    'Pro will add term GPA history, semester goals, and a degree-progress tracker. For now, use this snapshot to keep tabs on the season.'
+    };
+  }
+  // Default: HS (and unspecified — most players are HS)
+  return {
+    mode: 'hs',
+    pageSub: 'No Grades · No Game',
+    cardTitle: '📚 Academics · No Grades · No Game',
+    pullQuote: 'Pull every grade right now. If anything is slipping, handle it today, not next week.',
+    sectionTitle: '📖 The 6 Required Core Classes',
+    sectionSub: 'These are the NCAA core-course categories. Plug in what your school calls each class and your current grade.',
+    slots: [
+      { name: 'English',          sub: 'NCAA · 4 yr',          abbrev: 'Eng' },
+      { name: 'Math',             sub: 'NCAA · 3 yr (Alg 1+)', abbrev: 'Math' },
+      { name: 'Natural Science',  sub: 'NCAA · 2 yr (1 lab)',  abbrev: 'Sci' },
+      { name: 'Social Studies',   sub: 'NCAA · 2 yr',          abbrev: 'Social' },
+      { name: 'Foreign Language', sub: 'NCAA · additional',    abbrev: 'For Lang' },
+      { name: 'Elective',         sub: 'PE / Arts / Other',    abbrev: 'Elective' }
+    ],
+    proEyebrow: '🎓 MyGrind Pro · Coming August 2026',
+    proTitle:   'Make sure your classes actually count.',
+    proBody:    'NCAA only counts specific core courses. Pro unlocks the full core-course tracker: per-class keyword checks, year-by-year planning, per-school targets, and a junior-year lockin alert so nothing slips through before signing day.'
+  };
+}
+
 function computeEligibility(gpa) {
+  const ctx = getAcademicContext();
   const g = parseFloat(gpa);
   const valid = !isNaN(g) && g > 0;
   // Helper for divisions with a hard NCAA minimum + a recruit-competitive bar.
@@ -10035,6 +10336,38 @@ function computeEligibility(gpa) {
     if (g >= min)  return { label: label, sub: sub, warn: true };
     return { label: label, sub: sub, bad: true };
   };
+
+  // Middle School — 3-tier achievement ladder, no NCAA recruiting framing.
+  // Coach Young 2026-05-17: dropped the original "HS Team Prep (3.0+)" tile.
+  // It mixed a soft forward-looking prep target with real eligibility
+  // thresholds (Travel Ball 2.0+, Honor Roll 3.5+) and confused the mental
+  // model — most HS sports require 2.0 not 3.0, and "prep for HS" is vague
+  // when the player will be in HS regardless of MS GPA. Three concrete
+  // tiles instead of four. Grid renders 3-col in MS mode for a clean row.
+  if (ctx.mode === 'ms') {
+    return {
+      d1:   tier('Travel Ball', 'Most programs need 2.0+', 2.0, 2.5),
+      d2:   null,
+      d3:   tier('Honor Roll',  '3.5+ standard',           3.0, 3.5),
+      naia: tier('High Honors', '4.0',                     3.5, 4.0),
+      juco: null
+    };
+  }
+
+  // College — simplified personal GPA targets (NCAA APR is the compliance
+  // officer's job, not the app's). Tiles 3-5 return null and are skipped
+  // by _eligTileHTML's null guard.
+  if (ctx.mode === 'college') {
+    return {
+      d1:   tier('Honor Roll',    'College honors · 3.5+', 3.0, 3.5),
+      d2:   tier('Good Standing', '2.0+ to stay enrolled', 2.0, 2.5),
+      d3:   null,
+      naia: null,
+      juco: null
+    };
+  }
+
+  // Default: HS NCAA recruiting tiers.
   return {
     d1:   tier('NCAA D1', 'Min 2.3 · Recruits 3.0+',                2.3, 3.0),
     d2:   tier('NCAA D2', 'Min 2.2 · Recruits 2.8+',                2.2, 2.8),
@@ -10058,6 +10391,10 @@ function computeEligibility(gpa) {
 }
 
 function _eligTileHTML(tier, compact) {
+  // MS hides the 5th JUCO tile; college hides D3/NAIA/JUCO. Return empty
+  // string for null tiers so the eligibility grid renders cleanly with
+  // however many tiles the current academic context exposes.
+  if (!tier) return '';
   const padding = compact ? '6px 8px' : '8px 10px';
   const titleSize = compact ? '11px' : '12px';
   const subSize = compact ? '9px' : '10px';
@@ -10082,7 +10419,59 @@ function renderEligibility() {
   if (!grid) return;
   const gpa = (state && state.gpa && state.gpa.current) || document.getElementById('gpa-current')?.value || '';
   const e = computeEligibility(gpa);
+  // Coach Young 2026-05-17: column count flexes per mode so the layout
+  // always lands on a clean row count — HS has 5 tiles (2-col → 2+2+1),
+  // MS has 3 (3-col → single row), college has 2 (2-col → single row).
+  const ctx = getAcademicContext();
+  grid.style.gridTemplateColumns = (ctx.mode === 'ms') ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
   grid.innerHTML = _eligTileHTML(e.d1) + _eligTileHTML(e.d2) + _eligTileHTML(e.d3) + _eligTileHTML(e.naia) + _eligTileHTML(e.juco);
+}
+
+// renderAcademicsContext — paints every swappable element in the
+// dedicated Academics tab (#panel-academics) from getAcademicContext().
+// Coach Young 2026-05-17: ships the Middle School adaptation. The tab
+// HTML defaults to HS copy; this function swaps every label, subtitle,
+// pull-quote, slot name, and Pro tease line when the player's grade is
+// "Middle School" or "College *". Element IDs were added to the static
+// HTML in panel-academics for this hook to target. All getElementById
+// calls are null-safe so this function no-ops cleanly on surfaces that
+// don't have the Academics tab in the DOM (e.g. signup.html embedded
+// previews). Runs on every renderDashAcademics() tick so the tab stays
+// in sync with the dashboard card without explicit wiring elsewhere.
+function renderAcademicsContext() {
+  const ctx = getAcademicContext();
+
+  // Page header subtitle ("No Grades · No Game" / "Build the Habit Early" / etc.)
+  const pageSub = document.getElementById('acad-page-sub');
+  if (pageSub) pageSub.textContent = ctx.pageSub;
+
+  // Inner card title + pull-quote
+  const cardTitle = document.getElementById('acad-card-title');
+  if (cardTitle) cardTitle.textContent = ctx.cardTitle;
+  const pullQuote = document.getElementById('acad-pull-quote');
+  if (pullQuote) pullQuote.textContent = '"' + ctx.pullQuote + '"';
+
+  // Section title + subtitle above the 6 grade rows
+  const secTitle = document.getElementById('acad-section-title');
+  if (secTitle) secTitle.textContent = ctx.sectionTitle;
+  const secSub = document.getElementById('acad-section-sub');
+  if (secSub) secSub.textContent = ctx.sectionSub;
+
+  // 6 slot labels (name + sub) — paired with the grade-row inputs below
+  for (let i = 0; i < 6; i++) {
+    const nameEl = document.getElementById('acad-slot-name-' + i);
+    const subEl  = document.getElementById('acad-slot-sub-' + i);
+    if (nameEl && ctx.slots[i]) nameEl.textContent = ctx.slots[i].name;
+    if (subEl  && ctx.slots[i]) subEl.textContent  = ctx.slots[i].sub;
+  }
+
+  // Pro tease block (eyebrow / title / body)
+  const proEyebrow = document.getElementById('acad-pro-eyebrow');
+  if (proEyebrow) proEyebrow.textContent = ctx.proEyebrow;
+  const proTitle = document.getElementById('acad-pro-title');
+  if (proTitle) proTitle.textContent = ctx.proTitle;
+  const proBody = document.getElementById('acad-pro-body');
+  if (proBody) proBody.textContent = ctx.proBody;
 }
 
 // Phase 2A summer mode (Coach Young 2026-05-16 spec): when the calendar
@@ -10097,6 +10486,10 @@ function isAcademicsSummerMode() {
 }
 
 function renderDashAcademics() {
+  // Always keep the dedicated Academics tab in sync — it shares state
+  // with this dashboard card and they should never diverge.
+  try { renderAcademicsContext(); } catch (e) {}
+
   const card = document.getElementById('dash-academics-card');
   if (!card) return;
 
@@ -10118,10 +10511,29 @@ function renderDashAcademics() {
     card.style.borderLeftColor = '#9A7A30';
   } else {
     if (badgeEl)   badgeEl.style.display = 'none';
-    if (titleEl)   titleEl.textContent   = '📚 Academics';
-    if (manageEl)  manageEl.textContent  = 'Manage in Profile →';
-    if (taglineEl) taglineEl.textContent = 'No grades · No game. Pull every grade. Slipping? Handle it today.';
+    if (titleEl)   titleEl.textContent   = '📚 Academic Standing';
+    if (manageEl)  manageEl.textContent  = 'Open Academics →';
     card.style.borderLeftColor = '#5A8A3A';
+    // State-aware tagline — Coach Young 2026-05-17: the dashboard card
+    // now complements the dedicated Academics tab instead of duplicating
+    // its pull-quote. Tagline tells the player what to do next based on
+    // how many of the 6 core slots they have filled, so the dashboard
+    // reads as a snapshot and the tab reads as the workspace.
+    if (taglineEl) {
+      let _grades = [];
+      try { _grades = JSON.parse(localStorage.getItem('ybg_subject_grades') || '[]'); } catch (e) {}
+      const _filled  = _grades.filter(function (g) { return g && g.length > 0; }).length;
+      const _gpaNow  = (state && state.gpa && state.gpa.current) || '';
+      if (_filled === 0) {
+        taglineEl.textContent = 'Start by logging your 6 classes. Tap to open Academics.';
+      } else if (_filled < 6) {
+        taglineEl.textContent = _filled + ' of 6 grades in. Finish to lock your eligibility.';
+      } else if (!_gpaNow) {
+        taglineEl.textContent = 'All 6 grades logged. GPA calculates as you save.';
+      } else {
+        taglineEl.textContent = 'All 6 grades logged. Your standing is current.';
+      }
+    }
   }
 
   const gpaCur = (state && state.gpa && state.gpa.current) || '';
@@ -10131,25 +10543,42 @@ function renderDashAcademics() {
   if (gpaEl) gpaEl.textContent = gpaCur || '—';
   if (tgtEl) tgtEl.textContent = gpaTgt ? 'Target ' + gpaTgt : 'Target —';
 
-  // Eligibility tiles (compact for dashboard)
+  // Eligibility tiles (compact for dashboard). Column count flexes per mode
+  // so MS lands on a clean 3-tile single row instead of an awkward 2+1
+  // split (Coach Young 2026-05-17 — "HS Team Prep" dropped, leaving 3 tiles).
   const elig = computeEligibility(gpaCur);
   const grid = document.getElementById('dash-elig-grid');
-  if (grid) grid.innerHTML = _eligTileHTML(elig.d1, true) + _eligTileHTML(elig.d2, true) + _eligTileHTML(elig.d3, true) + _eligTileHTML(elig.naia, true) + _eligTileHTML(elig.juco, true);
+  if (grid) {
+    const _ctx = getAcademicContext();
+    grid.style.gridTemplateColumns = (_ctx.mode === 'ms') ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
+    grid.innerHTML = _eligTileHTML(elig.d1, true) + _eligTileHTML(elig.d2, true) + _eligTileHTML(elig.d3, true) + _eligTileHTML(elig.naia, true) + _eligTileHTML(elig.juco, true);
+  }
 
-  // Subject grade pills — read directly from saved grades
+  // Subject grade pills — category abbreviation + current letter grade.
+  // Coach Young 2026-05-17: pills ALWAYS show the category abbreviation
+  // (not the player's typed class name) for three reasons: (1) keeps the
+  // dashboard a true "6-slot status" snapshot, (2) prevents long class
+  // names like "AP English Literature" from overflowing the pill row on
+  // a phone, (3) the actual class names already live in the Academics
+  // tab where they belong. The abbreviation set itself is now driven by
+  // getAcademicContext() so MS players see PE instead of FOR LANG, and
+  // college players see C1-C6 instead of NCAA core categories.
   const pills = document.getElementById('dash-subject-pills');
   if (pills) {
     let grades = [];
-    let names  = [];
     try { grades = JSON.parse(localStorage.getItem('ybg_subject_grades') || '[]'); } catch(e) {}
-    try { names  = JSON.parse(localStorage.getItem('ybg_subject_names')  || '[]'); } catch(e) {}
-    const fallbackLabels = ['Eng', 'Math', 'Sci', 'Social', 'For Lang', 'Elective'];
-    const tiles = fallbackLabels.map(function(fallback, i) {
+    const ctx = getAcademicContext();
+    // Coach Young 2026-05-17: bumped padding 6/10 → 10/14 and font 11 → 14
+    // so the grade row has real presence on the dashboard. Grade letter
+    // bumped to 18px + bolder so the "A / B / C" reads from across the
+    // room. Pills wrap naturally to 2 rows of 3 on narrow phones, which
+    // also reads cleaner than a single 6-pill row at this size.
+    const tiles = ctx.slots.map(function(slot, i) {
       const g = grades[i] || '—';
-      const n = (names[i] && names[i].trim()) || fallback;
       const gColor = (g === 'A') ? '#58D68D' : (g === 'B') ? '#A8D97B' : (g === 'C') ? '#E67E22' : (g === 'D' || g === 'F') ? '#E57373' : 'var(--grey)';
-      return '<div style="padding:6px 10px; background:var(--card2); border:1px solid var(--border); border-radius:3px; font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--light);">' +
-               n + ' <span style="color:' + gColor + '; margin-left:4px;">' + g + '</span>' +
+      return '<div style="padding:10px 14px; background:var(--card2); border:1px solid var(--border); border-radius:4px; font-family:\'Barlow Condensed\'; font-size:14px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--light); display:inline-flex; align-items:center; gap:8px;">' +
+               '<span>' + slot.abbrev + '</span>' +
+               '<span style="color:' + gColor + '; font-size:18px; font-weight:800;">' + g + '</span>' +
              '</div>';
     }).join('');
     pills.innerHTML = tiles;
@@ -10166,15 +10595,22 @@ function updateSubscriptionCard() {
     const paidInfo    = document.getElementById('sub-paid-info');
     const trialDaysEl = document.getElementById('sub-trial-days');
 
-    // Dependents (kids) never see the Manage Subscription card — billing
-    // belongs to the payer. Payers + creators see the card; whether they
-    // see upgrade pricing or just the Manage Billing link is decided by
-    // acc.paid below (existing logic — paid hides #sub-trial-info).
+    // Dependents (kids whose parent pays) see the card with the Account
+    // Info section visible but the billing controls + cancellation policy
+    // hidden — they can't act on those anyway, but they still need to see
+    // their registered email + access type. Payers + creators see the full
+    // card. Coach Young 2026-05-17 (was "hide entire card for dependents"
+    // before the Account-card-dedup pass; that left dependents with zero
+    // account-info surface in Settings, which was the bug).
+    if (card) card.style.display = '';
+    const billingControls = document.getElementById('sub-billing-controls');
     if (getBillingRole().role === 'dependent') {
-      if (card) card.style.display = 'none';
+      if (billingControls) billingControls.style.display = 'none';
+      if (planEl) planEl.textContent = 'Family Plan — managed by parent';
+      if (emailEl) emailEl.textContent = acc.email || '—';
       return;
     }
-    if (card) card.style.display = '';
+    if (billingControls) billingControls.style.display = '';
 
     if (emailEl) emailEl.textContent = acc.email || '—';
 
@@ -10219,24 +10655,80 @@ function loadGrades() {
 
 // ─── PRESET GOALS ─────────────────────────────────────────
 // Top dream goals shown as quick-pick chips above the custom input.
-// The full menu (organized by category) lives in the dropdown.
-// Format: { label, cat } — matches the goal category system.
-const GOAL_PRESET_CHIPS = [
-  { label: '🏆 Make All-Stars',           cat: 'team' },
-  { label: '🥇 Make All-League',          cat: 'team' },
-  { label: '🌟 Make All-Conference',      cat: 'team' },
-  { label: '✈️ Make Travel Team',         cat: 'team' },
-  { label: '⚾ Make Varsity',             cat: 'team' },
-  { label: '🎓 Get D1 Looks',             cat: 'mental' },
-  { label: '📚 Maintain 3.5+ GPA',        cat: 'academics' }
-];
+// The full menu (organized by category) lives in the dropdown below
+// and stays comprehensive across all ages — chips are just the curated
+// shortcuts. Format: { label, cat } — matches the goal category system.
+//
+// Coach Young 2026-05-17: chips now flex by player life stage so an
+// MS player doesn't see "Make Varsity" + "Get D1 Looks" as their top
+// suggestions (those are 4-6 years away and feel disconnected). MS
+// sees MS-appropriate goals; college sees in-program goals; HS keeps
+// the existing recruiting-flavored set. Source of truth for stage is
+// getAcademicContext().mode (set by Profile → Grade dropdown).
+function getGoalPresetChips() {
+  // Coach Young 2026-05-17: stripped leading emojis from every chip label
+  // for a cleaner text-only chip row. Saved goal text was already
+  // emoji-stripped via the regex in addPresetGoal(), so this only changes
+  // the chip display — no migration needed. The "already added" state on
+  // each chip (rendered in renderGoalPresetChips) is the new visual signal
+  // that replaces the emoji.
+  const mode = (typeof getAcademicContext === 'function') ? getAcademicContext().mode : 'hs';
+  if (mode === 'ms') {
+    return [
+      { label: 'Make the MS Team',         cat: 'team' },
+      { label: 'Make Travel Team',         cat: 'team' },
+      { label: 'Earn a Starting Spot',     cat: 'team' },
+      { label: 'Hit 60+ MPH Pitching',     cat: 'pitching' },
+      { label: 'Sub-8.0 60-Yard',          cat: 'strength' },
+      { label: 'Make Honor Roll (3.5+)',   cat: 'academics' }
+    ];
+  }
+  if (mode === 'college') {
+    return [
+      { label: 'Earn All-Conference',        cat: 'team' },
+      { label: 'Start Every Game',           cat: 'team' },
+      { label: 'Hit Season Stat Goal',       cat: 'mental' },
+      { label: 'Hit a Team-Lift PR',         cat: 'strength' },
+      { label: 'All-Region Honors',          cat: 'team' },
+      { label: 'Maintain Honor Roll (3.5+)', cat: 'academics' }
+    ];
+  }
+  // HS default — recruiting-flavored set, emoji-stripped.
+  return [
+    { label: 'Make All-Stars',           cat: 'team' },
+    { label: 'Make All-League',          cat: 'team' },
+    { label: 'Make All-Conference',      cat: 'team' },
+    { label: 'Make Travel Team',         cat: 'team' },
+    { label: 'Make Varsity',             cat: 'team' },
+    { label: 'Get D1 Looks',             cat: 'mental' },
+    { label: 'Maintain 3.5+ GPA',        cat: 'academics' }
+  ];
+}
 
 // Render the quick-pick chips. Each chip is one tap to add the goal.
 function renderGoalPresetChips() {
   const container = document.getElementById('goal-presets-chips');
   if (!container) return;
-  container.innerHTML = GOAL_PRESET_CHIPS.map(function(p) {
+  // Build a lowercase Set of current goal texts so we can mark chips
+  // whose goal is already in the player's list. Coach Young 2026-05-17:
+  // chips for already-added goals get an "added" visual + disabled state
+  // so the player doesn't tap one twice and confuse themselves.
+  const taken = new Set(
+    (state && state.goals ? state.goals : []).map(function (g) {
+      return (g && g.text ? String(g.text) : '').toLowerCase().trim();
+    })
+  );
+  container.innerHTML = getGoalPresetChips().map(function(p) {
     const safeLabel = p.label.replace(/'/g, "\\'");
+    const isTaken = taken.has(p.label.toLowerCase().trim());
+    if (isTaken) {
+      return '<button disabled aria-disabled="true" ' +
+             'style="background:rgba(255,255,255,0.04); border:1px solid var(--border); color:var(--grey); ' +
+             'font-family:\'Barlow Condensed\',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; ' +
+             'padding:8px 12px; border-radius:20px; cursor:default; opacity:0.6;">' +
+             '✓ ' + p.label + ' · Added' +
+             '</button>';
+    }
     return '<button onclick="addPresetGoal(\'' + safeLabel + '\',\'' + p.cat + '\')" ' +
            'style="background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); color:var(--gold); ' +
            'font-family:\'Barlow Condensed\',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; ' +
@@ -10313,7 +10805,15 @@ function addGoal() {
 
 function toggleGoal(id) {
   const goal = state.goals.find(g => g.id === id);
-  if (goal) goal.done = !goal.done;
+  if (goal) {
+    goal.done = !goal.done;
+    // Stamp the achievement timestamp on the transition so the
+    // Season Accomplishments section can render "Achieved [date]".
+    // Cleared on un-check so a mis-tap doesn't leave a stale date.
+    // Coach Young 2026-05-17.
+    if (goal.done) goal.doneAt = Date.now();
+    else delete goal.doneAt;
+  }
   try { saveState(); } catch(e) {}
   renderAll();
 }
@@ -10338,18 +10838,60 @@ function renderGoals() {
 
   const catColors = { hitting:'#27AE60', pitching:'#2980B9', fielding:'#8E44AD', strength:'#E67E22', academics:'var(--gold)', mental:'#E74C3C', team:'#1ABC9C' };
 
-  container.innerHTML = state.goals.map(g => `
-    <div style="display:flex; align-items:center; gap:14px; padding:16px 12px; margin-bottom:8px; background:${g.done ? 'rgba(39,174,96,0.04)' : 'var(--card2)'}; border:1px solid ${g.done ? 'rgba(39,174,96,0.25)' : 'var(--border)'}; border-radius:4px; transition:all 0.2s;">
-      <input type="checkbox" ${g.done ? 'checked' : ''} onchange="toggleGoal(${g.id})" style="width:24px; height:24px; accent-color:var(--gold); margin:0; flex-shrink:0; cursor:pointer;">
-      <div style="flex:1; min-width:0;">
-        <div style="font-family:'Barlow'; font-size:18px; font-weight:600; color:${g.done ? 'var(--grey)' : 'var(--white)'}; line-height:1.4; ${g.done ? 'text-decoration:line-through;' : ''}">${g.text}</div>
-        <div style="margin-top:6px;">
-          <span style="display:inline-block; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#161210; background:${catColors[g.cat] || 'var(--gold)'}; padding:3px 9px; border-radius:2px;">${g.cat}</span>
-        </div>
-      </div>
-      <button class="btn btn-danger btn-sm" onclick="deleteGoal(${g.id})" style="flex-shrink:0;">✕</button>
-    </div>
-  `).join('');
+  // Coach Young 2026-05-17: split goals into ACTIVE (top) and SEASON
+  // ACCOMPLISHMENTS (bottom) so completed goals get their own celebratory
+  // surface instead of being buried in the active list. Accomplishments
+  // sort newest-first by doneAt so the most recent win lands on top.
+  const active          = state.goals.filter(function (g) { return !g.done; });
+  const accomplishments = state.goals.filter(function (g) { return g.done; })
+                                     .sort(function (a, b) { return (b.doneAt || 0) - (a.doneAt || 0); });
+
+  const activeRow = function (g) {
+    return '<div style="display:flex; align-items:center; gap:14px; padding:16px 12px; margin-bottom:8px; background:var(--card2); border:1px solid var(--border); border-radius:4px; transition:all 0.2s;">' +
+             '<input type="checkbox" onchange="toggleGoal(' + g.id + ')" style="width:24px; height:24px; accent-color:var(--gold); margin:0; flex-shrink:0; cursor:pointer;">' +
+             '<div style="flex:1; min-width:0;">' +
+               '<div style="font-family:\'Barlow\'; font-size:18px; font-weight:600; color:var(--white); line-height:1.4;">' + g.text + '</div>' +
+               '<div style="margin-top:6px;">' +
+                 '<span style="display:inline-block; font-family:\'Barlow Condensed\',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#161210; background:' + (catColors[g.cat] || 'var(--gold)') + '; padding:3px 9px; border-radius:2px;">' + g.cat + '</span>' +
+               '</div>' +
+             '</div>' +
+             '<button class="btn btn-danger btn-sm" onclick="deleteGoal(' + g.id + ')" style="flex-shrink:0;">✕</button>' +
+           '</div>';
+  };
+
+  const accomplishmentRow = function (g) {
+    const dateStr = g.doneAt
+      ? new Date(g.doneAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : '';
+    return '<div style="display:flex; align-items:center; gap:12px; padding:12px 12px; margin-bottom:6px; background:rgba(201,168,76,0.06); border:1px solid var(--gold-dark); border-radius:4px;">' +
+             '<input type="checkbox" checked onchange="toggleGoal(' + g.id + ')" style="width:20px; height:20px; accent-color:var(--gold); margin:0; flex-shrink:0; cursor:pointer;">' +
+             '<div style="flex:1; min-width:0;">' +
+               '<div style="font-family:\'Barlow\'; font-size:15px; font-weight:600; color:var(--grey); line-height:1.4; text-decoration:line-through;">' + g.text + '</div>' +
+               (dateStr ? '<div style="font-family:\'Barlow Condensed\',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-top:4px;">🏆 Achieved · ' + dateStr + '</div>' : '') +
+             '</div>' +
+             '<button class="btn btn-danger btn-sm" onclick="deleteGoal(' + g.id + ')" style="flex-shrink:0;">✕</button>' +
+           '</div>';
+  };
+
+  let html = '';
+
+  // Active section — header only shown if at least one accomplishment exists
+  // (otherwise it's redundant — the whole card is already labeled "Season Goals").
+  if (active.length) {
+    if (accomplishments.length) {
+      html += '<div style="font-family:\'Barlow Condensed\',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">🎯 Active</div>';
+    }
+    html += active.map(activeRow).join('');
+  }
+
+  // Accomplishments section — only renders when there's something to celebrate.
+  if (accomplishments.length) {
+    html += '<div style="height:1px; background:linear-gradient(90deg, transparent, var(--gold-dark), transparent); margin:18px 0 14px;"></div>';
+    html += '<div style="font-family:\'Barlow Condensed\',sans-serif; font-size:13px; font-weight:800; letter-spacing:2.5px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">🏆 Season Accomplishments · ' + accomplishments.length + '</div>';
+    html += accomplishments.map(accomplishmentRow).join('');
+  }
+
+  container.innerHTML = html;
 }
 
 // ─── GPA ──────────────────────────────────────────────────
@@ -11336,6 +11878,31 @@ function savePositions() {
   saveProfile();
 }
 
+// updateAutosavePill — Coach Young 2026-05-17. Refreshes the persistent
+// "✓ Auto-saved · X ago" indicator at the top of the Profile panel
+// every time any autosaving field changes. Stamps the save time in
+// localStorage so the relative-time label survives page reloads.
+function updateAutosavePill() {
+  try { localStorage.setItem('ybg_profile_autosave_ts', String(Date.now())); } catch (e) {}
+  const pill = document.getElementById('autosave-pill');
+  if (pill) pill.textContent = '✓ Auto-saved · just now';
+}
+// On load, hydrate the pill with the last save time (relative). Re-runs
+// every minute so "just now" decays naturally to "1m ago", "5m ago", etc.
+function refreshAutosavePillLabel() {
+  const pill = document.getElementById('autosave-pill');
+  if (!pill) return;
+  let ts = 0;
+  try { ts = parseInt(localStorage.getItem('ybg_profile_autosave_ts')) || 0; } catch (e) {}
+  if (!ts) { pill.textContent = '✓ Auto-saves as you type'; return; }
+  const mins = Math.floor((Date.now() - ts) / 60000);
+  if (mins < 1)       pill.textContent = '✓ Auto-saved · just now';
+  else if (mins < 60) pill.textContent = '✓ Auto-saved · ' + mins + 'm ago';
+  else if (mins < 1440) pill.textContent = '✓ Auto-saved · ' + Math.floor(mins / 60) + 'h ago';
+  else                pill.textContent = '✓ Auto-saved · ' + Math.floor(mins / 1440) + 'd ago';
+}
+setInterval(refreshAutosavePillLabel, 60000);
+
 function saveProfile() {
   // Firebase cloud save
   setTimeout(function() {
@@ -11368,6 +11935,15 @@ function saveProfile() {
   }
   updateDashboardName(profile.name);
   updateProfileDisplay(profile.name, profile.pos, profile.school);
+  // Coach Young 2026-05-17: grade selection drives the Academics surface
+  // (MS / HS / College). Re-render the dashboard card (which also re-paints
+  // the dedicated Academics tab via the renderAcademicsContext call inside)
+  // so the player sees the tab re-theme the instant they pick their grade,
+  // without having to switch tabs or refresh.
+  try { renderDashAcademics(); }   catch (e) {}
+  try { renderEligibility(); }     catch (e) {}
+  try { renderGoalPresetChips(); } catch (e) {}
+  try { updateAutosavePill(); }    catch (e) {}
 }
 
 // Bridge onboarding profile (mg_player_profile, written by onboarding.html)
@@ -11537,6 +12113,30 @@ function saveHWEntry() {
     if (weight) summary += ' · ' + weight + ' lbs';
     if (typeof showShareToast === 'function') {
       showShareToast('✅ Updated · ' + summary);
+    }
+  } catch (e) {}
+
+  // Button-morph confirmation — Coach Young 2026-05-17: the prior toast
+  // alone felt disconnected (toast lands at the top of the viewport,
+  // button is at the bottom of the form). Morphing the button itself
+  // gives co-located feedback: tap → flash green + label "✓ Logged!"
+  // + stronger haptic + brief disable, then revert after 1.5s. Matches
+  // the Strava / MyFitnessPal / Whoop pattern.
+  try {
+    var hwBtn = document.querySelector('button[onclick="saveHWEntry()"]');
+    if (hwBtn) {
+      var origLabel = hwBtn.innerHTML;
+      hwBtn.innerHTML = '✓ &nbsp;Logged!';
+      hwBtn.classList.add('btn-saved-flash');
+      hwBtn.disabled = true;
+      if (typeof ybgHaptic === 'function') ybgHaptic([20, 40, 30]);
+      setTimeout(function () {
+        try {
+          hwBtn.innerHTML = origLabel;
+          hwBtn.classList.remove('btn-saved-flash');
+          hwBtn.disabled = false;
+        } catch (_) {}
+      }, 1500);
     }
   } catch (e) {}
 
@@ -11934,7 +12534,10 @@ function loadSettings() {
     set('pref-scroll',        s.prefScroll);
     updateNotifSlider(s.notifDaily);
     applySettings(s);
-    updateSettingsAccountInfo();
+    // updateSettingsAccountInfo removed 2026-05-17 — Account card deleted in
+    // the Settings dedup pass; updateSubscriptionCard now owns the same
+    // email + access-type display via the Subscription card's bottom section.
+    try { updateSubscriptionCard(); } catch (e) {}
 
     // Pre-fill the Feedback email field with the user's account email
     // (only if it's a real email, not the legacy placeholder, and the
@@ -11956,22 +12559,13 @@ function applySettings(s) {
   updateNotifSlider(s.notifDaily);
 }
 
-function updateSettingsAccountInfo() {
-  try {
-    const acc = getAccessState();
-    const emailEl = document.getElementById('settings-email-display');
-    const planEl  = document.getElementById('settings-plan-display');
-    if (emailEl) emailEl.textContent = acc.email || '—';
-    if (planEl) {
-      if (isCreator())   planEl.textContent = 'Creator — Full Access';
-      else if (acc.paid) planEl.textContent = 'Active Subscription';
-      else if (acc.trialStart) {
-        const days = Math.max(0, Math.ceil(7 - (Date.now() - acc.trialStart) / 86400000));
-        planEl.textContent = `Free Trial — ${days} day${days !== 1 ? 's' : ''} remaining`;
-      } else planEl.textContent = 'No active plan';
-    }
-  } catch(e) {}
-}
+// updateSettingsAccountInfo() removed 2026-05-17 — the standalone Account
+// card it painted into (#settings-email-display + #settings-plan-display)
+// was deleted in the Settings dedup pass. The Subscription & Billing card
+// already includes a "Account Info" section that renders the same data
+// via updateSubscriptionCard(). All 3 prior callers were rewired to call
+// updateSubscriptionCard() directly so dependents and adults both see
+// their email + access type without duplicated UI.
 
 // ── NOTIFICATION TOGGLE SLIDER ──
 function toggleNotifDaily() {
@@ -12456,6 +13050,65 @@ document.addEventListener('pointerdown', function(e) {
   }, 300);
 }, { passive: true });
 
+// ─── BOTTOM-NAV HIDE-ON-FORM-FOCUS (iOS nav-drift workaround) ──────────
+// Coach Young 2026-05-17: when a <select> wheel picker (~270px) or the
+// soft keyboard opens on iOS Safari, the visual viewport shrinks and
+// position:fixed elements at bottom:0 re-anchor to the new (smaller)
+// visual viewport bottom — making the bottom nav appear to "release"
+// from the screen edge and float up into the form content. Specifically
+// reproducible by tapping the Arm Strength select on Profile after
+// typing in other fields.
+//
+// The existing nav-drift fixes (100svh + opaque background + translate3d
+// hardware layer) handle SCROLL-induced drift but not FOCUS-induced
+// drift. This handler covers the second case by hiding the nav while
+// any form element has focus. Touch-device-only — desktop browsers
+// don't shrink the visual viewport on focus so the nav stays put there.
+//
+// Used by Notion + Linear + most mobile-first PWAs.
+(function () {
+  var isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  if (!isTouchDevice) return;
+
+  var FORM_TAGS = { INPUT: 1, SELECT: 1, TEXTAREA: 1 };
+  var nav = null;
+  function getNav() { return nav || (nav = document.getElementById('mg-bottom-nav')); }
+
+  document.addEventListener('focusin', function (e) {
+    if (!e.target || !FORM_TAGS[e.target.tagName]) return;
+    // Skip hidden-type inputs (e.g. file pickers, hidden fields) — they
+    // don't bring up the keyboard/picker so the nav doesn't need to move.
+    if (e.target.type === 'hidden' || e.target.type === 'file') return;
+    var n = getNav();
+    if (n) n.style.display = 'none';
+  }, true);
+
+  document.addEventListener('focusout', function (e) {
+    if (!e.target || !FORM_TAGS[e.target.tagName]) return;
+    // Small delay so tabbing between fields doesn't flicker the nav.
+    setTimeout(function () {
+      var active = document.activeElement;
+      if (active && FORM_TAGS[active.tagName] && active.type !== 'hidden' && active.type !== 'file') return;
+      var n = getNav();
+      if (n) n.style.display = 'flex';
+    }, 120);
+  }, true);
+
+  // Coach Young 2026-05-17 follow-up: on iOS Safari a <select> keeps focus
+  // after the wheel picker is dismissed, so the focusout-only path above
+  // left the nav hidden until the user tapped somewhere else (often
+  // confusingly until they hit Save). Listening for `change` on selects
+  // re-shows the nav the instant a value is picked, which is when the
+  // wheel picker has closed and we can safely show the nav again. Caught
+  // by the Journal → Entry Type → Off Day flow on phone.
+  document.addEventListener('change', function (e) {
+    if (e.target && e.target.tagName === 'SELECT') {
+      var n = getNav();
+      if (n) n.style.display = 'flex';
+    }
+  }, true);
+})();
+
 // ─── STREAK CALCULATION ──────────────────────────────────
 // Streak rule (locked 2026-05-11 pre-launch audit): ANY entry type
 // counts as a streak day — Practice, Game, Instructor, Workout,
@@ -12758,30 +13411,16 @@ function buildWeeklyRecap() {
     }
   });
 
-  // Coach / instructor notes this week — Coach Young 2026-05-10:
-  // parents see what their kid is reaching out to their coach about.
-  // Pulls saved entry.coachNote and entry.instructor.noteForCoach from
-  // entries logged this week, normalized into one list for display.
-  const notesThisWeek = [];
-  state.entries.forEach(function(e) {
-    const d = parseEntryDate(e.date);
-    if (!d || isNaN(d.getTime())) return;
-    if (d < weekAgo || d > now) return;
-    if (e.coachNote) {
-      notesThisWeek.push({
-        at: d.getTime(),
-        audience: 'Coach',
-        text: e.coachNote
-      });
-    }
-    if (e.instructor && e.instructor.noteForCoach) {
-      notesThisWeek.push({
-        at: d.getTime(),
-        audience: e.instructor.name || 'Instructor',
-        text: e.instructor.noteForCoach
-      });
-    }
-  });
+  // Coach / instructor notes block removed 2026-05-17 — Coach Young's Tier 1
+  // privacy model: parents see ENGAGEMENT SIGNALS (streak, counts, goals),
+  // never journal CONTENT. The actual text the kid wrote to their coach is
+  // their workspace, not a parent surface. Removed surfacing of:
+  //   - entry.coachNote text
+  //   - entry.instructor.noteForCoach text
+  // The notes themselves stay saved on the entries; this just stops them
+  // bleeding into the family-facing recap. The 'Notes to Coach: 3' COUNT
+  // is also intentionally omitted — counting them would still leak the
+  // signal "your kid is venting to their coach this week."
 
   const streak = calculateStreak();
   const goalsActive = (state.goals && state.goals.length) || 0;
@@ -12808,16 +13447,21 @@ function buildWeeklyRecap() {
     // then instructor/solo/workout supplemental, then reflection/offday
     // close out the week.
     (function() {
+      // Reflections + Off Days INTENTIONALLY EXCLUDED from the parent-facing
+      // rows (Coach Young 2026-05-17 Tier 1 privacy model). Both are
+      // emotional/personal categories — surfacing even the COUNT tells
+      // the parent how much the kid is reflecting or resting, which
+      // chills the journal's role as a private mindset workspace. The
+      // counters are still computed above for future use (e.g. the
+      // player's own dashboard) but not surfaced to family.
       const rows = [
         { count: games,              icon: _ball,  label: 'Games' },
         { count: practices,          icon: '🏏',    label: 'Practices' },
         { count: instructorSessions, icon: '👨‍🏫',  label: 'Instructor' },
         { count: soloSessions,       icon: '🎯',    label: 'Solo Work' },
-        { count: workouts,           icon: '💪',    label: 'Workouts' },
-        { count: reflections,        icon: '💭',    label: 'Reflections' },
-        { count: offDays,            icon: '😴',    label: 'Off Days' }
+        { count: workouts,           icon: '💪',    label: 'Workouts' }
       ].filter(function(r) { return r.count > 0; });
-      if (!rows.length) return '<div style="font-size:13px; color:var(--grey); margin-top:4px;">No entries logged this week yet.</div>';
+      if (!rows.length) return '<div style="font-size:13px; color:var(--grey); margin-top:4px;">No training entries logged this week yet.</div>';
       return '<div style="font-size:13px; color:var(--light); line-height:1.8;">' +
         rows.map(function(r) {
           return r.icon + ' ' + r.label + ': <strong style="color:var(--gold);">' + r.count + '</strong>';
@@ -12827,23 +13471,14 @@ function buildWeeklyRecap() {
     '<div style="font-size:13px; color:var(--light); margin-top:6px;">' +
       '🏆 Active Goals: <strong style="color:var(--gold);">' + goalsActive + '</strong>' +
     '</div>' +
-    // Coach / instructor notes this week — Coach Young 2026-05-10:
-    // parents see what their kid is asking their coach about. Block
-    // only renders when there's at least one note to show.
-    (notesThisWeek.length ? (
-      '<div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border);">' +
-        '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">📝 Notes to Coach (' + notesThisWeek.length + ')</div>' +
-        notesThisWeek.slice(-3).map(function(t) {
-          const when = new Date(t.at);
-          const day  = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-          const snippet = (t.text || '').replace(/\s+/g, ' ').slice(0, 100);
-          return '<div style="font-family:\'Barlow\'; font-size:12px; color:var(--light); line-height:1.5; margin-bottom:4px;">' +
-                   '<span style="color:var(--grey);">' + day + ' · ' + t.audience + ' — </span>' + snippet + (snippet.length >= 100 ? '…' : '') +
-                 '</div>';
-        }).join('') +
-        (notesThisWeek.length > 3 ? '<div style="font-family:\'Barlow\'; font-size:11px; color:var(--grey); margin-top:4px;">+ ' + (notesThisWeek.length - 3) + ' more this week</div>' : '') +
-      '</div>'
-    ) : '');
+    // Trust line — Coach Young 2026-05-17. Sets parent expectations so
+    // they know the recap is engagement signals only, not content. This
+    // is the disclosure that makes the privacy model legible to both
+    // sides: kid trusts the journal stays theirs, parent knows what
+    // they're getting + why.
+    '<div style="margin-top:14px; padding-top:12px; border-top:1px solid var(--border); font-family:\'Barlow\'; font-size:11px; color:var(--grey); line-height:1.5; font-style:italic;">' +
+      '🔒 Reflections, off-day notes, and coach messages stay private to the player. You see the work they\'re putting in.' +
+    '</div>';
 
   const profile = (function() {
     try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); }
@@ -12851,24 +13486,26 @@ function buildWeeklyRecap() {
   })();
   const name = profile.firstName || profile.name || 'Player';
 
-  // Plain-text payload for the OS share sheet — uses canonical mygrindapp.com
-  // (legacy youngsbaseball.github.io link replaced 2026-05-08 audit fix).
-  // Coach-text snippets appended below so parents see exactly what their
-  // kid reached out to their instructor about this week.
+  // Plain-text payload for the OS share sheet — uses canonical mygrindapp.com.
+  // Coach Young 2026-05-17 Tier 1 privacy model: this is the EXACT string the
+  // kid sends to their parent. It includes ENGAGEMENT SIGNALS only (counts +
+  // streak + goals). Reflections, off-day notes, coach-message text, and even
+  // the count of reflections/off-days are intentionally excluded — those stay
+  // the player's private workspace. Trust line at the end discloses the
+  // boundary so the parent knows what they're getting and what they aren't.
   let plain =
     name + "'s Week · MY GRIND Recap " + _ball + "\n\n" +
     "Entries this week: " + total + "\n" +
     "Current streak: " + streak + " days 🔥\n" +
     "Active goals: " + goalsActive + "\n";
-  // Per-type breakdown — same coordination as the HTML view above.
+  // Per-type breakdown — same Tier 1 rows as the HTML view (reflections
+  // + off days intentionally omitted).
   const _plainRows = [
     { count: games,              icon: _ball,  label: 'Games' },
     { count: practices,          icon: '🏏',    label: 'Practices' },
     { count: instructorSessions, icon: '👨‍🏫',  label: 'Instructor' },
     { count: soloSessions,       icon: '🎯',    label: 'Solo Work' },
-    { count: workouts,           icon: '💪',    label: 'Workouts' },
-    { count: reflections,        icon: '💭',    label: 'Reflections' },
-    { count: offDays,            icon: '😴',    label: 'Off Days' }
+    { count: workouts,           icon: '💪',    label: 'Workouts' }
   ].filter(function(r) { return r.count > 0; });
   if (_plainRows.length) {
     plain += "\n";
@@ -12876,18 +13513,7 @@ function buildWeeklyRecap() {
       plain += r.icon + " " + r.label + ": " + r.count + "\n";
     });
   }
-  if (notesThisWeek.length) {
-    plain += "\n📝 Notes to Coach (" + notesThisWeek.length + ")\n";
-    notesThisWeek.slice(-3).forEach(function(t) {
-      const when = new Date(t.at);
-      const day  = when.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-      const snippet = (t.text || '').replace(/\s+/g, ' ').slice(0, 100);
-      plain += "  " + day + " · " + t.audience + " — " + snippet + (snippet.length >= 100 ? '…' : '') + "\n";
-    });
-    if (notesThisWeek.length > 3) {
-      plain += "  + " + (notesThisWeek.length - 3) + " more this week\n";
-    }
-  }
+  plain += "\n🔒 Reflections + off-day notes stay private to the player.\n";
   plain += "\nTracked on MY GRIND\nhttps://www.mygrindapp.com/signup.html?trial=1";
 
   return { html: html, plain: plain };
@@ -12902,6 +13528,25 @@ function renderWeeklyRecap() {
 
 function shareWeeklyRecap() {
   const recap = buildWeeklyRecap();
+  // Coach Young 2026-05-17: switched from navigator.share() to the sms: URL
+  // scheme on mobile to dodge a known iOS Safari bug where picking Messages
+  // from the share sheet then picking a contact sometimes routes the text
+  // to the LAST-used conversation instead of the picked one. The sms:&body=
+  // approach opens Messages cleanly with no recipient set — the user picks
+  // their parent in the To: field directly, no share-sheet routing involved.
+  // Pattern matches the textParentForBilling() flow that was already proven
+  // for the billing-overlay path. navigator.share() stays as the desktop
+  // fallback so the recap is still usable in a laptop browser.
+  const ua = navigator.userAgent || '';
+  const isIOS     = /iPad|iPhone|iPod/.test(ua);
+  const isAndroid = /Android/.test(ua);
+  if (isIOS || isAndroid) {
+    const sep = isIOS ? '&' : '?';
+    const body = encodeURIComponent(recap.plain);
+    window.open('sms:' + sep + 'body=' + body);
+    return;
+  }
+  // Desktop / other — Web Share API if available, otherwise copy-to-clipboard.
   if (navigator.share) {
     navigator.share({ title: 'My Grind — This Week', text: recap.plain })
       .catch(function() { fallbackShare(recap.plain); });
@@ -12910,41 +13555,12 @@ function shareWeeklyRecap() {
   }
 }
 
-// ─── PARENT EMAIL (weekly highlights) ────────────────────
-function sendParentRecap() {
-  const recap = buildWeeklyRecap();
-  const profile = (function() {
-    try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); }
-    catch(e) { return {}; }
-  })();
-  const name = profile.firstName || profile.name || 'your player';
-  const subject = "My Grind — " + name + "'s Week";
-
-  // Build email body
-  let body = "Hi Mom / Dad,\n\n";
-  body += "Here's my week on My Grind ⚾\n\n";
-  body += recap.plain;
-  body += "\n\nLet me know if you want to talk about anything in my journal.\n\n— " + name;
-
-  // Use a hidden anchor to open mailto — doesn't navigate the current window
-  // This keeps the app state intact and the user can easily come back
-  try {
-    const a = document.createElement('a');
-    a.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(function() {
-      try { document.body.removeChild(a); } catch(e) {}
-    }, 200);
-    if (typeof showShareToast === 'function') {
-      showShareToast('📧 Email opened. Come back when you\'ve sent it.');
-    }
-  } catch(err) {
-    // Fallback
-    window.location.href = 'mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
-  }
-}
+// sendParentRecap() removed 2026-05-17 — Email Week button was redundant
+// with both the Text path (same payload, different transport) AND with the
+// Mailchimp weekly digest that auto-fires every Monday 7am PT. Parents who
+// prefer email get the formal digest automatically; the manual button was
+// dead weight on the share row. If a future product decision restores
+// "manual email recap," the function lived here at this commit.
 
 // ─── PDF / HTML EXPORT OF JOURNAL ────────────────────────
 function exportJournalPDF() {
@@ -16097,6 +16713,20 @@ function mgTab(panel, tabId) {
   if (panel === 'journal') {
     try { renderJournalReminders(); } catch (e) {}
   }
+  // Scroll the main container to top on tab switch — Coach Young 2026-05-17.
+  // The "← Back to Dashboard" pills used to leave the player wherever the
+  // dashboard was last scrolled (often at the bottom Share With Family card).
+  // Honors the existing "Scroll to Top on Tab Switch" preference (default ON,
+  // toggleable in Settings → App Preferences). Instant scroll, not smooth,
+  // because the panel change is already instant — smooth would look janky.
+  try {
+    var prefs = JSON.parse(localStorage.getItem('ybg_settings') || '{}');
+    if (prefs.prefScroll !== false) {
+      var mainEl = document.querySelector('main');
+      if (mainEl && typeof mainEl.scrollTo === 'function') mainEl.scrollTo(0, 0);
+      else if (mainEl) mainEl.scrollTop = 0;
+    }
+  } catch (e) {}
 }
 
 // ─── JOURNAL REMINDER BANNERS ─────────────────────────────
@@ -16179,9 +16809,9 @@ function renderJournalReminders() {
         accent: '#A8D97B',
         icon: '📚',
         title: 'Time to update your grades',
-        body: 'Around now is when ' + labels[win] + ' come out. Pull every grade in your 6 classes and update them in Profile so your GPA + eligibility stay accurate.',
-        cta: 'Open Profile →',
-        action: "mgTab('players','tab-players')"
+        body: 'Around now is when ' + labels[win] + ' come out. Pull every grade in your 6 classes and update them in Academics so your GPA and eligibility stay accurate.',
+        cta: 'Open Academics →',
+        action: "mgTab('academics','tab-academics')"
       });
     }
   }
@@ -16259,6 +16889,30 @@ function closeMoreMenu() {
     moreTab.style.color       = '#555';
     moreTab.style.borderColor = 'transparent';
   }
+}
+
+// Opens the Settings panel and scrolls to the feedback form. Coach Young
+// 2026-05-17: replaces the old More-menu mailto so there's one canonical
+// feedback surface (the structured form in Settings) instead of a mailto
+// link competing with it. The setTimeout lets the tab switch paint
+// before scrolling — otherwise the scrollIntoView fires while panel-
+// settings is still display:none and ends up no-oping.
+function openSettingsAtFeedback() {
+  try { closeMoreMenu(); } catch (e) {}
+  try { mgTab('settings', null); } catch (e) {}
+  setTimeout(function () {
+    var el = document.getElementById('settings-feedback-card');
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    // Soft focus on the email field so the keyboard pops naturally on
+    // mobile after the scroll lands. Wrapped in try because mobile
+    // browsers can silently reject programmatic focus outside a tap.
+    try {
+      var emailEl = document.getElementById('fb-email');
+      if (emailEl) emailEl.focus({ preventScroll: true });
+    } catch (_) {}
+  }, 120);
 }
 
 // Close more menu when tapping outside
