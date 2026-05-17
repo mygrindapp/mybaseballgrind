@@ -356,6 +356,7 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
+  html { overscroll-behavior-y: none; }
   body {
     background: #181614;
     color: #F5F0EB;
@@ -379,8 +380,12 @@
     min-height: 100vh;
     min-height: -webkit-fill-available;
     overflow-x: hidden;
-    /* Safe area for iPhone notch / home bar */
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    /* Prevent iOS Safari rubber-band overscroll from exposing the gap
+       beneath the fixed nav. Coach Young 2026-05-17. */
+    overscroll-behavior-y: none;
+    /* Safe area for iPhone notch only — bottom safe area is owned by the
+       fixed nav itself (it has padding-bottom: env(safe-area-inset-bottom)).
+       Duplicating it on body created a 34px gap that overscroll exposed. */
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
@@ -1294,7 +1299,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v199';
+    const CACHE = 'ybg-mygrind-v200';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2115,12 +2120,6 @@ function dismissIosBanner() {
   height: 62px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   max-width: 100%;
-  /* iOS Safari stability: forces the nav onto its own GPU layer so
-     position:fixed doesn't drift on scroll when the address bar
-     hides/reveals. Coach Young 2026-05-17 walkthrough. */
-  transform: translateZ(0);
-  -webkit-transform: translateZ(0);
-  will-change: transform;
 ">
   <!-- Bottom nav reordered 2026-05-16 (Coach Young walkthrough): Dashboard ·
        Journal · Stats · Profile · More. Matches top-tier mobile fitness/
