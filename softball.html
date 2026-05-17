@@ -356,7 +356,6 @@
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { overscroll-behavior-y: none; }
   body {
     background: #181614;
     color: #F5F0EB;
@@ -380,12 +379,10 @@
     min-height: 100vh;
     min-height: -webkit-fill-available;
     overflow-x: hidden;
-    /* Prevent iOS Safari rubber-band overscroll from exposing the gap
-       beneath the fixed nav. Coach Young 2026-05-17. */
-    overscroll-behavior-y: none;
     /* Safe area for iPhone notch only — bottom safe area is owned by the
        fixed nav itself (it has padding-bottom: env(safe-area-inset-bottom)).
-       Duplicating it on body created a 34px gap that overscroll exposed. */
+       Duplicating it on body created a 34px gap that rubber-band overscroll
+       exposed, making the nav appear to drift upward. Coach Young 2026-05-17. */
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
@@ -1299,7 +1296,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v200';
+    const CACHE = 'ybg-mygrind-v201';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
