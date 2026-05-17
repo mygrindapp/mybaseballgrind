@@ -1364,7 +1364,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v214';
+    const CACHE = 'ybg-mygrind-v215';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -16771,62 +16771,13 @@ if (document.readyState === 'loading') {
   setTimeout(dashCoachLoad, 600);
 }
 
-/* ── PULL-TO-REFRESH ── Coach Young 2026-05-16: the nuclear app-shell
-   scroll architecture (body overflow:hidden + main as scroll container)
-   killed iOS Safari's native pull-to-refresh, since native PTR requires
-   the DOCUMENT to be at scroll-top. Re-implement as a small touch
-   handler on <main>. Pull down >70px when already scrolled to top and
-   trigger window.location.reload(). Subtle gold progress bar at the
-   top edge gives visual feedback during the pull. */
-(function attachPullToRefresh() {
-  const main = document.querySelector('main');
-  if (!main) return;
-
-  const THRESHOLD = 70;     // px pull required to trigger reload
-  const MAX_PULL = 120;     // px past which we stop showing progress
-  let startY = 0;
-  let pulling = false;
-  let bar = null;
-
-  function ensureBar() {
-    if (bar) return bar;
-    bar = document.createElement('div');
-    bar.id = 'ptr-bar';
-    bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0;background:var(--gold,#C9A84C);z-index:9999;transition:width 0.1s linear,opacity 0.25s;pointer-events:none;opacity:0;';
-    document.body.appendChild(bar);
-    return bar;
-  }
-
-  main.addEventListener('touchstart', function(e) {
-    if (main.scrollTop > 0) { pulling = false; return; }
-    startY = e.touches[0].clientY;
-    pulling = true;
-  }, { passive: true });
-
-  main.addEventListener('touchmove', function(e) {
-    if (!pulling) return;
-    const delta = e.touches[0].clientY - startY;
-    if (delta <= 0) { ensureBar().style.opacity = '0'; return; }
-    const clamped = Math.min(delta, MAX_PULL);
-    const b = ensureBar();
-    b.style.opacity = '1';
-    b.style.width = Math.min(100, (clamped / THRESHOLD) * 100) + '%';
-  }, { passive: true });
-
-  main.addEventListener('touchend', function(e) {
-    if (!pulling) return;
-    pulling = false;
-    const endY = (e.changedTouches && e.changedTouches[0]) ? e.changedTouches[0].clientY : startY;
-    const delta = endY - startY;
-    if (delta >= THRESHOLD && main.scrollTop <= 0) {
-      if (bar) { bar.style.width = '100%'; bar.style.opacity = '1'; }
-      setTimeout(function() { window.location.reload(); }, 120);
-    } else if (bar) {
-      bar.style.width = '0';
-      bar.style.opacity = '0';
-    }
-  }, { passive: true });
-})();
+/* Pull-to-refresh removed 2026-05-16 — Coach Young. The custom PTR was
+   added to replace native PTR (killed by the app-shell scroll fix), but
+   MyGrind data is local-first: nothing to "pull" from a server, deploys
+   auto-update via the service worker, and the touch handler was causing
+   layout interference. Players don't need it; dev workflow uses Safari's
+   reload button. Keeping this comment as a marker so future drift toward
+   re-adding it has context. */
 </script>
 </body>
 </html>
