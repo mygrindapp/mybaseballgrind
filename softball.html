@@ -578,11 +578,17 @@
        transitions. `contain` is enough on top of that. */
     overscroll-behavior: contain;
     /* Extra bottom padding so last card clears iPhone home indicator
-       + the fixed nav (62px) + Claude preview bottom bar. Bumped from
-       100px to 140px on 2026-05-16 — Coach Young saw the last journal
-       entry card getting visually clipped by the bottom nav. Gives a
-       comfortable ~78px breathing zone between last card and nav. */
-    padding: 24px 24px calc(140px + env(safe-area-inset-bottom, 0px));
+       + the fixed nav (62px) + Claude preview bottom bar.
+       Coach Young 2026-05-16 bump #2: 140px wasn't enough — main has
+       height:100% of body (100svh), so it physically extends ~64px
+       below the visible viewport because header takes that space at
+       the top. That swallows 64px of any padding-bottom, leaving only
+       ~14px clear above the nav. The parents-portal Email/Journal
+       buttons looked cut off. 220px gives a real ~94px of visible
+       buffer above the nav (= 220 padding - 64 header offset - 62
+       nav height = 94). Will revisit with a `calc(100% - header)`
+       main height fix post-launch. */
+    padding: 24px 24px calc(220px + env(safe-area-inset-bottom, 0px));
   }
 
   /* ── PANEL ── */
@@ -1375,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v223';
+    const CACHE = 'ybg-mygrind-v224';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
