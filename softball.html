@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v245';
+    const CACHE = 'ybg-mygrind-v246';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -17675,25 +17675,45 @@ if (document.readyState === 'loading') {
    autofill behavior). Run after DOM is ready AND again after any panel
    switch in case dynamically-rendered inputs come in later. */
 (function suppressAutofill() {
-  function applyTo(scope) {
-    // Coach Young 2026-05-17: extended from inputs-only to also cover
-    // <textarea> elements. Original 5-16 suppressor missed all journal-
-    // entry textareas (j-what, j-tomorrow, j-team-role-text, j-prepare,
-    // j-wo-lifts, j-inst-notes, etc.) so tapping into them still popped
-    // the iOS QuickType bar with password / credit card / location
-    // suggestions. Single selector swap.
-    var fields = (scope || document).querySelectorAll('input:not([autocomplete]), textarea:not([autocomplete])');
-    fields.forEach(function(inp) {
-      var t = (inp.type || 'text').toLowerCase();
-      // Skip credential-style inputs — they're already handled by explicit
-      // autocomplete attrs elsewhere, but defend anyway.
-      if (t === 'password' || t === 'email') return;
-      inp.setAttribute('autocomplete', 'off');
-      inp.setAttribute('autocorrect', 'off');
-      inp.setAttribute('autocapitalize', 'off');
-      inp.setAttribute('spellcheck', 'false');
-    });
+  // Marker attr so we don't re-process the same input on every pass.
+  var MARK = 'data-mg-autofill-suppressed';
+
+  function suppress(inp) {
+    if (inp.hasAttribute(MARK)) return;
+    var tag = inp.tagName;
+    if (tag !== 'INPUT' && tag !== 'TEXTAREA') return;
+    var t = (inp.type || 'text').toLowerCase();
+    // Skip credential-style inputs — keep their proper autofill behavior.
+    if (t === 'password' || t === 'email' || t === 'hidden' || t === 'file') return;
+    // Honor any non-"off" autocomplete the author already set (email, tel, etc.).
+    var ac = inp.getAttribute('autocomplete');
+    if (ac && ac !== 'off') return;
+
+    inp.setAttribute('autocomplete', 'off');
+    inp.setAttribute('autocorrect',  'off');
+    inp.setAttribute('autocapitalize', 'off');
+    inp.setAttribute('spellcheck',   'false');
+
+    // Coach Young 2026-05-17 (v245 escalation): iOS Safari often IGNORES
+    // autocomplete="off" when the input's id matches credential-heuristic
+    // patterns (id="pl-name" → Contacts autofill; id="hw-weight" → Health
+    // autofill; id="pl-school" → Address autofill). Giving the input a
+    // randomized, non-credential-y `name` attribute dodges that heuristic
+    // since iOS uses BOTH id and name for autofill category matching.
+    // We don't use HTML form submission anywhere (all values read via JS
+    // getElementById) so scrambling name is safe.
+    if (!inp.hasAttribute('name') || /name|email|phone|address|city|state|zip|card|cc|pass/i.test(inp.getAttribute('name') || '')) {
+      inp.setAttribute('name', 'mg_' + Math.random().toString(36).substr(2, 8));
+    }
+
+    inp.setAttribute(MARK, '');
   }
+
+  function applyTo(scope) {
+    var fields = (scope || document).querySelectorAll('input, textarea');
+    fields.forEach(suppress);
+  }
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', function() { applyTo(); });
   } else {
@@ -17708,6 +17728,16 @@ if (document.readyState === 'loading') {
       return r;
     };
   }
+
+  // JIT suppression on touchstart — catches inputs that slipped past the
+  // load + panel-switch scans (modals, dynamically-rendered, etc.). Fires
+  // BEFORE focusin and BEFORE the iOS keyboard animation, so the
+  // autocomplete attrs are present when iOS evaluates the field for
+  // autofill. Same handler as the nav-hide touchstart — single pass,
+  // negligible cost.
+  document.addEventListener('touchstart', function (e) {
+    if (e.target) suppress(e.target);
+  }, { capture: true, passive: true });
 })();
 </script>
 </body>
