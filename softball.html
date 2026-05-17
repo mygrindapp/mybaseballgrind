@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v262';
+    const CACHE = 'ybg-mygrind-v263';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4238,7 +4238,7 @@ input[type="number"] {
            open it manually. -->
 
       <!-- Toggle button — shown when the form is collapsed. -->
-      <button id="hw-form-toggle-btn" type="button" onclick="toggleHWForm()" class="btn btn-outline" style="border-color:#27AE60; color:#27AE60; width:100%; margin-bottom:14px;">
+      <button id="hw-form-toggle-btn" type="button" onclick="toggleHWForm()" class="btn btn-outline" style="border-color:#27AE60; color:#27AE60; max-width:220px; margin:0 0 14px;">
         📏 &nbsp;Update Now
       </button>
 
@@ -4282,7 +4282,7 @@ input[type="number"] {
             <input type="text" id="hw-notes" placeholder="e.g. Up 8 lbs after summer training" style="margin-bottom:0;">
           </div>
         </div>
-        <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; width:100%;">
+        <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; max-width:220px;">
           📏 &nbsp;Update
         </button>
       </div>
