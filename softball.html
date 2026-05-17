@@ -1316,7 +1316,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v204';
+    const CACHE = 'ybg-mygrind-v205';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3193,6 +3193,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <button type="button" class="grade-chip" data-val="C" onclick="selectGradeChip('C', this)">C · Average</button>
           <button type="button" class="grade-chip" data-val="D" onclick="selectGradeChip('D', this)">D · Below Avg</button>
           <button type="button" class="grade-chip" data-val="F" onclick="selectGradeChip('F', this)">F · Struggled</button>
+          <button type="button" class="grade-chip" data-val="DNP" onclick="selectGradeChip('DNP', this)">DNP · Did Not Play</button>
         </div>
       </div>
 
