@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v242';
+    const CACHE = 'ybg-mygrind-v243';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6006,10 +6006,11 @@ const TEAM_REMOVAL_GRACE_DAYS = 7;
 
 // ── CREATOR EMAILS — always full access ─────────────
 const CREATOR_EMAILS = [
+  'coach@mygrindapp.com',      // MyGrind brand primary — added 2026-05-17
   'support@mygrindapp.com',
   'papamike@youngsbaseball.com',
   'michael@youngsbaseball.com',
-  'youngsbaseball@gmail.com'   // Coach Young's primary — added 2026-05-07
+  'youngsbaseball@gmail.com'   // Coach Young's personal — kept for back-compat / admin access
 ];
 
 // ── STORAGE ─────────────────────────────────────────
