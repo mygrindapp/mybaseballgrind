@@ -1316,7 +1316,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v206';
+    const CACHE = 'ybg-mygrind-v207';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3961,25 +3961,25 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
              2) Speed + Velocity (autosave inline inputs)
              3) New Check-In form + Log button (commits to history)
              4) History table + reminder. -->
-      <div style="border-top:1px solid var(--border); padding-top:14px; margin-bottom:12px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#27AE60;">📏 Physical Development</div>
+      <div id="hw-tracker-anchor" style="border-top:1px solid var(--border); padding-top:14px; margin-bottom:12px;">
+        <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60;">📏 Physical Development</div>
       </div>
 
       <!-- GROUP 1: Current snapshot tiles. Shown after first check-in. -->
       <div id="hw-current" style="display:none; margin-bottom:14px;">
-        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Current</div>
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Current</div>
         <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:3px;">
           <div style="background:var(--card2); padding:12px 8px; text-align:center; border-radius:2px;">
             <div style="font-family:'Bebas Neue'; font-size:28px; color:#27AE60; line-height:1;" id="hw-disp-height">—</div>
-            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Height</div>
+            <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Height</div>
           </div>
           <div style="background:var(--card2); padding:12px 8px; text-align:center; border-radius:2px;">
             <div style="font-family:'Bebas Neue'; font-size:28px; color:#27AE60; line-height:1;" id="hw-disp-weight">—</div>
-            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Weight (lbs)</div>
+            <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Weight (lbs)</div>
           </div>
           <div style="background:var(--card2); padding:12px 8px; text-align:center; border-radius:2px;">
             <div style="font-family:'Bebas Neue'; font-size:28px; color:var(--gold); line-height:1;" id="hw-disp-gain">—</div>
-            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">lbs Gained</div>
+            <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">lbs Gained</div>
           </div>
         </div>
       </div>
@@ -3990,7 +3990,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            a self-assessable arm-strength tier dropdown. The 60-yard is
            something a player CAN time themselves with a phone stopwatch
            or get from a coach, so it stays as a free-form input. -->
-      <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Speed & Arm Strength <span style="text-transform:none; letter-spacing:0.5px; font-weight:500;">— updates automatically</span></div>
+      <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Speed &amp; Arm Strength <span style="text-transform:none; letter-spacing:0.5px; font-weight:500; font-size:12px;">· updates automatically</span></div>
       <div class="form-row" style="margin-bottom:8px;">
         <div>
           <label>60-Yard Dash (sec)</label>
@@ -4047,13 +4047,13 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </div>
         </div>
         <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; width:100%;">
-          📏 &nbsp;Save Check-In
+          📏 &nbsp;Update
         </button>
       </div>
 
       <!-- HISTORY TABLE -->
       <div id="hw-history" style="display:none;">
-        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">📋 Check-In History</div>
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">📋 Check-In History</div>
         <div style="overflow-x:auto;">
           <table style="width:100%; border-collapse:collapse; font-size:13px;">
             <thead>
@@ -11197,7 +11197,17 @@ function saveHWEntry() {
     var summary = heightStr;
     if (weight) summary += ' · ' + weight + ' lbs';
     if (typeof showShareToast === 'function') {
-      showShareToast('✅ Check-in saved · ' + summary);
+      showShareToast('✅ Updated · ' + summary);
+    }
+  } catch (e) {}
+
+  // Scroll the Physical Development section back to the top so the
+  // player sees the freshly updated Current snapshot tiles instead
+  // of staring at empty form fields. Coach Young 2026-05-17.
+  try {
+    var anchor = document.getElementById('hw-tracker-anchor');
+    if (anchor && typeof anchor.scrollIntoView === 'function') {
+      anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   } catch (e) {}
 }
