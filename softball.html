@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v256';
+    const CACHE = 'ybg-mygrind-v257';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -9920,6 +9920,10 @@ function renderEntries() {
             </div>
           ` : ''}
           ${e.workout.lifts ? `<div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #B95E15; border-radius:2px; margin-bottom:8px; white-space:pre-wrap;">${e.workout.lifts}</div>` : ''}
+          ${e.workout.reflection ? `
+            <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#E67E22; margin-bottom:4px;">💭 How It Felt</div>
+            <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #8B6F47; border-radius:2px; margin-bottom:8px; white-space:pre-wrap; font-style:italic;">${e.workout.reflection}</div>
+          ` : ''}
           ${parseInt(e.workout.duration) > 0 ? `
             <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); padding-top:8px; border-top:1px solid var(--border);">
               ⏱ <span style="color:var(--light);">${parseInt(e.workout.duration)} min</span>
