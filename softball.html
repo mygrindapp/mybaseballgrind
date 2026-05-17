@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v255';
+    const CACHE = 'ybg-mygrind-v256';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3734,9 +3734,22 @@ input[type="number"] {
           <label class="wo-section-label">Main Lifts <span class="wo-section-hint">— what you actually worked on</span></label>
           <textarea id="j-wo-lifts" oninput="_refreshWoLiftChips()" placeholder="e.g. Trap Bar DL 3x5 @ 225 · Med Ball Rotational Throw 3x8 · Bench 3x5 @ 155 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
-        <div style="margin-top:18px; margin-bottom:0;">
+        <div style="margin-top:18px;">
           <label class="wo-section-label">Duration <span class="wo-section-hint">— minutes</span></label>
           <input type="number" id="j-wo-duration" min="0" max="600" step="5" placeholder="e.g. 60" style="margin-bottom:0;">
+        </div>
+        <!-- Session reflection — Coach Young 2026-05-17. One optional
+             textarea to capture subjective signal (form feel, what was
+             hard, what to push next time) that the lifts log can't.
+             Deliberately lightweight (single textarea, not the 3-prompt
+             reflection block other types have) so workout entries stay
+             fast to log. Saved to entry.workout.reflection. Hidden in
+             toggleGameStats workout branch isn't needed — this lives
+             INSIDE #j-workout-section which is already hidden for
+             non-workout types. -->
+        <div style="margin-top:18px; margin-bottom:0;">
+          <label class="wo-section-label">How did the session feel? <span class="wo-section-hint">— optional</span></label>
+          <textarea id="j-wo-reflection" inputmode="text" placeholder="What felt hard, what felt strong, form notes, what to push next time." style="min-height:70px; margin-bottom:0;"></textarea>
         </div>
       </div>
 
@@ -8057,16 +8070,22 @@ function saveEntry() {
   // part of player development; this captures focus, intensity, lifts log,
   // and duration alongside the standard journal fields.
   if (type === 'workout') {
-    const woFocus     = document.getElementById('j-wo-focus')?.value           || '';
-    const woIntensity = document.getElementById('j-wo-intensity')?.value       || '';
-    const woLifts     = document.getElementById('j-wo-lifts')?.value.trim()    || '';
-    const woDuration  = document.getElementById('j-wo-duration')?.value        || '';
-    if (woFocus || woLifts || woIntensity) {
+    const woFocus      = document.getElementById('j-wo-focus')?.value           || '';
+    const woIntensity  = document.getElementById('j-wo-intensity')?.value       || '';
+    const woLifts      = document.getElementById('j-wo-lifts')?.value.trim()    || '';
+    const woDuration   = document.getElementById('j-wo-duration')?.value        || '';
+    const woReflection = document.getElementById('j-wo-reflection')?.value.trim() || '';
+    if (woFocus || woLifts || woIntensity || woReflection) {
       entry.workout = {
-        focus:     woFocus,
-        intensity: woIntensity,
-        lifts:     woLifts,
-        duration:  woDuration
+        focus:      woFocus,
+        intensity:  woIntensity,
+        lifts:      woLifts,
+        duration:   woDuration,
+        // Coach Young 2026-05-17: subjective session feel (form notes,
+        // what was hard, what to push next time). Optional. Captured
+        // separately from the lifts log so it can be displayed +
+        // searched independently in future entry-view passes.
+        reflection: woReflection,
       };
     }
   }
@@ -8188,7 +8207,7 @@ function saveEntry() {
   document.getElementById('j-comment-role').value = '';
   document.getElementById('j-comment-text').value = '';
   // Reset Workout fields
-  ['j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration'].forEach(id => {
+  ['j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration','j-wo-reflection'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
