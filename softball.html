@@ -1316,7 +1316,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v205';
+    const CACHE = 'ybg-mygrind-v206';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4015,8 +4015,8 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            + Log button. Single visual group on a subtle background so it
            reads as one logical commit action. -->
       <div style="background:rgba(39,174,96,0.04); border:1px solid #1A3A1A; border-radius:3px; padding:14px; margin-bottom:14px;">
-        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#58D68D; margin-bottom:10px;">📝 New Check-In</div>
-        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Log every 3 or 6 months — coaches care about growth.</div>
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#58D68D; margin-bottom:10px;">📝 New Height + Weight Check-In</div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Track your growth over time. Log every 3-6 months so coaches can see your physical development. Your name, school, and other profile fields above save automatically as you type. No button needed there.</div>
         <div class="form-row" style="margin-bottom:10px;">
           <div>
             <label>Height</label>
@@ -4047,7 +4047,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           </div>
         </div>
         <button class="btn btn-outline" onclick="saveHWEntry()" style="border-color:#27AE60; color:#27AE60; width:100%;">
-          📏 &nbsp;Log Check-In
+          📏 &nbsp;Save Check-In
         </button>
       </div>
 
@@ -11182,13 +11182,24 @@ function saveHWEntry() {
     if (typeof renderJournalReminders === 'function') renderJournalReminders();
   } catch (e) {}
 
-  // Clear inputs
+  // Clear inputs (so the next check-in can be logged cleanly)
   ['hw-feet','hw-inches','hw-weight','hw-notes'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
 
   renderHWTracker();
+
+  // Success toast — Coach Young 2026-05-17: previously, the fields just
+  // cleared with no confirmation so users thought their data was lost.
+  // Toast surfaces what got saved + points them to the history below.
+  try {
+    var summary = heightStr;
+    if (weight) summary += ' · ' + weight + ' lbs';
+    if (typeof showShareToast === 'function') {
+      showShareToast('✅ Check-in saved · ' + summary);
+    }
+  } catch (e) {}
 }
 
 function deleteHWEntry(id) {
