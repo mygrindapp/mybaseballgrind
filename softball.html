@@ -542,10 +542,17 @@
      scrolls, position:fixed elements get repainted unreliably on
      iOS during rubber-band. The fix is to isolate the scroll to an
      inner container (<main>), so the body itself doesn't scroll.
-     The fixed nav now anchors to a viewport that never changes. */
+     The fixed nav now anchors to a viewport that never changes.
+
+     2026-05-16 update: switched from 100dvh to 100svh. dvh = dynamic
+     viewport height, which resizes as iOS Safari shows/hides its
+     URL bar. That resize was causing the fixed nav at bottom:0 to
+     visibly drift during scroll as it chased the new viewport bottom.
+     svh = small viewport height, locked to the URL-bar-visible size.
+     The viewport never resizes, the nav never drifts. */
   html, body {
-    height: 100%;
-    height: 100dvh;
+    height: 100vh;
+    height: 100svh;
     overflow: hidden;
   }
 
@@ -561,14 +568,15 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    /* Coach Young 2026-05-16: nav-drift v2. The custom PTR handler on
-       main was letting iOS rubber-band the inner scroll container at
-       the top edge, which created a visual lift that read as the fixed
-       bottom nav drifting. `overscroll-behavior: contain` locks the
-       rubber-band to this container without breaking momentum scroll.
-       Safe to do now that native pull-to-refresh is already replaced
-       by the custom touch handler at the bottom of the file. */
-    overscroll-behavior: contain;
+    /* Coach Young 2026-05-16: nav-drift v3. Started as `contain` to
+       block scroll-chaining; bumped to `none` after drift came back.
+       `none` is the more aggressive form — it also suppresses the
+       rubber-band bounce itself, not just the chain to body. Safe to
+       run this strict since we already removed the custom pull-to-
+       refresh handler and don't want native PTR either. Combined with
+       the body 100svh switch above, the viewport and scroll surface
+       both stay still during URL bar transitions. */
+    overscroll-behavior: none;
     /* Extra bottom padding so last card clears iPhone home indicator
        + the fixed nav (62px) + Claude preview bottom bar. Bumped from
        100px to 140px on 2026-05-16 — Coach Young saw the last journal
@@ -1367,7 +1375,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v219';
+    const CACHE = 'ybg-mygrind-v220';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
