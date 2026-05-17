@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v244';
+    const CACHE = 'ybg-mygrind-v245';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4379,11 +4379,12 @@ input[type="number"] {
 
     <!-- Bottom-of-page "Done" pill — Coach Young 2026-05-17. Autosave
          handles persistence, but long-form forms still need a closure
-         gesture or players are unsure if they "finished." This pill
-         confirms + navigates back to Dashboard in one tap. Visually
-         tied to the autosave pill at the top so the player sees the
-         same green check-mark language at the start and end of the form. -->
-    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="
+         gesture or players are unsure if they "finished." Profile's
+         pill specifically routes to Academics (not Dashboard) because
+         the natural onboarding flow is identity → academics → daily
+         use. Label is explicit so the player knows where they're being
+         taken next. -->
+    <button onclick="mgTab('academics', 'tab-academics')" style="
       display:block;
       width:100%;
       margin:8px 0 18px;
@@ -4399,7 +4400,7 @@ input[type="number"] {
       text-transform:uppercase;
       cursor:pointer;
     ">
-      ✓ Done · Back to Dashboard
+      ✓ Done · Continue to Academics
     </button>
 
   </div>
@@ -13083,6 +13084,21 @@ document.addEventListener('pointerdown', function(e) {
     var n = getNav();
     if (n) n.style.display = 'none';
   }, true);
+
+  // Coach Young 2026-05-17 follow-up: touchstart fires the same hide
+  // BEFORE focusin does, which closes the visual gap where iOS Safari
+  // starts the keyboard slide-up animation 100-200ms before focusin
+  // dispatches. In that window the position:fixed nav re-anchors to
+  // the shrinking visual viewport bottom and appears to "move up" into
+  // the form. Hiding on touchstart (when the finger first contacts the
+  // input) gets the display:none in BEFORE the keyboard animation begins,
+  // so the nav cleanly disappears instead of sliding up first.
+  document.addEventListener('touchstart', function (e) {
+    if (!e.target || !FORM_TAGS[e.target.tagName]) return;
+    if (e.target.type === 'hidden' || e.target.type === 'file') return;
+    var n = getNav();
+    if (n) n.style.display = 'none';
+  }, { capture: true, passive: true });
 
   document.addEventListener('focusout', function (e) {
     if (!e.target || !FORM_TAGS[e.target.tagName]) return;
