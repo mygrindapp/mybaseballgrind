@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v254';
+    const CACHE = 'ybg-mygrind-v255';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7912,7 +7912,19 @@ function saveEntry() {
     const gsA   = parseInt(document.getElementById('gs-a')?.value)  || 0;
     const gsE   = parseInt(document.getElementById('gs-e')?.value)  || 0;
 
-    if (gsAb > 0 || gsIp > 0 || gsPo > 0 || gsA > 0 || gsE > 0) {
+    // Coach Young 2026-05-17: trigger expanded from {ab, ip, po, a, e}
+    // to ANY non-zero stat. The old narrow trigger silently dropped
+    // gameStats=null for valid game entries that recorded only secondary
+    // stats — pinch-running (SB=1, AB=0), DH walking 4x (BB=4, AB=0),
+    // hit-by-pitch-only-games, scoring-without-at-bats, etc. Those
+    // entries saved but never flowed into Stats panel because
+    // accumulateGameStats filters on `e.gameStats` being non-null.
+    // Now: any stat entered = stats saved + accumulated. Empty games
+    // (all zeros) still skip — that's correct, the player didn't
+    // actually play.
+    if (gsAb > 0 || gsIp > 0 || gsPo > 0 || gsA > 0 || gsE > 0 ||
+        gsH > 0 || gsHr > 0 || gsRbi > 0 || gsR > 0 || gsBb > 0 ||
+        gsK > 0 || gsSb > 0 || gsEr > 0 || gsPk > 0 || gsPbb > 0) {
       const tb  = gsH + gsHr * 2; // simplified TB
       const pa  = gsAb + gsBb;
       const tc  = gsPo + gsA + gsE; // total chances
