@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v251';
+    const CACHE = 'ybg-mygrind-v252';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -13099,6 +13099,55 @@ document.addEventListener('pointerdown', function(e) {
     var n = getNav();
     if (n) n.style.display = 'none';
   }, { capture: true, passive: true });
+
+  // Coach Young 2026-05-17 (third pass): "swiped up and continued, nav
+  // disappeared and didn't come back." That's iOS Safari's known
+  // fixed-position-during-scroll bug — when Safari auto-hides its own
+  // bottom toolbar during rapid scroll, the visual viewport changes
+  // and our position:fixed nav can get stuck offscreen or invisible.
+  // Defense in depth: listen for scroll-end on the main scroll container
+  // AND for visualViewport resize/scroll events, force the nav back to
+  // visible + correctly positioned. Belt-and-suspenders for the iOS bug
+  // since we can't fix Safari directly.
+  function forceNavVisible() {
+    var n = getNav();
+    if (!n) return;
+    // Only force-show if no input/select/textarea has focus — otherwise
+    // we'd undo the keyboard-hide handler above. The form-focus path
+    // wants the nav hidden until the user blurs.
+    var active = document.activeElement;
+    if (active && FORM_TAGS[active.tagName] && active.type !== 'hidden' && active.type !== 'file') return;
+    n.style.display = 'flex';
+    // Force a reflow + re-apply the hardware-acceleration transform so
+    // iOS re-evaluates the fixed positioning. Without this, the nav can
+    // stay invisible even with display:flex set.
+    n.style.transform = 'none';
+    void n.offsetHeight;
+    n.style.transform = 'translate3d(0, 0, 0)';
+  }
+  // Debounced scroll-end on the main scroll container.
+  var _scrollEndTimer = null;
+  function onScroll() {
+    if (_scrollEndTimer) clearTimeout(_scrollEndTimer);
+    _scrollEndTimer = setTimeout(forceNavVisible, 180);
+  }
+  function bindScrollListener() {
+    var main = document.querySelector('main');
+    if (main) main.addEventListener('scroll', onScroll, { passive: true });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', bindScrollListener);
+  } else {
+    bindScrollListener();
+  }
+  // visualViewport changes when Safari chrome shows/hides during scroll
+  // OR when the keyboard opens/closes. The resize handler fires on
+  // chrome changes; the scroll handler fires when momentum scroll
+  // settles. Both can leave the nav stuck — force it back.
+  if (typeof window.visualViewport !== 'undefined' && window.visualViewport) {
+    window.visualViewport.addEventListener('resize', forceNavVisible);
+    window.visualViewport.addEventListener('scroll',  onScroll);
+  }
 
   document.addEventListener('focusout', function (e) {
     if (!e.target || !FORM_TAGS[e.target.tagName]) return;
