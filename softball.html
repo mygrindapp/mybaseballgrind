@@ -1367,7 +1367,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v218';
+    const CACHE = 'ybg-mygrind-v219';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -9844,11 +9844,46 @@ function classMatchesCategory(className, category) {
   return false;
 }
 
+// Per-slot elective override — Coach Young 2026-05-16: a senior who has
+// already finished their core requirements (e.g. 4 yr English done by
+// junior year) may load a senior-year slot with an elective like
+// Photography. They shouldn't see the amber warning forever. Player can
+// tap "Mark as elective" inside the warning to flag that slot as an
+// elective override; the warning hides and the slot no longer counts
+// against the core-aligned summary. Tap "Restore" to undo.
+function getElectiveOverrides() {
+  try {
+    var raw = localStorage.getItem('ybg_slot_elective_overrides');
+    var arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch(e) { return []; }
+}
+function setElectiveOverride(category, val) {
+  var cats = ['english','math','science','social','language'];
+  var i = cats.indexOf(category);
+  if (i === -1) return;
+  var arr = getElectiveOverrides();
+  while (arr.length < 5) arr.push(false);
+  arr[i] = !!val;
+  try { localStorage.setItem('ybg_slot_elective_overrides', JSON.stringify(arr)); } catch(e) {}
+  try { renderCoreAlerts(); renderDashAcademics(); } catch(e) {}
+}
+function isSlotMarkedElective(category) {
+  var cats = ['english','math','science','social','language'];
+  var i = cats.indexOf(category);
+  if (i === -1) return false;
+  var arr = getElectiveOverrides();
+  return !!arr[i];
+}
+// Exposed on window so the inline onclick in the warning HTML can call it.
+window.markSlotElective = function(category) { setElectiveOverride(category, true); };
+window.restoreSlotCore = function(category) { setElectiveOverride(category, false); };
+
 function renderCoreAlerts() {
   const rows = document.querySelectorAll('#grade-checks .grade-row');
   let coreAligned = 0;
   let coreFilled = 0; // count of non-elective slots with a class typed in
-  let mismatched = [];
+  let coreSlotsActive = 0; // total non-elective slots NOT overridden
 
   rows.forEach(function(row) {
     const category = row.getAttribute('data-category');
@@ -9856,8 +9891,21 @@ function renderCoreAlerts() {
     const className = input ? input.value : '';
     const warnEl = document.querySelector('.subject-warn[data-for="' + category + '"]');
 
-    if (category === 'elective') return; // skip elective in the summary count
+    if (category === 'elective') return; // skip the catch-all elective slot
 
+    const overridden = isSlotMarkedElective(category);
+
+    if (overridden) {
+      // Slot is marked as elective by the player — show a small grey
+      // confirmation with a restore link, no amber warning, doesn't count.
+      if (warnEl) {
+        warnEl.innerHTML = 'ℹ️ Marked as <strong>elective</strong> for this year. <span onclick="restoreSlotCore(\'' + category + '\')" style="color:#A8D97B; text-decoration:underline; cursor:pointer; margin-left:4px;">Restore as core →</span>';
+        warnEl.style.cssText = 'display:block; font-family:\'Barlow\'; font-size:11px; line-height:1.5; color:var(--grey); margin:-2px 0 10px 0; padding:0 2px;';
+      }
+      return;
+    }
+
+    coreSlotsActive++;
     if (className.trim()) coreFilled++;
 
     const match = classMatchesCategory(className, category);
@@ -9869,8 +9917,11 @@ function renderCoreAlerts() {
           english:'an English', math:'a Math', science:'a Science',
           social:'a Social Studies', language:'a Foreign Language'
         })[category] || 'a core';
-        warnEl.innerHTML = '⚠️ "<strong>' + className.replace(/[<>]/g,'') + '</strong>" doesn\'t look like ' + categoryLabel + ' class. NCAA core requires actual ' + categoryLabel.replace(/^an? /,'') + ' coursework — check with your counselor before locking it in.';
-        warnEl.style.display = 'block';
+        const plainCat = categoryLabel.replace(/^an? /,'');
+        warnEl.innerHTML =
+          '⚠️ "<strong>' + className.replace(/[<>]/g,'') + '</strong>" doesn\'t look like ' + categoryLabel + ' class. NCAA core requires actual ' + plainCat + ' coursework — check with your counselor before locking it in.' +
+          '<div style="margin-top:6px;"><span onclick="markSlotElective(\'' + category + '\')" style="color:#A8D97B; text-decoration:underline; cursor:pointer;">Done with ' + plainCat + ' already? Mark this slot as elective →</span></div>';
+        warnEl.style.cssText = 'display:block; font-family:\'Barlow\'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;';
       } else {
         warnEl.style.display = 'none';
         warnEl.innerHTML = '';
@@ -9878,23 +9929,30 @@ function renderCoreAlerts() {
     }
   });
 
-  // Bottom summary — only show once the player has typed at least one
-  // class. Aligned-vs-filled framing keeps it actionable.
+  // Bottom summary. Denominator is now active core slots (overridden ones
+  // are excluded) so a senior who marked 4 slots elective sees "1/1" not "1/5".
   const summary = document.getElementById('core-summary');
   if (!summary) return;
-  if (coreFilled === 0) {
+  if (coreFilled === 0 && coreSlotsActive === 5) {
     summary.style.display = 'none';
     summary.innerHTML = '';
     return;
   }
-  const allGood = (coreAligned === coreFilled) && coreFilled === 5;
+  if (coreSlotsActive === 0) {
+    // All core slots overridden as elective — likely a senior loading
+    // out their final term with electives. Show a calm confirmation.
+    summary.style.cssText = 'display:block; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:\'Barlow\'; font-size:12px; line-height:1.55; background:rgba(168,217,123,0.06); border:1px solid #2A3A2A; color:var(--light);';
+    summary.innerHTML = 'ℹ️ All core slots marked as electives this year. Make sure you\'ve finished your NCAA core requirements through last year.';
+    return;
+  }
+  const allGood = (coreAligned === coreSlotsActive) && coreFilled === coreSlotsActive;
   if (allGood) {
     summary.style.cssText = 'display:block; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:\'Barlow\'; font-size:12px; line-height:1.55; background:rgba(168,217,123,0.08); border:1px solid #2F5A1E; color:#A8D97B;';
-    summary.innerHTML = '✅ All 5 core slots look NCAA-aligned. Stay on this path.';
+    summary.innerHTML = '✅ All ' + coreSlotsActive + ' core slots look NCAA-aligned. Stay on this path.';
   } else if (coreAligned === coreFilled) {
     // Partial fill but everything entered so far is aligned
     summary.style.cssText = 'display:block; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:\'Barlow\'; font-size:12px; line-height:1.55; background:rgba(168,217,123,0.06); border:1px solid #2A3A2A; color:var(--light);';
-    summary.innerHTML = '📘 ' + coreAligned + '/5 core slots look NCAA-aligned. Fill in the rest as you go.';
+    summary.innerHTML = '📘 ' + coreAligned + '/' + coreSlotsActive + ' core slots look NCAA-aligned. Fill in the rest as you go.';
   } else {
     const off = coreFilled - coreAligned;
     summary.style.cssText = 'display:block; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:\'Barlow\'; font-size:12px; line-height:1.55; background:rgba(232,169,58,0.08); border:1px solid #6B4A1E; color:#E8A93A;';
