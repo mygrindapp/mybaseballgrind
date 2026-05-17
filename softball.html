@@ -1316,7 +1316,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v208';
+    const CACHE = 'ybg-mygrind-v209';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4011,11 +4011,24 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
            when the player picks a tier. Hidden until something is chosen. -->
       <div id="pl-arm-tip" style="display:none; margin-bottom:18px; padding:10px 12px; background:rgba(39,174,96,0.06); border-left:2px solid #5A8A3A; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.5;"></div>
 
-      <!-- GROUP 3: New check-in form. Height + Weight + Check-In + Notes
-           + Log button. Single visual group on a subtle background so it
-           reads as one logical commit action. -->
-      <div style="background:rgba(39,174,96,0.04); border:1px solid #1A3A1A; border-radius:3px; padding:14px; margin-bottom:14px;">
-        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#58D68D; margin-bottom:10px;">📝 New Height + Weight Check-In</div>
+      <!-- GROUP 3: New check-in form. Collapsed by default (Coach Young
+           2026-05-17 walkthrough): the form was always-on, which made the
+           Profile tab feel cluttered for users who weren't logging a
+           check-in. Now hidden until either (a) the user has no entries
+           yet, (b) a 3-month / 6-month check-in is overdue (renderHWTracker
+           handles auto-expand), or (c) the player taps "📏 Update Now" to
+           open it manually. -->
+
+      <!-- Toggle button — shown when the form is collapsed. -->
+      <button id="hw-form-toggle-btn" type="button" onclick="toggleHWForm()" class="btn btn-outline" style="border-color:#27AE60; color:#27AE60; width:100%; margin-bottom:14px;">
+        📏 &nbsp;Update Now
+      </button>
+
+      <div id="hw-form" style="display:none; background:rgba(39,174,96,0.04); border:1px solid #1A3A1A; border-radius:3px; padding:14px; margin-bottom:14px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:10px;">
+          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#58D68D;">📝 New Height + Weight Check-In</div>
+          <button type="button" onclick="toggleHWForm()" aria-label="Close" style="background:transparent; border:none; color:var(--grey); font-size:22px; line-height:1; cursor:pointer; padding:0 4px; margin-top:-2px;">×</button>
+        </div>
         <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:12px; line-height:1.5;">Track your growth over time. Log every 3-6 months so coaches can see your physical development. Your name, school, and other profile fields above save automatically as you type. No button needed there.</div>
         <div class="form-row" style="margin-bottom:10px;">
           <div>
@@ -11148,6 +11161,28 @@ function saveHWLog(log) {
   try { localStorage.setItem('ybg_hw_log', JSON.stringify(log)); } catch(e) {}
 }
 
+// Toggle the H/W check-in form open or closed. Coach Young 2026-05-17:
+// the form is collapsed by default once the player has at least one
+// entry logged — they tap "📏 Update Now" to open it for an early
+// update, or the form auto-expands when their 3-month / 6-month
+// check-in is overdue (handled inside renderHWTracker below).
+function toggleHWForm() {
+  const form = document.getElementById('hw-form');
+  const btn  = document.getElementById('hw-form-toggle-btn');
+  if (!form || !btn) return;
+  const isOpen = form.style.display !== 'none';
+  if (isOpen) {
+    form.style.display = 'none';
+    btn.style.display  = 'inline-flex';
+  } else {
+    form.style.display = 'block';
+    btn.style.display  = 'none';
+    // When opening, scroll the form into view so the player doesn't
+    // have to hunt for it on long Profile pages.
+    try { form.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+  }
+}
+
 function saveHWEntry() {
   const feet   = parseInt(document.getElementById('hw-feet')?.value)   || 0;
   const inches = parseInt(document.getElementById('hw-inches')?.value) || 0;
@@ -11225,11 +11260,18 @@ function renderHWTracker() {
   const historyEl  = document.getElementById('hw-history');
   const reminderEl = document.getElementById('hw-reminder');
   const tbody      = document.getElementById('hw-tbody');
+  const formEl     = document.getElementById('hw-form');
+  const toggleBtn  = document.getElementById('hw-form-toggle-btn');
 
   if (!log.length) {
     if (currentEl)  currentEl.style.display  = 'none';
     if (historyEl)  historyEl.style.display  = 'none';
     if (reminderEl) reminderEl.style.display = 'none';
+    // No entries yet — open the form by default so the player knows
+    // where to log their first measurement. Toggle button hidden so
+    // the open form is the only path.
+    if (formEl)    formEl.style.display    = 'block';
+    if (toggleBtn) toggleBtn.style.display = 'none';
     // Also clear the Hero subheading so it hides when no entries exist
     try { updateProfileHWDisplay(); } catch(e) {}
     return;
@@ -11280,24 +11322,39 @@ function renderHWTracker() {
     }).join('');
   }
 
-  // Next check-in reminder
-  if (reminderEl) {
-    const lastDate = new Date(latest.dateTs);
-    const now      = new Date();
-    const daysSince = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
-    const days3mo   = 90 - daysSince;
-    const days6mo   = 180 - daysSince;
+  // Next check-in reminder + form auto-expand. Coach Young 2026-05-17:
+  // when a check-in is overdue, open the form automatically so the
+  // player sees it without an extra tap. When not yet due, keep the
+  // form collapsed behind the "📏 Update Now" toggle button.
+  const lastDate = new Date(latest.dateTs);
+  const now       = new Date();
+  const daysSince = Math.floor((now - lastDate) / (1000 * 60 * 60 * 24));
+  const days3mo   = 90 - daysSince;
+  const days6mo   = 180 - daysSince;
+  const isOverdue = days3mo <= 0;
 
+  if (reminderEl) {
     let reminderText = '';
     if (days3mo > 0) {
       reminderText = `Next 3-month check-in in ${days3mo} days · Next 6-month check-in in ${days6mo > 0 ? days6mo : 0} days`;
     } else if (days6mo > 0) {
-      reminderText = `⚠️ 3-month check-in is overdue! Log your height and weight above. 6-month check-in in ${days6mo} days.`;
+      reminderText = `⚠️ 3-month check-in is overdue. Tap Update Now or open the form below to log your height and weight. 6-month check-in in ${days6mo} days.`;
     } else {
-      reminderText = `⚠️ Both your 3-month and 6-month check-ins are overdue. Log your measurements above.`;
+      reminderText = `⚠️ Both your 3-month and 6-month check-ins are overdue. Tap Update Now to log your measurements.`;
     }
     document.getElementById('hw-reminder-text').textContent = reminderText;
     reminderEl.style.display = 'block';
+  }
+
+  // Auto-expand / collapse the form based on overdue state.
+  if (formEl && toggleBtn) {
+    if (isOverdue) {
+      formEl.style.display    = 'block';
+      toggleBtn.style.display = 'none';
+    } else {
+      formEl.style.display    = 'none';
+      toggleBtn.style.display = 'inline-flex';
+    }
   }
 
   // Push the latest height/weight up to the Hero card subheading
