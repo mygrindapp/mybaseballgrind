@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v253';
+    const CACHE = 'ybg-mygrind-v254';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8657,8 +8657,12 @@ function toggleGameStats() {
     if (titleEl) titleEl.placeholder = 'e.g. Team played · W 6-4';
     if (whatLb)  whatLb.textContent  = 'What happened? What did I do for my team?';
     if (whatEl)  whatEl.placeholder  = 'Describe the game. What went well, what did not, and how did you compete?';
-    if (tmrwLb)  tmrwLb.textContent  = 'What am I taking into tomorrow?';
-    if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing to carry forward from this game?';
+    // Coach Young 2026-05-17: "what am i taking into tomorrow" was too
+    // generic for game context. Players just finished a game — the
+    // forward-looking prompt should point at the NEXT game specifically,
+    // not "tomorrow" (which might be a practice / rest day / nothing).
+    if (tmrwLb)  tmrwLb.textContent  = "What's the goal for next game?";
+    if (tmrwEl)  tmrwEl.placeholder  = 'One adjustment, one mindset, one specific stat to push. Make it real.';
   } else if (isPrac) {
     if (whatLb)  whatLb.textContent  = 'What did I work on today?';
     if (whatEl)  whatEl.placeholder  = 'What drills, reps, or skills did I focus on? What felt good?';
