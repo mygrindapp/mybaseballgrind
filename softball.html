@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v246';
+    const CACHE = 'ybg-mygrind-v247';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -16742,6 +16742,25 @@ function mgTab(panel, tabId) {
       var mainEl = document.querySelector('main');
       if (mainEl && typeof mainEl.scrollTo === 'function') mainEl.scrollTo(0, 0);
       else if (mainEl) mainEl.scrollTop = 0;
+    }
+  } catch (e) {}
+
+  // Force the bottom nav back to visible on every tab switch — Coach Young
+  // 2026-05-17. Critical fix: when the user is typing in an input (which
+  // hides the nav via the touchstart/focusin handler), then taps "← Back
+  // to Dashboard" or any cross-panel CTA, iOS doesn't reliably blur the
+  // focused input before the parent panel goes display:none. The focusout
+  // re-show check sees the input still has focus → bails → nav stays hidden
+  // and the player is stranded with no way to navigate. Resetting the nav
+  // display on every tab switch is a clean slate — any keyboard-related
+  // hide state from the previous panel is cleared.
+  try {
+    var _bottomNav = document.getElementById('mg-bottom-nav');
+    if (_bottomNav) _bottomNav.style.display = 'flex';
+    // Also blur any lingering focused element so the soft keyboard closes.
+    var _activeEl = document.activeElement;
+    if (_activeEl && _activeEl !== document.body && typeof _activeEl.blur === 'function') {
+      _activeEl.blur();
     }
   } catch (e) {}
 }
