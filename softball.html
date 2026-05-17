@@ -699,6 +699,15 @@
   textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
   select option { background: var(--card2); }
 
+  /* Disabled state — Coach Young 2026-05-17: clearly signal that a
+     control is locked (used by the Academics class-name-before-grade
+     gate). Lower opacity + cursor + dimmer chevron. */
+  select:disabled, input:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background-color: rgba(0,0,0,0.2);
+  }
+
   /* Custom select chevron — Coach Young 2026-05-17 walkthrough: default
      browser chevron renders dark on a dark background and disappears.
      Strip the native chevron and paint a gold one in its place. Encoded
@@ -1316,7 +1325,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v209';
+    const CACHE = 'ybg-mygrind-v210';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -9666,7 +9675,31 @@ function renderPlayers() {
 }
 
 // ─── GOALS ────────────────────────────────────────────────
+// Gate grade selection on class name entry. Coach Young 2026-05-17:
+// don't let the player pick a grade for an empty class slot — that
+// would create orphan grades floating without a subject. Each row's
+// grade select is disabled until its sibling .subject-name has at
+// least one non-whitespace character. Clearing the class name clears
+// AND re-disables the grade so partial data stays clean.
+function updateGradeDisabledStates() {
+  document.querySelectorAll('.grade-row').forEach(function(row) {
+    var nameInput   = row.querySelector('.subject-name');
+    var gradeSelect = row.querySelector('.subject-grade');
+    if (!nameInput || !gradeSelect) return;
+    var hasName = (nameInput.value || '').trim().length > 0;
+    gradeSelect.disabled = !hasName;
+    if (!hasName && gradeSelect.value !== '') {
+      gradeSelect.value = '';
+    }
+  });
+}
+
 function renderGrades() {
+  // Apply the enable/disable gate first so the rest of this function
+  // computes GPA against the post-gating state (a freshly cleared
+  // grade from an emptied class name won't count toward GPA).
+  updateGradeDisabledStates();
+
   // Save all subject grades + custom class names to localStorage.
   // Coach Young 2026-05-11: expanded to 6 NCAA-mapped subjects with
   // custom class names per slot.
