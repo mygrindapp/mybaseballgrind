@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v224';
+    const CACHE = 'ybg-mygrind-v225';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -12613,7 +12613,6 @@ const YBG_QUOTES = [
   { q: "Your equipment doesn't win games. Your preparation does.",                                  a: "The Grind" },
   { q: "There is no shortcut to a swing. Swing more.",                                              a: "The Grind" },
   { q: "Your worst position is the one you avoid. Get reps there too.",                             a: "The Grind" },
-  { q: "Your jersey number changes. Your work ethic doesn't.",                                      a: "The Grind" },
   { q: "The kid who runs out every ground ball wins something different than the scoreboard.",      a: "The Grind" },
   { q: "The game is hard for everyone. The ones who keep going win it.",                            a: "The Grind" },
   { q: "Talk less. Train more.",                                                                    a: "The Grind" },
@@ -16375,7 +16374,6 @@ var YBG_QOTD = [
   { q: "Your equipment doesn't win games. Your preparation does.", a: "The Grind" },
   { q: "There is no shortcut to a swing. Swing more.", a: "The Grind" },
   { q: "Your worst position is the one you avoid. Get reps there too.", a: "The Grind" },
-  { q: "Your jersey number changes. Your work ethic doesn't.", a: "The Grind" },
   { q: "The kid who runs out every ground ball wins something different than the scoreboard.", a: "The Grind" },
   { q: "The game is hard for everyone. The ones who keep going win it.", a: "The Grind" },
   { q: "Talk less. Train more.", a: "The Grind" }
