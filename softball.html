@@ -568,15 +568,15 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    /* Coach Young 2026-05-16: nav-drift v3. Started as `contain` to
-       block scroll-chaining; bumped to `none` after drift came back.
-       `none` is the more aggressive form — it also suppresses the
-       rubber-band bounce itself, not just the chain to body. Safe to
-       run this strict since we already removed the custom pull-to-
-       refresh handler and don't want native PTR either. Combined with
-       the body 100svh switch above, the viewport and scroll surface
-       both stay still during URL bar transitions. */
-    overscroll-behavior: none;
+    /* Coach Young 2026-05-16: nav-drift v4. The v3 fix bumped this to
+       `none`, but iOS Safari has a known edge case where the strict
+       form can lock inner scroll containers — Profile panel couldn't
+       reach its bottom. Reverted to `contain` (blocks scroll chaining
+       to body, doesn't suppress the bounce itself). The actual drift
+       fix that mattered was the 100svh switch above — that pinned the
+       viewport so the nav has nothing to chase during URL bar
+       transitions. `contain` is enough on top of that. */
+    overscroll-behavior: contain;
     /* Extra bottom padding so last card clears iPhone home indicator
        + the fixed nav (62px) + Claude preview bottom bar. Bumped from
        100px to 140px on 2026-05-16 — Coach Young saw the last journal
@@ -1375,7 +1375,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v222';
+    const CACHE = 'ybg-mygrind-v223';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
