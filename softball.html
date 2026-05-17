@@ -653,15 +653,18 @@
   }
 
   /* ── FORMS ── */
+  /* Coach Young 2026-05-17 walkthrough: input labels were too small to
+     scan comfortably on mobile (was 11px). Bumped to 15px so every
+     input prompt reads as a clear question, not a tiny eyebrow stamp. */
   label {
     display: block;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 11px;
+    font-size: 15px;
     font-weight: 600;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     color: #A89880;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   input[type="text"],
@@ -1313,7 +1316,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v203';
+    const CACHE = 'ybg-mygrind-v204';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3108,7 +3111,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           color: #D4C29B;
           letter-spacing: 0.3px;
           text-transform: none;
-          font-size: 14px;
+          font-size: 16px;
         }
         body[data-reflection-active="1"] #j-what,
         body[data-reflection-active="1"] #j-tomorrow,
