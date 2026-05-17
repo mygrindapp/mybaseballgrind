@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v257';
+    const CACHE = 'ybg-mygrind-v258';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3736,7 +3736,7 @@ input[type="number"] {
         </div>
         <div style="margin-top:18px;">
           <label class="wo-section-label">Duration <span class="wo-section-hint">— minutes</span></label>
-          <input type="number" id="j-wo-duration" min="0" max="600" step="5" placeholder="e.g. 60" style="margin-bottom:0;">
+          <input type="number" id="j-wo-duration" min="0" max="600" step="5" placeholder="e.g. 60" style="width:110px; margin-bottom:0;">
         </div>
         <!-- Session reflection — Coach Young 2026-05-17. One optional
              textarea to capture subjective signal (form feel, what was
@@ -3847,7 +3847,7 @@ input[type="number"] {
         <div class="form-row" style="margin-top:14px; margin-bottom:0;">
           <div>
             <label>Session Duration (min)</label>
-            <input type="number" id="j-inst-duration" min="0" max="600" step="15" placeholder="e.g. 60" style="margin-bottom:0;">
+            <input type="number" id="j-inst-duration" min="0" max="600" step="15" placeholder="e.g. 60" style="width:110px; margin-bottom:0;">
           </div>
           <div>
             <label>Next Session Date</label>
@@ -4151,7 +4151,7 @@ input[type="number"] {
       <div class="form-row">
         <div>
           <label>Age</label>
-          <input type="number" id="pl-age" placeholder="e.g. 15" min="5" max="25" oninput="saveProfile()">
+          <input type="number" id="pl-age" placeholder="e.g. 15" min="5" max="25" oninput="saveProfile()" style="width:80px;">
         </div>
         <div>
           <label>Grade</label>
@@ -4484,7 +4484,7 @@ input[type="number"] {
         <div>
           <input type="hidden" id="gpa-current">
           <label>Target GPA</label>
-          <input type="number" id="gpa-target" step="0.1" min="0" max="4.0" placeholder="e.g. 3.5">
+          <input type="number" id="gpa-target" step="0.1" min="0" max="4.0" placeholder="e.g. 3.5" style="width:90px;">
           <button class="btn btn-gold btn-sm" onclick="saveGPA()" style="margin-top:4px;">Save Target</button>
           <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:10px; line-height:1.5;">Set the GPA you're chasing. We'll auto-compute your current GPA from the class grades below. No manual override.</div>
         </div>
