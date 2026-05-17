@@ -1367,7 +1367,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v217';
+    const CACHE = 'ybg-mygrind-v218';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4286,39 +4286,58 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
       </div>
 
       <!-- 6 Subjects — NCAA-core-mapped categories. Custom class name +
-           grade per slot. HS typically loads 6 classes per term. -->
+           grade per slot. HS typically loads 6 classes per term.
+           Coach Young 2026-05-16: added per-slot category check. If a
+           player types a class name that doesn't match the expected
+           NCAA core category (e.g. "Painting 101" in the English slot),
+           a soft amber warning appears so they know it may not count
+           toward eligibility. Bottom summary tallies core-aligned count. -->
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">📖 My 6 Classes</div>
       <div id="grade-checks">
-        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+        <div class="grade-row" data-category="english" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">English<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 4 yr</span></div>
           <input type="text" class="subject-name" placeholder="e.g. AP English Lit" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+        <div class="subject-warn" data-for="english" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
+
+        <div class="grade-row" data-category="math" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Math<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 3 yr (Alg 1+)</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Algebra 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+        <div class="subject-warn" data-for="math" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
+
+        <div class="grade-row" data-category="science" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Natural Science<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr (1 lab)</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Biology" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+        <div class="subject-warn" data-for="science" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
+
+        <div class="grade-row" data-category="social" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Social Studies<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr</span></div>
           <input type="text" class="subject-name" placeholder="e.g. US History" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+        <div class="subject-warn" data-for="social" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
+
+        <div class="grade-row" data-category="language" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Foreign Language<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">NCAA · additional</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Spanish 2" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
-        <div class="grade-row" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:8px;">
+        <div class="subject-warn" data-for="language" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
+
+        <div class="grade-row" data-category="elective" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
           <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Elective<br><span style="font-size:9px; color:var(--grey); letter-spacing:1px;">PE / Arts / Other</span></div>
           <input type="text" class="subject-name" placeholder="e.g. Weight Training" style="margin-bottom:0; font-size:13px;" oninput="renderGrades()">
           <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
         </div>
+        <!-- Elective slot is the catch-all — anything goes here, no warning. -->
+
+        <!-- Bottom summary — tally of core-aligned classes -->
+        <div id="core-summary" style="display:none; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:'Barlow'; font-size:12px; line-height:1.55;"></div>
       </div>
     </div>
 
@@ -9794,6 +9813,93 @@ function renderGrades() {
 
   try { renderEligibility(); } catch(e) {}
   try { renderDashAcademics(); } catch(e) {}
+  try { renderCoreAlerts(); } catch(e) {}
+}
+
+// ─── NCAA CORE-COURSE ALERTS ──────────────────────────────
+// Coach Young 2026-05-16: a player can type any class name in any slot
+// and the GPA computes against it — but NCAA only counts specific core
+// courses. So a 4.0 in PE + Yearbook + Study Hall is academically
+// impressive but doesn't qualify them for D1/D2. This function checks
+// each typed class name against a keyword list for its slot's category
+// and shows a soft amber warning if it doesn't look right. Educational,
+// not blocking — the player still gets credit toward the displayed GPA,
+// but they're alerted so they can fix it with their counselor.
+const NCAA_CORE_KEYWORDS = {
+  english:  ['english','lit','literature','writing','composition','language arts','ela','ap lang','ap lit','ap eng','rhetoric','journalism','creative writing','reading','grammar'],
+  math:     ['math','algebra','geometry','trig','trigonometry','calc','calculus','statistics','stats','pre-calc','precalc','precalculus','functions','probability','discrete'],
+  science:  ['bio','biology','chem','chemistry','physics','anatomy','physiology','earth','environmental','geology','astronomy','marine','ap bio','ap chem','ap physics','science','botany','zoology'],
+  social:   ['history','government','civics','economics','econ','geography','sociology','psychology','psych','world history','us history','american','global','ap gov','ap psych','ap world','ap us','american studies','political'],
+  language: ['spanish','french','latin','german','mandarin','chinese','japanese','italian','asl','american sign','sign language','korean','russian','portuguese','arabic','hebrew','greek','language']
+};
+
+function classMatchesCategory(className, category) {
+  if (!className) return null; // empty input — neutral, no warning
+  if (category === 'elective') return true; // anything goes in elective
+  const name = className.toLowerCase().trim();
+  const keywords = NCAA_CORE_KEYWORDS[category] || [];
+  for (let i = 0; i < keywords.length; i++) {
+    if (name.indexOf(keywords[i]) !== -1) return true;
+  }
+  return false;
+}
+
+function renderCoreAlerts() {
+  const rows = document.querySelectorAll('#grade-checks .grade-row');
+  let coreAligned = 0;
+  let coreFilled = 0; // count of non-elective slots with a class typed in
+  let mismatched = [];
+
+  rows.forEach(function(row) {
+    const category = row.getAttribute('data-category');
+    const input = row.querySelector('.subject-name');
+    const className = input ? input.value : '';
+    const warnEl = document.querySelector('.subject-warn[data-for="' + category + '"]');
+
+    if (category === 'elective') return; // skip elective in the summary count
+
+    if (className.trim()) coreFilled++;
+
+    const match = classMatchesCategory(className, category);
+    if (match === true) coreAligned++;
+
+    if (warnEl) {
+      if (match === false) {
+        const categoryLabel = ({
+          english:'an English', math:'a Math', science:'a Science',
+          social:'a Social Studies', language:'a Foreign Language'
+        })[category] || 'a core';
+        warnEl.innerHTML = '⚠️ "<strong>' + className.replace(/[<>]/g,'') + '</strong>" doesn\'t look like ' + categoryLabel + ' class. NCAA core requires actual ' + categoryLabel.replace(/^an? /,'') + ' coursework — check with your counselor before locking it in.';
+        warnEl.style.display = 'block';
+      } else {
+        warnEl.style.display = 'none';
+        warnEl.innerHTML = '';
+      }
+    }
+  });
+
+  // Bottom summary — only show once the player has typed at least one
+  // class. Aligned-vs-filled framing keeps it actionable.
+  const summary = document.getElementById('core-summary');
+  if (!summary) return;
+  if (coreFilled === 0) {
+    summary.style.display = 'none';
+    summary.innerHTML = '';
+    return;
+  }
+  const allGood = (coreAligned === coreFilled) && coreFilled === 5;
+  if (allGood) {
+    summary.style.cssText = 'display:block; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:\'Barlow\'; font-size:12px; line-height:1.55; background:rgba(168,217,123,0.08); border:1px solid #2F5A1E; color:#A8D97B;';
+    summary.innerHTML = '✅ All 5 core slots look NCAA-aligned. Stay on this path.';
+  } else if (coreAligned === coreFilled) {
+    // Partial fill but everything entered so far is aligned
+    summary.style.cssText = 'display:block; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:\'Barlow\'; font-size:12px; line-height:1.55; background:rgba(168,217,123,0.06); border:1px solid #2A3A2A; color:var(--light);';
+    summary.innerHTML = '📘 ' + coreAligned + '/5 core slots look NCAA-aligned. Fill in the rest as you go.';
+  } else {
+    const off = coreFilled - coreAligned;
+    summary.style.cssText = 'display:block; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:\'Barlow\'; font-size:12px; line-height:1.55; background:rgba(232,169,58,0.08); border:1px solid #6B4A1E; color:#E8A93A;';
+    summary.innerHTML = '⚠️ ' + off + ' of your core slots may not count toward NCAA eligibility. Talk to your counselor about getting the right class in each slot before you lock in your schedule.';
+  }
 }
 
 // ─── COLLEGE ELIGIBILITY ──────────────────────────────────
