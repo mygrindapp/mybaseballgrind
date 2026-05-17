@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v260';
+    const CACHE = 'ybg-mygrind-v261';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3466,38 +3466,38 @@ input[type="number"] {
           </div>
 
           <!-- BATTING GAME STATS -->
-          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Batting</div>
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">Batting</div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:0 auto 14px; max-width:520px; text-align:center;">
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">AB</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">AB</label>
               <input type="number" id="gs-ab" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">H</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">H</label>
               <input type="number" id="gs-h" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">HR</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">HR</label>
               <input type="number" id="gs-hr" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">RBI</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">RBI</label>
               <input type="number" id="gs-rbi" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">R</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">R</label>
               <input type="number" id="gs-r" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">BB</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">BB</label>
               <input type="number" id="gs-bb" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">K</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">K</label>
               <input type="number" id="gs-k" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">SB</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">SB</label>
               <input type="number" id="gs-sb" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
           </div>
@@ -3521,22 +3521,22 @@ input[type="number"] {
           </div>
 
           <!-- PITCHING GAME STATS -->
-          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Pitching <span style="font-weight:400; text-transform:none; letter-spacing:0;">(if applicable)</span></div>
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">Pitching <span style="font-weight:400; text-transform:none; letter-spacing:0;">(if applicable)</span></div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:0 auto 14px; max-width:520px; text-align:center;">
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">IP</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">IP</label>
               <input type="number" id="gs-ip" placeholder="0" min="0" step="0.1" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">ER</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">ER</label>
               <input type="number" id="gs-er" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">K</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">K</label>
               <input type="number" id="gs-pk" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">BB</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">BB</label>
               <input type="number" id="gs-pbb" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
           </div>
@@ -3544,18 +3544,18 @@ input[type="number"] {
           <!-- FIELDING GAME STATS — added 2026-05-09 (Coach Young: dashboard
                needs fielding totals). PO/A/E feed the season-totals fielding
                pile in My Stats and the new dash-fielding-card. -->
-          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Fielding</div>
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">Fielding</div>
           <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:0 auto 14px; max-width:400px; text-align:center;">
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">PO</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">PO</label>
               <input type="number" id="gs-po" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">A</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">A</label>
               <input type="number" id="gs-a" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
-              <label style="font-size:10px; letter-spacing:1px;">E</label>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">E</label>
               <input type="number" id="gs-e" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
           </div>
@@ -5525,7 +5525,7 @@ input[type="number"] {
 
       <!-- Account info -->
       <div style="border-top:1px solid var(--border); padding-top:14px;">
-        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Account Info</div>
+        <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">Account Info</div>
         <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); line-height:1.8;">
           <div style="margin-bottom:4px;">
             Registered email:<br>
