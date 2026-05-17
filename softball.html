@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v247';
+    const CACHE = 'ybg-mygrind-v248';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -13488,6 +13488,13 @@ function buildWeeklyRecap() {
     '<div style="font-size:13px; color:var(--light); margin-top:6px;">' +
       '🏆 Active Goals: <strong style="color:var(--gold);">' + goalsActive + '</strong>' +
     '</div>' +
+    // Academic health signal — Coach Young 2026-05-17. One-line status
+    // so the player + parent both see "on track / slipping / needs help"
+    // without parsing GPA digits. Renders the same string as the SMS
+    // payload so the on-screen preview matches what gets sent.
+    '<div style="font-size:13px; color:var(--light); margin-top:6px;">' +
+      '📚 Academics: <strong style="color:var(--gold);">' + getAcademicStatusLine() + '</strong>' +
+    '</div>' +
     // Trust line — Coach Young 2026-05-17. Sets parent expectations so
     // they know the recap is engagement signals only, not content. This
     // is the disclosure that makes the privacy model legible to both
@@ -13530,10 +13537,57 @@ function buildWeeklyRecap() {
       plain += r.icon + " " + r.label + ": " + r.count + "\n";
     });
   }
+  // Academic health signal — Coach Young 2026-05-17. One-line status so
+  // parents see "on track / slipping / needs help" without parsing GPA digits.
+  plain += "\n📚 Academics: " + getAcademicStatusLine() + "\n";
   plain += "\n🔒 Reflections + off-day notes stay private to the player.\n";
-  plain += "\nTracked on MY GRIND\nhttps://www.mygrindapp.com/signup.html?trial=1";
+  // Trailing signup.html link REMOVED 2026-05-17 — iOS Messages was auto-
+  // rendering the URL as a link preview card with signup.html's <title>
+  // ("MyGrind — Sign Up Your Player") + description ("Set up your player
+  // on MyGrind..."), which read to parents as a SECOND message instructing
+  // them to sign up their player. Confusing for parents who already are
+  // parents. The recap now ends with the neutral brand line — no auto-
+  // generated link card.
+  plain += "\nTracked on MY GRIND";
 
   return { html: html, plain: plain };
+}
+
+// One-line academic health signal for the parent recap. Coach Young
+// 2026-05-17: parents asked for an "on track / slipping / needs help"
+// status they can read at a glance instead of staring at raw numbers.
+// Stays within Tier 1 privacy — no journal content, just a status badge
+// derived from the auto-computed GPA + the player's life-stage context
+// (MS / HS / college). Returns plain text suitable for both HTML escape
+// and the SMS payload.
+function getAcademicStatusLine() {
+  var gpaStr = (typeof state !== 'undefined' && state && state.gpa && state.gpa.current) || '';
+  var gpa = parseFloat(gpaStr);
+  if (isNaN(gpa) || gpa <= 0) {
+    return 'ℹ️ No GPA logged yet — encourage your player to enter their grades on the Academics tab';
+  }
+  var mode = (typeof getAcademicContext === 'function') ? getAcademicContext().mode : 'hs';
+  var g = gpa.toFixed(gpa % 1 === 0 ? 1 : 2);
+  if (mode === 'ms') {
+    if (gpa >= 4.0) return '🏆 High Honors (' + g + ' GPA) — your player is crushing it';
+    if (gpa >= 3.5) return '✅ Honor Roll (' + g + ' GPA) — on track';
+    if (gpa >= 2.5) return '✅ Travel Ball eligible (' + g + ' GPA) — room to grow';
+    if (gpa >= 2.0) return '⚠️ At travel-ball minimum (' + g + ' GPA) — could use a push';
+    return '🚨 Below 2.0 (' + g + ' GPA) — needs help, time to talk to your player';
+  }
+  if (mode === 'college') {
+    if (gpa >= 3.5) return '🏆 Honor Roll (' + g + ' GPA) — on track';
+    if (gpa >= 2.5) return '✅ Good Standing (' + g + ' GPA) — comfortable margin';
+    if (gpa >= 2.0) return '⚠️ Eligibility minimum (' + g + ' GPA) — slim margin';
+    return '🚨 Below 2.0 (' + g + ' GPA) — eligibility at risk';
+  }
+  // HS default — NCAA recruiting tiers
+  if (gpa >= 3.5) return '🏆 NCAA D1 + top D3 / Ivy bar (' + g + ' GPA) — on track for the best schools';
+  if (gpa >= 3.0) return '✅ NCAA D1 recruit-competitive (' + g + ' GPA) — on track';
+  if (gpa >= 2.8) return '✅ NCAA D2 eligible (' + g + ' GPA) — solid';
+  if (gpa >= 2.3) return '⚠️ NCAA minimum met (' + g + ' GPA) — below recruit bar, time to push grades up';
+  if (gpa >= 2.0) return '🚨 Below NCAA D1/D2 floor (' + g + ' GPA) — JUCO path only, needs help';
+  return '🚨 Below 2.0 (' + g + ' GPA) — needs help, time to talk to your player';
 }
 
 function renderWeeklyRecap() {
