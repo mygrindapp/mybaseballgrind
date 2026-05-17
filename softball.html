@@ -561,6 +561,14 @@
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    /* Coach Young 2026-05-16: nav-drift v2. The custom PTR handler on
+       main was letting iOS rubber-band the inner scroll container at
+       the top edge, which created a visual lift that read as the fixed
+       bottom nav drifting. `overscroll-behavior: contain` locks the
+       rubber-band to this container without breaking momentum scroll.
+       Safe to do now that native pull-to-refresh is already replaced
+       by the custom touch handler at the bottom of the file. */
+    overscroll-behavior: contain;
     /* Extra bottom padding so last card clears iPhone home indicator
        + the fixed nav + Claude preview bottom bar. */
     padding: 24px 24px calc(100px + env(safe-area-inset-bottom, 0px));
@@ -1356,7 +1364,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v213';
+    const CACHE = 'ybg-mygrind-v214';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4200,9 +4208,11 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <select id="pl-bats" onchange="saveProfile()">
             <option value="">-- Select --</option>
             <option value="R/R">Right / Right</option>
+            <option value="R/L">Right / Left</option>
             <option value="L/L">Left / Left</option>
             <option value="L/R">Left / Right</option>
             <option value="S/R">Switch Hitter / Right</option>
+            <option value="S/L">Switch Hitter / Left</option>
           </select>
           <!-- Slapper is a softball-only term (Coach Young 2026-05-11).
                Hidden when data-sport="baseball" via CSS rule below. -->
