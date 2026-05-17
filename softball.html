@@ -1316,7 +1316,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v207';
+    const CACHE = 'ybg-mygrind-v208';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -15691,7 +15691,26 @@ setTimeout(function() {
 <script>
 
 // ══ BOTTOM TAB BAR ════════════════════════════════════════════════════
+// Flag prevents popstate -> mgTab -> pushState -> popstate loops.
+// Set to true while the popstate handler is driving the tab switch so
+// mgTab doesn't push another history entry on top of the one we're
+// already navigating back to.
+var _mgTabSkipHistoryPush = false;
+
 function mgTab(panel, tabId) {
+  // History push for browser/device back-button support — Coach Young
+  // 2026-05-17: hitting the phone back arrow inside the app was
+  // exiting the entire app because mgTab() never pushed history. Now
+  // each tab switch pushes a hash entry (#journal, #stats, etc.) so
+  // back navigates within softball.html until the hash stack is empty,
+  // THEN exits to the previous page (signup.html or whatever).
+  if (!_mgTabSkipHistoryPush && panel && typeof window.history === 'object' && typeof window.history.pushState === 'function') {
+    var newHash = '#' + panel;
+    if (window.location.hash !== newHash) {
+      try { window.history.pushState({ mgPanel: panel, mgTabId: tabId }, '', newHash); } catch (e) {}
+    }
+  }
+
   // Reset all tabs
   document.querySelectorAll('.mg-tab').forEach(function(t) {
     t.style.color       = '#555';
@@ -15894,10 +15913,37 @@ document.addEventListener('click', function(e) {
 // Set Dashboard active on load — Coach Young 2026-05-16 walkthrough: Dashboard
 // is the home base with aggregated info, so it's both the leftmost tab and
 // the first thing a player sees when the app opens.
+// Updated 2026-05-17: if the URL has a hash (#journal, #stats, etc.) from a
+// previous session or shared link, honor that instead of forcing dashboard.
+// Pairs with the history.pushState flow in mgTab() to make the back button
+// navigate within the app instead of exiting on first press.
 window.addEventListener('load', function() {
   setTimeout(function() {
-    mgTab('dashboard', 'tab-dashboard');
+    var hash = (window.location.hash || '').slice(1);
+    var validTabs = ['dashboard','journal','stats','players','team','coach-feedback','calendar','settings'];
+    if (hash && validTabs.indexOf(hash) !== -1) {
+      // Drive via popstate-style path: skip history push so we don't
+      // duplicate the existing hash entry on first load.
+      _mgTabSkipHistoryPush = true;
+      mgTab(hash, 'tab-' + hash);
+      _mgTabSkipHistoryPush = false;
+    } else {
+      mgTab('dashboard', 'tab-dashboard');
+    }
   }, 250);
+});
+
+// popstate fires when the user taps the phone back arrow (or swipes
+// back on iOS Safari, or hits Cmd+Left on desktop). Re-run mgTab()
+// for whatever panel the hash now points to, WITHOUT pushing another
+// history entry — _mgTabSkipHistoryPush is the guard.
+window.addEventListener('popstate', function(e) {
+  var hash = (window.location.hash || '').slice(1);
+  var panel = (e && e.state && e.state.mgPanel) || hash || 'dashboard';
+  var tabId = (e && e.state && e.state.mgTabId) || ('tab-' + panel);
+  _mgTabSkipHistoryPush = true;
+  try { mgTab(panel, tabId); } catch (err) {}
+  _mgTabSkipHistoryPush = false;
 });
 
 // ══ QUOTE OF THE DAY POPUP ════════════════════════════════════════════
