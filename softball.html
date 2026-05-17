@@ -570,8 +570,11 @@
        by the custom touch handler at the bottom of the file. */
     overscroll-behavior: contain;
     /* Extra bottom padding so last card clears iPhone home indicator
-       + the fixed nav + Claude preview bottom bar. */
-    padding: 24px 24px calc(100px + env(safe-area-inset-bottom, 0px));
+       + the fixed nav (62px) + Claude preview bottom bar. Bumped from
+       100px to 140px on 2026-05-16 — Coach Young saw the last journal
+       entry card getting visually clipped by the bottom nav. Gives a
+       comfortable ~78px breathing zone between last card and nav. */
+    padding: 24px 24px calc(140px + env(safe-area-inset-bottom, 0px));
   }
 
   /* ── PANEL ── */
@@ -1364,7 +1367,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v215';
+    const CACHE = 'ybg-mygrind-v216';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
