@@ -1375,7 +1375,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v221';
+    const CACHE = 'ybg-mygrind-v222';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -9917,8 +9917,8 @@ function renderCoreAlerts() {
       el.style.display = 'none';
       el.innerHTML = '';
     });
-    var summary = document.getElementById('core-summary');
-    if (summary) { summary.style.display = 'none'; summary.innerHTML = ''; }
+    var summaryHide = document.getElementById('core-summary');
+    if (summaryHide) { summaryHide.style.display = 'none'; summaryHide.innerHTML = ''; }
     if (teaseEl) teaseEl.style.display = 'block';
     return;
   }
