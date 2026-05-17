@@ -1288,7 +1288,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v195';
+    const CACHE = 'ybg-mygrind-v196';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3782,9 +3782,7 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
           <label>Grade</label>
           <select id="pl-grade" onchange="saveProfile()">
             <option value="">-- Select --</option>
-            <option>6th Grade</option>
-            <option>7th Grade</option>
-            <option>8th Grade</option>
+            <option>Middle School</option>
             <option>9th Grade (Freshman)</option>
             <option>10th Grade (Sophomore)</option>
             <option>11th Grade (Junior)</option>
