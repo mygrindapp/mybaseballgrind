@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v252';
+    const CACHE = 'ybg-mygrind-v253';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2744,6 +2744,24 @@ input[type="number"] {
       <div style="padding:18px 20px;">
         <div id="goals-list"></div>
 
+        <!-- Add-Goal toggle — Coach Young 2026-05-17. Hides the setup
+             form (chips + dropdown + custom input) once at least one
+             goal exists so the daily Dashboard isn't noisy with goal-
+             creation furniture. syncGoalSetupVisibility() (in renderGoals)
+             flips this based on state.goals.length: shown when 1+ goals
+             exist, hidden when zero (so the empty-state "SET YOUR FIRST
+             GOAL" hero card still leads the eye). Tapping this opens the
+             setup zone; addPresetGoal/addGoal auto-collapse it after a
+             successful add via the next renderAll cycle. -->
+        <button id="goal-setup-toggle" type="button" onclick="toggleGoalSetup()" style="display:none; width:100%; margin-top:14px; background:rgba(var(--accent-rgb), 0.06); border:1px dashed var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px; border-radius:4px; cursor:pointer;">
+          + Add a Goal
+        </button>
+
+        <!-- Collapsible setup zone — wraps the chips + Browse Full
+             Goal Menu dropdown + custom input + Add Goal button so
+             they can collapse together once the player has goals set. -->
+        <div id="goal-setup-zone">
+
         <!-- ── PRESET GOALS — Quick-pick chips ── -->
         <div style="margin-top:20px; padding:14px; background:rgba(var(--accent-rgb), 0.04); border:1px solid var(--gold-dark); border-radius:4px;">
           <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
@@ -2858,6 +2876,8 @@ input[type="number"] {
           </div>
         </div>
         <button class="btn btn-gold" onclick="addGoal()" style="font-size:15px; padding:14px;">🏆 &nbsp;Add Goal</button>
+
+        </div><!-- /#goal-setup-zone -->
       </div>
     </div>
 
@@ -10826,7 +10846,44 @@ function deleteGoal(id) {
   renderAll();
 }
 
+// Collapsible setup zone — Coach Young 2026-05-17. Hides the goal-
+// creation furniture (chips + Browse Full Menu dropdown + custom input
+// + Add Goal button) once the player has 1+ goals set. Daily Dashboard
+// stays focused on the active goals + Season Accomplishments list, with
+// a small "+ Add a Goal" toggle for the rare cases the player wants to
+// add more. Empty state (zero goals) keeps the setup zone visible so
+// the "SET YOUR FIRST GOAL" hero still hits new users hard.
+function toggleGoalSetup() {
+  const zone = document.getElementById('goal-setup-zone');
+  const toggle = document.getElementById('goal-setup-toggle');
+  if (!zone || !toggle) return;
+  if (zone.style.display === 'none') {
+    zone.style.display = 'block';
+    toggle.style.display = 'none';
+  } else {
+    zone.style.display = 'none';
+    toggle.style.display = 'block';
+  }
+}
+function syncGoalSetupVisibility() {
+  const zone = document.getElementById('goal-setup-zone');
+  const toggle = document.getElementById('goal-setup-toggle');
+  if (!zone || !toggle) return;
+  const hasGoals = state && state.goals && state.goals.length > 0;
+  if (hasGoals) {
+    zone.style.display = 'none';
+    toggle.style.display = 'block';
+  } else {
+    zone.style.display = 'block';
+    toggle.style.display = 'none';
+  }
+}
+
 function renderGoals() {
+  // Keep the setup-zone collapse state in sync with the current goals
+  // count on every render. Add → next render auto-collapses the form;
+  // delete-last-goal → next render re-opens it for the empty-state hero.
+  try { syncGoalSetupVisibility(); } catch (e) {}
   const container = document.getElementById('goals-list');
   if (!container) return;
   if (!state.goals.length) {
