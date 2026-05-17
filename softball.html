@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v250';
+    const CACHE = 'ybg-mygrind-v251';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2468,7 +2468,7 @@ input[type="number"] {
   <!-- ══════════════════════════════════════════ DASHBOARD ══ -->
   <div class="panel active" id="panel-dashboard">
     <div class="section-header">
-      <div class="section-title">MY <span>GRIND</span></div>
+      <div class="section-title">MY<span>GRIND</span></div>
       <div class="section-sub">The Daily Work Starts Here</div>
       <div id="dashboard-player-name" style="font-family:'Bebas Neue'; font-size:22px; letter-spacing:2px; color:var(--gold); margin-top:4px; display:none;"></div>
       <div class="gold-line"></div>
@@ -2972,7 +2972,7 @@ input[type="number"] {
   <!-- ══════════════════════════════════════════ JOURNAL ══ -->
   <div class="panel" id="panel-journal">
     <div class="section-header">
-      <div class="section-title">DAILY <span>JOURNAL</span></div>
+      <div class="section-title">MY<span>JOURNAL</span></div>
       <!-- Coach Young 2026-05-07: dropped the "Post-Game · Practice ·
            Reflection" subhead and the orphan gold-line below it. The
            Entry Type dropdown right below already shows those four
@@ -4012,7 +4012,7 @@ input[type="number"] {
          only way back. This explicit back pill removes the guesswork. -->
     <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
-      <div class="section-title">12-MONTH <span>CALENDAR</span></div>
+      <div class="section-title">MY<span>CALENDAR</span></div>
       <div class="section-sub">Training Prescriptions · Built from 20+ Years of Player Development</div>
       <div class="gold-line"></div>
     </div>
@@ -4035,7 +4035,7 @@ input[type="number"] {
   <!-- ══════════════════════════════════════════ PLAYERS ══ -->
   <div class="panel" id="panel-players">
     <div class="section-header">
-      <div class="section-title">MY <span>PROFILE</span></div>
+      <div class="section-title">MY<span>PROFILE</span></div>
       <div class="section-sub">This is your journal. Your info, your season, your grind.</div>
       <div class="gold-line"></div>
     </div>
@@ -4420,7 +4420,7 @@ input[type="number"] {
          convention from the 2026-05-16 walkthrough. -->
     <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
-      <div class="section-title">MY <span>ACADEMICS</span></div>
+      <div class="section-title">MY<span>ACADEMICS</span></div>
       <div class="section-sub" id="acad-page-sub">No Grades · No Game</div>
       <div class="gold-line"></div>
     </div>
@@ -4575,7 +4575,7 @@ input[type="number"] {
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
     <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
-      <div class="section-title">MY <span>TEAM</span></div>
+      <div class="section-title">MY<span>TEAM</span></div>
       <div class="section-sub" id="team-panel-sub">Join a team · or create one as a coach</div>
       <div class="gold-line"></div>
     </div>
@@ -4823,7 +4823,7 @@ input[type="number"] {
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
     <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
-      <div class="section-title">COACH <span>FEEDBACK</span></div>
+      <div class="section-title">MY<span>FEEDBACK</span></div>
       <div class="section-sub">Send a structured note to your coach or instructor</div>
       <div class="gold-line"></div>
     </div>
@@ -4892,7 +4892,7 @@ input[type="number"] {
 
   <div class="panel" id="panel-stats">
     <div class="section-header">
-      <div class="section-title">MY <span>STATS</span></div>
+      <div class="section-title">MY<span>STATS</span></div>
       <div class="section-sub">Season Stats · Averages Calculate Automatically</div>
       <div class="gold-line"></div>
     </div>
@@ -5232,7 +5232,7 @@ input[type="number"] {
        the panel-share div + add the More-menu button back. -->
   <div class="panel" id="panel-share" style="display:none !important;">
     <div class="section-header">
-      <div class="section-title">📲 <span>SHARE</span></div>
+      <div class="section-title">MY<span>SHARE</span></div>
       <div class="section-sub">Spread the Grind · Help a Player Level Up</div>
       <div class="gold-line"></div>
     </div>
@@ -5334,7 +5334,7 @@ input[type="number"] {
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
     <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:3px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
-      <div class="section-title">⚙️ <span>SETTINGS</span></div>
+      <div class="section-title">MY<span>SETTINGS</span></div>
       <div class="section-sub">Notifications · Preferences · Account</div>
       <div class="gold-line"></div>
     </div>
