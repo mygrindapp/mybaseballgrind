@@ -1375,7 +1375,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v220';
+    const CACHE = 'ybg-mygrind-v221';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4344,8 +4344,20 @@ main { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
         </div>
         <!-- Elective slot is the catch-all — anything goes here, no warning. -->
 
-        <!-- Bottom summary — tally of core-aligned classes -->
+        <!-- Bottom summary — tally of core-aligned classes. Free tier
+             leaves this hidden; MyGrind Pro Phase 2B turns it on. -->
         <div id="core-summary" style="display:none; margin-top:14px; padding:11px 14px; border-radius:3px; font-family:'Barlow'; font-size:12px; line-height:1.55;"></div>
+
+        <!-- Pro tease tile — Coach Young 2026-05-16: replaces the per-class
+             amber warnings + summary in the free tier so casual players
+             aren't nagged. Single soft upsell instead of six warnings. -->
+        <div id="core-pro-tease" style="margin-top:14px; padding:14px 16px; background:linear-gradient(135deg,rgba(201,168,76,0.08),rgba(201,168,76,0.03)); border:1px solid var(--gold-dark, #8B6914); border-radius:3px; line-height:1.55;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold,#C9A84C); margin-bottom:6px;">🎓 MyGrind Pro · Coming August 2026</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:15px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:6px;">Make sure your classes actually count.</div>
+          <div style="font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
+            NCAA only counts specific core courses. Pro unlocks the full core-course tracker: per-class keyword checks, year-by-year planning, per-school targets, and a junior-year lockin alert so nothing slips through before signing day.
+          </div>
+        </div>
       </div>
     </div>
 
@@ -9833,6 +9845,16 @@ function renderGrades() {
 // and shows a soft amber warning if it doesn't look right. Educational,
 // not blocking — the player still gets credit toward the displayed GPA,
 // but they're alerted so they can fix it with their counselor.
+//
+// Coach Young 2026-05-16 (later): gated this whole layer behind MG_PRO.
+// Concern: amber warnings on every class can feel like nagging in the
+// free tier and discourage casual players. Free tier keeps the simple
+// GPA + eligibility quick-read. The prescriptive layer (keyword checks,
+// per-slot overrides, core-aligned summary) ships with MyGrind Pro
+// Phase 2B alongside the full year-by-year NCAA tracker. To activate,
+// flip MG_PRO to true (or replace with a per-user subscription check).
+const MG_PRO = false;
+
 const NCAA_CORE_KEYWORDS = {
   english:  ['english','lit','literature','writing','composition','language arts','ela','ap lang','ap lit','ap eng','rhetoric','journalism','creative writing','reading','grammar'],
   math:     ['math','algebra','geometry','trig','trigonometry','calc','calculus','statistics','stats','pre-calc','precalc','precalculus','functions','probability','discrete'],
@@ -9888,6 +9910,21 @@ window.markSlotElective = function(category) { setElectiveOverride(category, tru
 window.restoreSlotCore = function(category) { setElectiveOverride(category, false); };
 
 function renderCoreAlerts() {
+  // Pro-only. Free tier shows the soft #core-pro-tease tile instead.
+  var teaseEl = document.getElementById('core-pro-tease');
+  if (!MG_PRO) {
+    document.querySelectorAll('.subject-warn').forEach(function(el) {
+      el.style.display = 'none';
+      el.innerHTML = '';
+    });
+    var summary = document.getElementById('core-summary');
+    if (summary) { summary.style.display = 'none'; summary.innerHTML = ''; }
+    if (teaseEl) teaseEl.style.display = 'block';
+    return;
+  }
+  // Pro is on — hide the upsell tile.
+  if (teaseEl) teaseEl.style.display = 'none';
+
   const rows = document.querySelectorAll('#grade-checks .grade-row');
   let coreAligned = 0;
   let coreFilled = 0; // count of non-elective slots with a class typed in
