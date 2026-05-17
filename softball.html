@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v261';
+    const CACHE = 'ybg-mygrind-v262';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8236,6 +8236,12 @@ function saveEntry() {
   // dependent UI.
   renderAll();
 
+  // Button-morph confirmation — Coach Young 2026-05-17. Toast alone was
+  // easy to miss while scrolling ("I put entry for game and nothing
+  // saved also"). Co-located morph at the tap location is impossible
+  // to miss + matches the saveHWEntry / saveGPA / addGoal pattern.
+  try { confirmSaveMorph('#save-entry-btn', '✓ Entry Saved!'); } catch (e) {}
+
   // Post-save UX (Coach Young 2026-05-11 iteration 2): confirm with a
   // toast that names the date. Do NOT auto-jump the entries-list
   // filter — earlier auto-jump pulled the player to the back-dated
@@ -8443,8 +8449,12 @@ function submitComment() {
     time: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
   });
 
-  cancelComment();
+  // Refresh entry list immediately so the new comment appears, but
+  // delay hiding the comment card until the morph completes so the
+  // player sees "✓ Feedback Saved!" before the card disappears.
   renderAll();
+  try { confirmSaveMorph('button[onclick="submitComment()"]', '✓ Feedback Saved!'); } catch (e) {}
+  setTimeout(function () { try { cancelComment(); } catch (_) {} }, 1600);
 }
 
 function deleteComment(entryId, commentId) {
@@ -10862,6 +10872,7 @@ function addGoal() {
   document.getElementById('goal-text').value = '';
   try { saveState(); } catch(e) {}
   renderAll();
+  try { confirmSaveMorph('button[onclick="addGoal()"]', '✓ Goal Added!'); } catch (e) {}
 }
 
 function toggleGoal(id) {
@@ -13126,6 +13137,40 @@ function ybgHaptic(pattern) {
   if (navigator.vibrate) {
     try { navigator.vibrate(pattern || 15); } catch(e) {}
   }
+}
+
+// Save-success confirmation morph — Coach Young 2026-05-17. Unified
+// pattern that every save button can call so confirmation always
+// lands AT the tap location (not as a toast scrolled off-screen).
+// Strava / MyFitnessPal / Whoop all do this exact pattern: the
+// button briefly flips to "✓ Saved!" with a green flash + stronger
+// haptic + brief disable, then reverts.
+//
+// Usage:
+//   confirmSaveMorph('button[onclick="saveEntry()"]', '✓ Entry Saved!');
+//   confirmSaveMorph(myButtonEl, '✓ Sent!');
+//
+// First arg is a selector string OR a DOM element. Second arg is
+// the success label (defaults to "✓ Saved!").
+function confirmSaveMorph(buttonSelector, label) {
+  try {
+    var btn = (typeof buttonSelector === 'string')
+      ? document.querySelector(buttonSelector)
+      : buttonSelector;
+    if (!btn) return;
+    var origLabel = btn.innerHTML;
+    btn.innerHTML = label || '✓ Saved!';
+    btn.classList.add('btn-saved-flash');
+    btn.disabled = true;
+    if (typeof ybgHaptic === 'function') ybgHaptic([20, 40, 30]);
+    setTimeout(function () {
+      try {
+        btn.innerHTML = origLabel;
+        btn.classList.remove('btn-saved-flash');
+        btn.disabled = false;
+      } catch (_) {}
+    }, 1500);
+  } catch (e) {}
 }
 // Attach haptic + visible press flash to every button automatically.
 // Coach Young 2026-05-12: "I need to fix all buttons throughout the app
