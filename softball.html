@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v249';
+    const CACHE = 'ybg-mygrind-v250';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -13569,16 +13569,25 @@ function getAcademicStatusLine() {
   var mode = (typeof getAcademicContext === 'function') ? getAcademicContext().mode : 'hs';
   var g = gpa.toFixed(gpa % 1 === 0 ? 1 : 2);
   if (mode === 'ms') {
+    // Middle School. Coach Young 2026-05-17: emoji + copy direction aligned
+    // same way as HS. Killed the "minimum" trapdoor (read as "you meet the
+    // bar, fine!" against the ⚠️) on the 2.0+ tier. Added 3.0+ HS-prep
+    // band so players in the 3.0-3.49 range don't get bucketed as low as
+    // 2.5+ "room to grow" — at MS, 3.0 is a meaningful HS-prep threshold.
     if (gpa >= 4.0) return '🏆 High Honors (' + g + ' GPA) — your player is crushing it';
     if (gpa >= 3.5) return '✅ Honor Roll (' + g + ' GPA) — on track';
+    if (gpa >= 3.0) return '✅ Above 3.0 (' + g + ' GPA) — solid HS-prep range';
     if (gpa >= 2.5) return '✅ Travel Ball eligible (' + g + ' GPA) — room to grow';
-    if (gpa >= 2.0) return '⚠️ At travel-ball minimum (' + g + ' GPA) — could use a push';
+    if (gpa >= 2.0) return '⚠️ At travel-ball floor (' + g + ' GPA) — needs a push above 2.5';
     return '🚨 Below 2.0 (' + g + ' GPA) — needs help, time to talk to your player';
   }
   if (mode === 'college') {
+    // College. Coach Young 2026-05-17: killed the "Eligibility minimum"
+    // trapdoor for the 2.0+ tier (same as MS/HS rewrite — "minimum" reads
+    // as positive against the ⚠️ warning emoji).
     if (gpa >= 3.5) return '🏆 Honor Roll (' + g + ' GPA) — on track';
     if (gpa >= 2.5) return '✅ Good Standing (' + g + ' GPA) — comfortable margin';
-    if (gpa >= 2.0) return '⚠️ Eligibility minimum (' + g + ' GPA) — slim margin';
+    if (gpa >= 2.0) return '⚠️ At eligibility floor (' + g + ' GPA) — one bad term puts you out';
     return '🚨 Below 2.0 (' + g + ' GPA) — eligibility at risk';
   }
   // HS default — NCAA recruiting tiers. Coach Young 2026-05-17: emoji and
