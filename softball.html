@@ -1367,7 +1367,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v216';
+    const CACHE = 'ybg-mygrind-v217';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -16781,6 +16781,44 @@ if (document.readyState === 'loading') {
    layout interference. Players don't need it; dev workflow uses Safari's
    reload button. Keeping this comment as a marker so future drift toward
    re-adding it has context. */
+
+/* ── SUPPRESS iOS QUICKTYPE AUTOFILL BAR ── Coach Young 2026-05-16: tapping
+   inputs like team name, city, position, etc. was popping the iOS Safari
+   suggestion bar (passwords / credit cards / contacts / locations) above
+   the keyboard. None of those are relevant to MyGrind inputs. Set
+   autocomplete="off" on every <input> that doesn't already have an
+   explicit autocomplete value (so email/password fields keep their proper
+   autofill behavior). Run after DOM is ready AND again after any panel
+   switch in case dynamically-rendered inputs come in later. */
+(function suppressAutofill() {
+  function applyTo(scope) {
+    var inputs = (scope || document).querySelectorAll('input:not([autocomplete])');
+    inputs.forEach(function(inp) {
+      var t = (inp.type || 'text').toLowerCase();
+      // Skip credential-style inputs — they're already handled by explicit
+      // autocomplete attrs elsewhere, but defend anyway.
+      if (t === 'password' || t === 'email') return;
+      inp.setAttribute('autocomplete', 'off');
+      inp.setAttribute('autocorrect', 'off');
+      inp.setAttribute('autocapitalize', 'off');
+      inp.setAttribute('spellcheck', 'false');
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() { applyTo(); });
+  } else {
+    applyTo();
+  }
+  // Re-apply when panels switch (some panels render inputs lazily).
+  var _origMgTab = window.mgTab;
+  if (typeof _origMgTab === 'function') {
+    window.mgTab = function() {
+      var r = _origMgTab.apply(this, arguments);
+      setTimeout(function() { applyTo(); }, 0);
+      return r;
+    };
+  }
+})();
 </script>
 </body>
 </html>
