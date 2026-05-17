@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v259';
+    const CACHE = 'ybg-mygrind-v260';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3467,7 +3467,7 @@ input[type="number"] {
 
           <!-- BATTING GAME STATS -->
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Batting</div>
-          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:14px;">
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:0 auto 14px; max-width:520px; text-align:center;">
             <div>
               <label style="font-size:10px; letter-spacing:1px;">AB</label>
               <input type="number" id="gs-ab" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
@@ -3522,7 +3522,7 @@ input[type="number"] {
 
           <!-- PITCHING GAME STATS -->
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Pitching <span style="font-weight:400; text-transform:none; letter-spacing:0;">(if applicable)</span></div>
-          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-bottom:14px;">
+          <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin:0 auto 14px; max-width:520px; text-align:center;">
             <div>
               <label style="font-size:10px; letter-spacing:1px;">IP</label>
               <input type="number" id="gs-ip" placeholder="0" min="0" step="0.1" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
@@ -3545,7 +3545,7 @@ input[type="number"] {
                needs fielding totals). PO/A/E feed the season-totals fielding
                pile in My Stats and the new dash-fielding-card. -->
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Fielding</div>
-          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:14px;">
+          <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:0 auto 14px; max-width:400px; text-align:center;">
             <div>
               <label style="font-size:10px; letter-spacing:1px;">PO</label>
               <input type="number" id="gs-po" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
