@@ -35,9 +35,25 @@
 
 import Redis from 'ioredis';
 import { Resend } from 'resend';
+import crypto from 'crypto';
 import { buildDigest } from '../../lib/email-digest.js';
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+const APP_URL = 'https://www.mygrindapp.com';
+
+// Per-parent HMAC unsubscribe URL. Coach Young 2026-05-17 — CAN-SPAM
+// compliance + parent trust. Reuses CRON_SECRET as the HMAC key so
+// no new env var needed. First 16 hex chars (8 bytes) is plenty for
+// a tamper-proof URL token. Verified by api/digest-unsubscribe.js
+// which uses the same construction.
+function buildUnsubscribeUrl(parentEmail) {
+  const secret = process.env.CRON_SECRET || '';
+  const token = crypto.createHmac('sha256', secret)
+    .update(parentEmail.toLowerCase().trim())
+    .digest('hex')
+    .slice(0, 16);
+  return `${APP_URL}/api/digest-unsubscribe?email=${encodeURIComponent(parentEmail)}&token=${token}`;
+}
 
 let redis = null;
 function getRedis() {
@@ -132,9 +148,27 @@ export default async function handler(req, res) {
 
   console.log('[weekly-digest] start', { parents: parents.length, dry, testRedirect: testRedirect || null, from });
 
-  const results = { sent: 0, skipped_empty: 0, failed: 0, errors: [] };
+  const results = { sent: 0, skipped_empty: 0, skipped_optout: 0, failed: 0, errors: [] };
 
   for (const parentEmail of parents) {
+    // Coach Young 2026-05-17: skip parents who clicked Unsubscribe in a
+    // prior digest. Flag set by api/digest-unsubscribe.js. Permanent
+    // until support manually deletes the Redis key.
+    try {
+      const optedOut = await r.exists('feedback:digest-optout:' + parentEmail);
+      if (optedOut) {
+        results.skipped_optout++;
+        continue;
+      }
+    } catch (e) {
+      // Fail open — if Redis can't check the flag, skip rather than risk
+      // sending to someone who opted out. CAN-SPAM violations cost more
+      // than a missed digest.
+      results.skipped_optout++;
+      results.errors.push({ parentEmail, stage: 'optout_check', message: e.message });
+      continue;
+    }
+
     let items = [];
     try {
       items = await loadResponsedItems(r, parentEmail);
@@ -151,7 +185,10 @@ export default async function handler(req, res) {
 
     const parentName = items[0]?.parent?.name || '';
     const recipient = testRedirect || parentEmail;
-    const { subject, html, text } = buildDigest({ parentEmail, parentName, items });
+    // Per-parent HMAC unsubscribe URL — rendered into both HTML + text
+    // footers by buildDigest when this param is present.
+    const unsubscribeUrl = buildUnsubscribeUrl(parentEmail);
+    const { subject, html, text } = buildDigest({ parentEmail, parentName, items, unsubscribeUrl });
 
     if (dry) {
       console.log('[weekly-digest] DRY', { recipient, subject, items: items.length });
