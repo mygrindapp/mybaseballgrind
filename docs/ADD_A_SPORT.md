@@ -162,7 +162,7 @@ This unlocks SEO (search "football training app" → lands on `/football`) and d
 | **Baseball** | ✅ Live | `#C9A84C` (gold) | ⚾ |
 | **Softball** | ✅ Live | `#D4547A` (pink) | 🥎 |
 | **Both** | ✅ Live (toggle) | gold (defaults to baseball view) | ⚾🥎 |
-| Football | 🚧 Coming soon | suggested `#7B3F00` | 🏈 |
+| **Football** | ✅ Live (2026-05-18) | `#B86F2A` (pigskin brown) | 🏈 |
 | Volleyball | 🚧 Coming soon | suggested `#3B82F6` | 🏐 |
 | Basketball | 🚧 Coming soon | suggested `#E36B22` | 🏀 |
 | Soccer | 🚧 Coming soon | suggested `#16A34A` | ⚽ |

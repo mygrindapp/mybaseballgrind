@@ -2310,6 +2310,10 @@ select.field-input {
         <div class="sport-tile-icon">⚾🥎</div>
         <div class="sport-tile-name">Both</div>
       </button>
+      <button type="button" class="sport-tile" id="sp_football" onclick="selectFamilySport('football')">
+        <div class="sport-tile-icon">🏈</div>
+        <div class="sport-tile-name">Football</div>
+      </button>
     </div>
 
     <!-- Player-count block (hidden in self-funnel — adult is always 1 player) -->
@@ -3512,7 +3516,7 @@ function selectFamilySport(sport) {
   try { localStorage.setItem('mg_family_sport', sport); } catch (e) { /* no-op */ }
 
   // Visual: clear all sport tiles, then select the chosen one
-  ['sp_baseball', 'sp_softball', 'sp_both'].forEach(id => {
+  ['sp_baseball', 'sp_softball', 'sp_both', 'sp_football'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove('selected');
   });
@@ -3549,7 +3553,7 @@ function selectPlayerCount(count) {
 
 function restoreFamilyFields() {
   // Clear both groups first (in case user navigated back and forth)
-  ['sp_baseball', 'sp_softball', 'sp_both'].forEach(id => {
+  ['sp_baseball', 'sp_softball', 'sp_both', 'sp_football'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.classList.remove('selected');
   });

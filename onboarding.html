@@ -458,6 +458,13 @@ h1 span { color: var(--gold); }
         <div class="sport-desc">I play or train for both sports</div>
       </div>
     </div>
+    <div class="sport-card" onclick="setSport('football', this)">
+      <div class="sport-emoji">🏈</div>
+      <div>
+        <div class="sport-name">Football</div>
+        <div class="sport-desc">Tackle, flag, youth, high school, or college</div>
+      </div>
+    </div>
   </div>
 
   <div class="bnav">
@@ -1259,7 +1266,10 @@ function buildPositions() {
    Builds the plan summary based on the kid's answers
    ────────────────────────────────────────────────────────── */
 function buildPlan() {
-  var sportLabel = d.sport === 'softball' ? 'Softball' : (d.sport === 'both' ? 'Two-Sport' : 'Baseball');
+  // Multi-sport label lookup (2026-05-18). Falls back to 'Baseball' for
+  // unknown / missing values so the plan title never breaks.
+  var SPORT_LABELS = { baseball: 'Baseball', softball: 'Softball', both: 'Two-Sport', football: 'Football' };
+  var sportLabel = SPORT_LABELS[d.sport] || 'Baseball';
   var goalLabel = Array.isArray(d.goal) ? d.goal.join(' + ') : (d.goal || 'Your Goal');
 
   var t = document.getElementById('planTitle');

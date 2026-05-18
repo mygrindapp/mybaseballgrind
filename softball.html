@@ -113,6 +113,14 @@
         id: 'both', label: 'Baseball/Softball', slug: 'baseball/softball',
         emoji: '⚾🥎',      // ⚾🥎
         accent: '#C9A84C', accentRgb: '201, 168, 76'   // defaults to baseball palette
+      },
+      // Football added 2026-05-18 — second-largest US youth sport, proves
+      // the multi-sport architecture publicly. Accent is the leather-pigskin
+      // brown that reads premium on the dark theme, not a screaming orange.
+      football: {
+        id: 'football', label: 'Football', slug: 'football',
+        emoji: '🏈',                  // 🏈
+        accent: '#7B3F00', accentRgb: '123, 63, 0'
       }
       // Future sports plug in here. See docs/ADD_A_SPORT.md.
     };
@@ -352,6 +360,16 @@
     --gold-light: #E87FA0;
     --gold-dark: #A03060;
     --accent-rgb: 212, 84, 122;
+  }
+
+  /* Football — pigskin brown reads premium on the dark theme. Lighter shade
+     for hover states, darker for borders and text-on-light. Added 2026-05-18
+     per docs/ADD_A_SPORT.md recipe. */
+  [data-sport="football"] {
+    --gold:        #B86F2A;
+    --gold-light:  #D89055;
+    --gold-dark:   #7B3F00;
+    --accent-rgb:  184, 111, 42;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1381,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v268';
+    const CACHE = 'ybg-mygrind-v269';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8093,10 +8111,19 @@ function saveEntry() {
   // every entry will match their one sport. Coach Young 2026-05-11:
   // "if the player selects softball after making baseball entry the
   // journal goes into softball specific journal."
+  //
+  // 2026-05-18: opened the allow-list from baseball/softball-only to
+  // every sport in the SPORTS config (football and beyond per the
+  // multi-sport north star). The prior hardcode silently dropped any
+  // non-baseball/softball sport tag, breaking the "all sports" claim.
   const _entrySport = (function() {
     try {
       var s = window.mgSport || localStorage.getItem('mg_sport') || 'baseball';
-      return (s === 'softball') ? 'softball' : 'baseball';
+      // Validate against the SPORTS config so a tampered localStorage
+      // value doesn't write garbage entry.sport tags. Fall back to
+      // baseball if the active sport is unknown.
+      if (typeof SPORTS === 'object' && SPORTS && SPORTS[s]) return s;
+      return 'baseball';
     } catch (e) { return 'baseball'; }
   })();
   // Mindset captured from the Reflection intro emoji picker (Coach Young
@@ -8982,11 +9009,23 @@ function updateArmCareVisibility() {
 // (Coach Young 2026-05-08 — caught when saved entries showed ⚾ GBs in
 // softball mode while the rest of the page correctly showed 🥎.)
 function getBallEmoji() {
+  // Read the active sport's emoji from mgSportConfig (set by SPORTS init).
+  // Single-glyph emojis return directly. Multi-glyph 'both' (⚾🥎) needs to
+  // pick a single representative for single-cell contexts. Updated 2026-05-18
+  // to be multi-sport-aware via the SPORTS config rather than hardcoded to
+  // baseball/softball — football and any future sport now render correctly.
   const e = window.mgSportConfig && window.mgSportConfig.emoji;
-  if (e === '🥎' || e === '⚾') return e;
-  // 'both' resolves to ⚾🥎 — pick a single emoji for single-cell contexts.
-  try { return localStorage.getItem('mg_sport') === 'softball' ? '🥎' : '⚾'; }
-  catch (_) { return '⚾'; }
+  // Detect single Unicode emoji (most sports). 'both' is the only multi-glyph
+  // case today (⚾🥎) — fall through to the lookup below for that.
+  if (e && Array.from(e).length === 1) return e;
+  // Fall back to a SPORTS-aware lookup using the stored sport key.
+  try {
+    const s = localStorage.getItem('mg_sport');
+    if (typeof SPORTS === 'object' && SPORTS && s && SPORTS[s] && SPORTS[s].emoji && Array.from(SPORTS[s].emoji).length === 1) {
+      return SPORTS[s].emoji;
+    }
+  } catch (_) {}
+  return '⚾'; // ultimate fallback for 'both' single-cell contexts
 }
 
 // ─── PRACTICE REP COUNTER — RANGE CHIP SELECTOR (Coach Young 2026-05-08) ───
@@ -15411,8 +15450,17 @@ function renderMonthFocus() {
     const list = document.getElementById('month-focus-list');
     if (!list) return;
     const sportName = (function() {
-      try { return localStorage.getItem('mg_sport') === 'softball' ? 'Softball' : 'Baseball'; }
-      catch(e) { return 'Baseball'; }
+      try {
+        // Multi-sport aware (2026-05-18): read the SPORTS config label
+        // for the active sport so football and beyond render correctly
+        // in the {Sport} template substitution. Falls back to Baseball
+        // for unknown / stale localStorage values.
+        const s = localStorage.getItem('mg_sport');
+        if (typeof SPORTS === 'object' && SPORTS && s && SPORTS[s] && SPORTS[s].label) {
+          return SPORTS[s].label;
+        }
+        return 'Baseball';
+      } catch(e) { return 'Baseball'; }
     })();
     list.innerHTML = MONTH_FOCUS_ITEMS.map(function(item) {
       const label = item.label.replace('{Sport}', sportName);
