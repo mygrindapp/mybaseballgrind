@@ -2310,10 +2310,13 @@ select.field-input {
         <div class="sport-tile-icon">⚾🥎</div>
         <div class="sport-tile-name">Both</div>
       </button>
-      <button type="button" class="sport-tile" id="sp_football" onclick="selectFamilySport('football')">
-        <div class="sport-tile-icon">🏈</div>
-        <div class="sport-tile-name">Football</div>
-      </button>
+      <!-- Football tile hidden 2026-05-18 PM per Coach Young's phased rollout
+           decision (see mygrind_north_star.md). Football is technically wired
+           (SPORTS config + CSS + hardening) but hidden from the public funnel
+           until Phase 3 (months 3-6 post-launch). Power users can still reach
+           football via ?sport=football URL param for private demos and testing.
+           When ready to publicly launch football, restore this tile + add the
+           football landing page at /football.html. -->
     </div>
 
     <!-- Player-count block (hidden in self-funnel — adult is always 1 player) -->

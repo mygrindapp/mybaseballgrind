@@ -162,10 +162,17 @@ This unlocks SEO (search "football training app" → lands on `/football`) and d
 | **Baseball** | ✅ Live | `#C9A84C` (gold) | ⚾ |
 | **Softball** | ✅ Live | `#D4547A` (pink) | 🥎 |
 | **Both** | ✅ Live (toggle) | gold (defaults to baseball view) | ⚾🥎 |
-| **Football** | ✅ Live (2026-05-18) | `#B86F2A` (pigskin brown) | 🏈 |
+| **Football** | 🟡 Wired but not marketed | `#B86F2A` (pigskin brown) | 🏈 |
 | Volleyball | 🚧 Coming soon | suggested `#3B82F6` | 🏐 |
 | Basketball | 🚧 Coming soon | suggested `#E36B22` | 🏀 |
 | Soccer | 🚧 Coming soon | suggested `#16A34A` | ⚽ |
+
+**Status legend:**
+- ✅ Live = public launch shipped, sport tile visible in signup + onboarding, dedicated marketing page exists
+- 🟡 Wired but not marketed = architecture in place (SPORTS config + CSS + multi-sport hardening); sport tile hidden from public funnel; available via `?sport=X` URL param for testing; awaiting Phase 3 launch event
+- 🚧 Coming soon = on the roadmap, no architecture work yet
+
+**Phased rollout strategy:** See `mygrind_north_star.md` four-phase plan. Baseball/softball ship in Phase 1, football re-emerges with dedicated landing page in Phase 3, volleyball/basketball/soccer in Phase 4.
 
 The "Coming soon" strip on signup.html Screen 0 surfaces this list to users — update it when launching a new sport (file: `signup.html`, search for `coming-soon-strip`).
 
