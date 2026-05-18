@@ -1373,13 +1373,24 @@ function onFinalExit() {
     localStorage.setItem('mg_first_journal_open', '1');
 
     // Grant trial access so softball.html's validateSession() returns
-    // 'trial' instead of 'no_trial' (which would bounce the freshly-
-    // onboarded player to signup.html — bug Coach Young hit on
-    // 2026-05-07). The journal reads ybg_softball_access; we set
-    // trialStart=now so elapsed=0 and the trial countdown UI shows the
-    // full window. Skip if user is already paid or has an active trial.
+    // 'trial' instead of 'no_trial' (which bounces a freshly-onboarded
+    // player back to signup.html — launch-day bug Coach hit 2026-05-18).
+    // Canonical key is ybg_access (softball.html's getAccessState reads
+    // retrieve('access') → ybg_+'access' = ybg_access). The 2026-05-07
+    // first pass wrote ybg_softball_access — that key is only used by
+    // legacy reads now (firebase auto sign-in, feedback flow). Write
+    // ybg_access for the gate; mirror ybg_softball_access so the legacy
+    // readers stay in sync until they're refactored.
+    var ACCESS_KEY = 'ybg_access';
+    var LEGACY_KEY = 'ybg_softball_access';
     var acc = {};
-    try { acc = JSON.parse(localStorage.getItem('ybg_softball_access') || '{}'); } catch(_){}
+    try {
+      acc = JSON.parse(
+        localStorage.getItem(ACCESS_KEY) ||
+        localStorage.getItem(LEGACY_KEY) ||
+        '{}'
+      );
+    } catch(_){}
     var elapsedDays = acc.trialStart
       ? (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24)
       : null;
@@ -1388,8 +1399,17 @@ function onFinalExit() {
       acc.trialStart = Date.now();
       acc.mode       = acc.mode || 'onboarded';
       acc.email      = acc.email || (d && d.email ? d.email : '');
-      localStorage.setItem('ybg_softball_access', JSON.stringify(acc));
+      var serialized = JSON.stringify(acc);
+      localStorage.setItem(ACCESS_KEY, serialized);
+      try { sessionStorage.setItem(ACCESS_KEY, serialized); } catch(_){}
+      try { localStorage.setItem(LEGACY_KEY, serialized); } catch(_){}
     }
+
+    // Clear stale signup-flow state so if anything downstream redirects
+    // back to signup.html (paid-status check still pending, etc.), the
+    // user doesn't land mid-funnel from a previous pass. The journal is
+    // the source of truth from this point forward.
+    try { localStorage.removeItem('mg_signup_state'); } catch(_){}
   } catch (_) { /* private browsing — no-op */ }
   window.location.href = 'softball.html';
 }
