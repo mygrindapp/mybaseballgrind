@@ -133,14 +133,14 @@
     function applyTitleAndMeta(s) {
       var Sport = sportName(s);
       var sport = sportLower(s);
-      document.title = 'My Grind — ' + Sport + ' Journal';
+      document.title = 'My Grind: ' + Sport + ' Journal';
       setMeta('meta[name="application-name"]',     'My Grind ' + Sport);
-      setMeta('meta[name="description"]',          'My Grind — The ' + sport + ' journal app for player development, stats, and daily accountability.');
+      setMeta('meta[name="description"]',          'My Grind: The ' + sport + ' journal app for player development, stats, and daily accountability.');
       setMeta('meta[name="theme-color"]',          getSportConfig(s).accent);
       setMeta('meta[name="apple-mobile-web-app-title"]', 'My Grind');
-      setMeta('meta[property="og:title"]',         'MY GRIND — ' + Sport + ' Journal App');
+      setMeta('meta[property="og:title"]',         'MY GRIND: ' + Sport + ' Journal App');
       setMeta('meta[property="og:image:alt"]',     'MY GRIND ' + Sport + ' Journal App Icon');
-      setMeta('meta[name="twitter:title"]',        'MY GRIND — ' + Sport + ' Journal App');
+      setMeta('meta[name="twitter:title"]',        'MY GRIND: ' + Sport + ' Journal App');
       setMeta('meta[name="twitter:image:alt"]',    'MY GRIND ' + Sport + ' Journal App');
     }
     function applyBodyText(s) {
@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v267';
+    const CACHE = 'ybg-mygrind-v268';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6340,7 +6340,7 @@ function requestEditPinAccess(actionFn, entry) {
 
   if (!getEditPinHash()) {
     if (title) title.textContent = 'SET YOUR PIN';
-    if (text) text.innerHTML = 'Set a <strong>4-digit PIN</strong> to protect your old entries. Write it down — you\'ll need it any time you want to edit something from a previous day.';
+    if (text) text.innerHTML = 'Set a <strong>4-digit PIN</strong> to protect your old entries. Write it down. You\'ll need it any time you want to edit something from a previous day.';
   } else {
     if (title) title.textContent = 'OLD ENTRIES LOCKED';
     const dateStr = entry && entry.date ? entry.date : 'this entry';
@@ -6608,7 +6608,7 @@ function toggleWelcomeMode() {
   const toggleBtn = document.getElementById('welcome-toggle-gift');
   if (toggleBtn) {
     toggleBtn.innerHTML = (newMode === 'gift')
-      ? '⚾ &nbsp;Back — I\'m the Player'
+      ? '⚾ &nbsp;Back. I\'m the Player'
       : '👨\u200d👩\u200d👧 &nbsp;Buying for Someone Else?';
   }
 }
@@ -7021,7 +7021,7 @@ function goToPurchase(plan) {
     // Confirm before opening multiple tabs
     if (players.length > 1) {
       const ok = confirm('Ready to purchase for ' + players.length + ' players?\n\n' +
-                         'We will open Stripe ' + players.length + ' times — one for each player. ' +
+                         'We will open Stripe ' + players.length + ' times. One for each player. ' +
                          'Your card pre-fills each time. Total: $' + (59.99 * players.length).toFixed(2) +
                          (plan === 'monthly' ? ' (if you switch to monthly, that becomes $' + (4.99 * players.length).toFixed(2) + '/mo)' : '') + '.\n\nContinue?');
       if (!ok) return;
@@ -7211,7 +7211,7 @@ function showJoinTeamFromSignup() {
     const registry = (typeof getTeamsRegistry === 'function') ? getTeamsRegistry() : [];
     const team = registry.find(function(t) { return (t.code || '').toUpperCase() === cleanCode; });
     if (!team) {
-      alert('Team code "' + cleanCode + '" not found.\n\nDouble-check with your coach — the code is usually their team abbreviation plus the year (e.g., RAVENS26).');
+      alert('Team code "' + cleanCode + '" not found.\n\nDouble-check with your coach. The code is usually their team abbreviation plus the year (e.g., RAVENS26).');
       return;
     }
     // Stash the pending join code so we can complete it after payment activation
@@ -8851,7 +8851,7 @@ function toggleGameStats() {
     if (titleLb) titleLb.textContent = 'Give this reflection a name (optional)';
     if (titleEl) titleEl.placeholder = 'e.g. Tough week · Post-game honest take · Mid-season check-in';
     if (whatLb)  whatLb.textContent  = "What's been on your mind?";
-    if (whatEl)  whatEl.placeholder  = "The thoughts you can't shake — about a tough stretch, a recent win, a slump you're working through, a game that stuck with you, or just where your head is at right now.";
+    if (whatEl)  whatEl.placeholder  = "The thoughts you can't shake. About a tough stretch, a recent win, a slump you're working through, a game that stuck with you, or just where your head is at right now.";
     if (tmrwLb)  tmrwLb.textContent  = 'What is this stretch teaching you?';
     if (tmrwEl)  tmrwEl.placeholder  = 'Could be from one game, a tough week, a hot streak, or the season so far. What have you learned about how you compete, respond to failure, or show up for your team?';
     const prepLbRef = document.getElementById('j-prepare-label');
@@ -9234,7 +9234,7 @@ function resetSoloWorkType() {
 const PRACTICE_LABEL_DEFAULT = 'What did I work on today?';
 const PRACTICE_PH_DEFAULT    = 'What drills, reps, or skills did I focus on? What felt good?';
 const PRACTICE_LABEL_TEAM    = 'What did the team work on today?';
-const PRACTICE_PH_TEAM       = 'Drills, scrimmage, situations, BP — what did coach run today?';
+const PRACTICE_PH_TEAM       = 'Drills, scrimmage, situations, BP. What did coach run today?';
 function applyPracticeCopy() {
   const type = document.getElementById('j-type')?.value;
   const mode = document.getElementById('j-practice-mode')?.value || 'team';
@@ -9274,7 +9274,7 @@ function onPracticeModeChipClick(mode) {
   if (mode === currentMode) return;
   if (!editingEntryId && hasUnsavedPracticeContent()) {
     const otherLabel = (mode === 'team') ? 'With Team' : 'On My Own';
-    const ok = confirm('Switch to "' + otherLabel + '"? This starts a separate entry — the current draft will be discarded.');
+    const ok = confirm('Switch to "' + otherLabel + '"? This starts a separate entry. The current draft will be discarded.');
     if (!ok) return;
     clearPracticeDraft();
   }
@@ -9397,10 +9397,10 @@ function updateRepCounterHeader(mode) {
   // "Today" row. Coach Young 2026-05-09.
   if (mode === 'instructor') {
     if (titleEl) titleEl.textContent = '🔢 This Lesson’s Reps';
-    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this lesson</strong> — your daily total updates on the Dashboard.';
+    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this lesson</strong>. Your daily total updates on the Dashboard.';
   } else {
     if (titleEl) titleEl.textContent = '🔢 This Session’s Reps';
-    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this practice</strong> — your daily total updates on the Dashboard.';
+    if (subEl)   subEl.innerHTML     = 'Just <strong style="color:var(--light);">this practice</strong>. Your daily total updates on the Dashboard.';
   }
 }
 
@@ -9826,7 +9826,7 @@ function toggleEntryCard(entryId) {
 function renderEntries() {
   const container = document.getElementById('entries-list');
   if (!state.entries.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day — learn from it and move on.</p></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day. Learn from it and move on.</p></div>`;
     return;
   }
   // Apply the active filter window. If it lands on an empty set but the
@@ -9997,8 +9997,8 @@ function renderEntries() {
       <div class="entry-meta" style="justify-content:flex-end;">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
           ${e.editedAt ? `<div title="This entry was edited after the original day" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey); background:rgba(100,100,100,0.12); padding:4px 8px; border-radius:3px;">✏️ edited ${formatEditedDate(e.editedAt)}</div>` : ''}
-          <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:8px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="${isEntryProtected(e) && !isCreator() ? 'Edit this entry — PIN required' : 'Edit this entry'}">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})" title="${isEntryProtected(e) && !isCreator() ? 'Delete — PIN required' : 'Delete'}">✕</button>
+          <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:8px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="${isEntryProtected(e) && !isCreator() ? 'Edit this entry. PIN required' : 'Edit this entry'}">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})" title="${isEntryProtected(e) && !isCreator() ? 'Delete. PIN required' : 'Delete'}">✕</button>
         </div>
       </div>
 
@@ -10411,7 +10411,7 @@ function renderCoreAlerts() {
         })[category] || 'a core';
         const plainCat = categoryLabel.replace(/^an? /,'');
         warnEl.innerHTML =
-          '⚠️ "<strong>' + className.replace(/[<>]/g,'') + '</strong>" doesn\'t look like ' + categoryLabel + ' class. NCAA core requires actual ' + plainCat + ' coursework — check with your counselor before locking it in.' +
+          '⚠️ "<strong>' + className.replace(/[<>]/g,'') + '</strong>" doesn\'t look like ' + categoryLabel + ' class. NCAA core requires actual ' + plainCat + ' coursework. Check with your counselor before locking it in.' +
           '<div style="margin-top:6px;"><span onclick="markSlotElective(\'' + category + '\')" style="color:#A8D97B; text-decoration:underline; cursor:pointer;">Done with ' + plainCat + ' already? Mark this slot as elective →</span></div>';
         warnEl.style.cssText = 'display:block; font-family:\'Barlow\'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;';
       } else {
@@ -11387,12 +11387,12 @@ function updatePitchSampleSize(ip) {
   if (!tier) return;
   let label, color;
   if (num === 0)        { label = 'No innings logged yet. Pitch a game in the Daily Journal to start the count.';   color = 'var(--grey)'; }
-  else if (num < 5)     { label = '🚨 Way too small — one bad inning trashes the ERA. Need 5+ IP for a trend.';      color = '#E67E22'; }
-  else if (num < 15)    { label = '⚠️ A few starts in — not stable yet. Push past 15 IP for a meaningful read.';     color = '#E67E22'; }
-  else if (num < 30)    { label = '✓ Decent HS sample — half-season of starts.';                                     color = '#5DADE2'; }
-  else if (num < 50)    { label = '✓✓ Solid HS sample — full-season workload for a HS starter.';                     color = '#27AE60'; }
+  else if (num < 5)     { label = '🚨 Way too small. One bad inning trashes the ERA. Need 5+ IP for a trend.';      color = '#E67E22'; }
+  else if (num < 15)    { label = '⚠️ A few starts in. Not stable yet. Push past 15 IP for a meaningful read.';     color = '#E67E22'; }
+  else if (num < 30)    { label = '✓ Decent HS sample. Half-season of starts.';                                     color = '#5DADE2'; }
+  else if (num < 50)    { label = '✓✓ Solid HS sample. Full-season workload for a HS starter.';                     color = '#27AE60'; }
   else if (num < 100)   { label = '✓✓✓ Heavy HS workload / college-level sample.';                                    color = '#27AE60'; }
-  else if (num < 300)   { label = '✓✓✓✓ WHIP-reliable — sabermetric threshold (~100 IP).';                             color = '#27AE60'; }
+  else if (num < 300)   { label = '✓✓✓✓ WHIP-reliable. Sabermetric threshold (~100 IP).';                             color = '#27AE60'; }
   else                  { label = '✓✓✓✓✓ ERA approaches statistical stability (~300 IP).';                              color = '#27AE60'; }
   tier.textContent = label;
   tier.style.color = color;
@@ -11412,12 +11412,12 @@ function updateBaSampleSize(ab) {
   if (!tier) return;
   let label, color;
   if (num === 0)       { label = 'No at-bats logged yet. Log a game in the Daily Journal to start the count.';      color = 'var(--grey)'; }
-  else if (num < 15)   { label = '🚨 Way too small — one hit moves you 50 points. Need 15+ for a trend.';            color = '#E67E22'; }
-  else if (num < 40)   { label = '⚠️ Trend forming — 5-13 games in. Push past 40 for a meaningful read.';            color = '#E67E22'; }
-  else if (num < 80)   { label = '✓ Decent HS sample — half-season of at-bats.';                                    color = '#5DADE2'; }
-  else if (num < 150)  { label = '✓✓ Solid HS sample — full-season workload for an everyday starter.';              color = '#27AE60'; }
+  else if (num < 15)   { label = '🚨 Way too small. One hit moves you 50 points. Need 15+ for a trend.';            color = '#E67E22'; }
+  else if (num < 40)   { label = '⚠️ Trend forming. 5-13 games in. Push past 40 for a meaningful read.';            color = '#E67E22'; }
+  else if (num < 80)   { label = '✓ Decent HS sample. Half-season of at-bats.';                                    color = '#5DADE2'; }
+  else if (num < 150)  { label = '✓✓ Solid HS sample. Full-season workload for an everyday starter.';              color = '#27AE60'; }
   else if (num < 910)  { label = '✓✓✓ Heavy HS workload / college-level sample.';                                    color = '#27AE60'; }
-  else                 { label = '✓✓✓✓ Statistically stable — sabermetric standard (~910 AB).';                       color = '#27AE60'; }
+  else                 { label = '✓✓✓✓ Statistically stable. Sabermetric standard (~910 AB).';                       color = '#27AE60'; }
   tier.textContent = label;
   tier.style.color = color;
 }
@@ -11522,7 +11522,7 @@ function calcStats() {
   const profileSeason = s('pl-season');
   const npEl   = document.getElementById('st-nameplate');
   const spEl   = document.getElementById('st-subplate');
-  if (npEl) npEl.textContent = profileName ? profileName.toUpperCase() : '— Complete Your Profile →';
+  if (npEl) npEl.textContent = profileName ? profileName.toUpperCase() : 'Complete Your Profile →';
   if (spEl) {
     const parts = [profilePos, profileSchool, profileSeason].filter(Boolean);
     spEl.textContent = parts.length ? parts.join(' · ') : 'Set your info in the Profile tab';
@@ -11815,8 +11815,8 @@ function renderTrainingVolume() {
 
   const TIER_STYLE = {
     green: { color: '#27AE60',     label: '✅ Normal training week' },
-    gold:  { color: 'var(--gold)', label: '⚠️ Heavy week — watch fatigue' },
-    red:   { color: '#E74C3C',     label: '🚨 Overuse risk — prioritize rest' }
+    gold:  { color: 'var(--gold)', label: '⚠️ Heavy week. Watch fatigue' },
+    red:   { color: '#E74C3C',     label: '🚨 Overuse risk. Prioritize rest' }
   };
 
   // ── My Stats — full Training Volume card ──
@@ -11907,7 +11907,7 @@ function renderTrainingVolume() {
     armStrip.style.background = 'rgba(231, 76, 60, 0.12)';
     armStrip.style.border     = '1px solid #C0392B';
     armStrip.style.color      = '#E74C3C';
-    armStrip.innerHTML        = '🚨 OVERUSE RISK · ' + t.armLoad7d.toLocaleString() + ' THROWS+PITCHES (LAST 7) · ARM CARE IS CRITICAL TODAY — CONSIDER REST';
+    armStrip.innerHTML        = '🚨 OVERUSE RISK · ' + t.armLoad7d.toLocaleString() + ' THROWS+PITCHES (LAST 7) · ARM CARE IS CRITICAL TODAY. CONSIDER REST';
     if (armSec) armSec.style.borderLeftColor = TIER_STYLE.red.color;
   } else {
     if (armStrip) armStrip.style.display = 'none';
@@ -12264,7 +12264,7 @@ function updateArmStrengthTip() {
   const tip = document.getElementById('pl-arm-tip');
   if (!sel || !tip) return;
   const tips = {
-    'developing': '🔨 <strong>Developing.</strong> Build with J-Bands daily + long toss 3×/week. Track distance — improvement = your radar gun.',
+    'developing': '🔨 <strong>Developing.</strong> Build with J-Bands daily + long toss 3×/week. Track distance. Improvement = your radar gun.',
     'average':    '✓ <strong>Average.</strong> Solid for HS. Maintain with J-Bands + long toss 2–3×/week. Add med-ball rotational throws to push velo.',
     'above':      '⭐ <strong>Above Average.</strong> Coaches notice. Periodize: in-season maintenance, off-season velocity blocks. Long toss + pulldowns add the next 2–3 mph.',
     'elite':      '🔥 <strong>Elite.</strong> Protect what you have. Arm care + sleep + recovery now beat more throwing. Add throws only with a plan.'
@@ -12585,7 +12585,7 @@ function initQR() {
   } catch(e) {
     const img = document.createElement('img');
     img.src = 'https://chart.googleapis.com/chart?chs=200x200&cht=qr&chl=' + encodeURIComponent(TRIAL_URL) + '&choe=UTF-8&chld=H|2';
-    img.alt = 'QR Code — Scan to Start Free Trial';
+    img.alt = 'QR Code. Scan to Start Free Trial';
     img.width = 200; img.height = 200;
     container.appendChild(img);
     qrGenerated = true;
@@ -12618,8 +12618,8 @@ function shareNative() {
   const sportName = window.mgSportName || 'Baseball';
   const sportLower = window.mgSportLower || 'baseball';
   const shareData = {
-    title: 'My Grind — ' + sportName + ' Journal App',
-    text: '7-Day Free Trial — ' + sportName + ' journal app for player development. Track stats, log games, and hold yourself accountable every day.',
+    title: 'My Grind: ' + sportName + ' Journal App',
+    text: '7-Day Free Trial. ' + sportName + ' journal app for player development. Track stats, log games, and hold yourself accountable every day.',
     url: TRIAL_URL
   };
   if (navigator.share) {
@@ -12712,10 +12712,10 @@ function sendFeedback() {
   const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   if (!emailOk)  { showStatus('Please enter a valid email so I can follow up.', 'error'); emailEl?.focus(); return; }
   if (!message) { showStatus('Please enter your feedback.', 'error'); messageEl?.focus(); return; }
-  if (message.length < 10) { showStatus('Tell me a little more — at least 10 characters.', 'error'); messageEl?.focus(); return; }
+  if (message.length < 10) { showStatus('Tell me a little more. At least 10 characters.', 'error'); messageEl?.focus(); return; }
 
   // Build mailto link with pre-filled subject and body
-  const subject = 'My Grind App — Feedback';
+  const subject = 'My Grind App. Feedback';
   const body =
     'From: ' + email + '\n' +
     'Sent: ' + new Date().toLocaleString() + '\n' +
@@ -12917,8 +12917,8 @@ function tellATeammate() {
     // Fallback if shareToSocial isn't loaded yet for some reason.
     if (navigator.share) {
       navigator.share({
-        title: 'My Grind — ' + (window.mgSportName || 'Baseball') + ' Journal App',
-        text:  'Yo you gotta get this. MY GRIND — journal + stats + training plan in one app.',
+        title: 'My Grind: ' + (window.mgSportName || 'Baseball') + ' Journal App',
+        text:  'Yo you gotta get this. MY GRIND: journal + stats + training plan in one app.',
         url:   'https://mygrindapp.com'
       });
     } else if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -13016,17 +13016,17 @@ function scheduleNotification(s) {
 function sendDailyNotification() {
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
   const msgs = [
-    "Time to log today's game or practice. Close the book on today — learn from it.",
+    "Time to log today's game or practice. Close the book on today. Learn from it.",
     "Don't forget to log your journal entry for today. The grind doesn't stop.",
-    "Hey — did you log today? Your journal is waiting. Every day counts.",
+    "Hey. Did you log today? Your journal is waiting. Every day counts.",
     "Post-game entry time. What happened today? What are you taking into tomorrow?",
-    "The best players journal every day. Log yours now — takes 2 minutes.",
+    "The best players journal every day. Log yours now. Takes 2 minutes.",
   ];
   const msg = msgs[new Date().getDate() % msgs.length];
   try {
     // Sport-aware notification: pull active sport's emoji from SPORTS config.
     const _ball = (window.mgSportConfig && window.mgSportConfig.emoji) || '⚾';
-    const n = new Notification(_ball + ' My Grind — Daily Journal', {
+    const n = new Notification(_ball + ' My Grind: Daily Journal', {
       body: msg,
       icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">' + _ball + '</text></svg>',
       badge:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">' + _ball + '</text></svg>',
@@ -13090,7 +13090,7 @@ const SHARE_URL  = 'https://youngsbaseball.github.io/mybaseballgrind/?trial=1';
 const SHARE_CAPTIONS = {
   instagram: `Bro this app is different ⚾️
 
-Been using MY GRIND to log my games and track my stats. Not just a notes app — it auto-calculates AVG, OBP, SLG, ERA, has a 12-month training plan, goals, arm & shoulder care, everything.
+Been using MY GRIND to log my games and track my stats. Not just a notes app. It auto-calculates AVG, OBP, SLG, ERA, has a 12-month training plan, goals, arm & shoulder care, everything.
 
 Actually changed how I approach every game. I log everything now.
 
@@ -13101,11 +13101,11 @@ Who needs this? Tag 'em 👇
 
 #MyGrind #BaseballLife #BaseballTraining #PlayerDevelopment #BaseballJournal #YouthBaseball #BaseballPlayer #HighSchoolBaseball #TravelBall #BaseballCoach #SCVBaseball #SantaClaritaBaseball #BaseballMom #BaseballDad #BaseballFamily #BaseballGrind #NeverStopGrinding #BaseballIsLife #FutureProBaseball #BaseballSkills #PitchingCoach #HittingCoach #BaseballWorkout #EliteBaseball #AABaseball #PerfectGame #BaseballUSA`,
 
-  facebook: `Parents — if your kid plays baseball, they need to see this. ⚾️
+  facebook: `Parents. If your kid plays baseball, they need to see this. ⚾️
 
 My son started using MY GRIND this season and the difference is real. He's more focused, more accountable, actually thinking about his game between practices. Every game he logs what happened, tracks his stats, and reviews what he's working on.
 
-The app has everything a serious player needs — a daily journal, automatic stat calculations (AVG, OBP, SLG, ERA), a 12-month training plan, goal tracking, arm & shoulder care, and more.
+The app has everything a serious player needs. A daily journal, automatic stat calculations (AVG, OBP, SLG, ERA), a 12-month training plan, goal tracking, arm & shoulder care, and more.
 
 7-day free trial. No credit card. Just let them try it.
 
@@ -13124,7 +13124,7 @@ https://youngsbaseball.github.io/mybaseballgrind/?trial=1
 
 #MyGrind #BaseballGrind`,
 
-  sms: `Yo you gotta get this. MY GRIND — journal + stats + training plan in one app.
+  sms: `Yo you gotta get this. MY GRIND: journal + stats + training plan in one app.
 
 Been logging every game with it. Download it and let's keep each other accountable this season 💯
 
@@ -13146,7 +13146,7 @@ function shareToSocial(platform) {
 
   if (platform === 'native') {
     if (navigator.share) {
-      navigator.share({ title: 'My Grind — ' + (window.mgSportName || 'Baseball') + ' Journal App', text: SHARE_CAPTIONS.sms, url: SHARE_URL });
+      navigator.share({ title: 'My Grind: ' + (window.mgSportName || 'Baseball') + ' Journal App', text: SHARE_CAPTIONS.sms, url: SHARE_URL });
     } else {
       shareToSocial('copy');
     }
@@ -13170,28 +13170,28 @@ function openShareModal(platform) {
   const captions = {
     instagram: {
       text:  SHARE_CAPTIONS.instagram,
-      label: '📸 Instagram — Caption ready to paste',
+      label: '📸 Instagram. Caption ready to paste',
       cta:   '📸 Copy Caption & Open Instagram',
       bg:    'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)',
       color: '#fff'
     },
     facebook: {
       text:  SHARE_CAPTIONS.facebook,
-      label: '👥 Facebook — Caption copies to clipboard, then paste into your post',
+      label: '👥 Facebook. Caption copies to clipboard, then paste into your post',
       cta:   '👥 Copy Caption & Open Facebook',
       bg:    '#1877F2',
       color: '#fff'
     },
     twitter: {
       text:  SHARE_CAPTIONS.twitter,
-      label: '𝕏 X / Twitter — Tweet pre-filled and ready',
+      label: '𝕏 X / Twitter. Tweet pre-filled and ready',
       cta:   '𝕏 Post on X / Twitter Now',
       bg:    '#111',
       color: '#fff'
     },
     sms: {
       text:  SHARE_CAPTIONS.sms,
-      label: '💬 Text Message — Tap send and you\'re done',
+      label: '💬 Text Message. Tap send and you\'re done',
       cta:   '💬 Open Messages & Send',
       bg:    'linear-gradient(135deg,#27AE60,#1E8449)',
       color: '#fff'
@@ -13752,7 +13752,7 @@ function renderDailyQuote() {
   const qText = document.getElementById('daily-quote-text');
   const qAuth = document.getElementById('daily-quote-author');
   if (qText) qText.textContent = '"' + quote.q + '"';
-  if (qAuth) qAuth.textContent = '— ' + quote.a;
+  if (qAuth) qAuth.textContent = '. ' + quote.a;
 }
 
 // ─── MILESTONE DETECTION + CELEBRATION ───────────────────
@@ -13784,7 +13784,7 @@ function showMilestone(streak) {
   let e = '🔥', t = streak + '-DAY STREAK', s = 'You hit a ' + streak + '-day streak. Keep grinding.';
   if (streak === 3)   { e = '🎯'; t = '3-DAY START';       s = 'Three days in. The habit is forming.'; }
   if (streak === 7)   { e = '🔥'; t = 'ONE WEEK STRONG';   s = '7 days locked in. You are building something real.'; }
-  if (streak === 14)  { e = '💪'; t = '2 WEEKS DEEP';      s = 'Two weeks. This is no longer a phase — this is who you are.'; }
+  if (streak === 14)  { e = '💪'; t = '2 WEEKS DEEP';      s = 'Two weeks. This is no longer a phase. This is who you are.'; }
   if (streak === 30)  { e = '⚾'; t = '30-DAY GRINDER';    s = 'A full month. Most players never make it here. You did.'; }
   if (streak === 50)  { e = '🏆'; t = '50-DAY BEAST';      s = 'You are in the top 1% of players on My Grind.'; }
   if (streak === 100) { e = '💎'; t = 'CENTURY CLUB';      s = '100 days. This is what separates the great from the good.'; }
@@ -14017,7 +14017,7 @@ function getAcademicStatusLine() {
   var gpaStr = (typeof state !== 'undefined' && state && state.gpa && state.gpa.current) || '';
   var gpa = parseFloat(gpaStr);
   if (isNaN(gpa) || gpa <= 0) {
-    return 'ℹ️ No GPA logged yet — encourage your player to enter their grades on the Academics tab';
+    return 'ℹ️ No GPA logged yet. Encourage your player to enter their grades on the Academics tab';
   }
   var mode = (typeof getAcademicContext === 'function') ? getAcademicContext().mode : 'hs';
   var g = gpa.toFixed(gpa % 1 === 0 ? 1 : 2);
@@ -14027,31 +14027,31 @@ function getAcademicStatusLine() {
     // bar, fine!" against the ⚠️) on the 2.0+ tier. Added 3.0+ HS-prep
     // band so players in the 3.0-3.49 range don't get bucketed as low as
     // 2.5+ "room to grow" — at MS, 3.0 is a meaningful HS-prep threshold.
-    if (gpa >= 4.0) return '🏆 High Honors (' + g + ' GPA) — your player is crushing it';
-    if (gpa >= 3.5) return '✅ Honor Roll (' + g + ' GPA) — on track';
-    if (gpa >= 3.0) return '✅ Above 3.0 (' + g + ' GPA) — solid HS-prep range';
-    if (gpa >= 2.5) return '✅ Travel Ball eligible (' + g + ' GPA) — room to grow';
-    if (gpa >= 2.0) return '⚠️ At travel-ball floor (' + g + ' GPA) — needs a push above 2.5';
-    return '🚨 Below 2.0 (' + g + ' GPA) — needs help, time to talk to your player';
+    if (gpa >= 4.0) return '🏆 High Honors (' + g + ' GPA). Your player is crushing it';
+    if (gpa >= 3.5) return '✅ Honor Roll (' + g + ' GPA). On track';
+    if (gpa >= 3.0) return '✅ Above 3.0 (' + g + ' GPA). Solid HS-prep range';
+    if (gpa >= 2.5) return '✅ Travel Ball eligible (' + g + ' GPA). Room to grow';
+    if (gpa >= 2.0) return '⚠️ At travel-ball floor (' + g + ' GPA). Needs a push above 2.5';
+    return '🚨 Below 2.0 (' + g + ' GPA). Needs help, time to talk to your player';
   }
   if (mode === 'college') {
     // College. Coach Young 2026-05-17: killed the "Eligibility minimum"
     // trapdoor for the 2.0+ tier (same as MS/HS rewrite — "minimum" reads
     // as positive against the ⚠️ warning emoji).
-    if (gpa >= 3.5) return '🏆 Honor Roll (' + g + ' GPA) — on track';
-    if (gpa >= 2.5) return '✅ Good Standing (' + g + ' GPA) — comfortable margin';
-    if (gpa >= 2.0) return '⚠️ At eligibility floor (' + g + ' GPA) — one bad term puts you out';
-    return '🚨 Below 2.0 (' + g + ' GPA) — eligibility at risk';
+    if (gpa >= 3.5) return '🏆 Honor Roll (' + g + ' GPA). On track';
+    if (gpa >= 2.5) return '✅ Good Standing (' + g + ' GPA). Comfortable margin';
+    if (gpa >= 2.0) return '⚠️ At eligibility floor (' + g + ' GPA). One bad term puts you out';
+    return '🚨 Below 2.0 (' + g + ' GPA). Eligibility at risk';
   }
   // HS default — NCAA recruiting tiers. Coach Young 2026-05-17: emoji and
   // copy direction now always agree (no more ⚠️ + "met" mixed signals).
   // ✅ = on track / fine, ⚠️ = action needed but eligible, 🚨 = at-risk.
-  if (gpa >= 3.5) return '🏆 NCAA D1 + top D3 / Ivy bar (' + g + ' GPA) — on track for the best schools';
-  if (gpa >= 3.0) return '✅ NCAA D1 recruit-competitive (' + g + ' GPA) — on track';
-  if (gpa >= 2.8) return '✅ NCAA D2 recruit-competitive (' + g + ' GPA) — push for D1';
-  if (gpa >= 2.3) return '⚠️ NCAA-eligible but below recruit bar (' + g + ' GPA) — grades need a push for D1 looks';
-  if (gpa >= 2.0) return '🚨 Below NCAA D1/D2 floor (' + g + ' GPA) — JUCO path only, needs help';
-  return '🚨 Below 2.0 (' + g + ' GPA) — needs help, time to talk to your player';
+  if (gpa >= 3.5) return '🏆 NCAA D1 + top D3 / Ivy bar (' + g + ' GPA). On track for the best schools';
+  if (gpa >= 3.0) return '✅ NCAA D1 recruit-competitive (' + g + ' GPA). On track';
+  if (gpa >= 2.8) return '✅ NCAA D2 recruit-competitive (' + g + ' GPA). Push for D1';
+  if (gpa >= 2.3) return '⚠️ NCAA-eligible but below recruit bar (' + g + ' GPA). Grades need a push for D1 looks';
+  if (gpa >= 2.0) return '🚨 Below NCAA D1/D2 floor (' + g + ' GPA). JUCO path only, needs help';
+  return '🚨 Below 2.0 (' + g + ' GPA). Needs help, time to talk to your player';
 }
 
 function renderWeeklyRecap() {
@@ -14083,7 +14083,7 @@ function shareWeeklyRecap() {
   }
   // Desktop / other — Web Share API if available, otherwise copy-to-clipboard.
   if (navigator.share) {
-    navigator.share({ title: 'My Grind — This Week', text: recap.plain })
+    navigator.share({ title: 'My Grind: This Week', text: recap.plain })
       .catch(function() { fallbackShare(recap.plain); });
   } else {
     fallbackShare(recap.plain);
@@ -14135,7 +14135,7 @@ function exportJournalPDF() {
   const now = new Date();
 
   // Build HTML doc (user prints to PDF from browser)
-  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + name + ' — My Grind Journal</title>';
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + name + ': My Grind Journal</title>';
   html += '<style>';
   html += '@page { margin: 0.5in; }';
   html += 'body { font-family: Georgia, serif; color:#222; line-height:1.6; max-width:760px; margin:30px auto; padding:20px; }';
@@ -14153,7 +14153,7 @@ function exportJournalPDF() {
   html += '@media print { .print-btn { display:none; } }';
   html += '</style></head><body>';
   html += '<button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>';
-  html += '<h1>' + escapeHTMLExport(name) + ' — MY GRIND Journal</h1>';
+  html += '<h1>' + escapeHTMLExport(name) + ': MY GRIND Journal</h1>';
   html += '<div class="summary">';
   html += '<strong>Season Summary</strong><br>';
   html += 'Total Entries: <strong>' + totalEntries + '</strong><br>';
@@ -14288,12 +14288,12 @@ function buildPromptForEntry(type, positions) {
     const isOF = positions.some(p => ['LF','CF','RF'].includes(p));
     const isH  = positions.length === 0 || !(positions.length === 1 && isP); // anyone who hits
 
-    if (isP)  parts.push('⚾ Pitch count? Command? Velo? What worked — what didn\'t?');
+    if (isP)  parts.push('⚾ Pitch count? Command? Velo? What worked. What didn\'t?');
     if (isC)  parts.push('🎯 Pop time? Pitch calling? Blocks & framing?');
     if (isIF) parts.push('🧤 Defensive reads? Footwork on ground balls? Double plays turned?');
     if (isOF) parts.push('🏃 Routes taken? Reads off the bat? Throws to cutoff?');
     if (isH)  parts.push('🏏 Pitches seen? Approach each at-bat? Quality contact?');
-    parts.push('💪 Mental game — stayed composed? Let anything linger?');
+    parts.push('💪 Mental game. Stayed composed? Let anything linger?');
     parts.push('🗣️ Did I lift my teammates up?');
     return parts.join('<br>');
   }
@@ -14310,7 +14310,7 @@ function buildPromptForEntry(type, positions) {
   // Reflection
   if (type === 'reflection') {
     return '<strong style="color:var(--gold);">Reflection Prompts:</strong><br>' +
-           '🧠 What\'s on your mind — baseball or otherwise?<br>' +
+           '🧠 What\'s on your mind. Baseball or otherwise?<br>' +
            '🎯 What\'s one thing you\'ll work on tomorrow?<br>' +
            '🙏 One thing you\'re grateful for today?';
   }
@@ -14388,7 +14388,7 @@ function getArmCareItems() {
   var alreadyThrewToday = false;
   try { alreadyThrewToday = (typeof hasThrowingEntryToday === 'function') && hasThrowingEntryToday(); } catch (e) {}
   if (alreadyThrewToday) {
-    items.push({ id: 'modwarm', label: 'Modified warm-up — 5 min light bands + short toss', icon: '🔁' });
+    items.push({ id: 'modwarm', label: 'Modified warm-up. 5 min light bands + short toss', icon: '🔁' });
   }
 
   // Coach Young 2026-05-11 v2 — corrected sectioning. The "walk the
@@ -14401,18 +14401,18 @@ function getArmCareItems() {
   // RECOVERY            : jog → ice → rest (off-day option)
   items.push(
     // Pre-throw warmup
-    { id: 'poles',     label: 'Run a couple of poles — get blood flowing',                                   icon: '🏃' },
-    { id: 'stretches', label: 'Arm stretches — full range of motion',                                        icon: '🤸' },
-    { id: 'mobility',  label: 'Shoulder mobility — arm circles + back-of-shoulder stretch',                  icon: '🤸' },
-    { id: 'bands',     label: 'J-Bands routine — rotator cuff + shoulder blades (8 min)',                    icon: '💪' },
+    { id: 'poles',     label: 'Run a couple of poles. Get blood flowing',                                   icon: '🏃' },
+    { id: 'stretches', label: 'Arm stretches. Full range of motion',                                        icon: '🤸' },
+    { id: 'mobility',  label: 'Shoulder mobility. Arm circles + back-of-shoulder stretch',                  icon: '🤸' },
+    { id: 'bands',     label: 'J-Bands routine. Rotator cuff + shoulder blades (8 min)',                    icon: '💪' },
     // Throwing
-    { id: 'toss',      label: 'Warm-up toss — build to full distance',                                       icon: '🎯' },
+    { id: 'toss',      label: 'Warm-up toss. Build to full distance',                                       icon: '🎯' },
     { id: 'longtoss',  label: 'Long toss when necessary',                                                    icon: '🎯' },
-    { id: 'cooldown',  label: 'Walk the ball in — keep throwing on the way back',                            icon: '🚶' },
+    { id: 'cooldown',  label: 'Walk the ball in. Keep throwing on the way back',                            icon: '🚶' },
     // Recovery
-    { id: 'jog',       label: 'Jog after bullpens — for pitchers',                                           icon: '🏃' },
-    { id: 'ice',       label: 'Ice with pressure — end of day after heavy throwing',                         icon: '🧊' },
-    { id: 'rest',      label: 'Active rest — no throwing today',                                             icon: '⛔' }
+    { id: 'jog',       label: 'Jog after bullpens. For pitchers',                                           icon: '🏃' },
+    { id: 'ice',       label: 'Ice with pressure. End of day after heavy throwing',                         icon: '🧊' },
+    { id: 'rest',      label: 'Active rest. No throwing today',                                             icon: '⛔' }
   );
 
   return items;
@@ -14425,21 +14425,21 @@ function getArmCareItems() {
 const ARM_CARE_REFS = {
   bands: {
     title: 'Band Work: Jaeger J-Bands Routine',
-    desc: "Alan Jaeger's J-Bands routine is the standard arm care program used by MLB and college pitchers for decades. The 11-step sequence builds the small muscles around your shoulder — the rotator cuff and shoulder blades — that slow your arm down after each throw. This is the #1 protector against shoulder injuries.",
-    proTip: "Slow and controlled — never fast. Stand tall, elbow tucked at your side, full range of motion. 2 sets of 15 reps per arm. Every rep matters more than how hard you pull.",
+    desc: "Alan Jaeger's J-Bands routine is the standard arm care program used by MLB and college pitchers for decades. The 11-step sequence builds the small muscles around your shoulder. The rotator cuff and shoulder blades. That slow your arm down after each throw. This is the #1 protector against shoulder injuries.",
+    proTip: "Slow and controlled. Never fast. Stand tall, elbow tucked at your side, full range of motion. 2 sets of 15 reps per arm. Every rep matters more than how hard you pull.",
     video: 'Rnc4J1vodmE',
-    credit: 'Demo: Jaeger Sports — official J-Bands routine'
+    credit: 'Demo: Jaeger Sports. Official J-Bands routine'
   },
   toss: {
     title: 'Warm-up Toss: Build to Full Distance',
     desc: "Long toss progressively warms up your shoulder, stretches the throwing motion, and reads how your arm feels today. Start at 30 ft, build out by 15–20 ft, end with 5–8 throws at your max comfortable distance.",
-    proTip: "If your arm feels tight or sore beyond 75% effort, stop early. Pain is data — listen to it.",
+    proTip: "If your arm feels tight or sore beyond 75% effort, stop early. Pain is data. Listen to it.",
     video: 'Dako4zqyN2Y',
     credit: 'Demo: Pro pitcher Craig Stem'
   },
   poles: {
     title: 'Run a Couple of Poles',
-    desc: "Light jog from foul pole to foul pole (or 60-90 yards back and forth) before any throwing. Gets blood flowing to your shoulder, hips, and legs — your throwing engine — so the J-Bands and warm-up toss actually work on warm tissue, not cold.",
+    desc: "Light jog from foul pole to foul pole (or 60-90 yards back and forth) before any throwing. Gets blood flowing to your shoulder, hips, and legs. Your throwing engine. So the J-Bands and warm-up toss actually work on warm tissue, not cold.",
     proTip: "Easy effort, not a sprint. Build a sweat without burning the legs you'll need for game throws. 2-3 poles is plenty for a normal day; pitchers prep day can stretch this longer.",
     video: null,
     credit: 'Source: Young\'s Baseball Group arm care protocol'
@@ -14447,56 +14447,56 @@ const ARM_CARE_REFS = {
   stretches: {
     title: 'Arm Stretches: Full Range of Motion',
     desc: "After J-Bands and before throwing, take the shoulder, elbow, and wrist through full range of motion. Cross-body stretch, sleeper stretch (the gentle version), wrist flexion + extension, forearm pronation. 30 seconds each.",
-    proTip: "Slow and controlled, never bouncing. If anything pinches at the FRONT of the shoulder, back off — you want stretch in the back/sides, not the front. Pain ≠ progress.",
+    proTip: "Slow and controlled, never bouncing. If anything pinches at the FRONT of the shoulder, back off. You want stretch in the back/sides, not the front. Pain ≠ progress.",
     video: null,
     credit: 'Source: Young\'s Baseball Group pre-throw mobility protocol'
   },
   longtoss: {
     title: 'Long Toss: When Necessary',
-    desc: "Distance throwing past your normal warmup max — useful for arm strength building, recovery days, and feel work. Not every day. Build out to a comfortable distance (not max), feel the arm work easy, then walk it back in.",
-    proTip: "Long toss is a tool, not a daily mandate. Pitchers on a structured plan know their distance days. Position players should long toss 2-3x/week max. Listen to the arm — if it's tight, distance is the wrong choice today.",
+    desc: "Distance throwing past your normal warmup max. Useful for arm strength building, recovery days, and feel work. Not every day. Build out to a comfortable distance (not max), feel the arm work easy, then walk it back in.",
+    proTip: "Long toss is a tool, not a daily mandate. Pitchers on a structured plan know their distance days. Position players should long toss 2-3x/week max. Listen to the arm. If it's tight, distance is the wrong choice today.",
     video: 'Dako4zqyN2Y',
     credit: 'Demo: Pro pitcher Craig Stem'
   },
   cooldown: {
     title: 'Walk the Ball In: Keep Throwing',
     desc: "From your long-toss distance, walk back toward your partner while continuing to throw at lower effort. Re-engages the arm in a controlled way and lets the shoulder finish working through smaller ranges before you stop. Smoother than just stopping cold at max distance.",
-    proTip: "Throws on the way in should drop from 100% to 70% to 50% effort progressively. By the time you're at 30 feet you're playing easy catch. Then walk a few minutes — keeps blood moving without big force.",
+    proTip: "Throws on the way in should drop from 100% to 70% to 50% effort progressively. By the time you're at 30 feet you're playing easy catch. Then walk a few minutes. Keeps blood moving without big force.",
     video: 'bDEXVfchUGg',
     credit: 'Demo: ARM Pitching · YBG protocol'
   },
   mobility: {
     title: 'Shoulder Mobility: Arm Circles + Back-of-Shoulder Stretch',
     desc: "Throwing tightens the back of your shoulder. Arm circles + the back-of-shoulder stretch keep your arm moving through full range tomorrow. 5 minutes daily prevents the slow stiffness that wrecks throwing mechanics.",
-    proTip: "Important: when you stretch the back of your shoulder (lying on your throwing side, arm bent), STOP the moment you feel pinching in the FRONT. You should only feel the stretch in the BACK of the shoulder. Done wrong, it can cause impingement — done right, it's gold.",
+    proTip: "Important: when you stretch the back of your shoulder (lying on your throwing side, arm bent), STOP the moment you feel pinching in the FRONT. You should only feel the stretch in the BACK of the shoulder. Done wrong, it can cause impingement. Done right, it's gold.",
     video: 'l5O4-D246Os',
     credit: 'Demo: Ultimate Baseball Training'
   },
   jog: {
     title: 'Jog After Bullpens',
-    desc: "For pitchers — a 5-10 minute easy jog right after a bullpen flushes the metabolic waste out of the throwing arm and gets the heart rate down gradually. Helps the arm feel fresh the next day instead of cement.",
-    proTip: "Easy effort — conversation pace, not punishment. The point is blood flow, not conditioning. If you can't talk while jogging, you're going too hard.",
+    desc: "For pitchers. A 5-10 minute easy jog right after a bullpen flushes the metabolic waste out of the throwing arm and gets the heart rate down gradually. Helps the arm feel fresh the next day instead of cement.",
+    proTip: "Easy effort. Conversation pace, not punishment. The point is blood flow, not conditioning. If you can't talk while jogging, you're going too hard.",
     video: null,
     credit: 'Source: Young\'s Baseball Group post-bullpen flush protocol'
   },
   ice: {
     title: 'Ice with Pressure: End of Day',
     desc: "After a heavy throwing day (long game, bullpen, max-effort outing), ice the shoulder and elbow with light compression for 15-20 minutes at the end of the day. Helps with inflammation when the arm is genuinely beat up.",
-    proTip: "Not after every throw — that slows healing for normal days. Use it after the days where you KNOW your arm did real work. Wrap with a light ace bandage to keep contact without restricting circulation.",
+    proTip: "Not after every throw. That slows healing for normal days. Use it after the days where you KNOW your arm did real work. Wrap with a light ace bandage to keep contact without restricting circulation.",
     video: null,
     credit: 'Source: Young\'s Baseball Group heavy-day recovery protocol'
   },
   rest: {
     title: 'Active Rest: No Throwing Today',
-    desc: "Your throws + pitches are above the safe weekly threshold for your age bracket. Rest now prevents bigger problems later — most arm injuries come from accumulated overuse, not single-game blowouts.",
-    proTip: "Active rest ≠ couch. Walk, stretch, hydrate, sleep 9+ hours. Skip the bullpen today. Your arm is repairing — let it.",
+    desc: "Your throws + pitches are above the safe weekly threshold for your age bracket. Rest now prevents bigger problems later. Most arm injuries come from accumulated overuse, not single-game blowouts.",
+    proTip: "Active rest ≠ couch. Walk, stretch, hydrate, sleep 9+ hours. Skip the bullpen today. Your arm is repairing. Let it.",
     video: null,
     credit: 'Source: MLB Pitch Smart age-bracketed thresholds'
   },
   modwarm: {
     title: 'Modified Warm-up: Second Session',
-    desc: "Already did your full warm-up earlier today? When you're throwing again later (morning practice + evening lesson, or game + practice the same day), you still need a SHORT warm-up before throwing — but not the full routine.",
-    proTip: "5 minutes of light bands (lower volume than your morning routine) + warm-up toss building to about half your max distance. Your arm is already activated; you're just re-priming it. NEVER skip the second-session warm-up — it's where same-day-multi-session injuries happen.",
+    desc: "Already did your full warm-up earlier today? When you're throwing again later (morning practice + evening lesson, or game + practice the same day), you still need a SHORT warm-up before throwing. But not the full routine.",
+    proTip: "5 minutes of light bands (lower volume than your morning routine) + warm-up toss building to about half your max distance. Your arm is already activated; you're just re-priming it. NEVER skip the second-session warm-up. It's where same-day-multi-session injuries happen.",
     video: null,
     credit: 'Source: MLB Pitch Smart + Driveline second-session protocol'
   }
@@ -14586,7 +14586,7 @@ function openPhotobook() {
 
   if (count) {
     count.textContent = allMedia.length === 0
-      ? 'No photos yet — add one to a journal entry to fill your photobook'
+      ? 'No photos yet. Add one to a journal entry to fill your photobook'
       : allMedia.length + ' photo' + (allMedia.length === 1 ? '' : 's') + ' across all entries';
   }
 
@@ -14696,7 +14696,7 @@ function renderArmCare() {
     const total = items.length;
     if (prog) {
       if (done === total) {
-        prog.innerHTML = '✅ ALL DONE — ARM CARE COMPLETE';
+        prog.innerHTML = '✅ ALL DONE. ARM CARE COMPLETE';
         prog.style.color = '#27AE60';
       } else {
         prog.innerHTML = done + ' of ' + total + ' complete';
@@ -14811,7 +14811,7 @@ function toggleArmCare(id) {
 const WORKOUT_FOCI = {
   'lower-power': {
     label: '💥 Lower Power',
-    tip: 'Lower body explosiveness is the engine for bat speed, throwing velocity, and first-step quickness. The legs go first — everything else is downstream.',
+    tip: 'Lower body explosiveness is the engine for bat speed, throwing velocity, and first-step quickness. The legs go first. Everything else is downstream.',
     lifts: [
       'Trap Bar Deadlift 3x5',
       'Conventional Deadlift 3x5',
@@ -14846,7 +14846,7 @@ const WORKOUT_FOCI = {
   },
   'upper': {
     label: '💪 Upper Body',
-    tip: 'Build pulling strength to protect the shoulder — pull-to-push at a 2:1 ratio favoring pull keeps the rotator cuff healthy for the long season.',
+    tip: 'Build pulling strength to protect the shoulder. Pull-to-push at a 2:1 ratio favoring pull keeps the rotator cuff healthy for the long season.',
     lifts: [
       'Bench Press 3x5',
       'DB Bench Press 3x6',
@@ -14868,7 +14868,7 @@ const WORKOUT_FOCI = {
   },
   'core': {
     label: '🤸 Core / Anti-Rotation',
-    tip: 'A stable core transfers force from legs to arms — without it the kinetic chain leaks power before it reaches the ball.',
+    tip: 'A stable core transfers force from legs to arms. Without it the kinetic chain leaks power before it reaches the ball.',
     lifts: [
       'Pallof Press 3x10/side',
       'Cable Wood Chopper 3x10/side',
@@ -14885,7 +14885,7 @@ const WORKOUT_FOCI = {
   },
   'speed-plyo': {
     label: '⚡ Speed / Plyo',
-    tip: 'Plyometrics build elastic strength — the kind that turns gym strength into game speed and explosive first-step quickness.',
+    tip: 'Plyometrics build elastic strength. The kind that turns gym strength into game speed and explosive first-step quickness.',
     lifts: [
       'Box Jump 3x5',
       'Broad Jump 3x5',
@@ -14902,7 +14902,7 @@ const WORKOUT_FOCI = {
   },
   'mobility': {
     label: '🧘 Mobility',
-    tip: 'Mobility work pays compound interest — protects against pulls, opens up rotation, and lets your strength reach its full range.',
+    tip: 'Mobility work pays compound interest. Protects against pulls, opens up rotation, and lets your strength reach its full range.',
     lifts: [
       'Foam roll quads/back/lats 5 min',
       'Hip flexor stretch 2x30s/side',
@@ -14918,7 +14918,7 @@ const WORKOUT_FOCI = {
   },
   'mixed': {
     label: '🔀 Mixed / Conditioning',
-    tip: 'Mixed sessions build conditioning + maintain strength — best when you only have one window in a busy week.',
+    tip: 'Mixed sessions build conditioning + maintain strength. Best when you only have one window in a busy week.',
     lifts: [
       'Trap Bar DL 3x5',
       'Pull-ups 3x6',
@@ -14932,7 +14932,7 @@ const WORKOUT_FOCI = {
   },
   'other': {
     label: '🛠️ Other / Custom',
-    tip: 'Running your own program? Log it below — your trainer\'s plan, a school weight room session, P90X, anything. Type the lifts the way you want them to read in your saved entry.',
+    tip: 'Running your own program? Log it below. Your trainer\'s plan, a school weight room session, P90X, anything. Type the lifts the way you want them to read in your saved entry.',
     lifts: []   // empty → no suggested-lifts row, just the textarea
   }
 };
@@ -15097,10 +15097,10 @@ function resetWorkoutChips() {
 
 const WORKOUT_WARMUP_ITEMS = [
   { id: 'foamroll', label: 'Foam roll tight spots (3-5 min)',                       icon: '🟦' },
-  { id: 'dynamic',  label: 'Dynamic warm-up — leg swings, hip & arm circles',       icon: '🤸' },
-  { id: 'activate', label: 'Activation — glute bridges + scap pulls + band pull-aparts', icon: '⚡' },
+  { id: 'dynamic',  label: 'Dynamic warm-up. Leg swings, hip & arm circles',       icon: '🤸' },
+  { id: 'activate', label: 'Activation. Glute bridges + scap pulls + band pull-aparts', icon: '⚡' },
   { id: 'rampup',   label: 'Light warm-up sets (2 sets at 50–70% of working weight)', icon: '🏋️' },
-  { id: 'hydrate',  label: 'Hydration check — water bottle on the rack',             icon: '💧' }
+  { id: 'hydrate',  label: 'Hydration check. Water bottle on the rack',             icon: '💧' }
 ];
 
 function warmupKey() {
@@ -15145,7 +15145,7 @@ function renderWarmup() {
     if (prog) {
       const total = WORKOUT_WARMUP_ITEMS.length;
       if (done === total) {
-        prog.innerHTML = '✅ ALL DONE — READY TO LIFT';
+        prog.innerHTML = '✅ ALL DONE. READY TO LIFT';
         prog.style.color = '#27AE60';
       } else {
         prog.innerHTML = done + ' of ' + total + ' complete';
@@ -15252,12 +15252,12 @@ function updateWarmupVisibility() {
 //     recovery lever for high school athletes (developing bodies need
 //     it for growth + protein synthesis).
 const WORKOUT_COOLDOWN_ITEMS = [
-  { id: 'cooldown', label: 'Cool down — 5 min easy walk or bike',                          icon: '🚶' },
-  { id: 'stretch',  label: 'Stretch — 30s+ holds on legs, hips, back, shoulders',           icon: '🧘' },
-  { id: 'foamroll', label: 'Foam roll — quads, hamstrings, back, lats (5 min)',             icon: '🟦' },
-  { id: 'fuel',     label: 'Fuel within 60 min — protein + carbs (chocolate milk, shake + fruit, or full meal)', icon: '🥩' },
-  { id: 'hydrate',  label: 'Hydrate — 16-20 oz water + electrolytes if you sweat hard',     icon: '💧' },
-  { id: 'sleep',    label: 'Sleep 8+ hours tonight — recovery\'s biggest lever',            icon: '😴' }
+  { id: 'cooldown', label: 'Cool down. 5 min easy walk or bike',                          icon: '🚶' },
+  { id: 'stretch',  label: 'Stretch. 30s+ holds on legs, hips, back, shoulders',           icon: '🧘' },
+  { id: 'foamroll', label: 'Foam roll. Quads, hamstrings, back, lats (5 min)',             icon: '🟦' },
+  { id: 'fuel',     label: 'Fuel within 60 min. Protein + carbs (chocolate milk, shake + fruit, or full meal)', icon: '🥩' },
+  { id: 'hydrate',  label: 'Hydrate. 16-20 oz water + electrolytes if you sweat hard',     icon: '💧' },
+  { id: 'sleep',    label: 'Sleep 8+ hours tonight. Recovery\'s biggest lever',            icon: '😴' }
 ];
 
 function cooldownKey() {
@@ -15447,7 +15447,7 @@ function renderDashMonthCard() {
     const bodyEl   = document.getElementById('dash-coach-note-body');
     const bannerEl = document.getElementById('dash-month-banner');
     if (titleEl)  titleEl.textContent  = "🗒️ Coach's Note · " + titleCase;
-    if (bodyEl && m.note) bodyEl.innerHTML = '"' + m.note + '"<br><br>— The Grind';
+    if (bodyEl && m.note) bodyEl.innerHTML = '"' + m.note + '"<br><br>. The Grind';
     if (bannerEl) bannerEl.innerHTML = '⚾ &nbsp;<strong>' + m.name + '</strong> · ' + typeLabel + ' · ' + (m.focus || '');
   } catch(err) { try { console.warn('[dash-month-card]', err); } catch(e) {} }
 }
@@ -15503,30 +15503,30 @@ function toggleMonthFocus(id) {
 // State keyed per-day so it resets at midnight.
 const WEEKLY_PLAN = {
   // 0 = Sun ... 6 = Sat
-  0: [ { id: 'rest',     icon: '😴', label: 'Rest day — recharge body + mind, family time' } ],
+  0: [ { id: 'rest',     icon: '😴', label: 'Rest day. Recharge body + mind, family time' } ],
   1: [
-    { id: 'lift',     icon: '🏋️', label: 'Weight Room — squats, deadlifts, bench, rows, pull-ups' },
-    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings with intent' }
+    { id: 'lift',     icon: '🏋️', label: 'Weight Room. Squats, deadlifts, bench, rows, pull-ups' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting. Minimum 50 tee swings with intent' }
   ],
   2: [
-    { id: 'mobility', icon: '🤸', label: 'Mobility + Arm Care — 20 min full routine' },
-    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+    { id: 'mobility', icon: '🤸', label: 'Mobility + Arm Care. 20 min full routine' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting. Minimum 50 tee swings' }
   ],
   3: [
-    { id: 'lift',     icon: '🏋️', label: 'Weight Room — full body, moderate-to-heavy' },
-    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+    { id: 'lift',     icon: '🏋️', label: 'Weight Room. Full body, moderate-to-heavy' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting. Minimum 50 tee swings' }
   ],
   4: [
-    { id: 'mobility', icon: '🤸', label: 'Mobility + Arm Care — 20 min full routine' },
-    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+    { id: 'mobility', icon: '🤸', label: 'Mobility + Arm Care. 20 min full routine' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting. Minimum 50 tee swings' }
   ],
   5: [
-    { id: 'lift',     icon: '🏋️', label: 'Weight Room — full body' },
-    { id: 'hit',      icon: '🏏', label: 'Hitting — minimum 50 tee swings' }
+    { id: 'lift',     icon: '🏋️', label: 'Weight Room. Full body' },
+    { id: 'hit',      icon: '🏏', label: 'Hitting. Minimum 50 tee swings' }
   ],
   6: [
-    { id: 'hit',      icon: '🏏', label: 'Hitting — light tee work, focus on mechanics' },
-    { id: 'recovery', icon: '🩹', label: 'Active recovery — walk, stretch, hydrate' }
+    { id: 'hit',      icon: '🏏', label: 'Hitting. Light tee work, focus on mechanics' },
+    { id: 'recovery', icon: '🩹', label: 'Active recovery. Walk, stretch, hydrate' }
   ]
 };
 const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -16020,10 +16020,10 @@ function messageCoach() {
   }
   const profile = (function() { try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); } catch(e) { return {}; } })();
   const name = profile.firstName || profile.name || 'Player';
-  const subject = 'Message from ' + name + ' — ' + (t.name || 'MyGrind');
+  const subject = 'Message from ' + name + '. ' + (t.name || 'MyGrind');
   const body = 'Hi Coach ' + (t.coachName ? t.coachName.split(' ')[0] : '') + ',\n\n' +
                '[Write your message here]\n\n' +
-               '— ' + name;
+               '. ' + name;
   try {
     const a = document.createElement('a');
     a.href = 'mailto:' + t.coachEmail + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
@@ -16045,7 +16045,7 @@ function sendJournalToCoach() {
   const recap = (typeof buildWeeklyRecap === 'function') ? buildWeeklyRecap() : { plain: 'Weekly recap unavailable.' };
   const profile = (function() { try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); } catch(e) { return {}; } })();
   const name = profile.firstName || profile.name || 'Player';
-  const subject = name + ' — Weekly Journal Update · ' + (t.name || '');
+  const subject = name + ': Weekly Journal Update · ' + (t.name || '');
   let body = 'Hi Coach ' + (t.coachName ? t.coachName.split(' ')[0] : '') + ',\n\n';
   body += "Here's my week on My Grind ⚾\n\n";
   body += recap.plain;
@@ -16117,7 +16117,7 @@ function shareTeamInvite() {
   const msg = 'Join our team on MY GRIND ⚾\n\n' +
               (t.name || '') + (t.city ? ' · ' + t.city : '') + '\n' +
               'Coach ' + (t.coachName || '') + '\n\n' +
-              'Tap the link to join — it saves your spot on the roster:\n' + url;
+              'Tap the link to join. It saves your spot on the roster:\n' + url;
   if (navigator.share) {
     navigator.share({ title: 'Join ' + (t.name || 'our team'), text: msg, url: url })
       .catch(function() { fallbackShare(msg); });
@@ -16265,7 +16265,7 @@ function submitTeamCreate() {
   if (editingTeamId) {
     // Update existing
     const idx = registry.findIndex(function(t) { return t.id === editingTeamId; });
-    if (idx === -1) return show('Team not found — try creating a new one.');
+    if (idx === -1) return show('Team not found. Try creating a new one.');
     registry[idx] = Object.assign({}, registry[idx], {
       name: name, abbr: abbr, city: city, state: stateT,
       primaryColor: primary, accentColor: accent,
@@ -16611,7 +16611,7 @@ function sendSponsorInvite() {
   }
   const url = window.location.origin + window.location.pathname + '?joinTeam=' + encodeURIComponent(t.id) + '&sponsor=1';
   const msg = 'Join ' + (t.name || 'our team') + ' on MY GRIND ⚾\n\n' +
-              'Coach ' + (t.coachName || '') + ' is sponsoring your full access — ' +
+              'Coach ' + (t.coachName || '') + ' is sponsoring your full access. ' +
               'no payment needed on your end.\n\n' +
               'Tap the link to claim your seat (' + seatsLeft + ' of ' + TEAM_SPONSOR_SEATS + ' available):\n' + url;
   if (navigator.share) {
@@ -16756,7 +16756,7 @@ function removeSponsorPlayer(encodedEmail) {
 
   const confirmMsg = p.sponsored
     ? 'Remove ' + email + ' from the roster?\n\nTheir sponsored seat will be freed immediately. They get 7 days of read-only grace before losing access.'
-    : 'Remove ' + email + ' from the roster?\n\nThey\'re on their own personal plan, so their access won\'t be affected — they just won\'t be on your team anymore.';
+    : 'Remove ' + email + ' from the roster?\n\nThey\'re on their own personal plan, so their access won\'t be affected. They just won\'t be on your team anymore.';
 
   if (!confirm(confirmMsg)) return;
 
@@ -16875,7 +16875,7 @@ function openSeasonEndReview(isAuto) {
   const reasonEl = document.getElementById('season-end-reason');
   if (reasonEl) {
     reasonEl.textContent = isAuto === true
-      ? 'Your sponsorship renews soon — review your roster'
+      ? 'Your sponsorship renews soon. Review your roster'
       : 'Time to clean up your roster';
   }
 
@@ -16885,7 +16885,7 @@ function openSeasonEndReview(isAuto) {
   const activeRoster = (s.roster || []).filter(function(p) { return !p.removedAt; });
 
   if (activeRoster.length === 0) {
-    rosterEl.innerHTML = '<div style="text-align:center; padding:24px 12px; color:var(--grey); font-family:\'Barlow\'; font-size:13px;">No active players on your roster — nothing to review.</div>';
+    rosterEl.innerHTML = '<div style="text-align:center; padding:24px 12px; color:var(--grey); font-family:\'Barlow\'; font-size:13px;">No active players on your roster. Nothing to review.</div>';
   } else {
     rosterEl.innerHTML = activeRoster.map(function(p, i) {
       const email = escapeHTML(p.email || '');
@@ -17063,7 +17063,7 @@ function confirmSeasonEndReview() {
         if (typeof removeBanner === 'function') removeBanner();
         if (typeof showShareToast === 'function') showShareToast('🏆️ Full access unlocked: ' + (registryTeam.coachName || 'your coach') + ' sponsored your seat!');
       } else if (alreadyPaid) {
-        if (typeof showShareToast === 'function') showShareToast('✅ Joined ' + registryTeam.name + ' — kept your own plan.');
+        if (typeof showShareToast === 'function') showShareToast('✅ Joined ' + registryTeam.name + '. Kept your own plan.');
       }
     } catch(err) { try { console.warn('[sponsor join]', err); } catch(e) {} }
 
@@ -17380,10 +17380,10 @@ function renderJournalReminders() {
       body = 'Log your first height + weight check-in so we can track your physical development as a baseline. Takes 30 seconds.';
     } else if (hw.type === '3month') {
       key = 'hw_3month_' + Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 30));
-      body = 'It\'s been over 90 days since your last check-in. Pick "3-Month" in Profile and log your current height + weight — growing players gain fast.';
+      body = 'It\'s been over 90 days since your last check-in. Pick "3-Month" in Profile and log your current height + weight. Growing players gain fast.';
     } else {
       key = 'hw_6month_' + Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 30));
-      body = 'It\'s been over 6 months since your last check-in. Log your current height + weight — coaches care about the year-over-year change.';
+      body = 'It\'s been over 6 months since your last check-in. Log your current height + weight. Coaches care about the year-over-year change.';
     }
     if (!_reminderDismissed(key)) {
       banners.push({
@@ -17799,7 +17799,7 @@ function startVoice(fieldId, btn) {
 
   _voiceRecognition.onerror = function(e) {
     if (e.error === 'not-allowed') {
-      showVoiceToast('Microphone access denied — check your browser settings');
+      showVoiceToast('Microphone access denied. Check your browser settings');
     } else if (e.error !== 'aborted') {
       showVoiceToast('Voice error: ' + e.error);
     }
@@ -17943,7 +17943,7 @@ function syncToCloud() {
   } catch(e) { console.warn('[FB] syncToCloud:', e); }
 }
 
-console.log('[Firebase] Ready — my-grind-b8486');
+console.log('[Firebase] Ready. My-grind-b8486');
 </script>
 
 <script>
@@ -18033,7 +18033,7 @@ function cfSubmit() {
   var note      = (document.getElementById('cf-note').value || '').trim();
 
   if (!coachName)  return cfShowError('Add the coach name first.');
-  if (!coachPhone) return cfShowError('Add the coach phone — that is how they get the text.');
+  if (!coachPhone) return cfShowError('Add the coach phone. That is how they get the text.');
   if (coachPhone.replace(/\D/g, '').length < 10) return cfShowError('Coach phone needs to be a 10-digit number.');
   if (!focus)      return cfShowError('Pick a focus area.');
   if (!situation)  return cfShowError('Pick a situation.');
@@ -18108,8 +18108,8 @@ function cfSubmit() {
     if (toast) {
       var notified = out.body.notify && out.body.notify.sent;
       toast.textContent = notified
-        ? '✓ Sent. ' + coachName + ' got a text — they will tap the link to respond.'
-        : '✓ Saved. (Coach was not notified — double-check their phone and try again.)';
+        ? '✓ Sent. ' + coachName + ' got a text. They will tap the link to respond.'
+        : '✓ Saved. (Coach was not notified. Double-check their phone and try again.)';
       toast.style.display = 'block';
       setTimeout(function() { toast.style.display = 'none'; }, 6000);
     }
@@ -18128,7 +18128,7 @@ function cfRenderHistory() {
   var outbox = [];
   try { outbox = JSON.parse(localStorage.getItem('mg_coach_feedback_outbox') || '[]'); } catch (err) {}
   if (outbox.length === 0) {
-    hist.innerHTML = '<div style="color:var(--grey);font-family:Barlow,sans-serif;font-size:13px;text-align:center;padding:18px 0;">No requests yet — your sent feedback shows up here.</div>';
+    hist.innerHTML = '<div style="color:var(--grey);font-family:Barlow,sans-serif;font-size:13px;text-align:center;padding:18px 0;">No requests yet. Your sent feedback shows up here.</div>';
     return;
   }
   var html = '';
