@@ -2824,6 +2824,51 @@ select.field-input {
     <!-- Player cards — populated dynamically by buildScreen8() -->
     <div id="dash_player_cards"></div>
 
+    <!-- ── INSTALL ON YOUR PHONE (2026-05-18 launch). Surfaces right after
+         the player cards so parents see it before scrolling to weekly review.
+         Hidden automatically when display-mode === standalone (already
+         installed — see hideIfInstalled() in buildScreen8). Reason: getting
+         parents to "Add to Home Screen" is the closest we get to App Store
+         distribution without the 30% Apple IAP cut. PWA install on iOS
+         Safari + Android Chrome gives them an app icon that loads instantly,
+         lives next to their other apps, and feels native — identical UX
+         to a wrapped native app for our use case. -->
+    <div id="install-prompt-card" class="status-card" style="margin-top:18px; border:1px solid var(--gold-dark); background:linear-gradient(135deg, rgba(201,168,76,0.06), rgba(201,168,76,0.02));">
+      <div class="status-card-head">
+        <span class="status-card-icon">📱</span>
+        <div class="status-card-name">Install MyGrind on your phone</div>
+      </div>
+      <p style="font-family:'Barlow',sans-serif;font-size:14px;color:var(--light);line-height:1.6;margin:10px 0 16px;">
+        One-tap access from your home screen. Loads instantly. Looks and works like any other app. No App Store needed.
+      </p>
+
+      <!-- iOS — Safari path -->
+      <div style="background:rgba(0,0,0,0.18); border:1px solid var(--gold-dark); border-radius:6px; padding:12px 14px; margin-bottom:10px;">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">📱 iPhone (Safari)</div>
+        <ol style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.7; margin:0; padding-left:18px;">
+          <li>Open MyGrind in <strong>Safari</strong> (not Chrome)</li>
+          <li>Tap the <strong>Share icon</strong> (square with arrow pointing up)</li>
+          <li>Scroll down, tap <strong>"Add to Home Screen"</strong></li>
+          <li>Tap <strong>"Add"</strong> in the top-right corner</li>
+        </ol>
+      </div>
+
+      <!-- Android — Chrome path -->
+      <div style="background:rgba(0,0,0,0.18); border:1px solid var(--gold-dark); border-radius:6px; padding:12px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">🤖 Android (Chrome)</div>
+        <ol style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.7; margin:0; padding-left:18px;">
+          <li>Open MyGrind in <strong>Chrome</strong></li>
+          <li>Tap the <strong>⋮ menu</strong> (top-right)</li>
+          <li>Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong></li>
+          <li>Confirm <strong>"Install"</strong></li>
+        </ol>
+      </div>
+
+      <p style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); line-height:1.5; margin:14px 0 0; text-align:center;">
+        Done in 5 seconds. After that, MyGrind opens straight from your home screen.
+      </p>
+    </div>
+
     <!-- ── THIS WEEK'S COACHING (Phase 7b V1) — surfaces only when there is recent coach feedback ── -->
     <div id="weekly-review-card" class="status-card" style="margin-top:18px; display:none; border:1px solid var(--gold-dark);">
       <div class="status-card-head">
@@ -4623,6 +4668,25 @@ function buildScreen8() {
   // who completed signup yesterday already has state.startedAt set,
   // and the server-side started:false is just an idempotent ack.
   recordTrialStartServerSide();
+
+  // ─── Hide install prompt card if PWA is already installed ──
+  // 2026-05-18 launch polish. If the user is viewing Screen 8 from
+  // an installed PWA shortcut (Add to Home Screen already done), the
+  // install instructions are noise. Detect via display-mode media
+  // query OR the legacy iOS navigator.standalone property.
+  try {
+    var installCard = document.getElementById('install-prompt-card');
+    if (installCard) {
+      var isInstalled =
+        (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+        (window.navigator && window.navigator.standalone === true);
+      if (isInstalled) installCard.style.display = 'none';
+    }
+  } catch (_) {
+    // Older browsers without matchMedia — just leave the card visible.
+    // Worst case is a parent who already installed sees the instructions
+    // a second time. Not breaking anything.
+  }
 
   // Personalize headline with parent's first name
   const parentNameSpan = document.getElementById('s8_parent_name');
