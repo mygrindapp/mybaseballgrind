@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v263';
+    const CACHE = 'ybg-mygrind-v265';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5394,8 +5394,40 @@ input[type="number"] {
     <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
       <div class="section-title">MY<span>SETTINGS</span></div>
-      <div class="section-sub">Notifications · Preferences · Account</div>
+      <div class="section-sub">Account · Preferences · Help</div>
       <div class="gold-line"></div>
+    </div>
+
+    <!-- ── YOU (identity header) ── 2026-05-18. Best-app convention (Strava,
+         Whoop, Duolingo, Apple Fitness+) is to open Settings with WHO YOU
+         ARE, not a toggle. Account info still also renders inside the
+         Subscription card so dependents (no billing controls) keep their
+         email + plan surface. This card is the at-a-glance identity strip
+         + sport switcher (only visible to family=both users). -->
+    <div class="card" id="settings-you-card" style="margin-bottom:16px; padding:18px 18px 16px;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div id="settings-you-avatar" style="width:48px; height:48px; border-radius:50%; background:var(--card2); border:1px solid var(--gold-dark); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+          <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg>
+        </div>
+        <div style="flex:1; min-width:0;">
+          <div id="settings-you-name" style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1.5px; color:var(--white); line-height:1.1; margin-bottom:3px;">Player</div>
+          <div id="settings-you-email" style="font-family:'Barlow'; font-size:13px; color:var(--grey); word-break:break-all; line-height:1.3;">—</div>
+        </div>
+        <div id="settings-you-plan-badge" style="background:rgba(var(--accent-rgb), 0.10); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:5px 9px; border-radius:3px; white-space:nowrap; flex-shrink:0;">—</div>
+      </div>
+
+      <!-- Sport switcher for family=both — JS shows/hides via data-family-sport.
+           Mirrors the dashboard header toggle so a both-sport family can flip
+           the app's sport identity from Settings too. -->
+      <div id="settings-you-sport-toggle" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
+        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Active Sport</div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+          <button type="button" id="settings-sport-baseball" onclick="setActiveSport('baseball')" style="background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:6px; cursor:pointer;">⚾ Baseball</button>
+          <button type="button" id="settings-sport-softball" onclick="setActiveSport('softball')" style="background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:6px; cursor:pointer;">🥎 Softball</button>
+        </div>
+      </div>
+
+      <button onclick="mgTab('profile', 'tab-profile')" style="margin-top:14px; width:100%; background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 14px; border-radius:6px; cursor:pointer;">Edit Profile →</button>
     </div>
 
     <!-- ── NOTIFICATIONS ── -->
@@ -5442,40 +5474,54 @@ input[type="number"] {
     </div>
 
 
-    <!-- ── APP PREFERENCES ── -->
+    <!-- ── APP PREFERENCES ── 2026-05-18: default-checkbox UI replaced with
+         the same custom slider toggles as the Notifications card so the
+         panel reads as ONE design system instead of two. Drop the "Show
+         Install Prompt" toggle entirely (95% of users don't know what it
+         means — internal cooldown handles re-prompts on its own). -->
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-settings"/></svg> App Preferences</div>
 
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
-        <div>
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--white);">Auto-save Journal Entries</div>
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Save drafts as you type</div>
+      <!-- Auto-save Journal Entries -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border);">
+        <div style="flex:1; min-width:0; padding-right:14px;">
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;">Auto-save Entries</div>
+          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Save journal drafts as you type</div>
         </div>
-        <input type="checkbox" id="pref-autosave" checked onchange="saveSettings()" style="accent-color:var(--gold); width:18px; height:18px;">
+        <label style="position:relative; display:inline-block; width:52px; height:28px; flex-shrink:0;">
+          <input type="checkbox" id="pref-autosave" checked onchange="saveSettings(); mgUpdatePrefSlider('pref-autosave')" style="opacity:0; width:0; height:0;">
+          <span class="mg-pref-slider" data-pref-target="pref-autosave" onclick="mgTogglePref('pref-autosave')" style="position:absolute; cursor:pointer; inset:0; background:#333; border-radius:28px; transition:0.3s;">
+            <span class="mg-pref-knob" style="position:absolute; height:20px; width:20px; left:4px; bottom:4px; background:#231F1C; border-radius:50%; transition:0.3s;"></span>
+          </span>
+        </label>
       </div>
 
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
-        <div>
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--white);">Stats Auto-Populate from Journal</div>
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Game stats fill My Stats automatically</div>
+      <!-- Stats Auto-Populate -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border);">
+        <div style="flex:1; min-width:0; padding-right:14px;">
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;">Auto-Populate Stats</div>
+          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Game entries flow into My Stats</div>
         </div>
-        <input type="checkbox" id="pref-autostats" checked onchange="saveSettings()" style="accent-color:var(--gold); width:18px; height:18px;">
+        <label style="position:relative; display:inline-block; width:52px; height:28px; flex-shrink:0;">
+          <input type="checkbox" id="pref-autostats" checked onchange="saveSettings(); mgUpdatePrefSlider('pref-autostats')" style="opacity:0; width:0; height:0;">
+          <span class="mg-pref-slider" data-pref-target="pref-autostats" onclick="mgTogglePref('pref-autostats')" style="position:absolute; cursor:pointer; inset:0; background:#333; border-radius:28px; transition:0.3s;">
+            <span class="mg-pref-knob" style="position:absolute; height:20px; width:20px; left:4px; bottom:4px; background:#231F1C; border-radius:50%; transition:0.3s;"></span>
+          </span>
+        </label>
       </div>
 
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0; border-bottom:1px solid var(--border);">
-        <div>
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--white);">Show Install Prompt</div>
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Remind me to add to home screen</div>
+      <!-- Scroll to Top on Tab Switch -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0;">
+        <div style="flex:1; min-width:0; padding-right:14px;">
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;">Scroll to Top on Tab Switch</div>
+          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Page jumps up when changing tabs</div>
         </div>
-        <input type="checkbox" id="pref-install" checked onchange="saveSettings()" style="accent-color:var(--gold); width:18px; height:18px;">
-      </div>
-
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 0;">
-        <div>
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:var(--white);">Scroll to Top on Tab Switch</div>
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Page scrolls up when changing tabs</div>
-        </div>
-        <input type="checkbox" id="pref-scroll" checked onchange="saveSettings()" style="accent-color:var(--gold); width:18px; height:18px;">
+        <label style="position:relative; display:inline-block; width:52px; height:28px; flex-shrink:0;">
+          <input type="checkbox" id="pref-scroll" checked onchange="saveSettings(); mgUpdatePrefSlider('pref-scroll')" style="opacity:0; width:0; height:0;">
+          <span class="mg-pref-slider" data-pref-target="pref-scroll" onclick="mgTogglePref('pref-scroll')" style="position:absolute; cursor:pointer; inset:0; background:#333; border-radius:28px; transition:0.3s;">
+            <span class="mg-pref-knob" style="position:absolute; height:20px; width:20px; left:4px; bottom:4px; background:#231F1C; border-radius:50%; transition:0.3s;"></span>
+          </span>
+        </label>
       </div>
     </div>
 
@@ -5511,16 +5557,26 @@ input[type="number"] {
         <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6;">Your subscription is active. You have full access to all features.</div>
       </div>
 
-      <!-- Cancel / Manage options -->
+      <!-- Manage Subscription — 2026-05-18: collapsed from two competing
+           buttons (Manage Billing + Email to Cancel) to a single primary
+           action. Stripe portal already handles cancel + update card +
+           change plan in one place; the support email is a small fallback
+           link, not a parallel button.
+           "Parent only" helper line added 2026-05-18 PM — Stripe portal
+           authenticates via the billing email on file (parent's email),
+           so a player tapping this hits a magic-link wall they can't
+           clear. The helper tells the player not to bother and tells the
+           parent the button is for them. Same pattern as Apple App Store
+           Family + Spotify Family subscription management. -->
       <div style="margin-bottom:16px;">
-        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:10px;">Manage Billing</div>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px;">
-          <a href="https://billing.stripe.com/p/login/4gM5kFgiu53D1yq8eZ4gg04" id="stripe-portal-btn" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center; min-width:0;">
-            💳 Manage Billing
-          </a>
-          <a href="mailto:support@mygrindapp.com?subject=Cancel%20My%20Subscription&body=Please%20cancel%20my%20My%20Grind%20subscription.%0A%0AEmail%20used%20to%20register%3A%20" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center; min-width:0;">
-            ✉️ Email to Cancel
-          </a>
+        <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; text-align:center;">
+          Parent Only · Uses billing email on file
+        </div>
+        <a href="https://billing.stripe.com/p/login/4gM5kFgiu53D1yq8eZ4gg04" id="stripe-portal-btn" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 14px; border-radius:8px; text-decoration:none; text-align:center;">
+          💳 &nbsp;Manage Subscription
+        </a>
+        <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; margin-top:10px; line-height:1.5;">
+          Update card, change plan, or cancel anytime in the Stripe portal. Need help? <a href="mailto:support@mygrindapp.com?subject=Subscription%20Help&body=Hi%20MyGrind%2C%0A%0A" style="color:var(--gold); text-decoration:none;">Email support</a>.
         </div>
       </div>
 
@@ -5564,11 +5620,17 @@ input[type="number"] {
       </div>
     </div>
 
-    <!-- ── BACKUP & RESTORE ── -->
+    <!-- ── BACKUP & RESTORE ── 2026-05-18 reword: positive framing
+         ("keep your training history safe") + honest cloud-sync truth
+         ("cross-device cloud sync ships with MyGrind Pro"). Replaces the
+         old slightly scary "your data lives on this device" framing. -->
     <div class="card" style="margin-bottom:16px; border-color:var(--gold-dark);">
       <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-save"/></svg> Backup &amp; Restore</div>
       <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.7; margin-bottom:14px;">
-        Your data lives on this device. <strong style="color:var(--gold);">Download a backup file</strong> to keep it safe. If you switch phones or clear your browser, you can restore everything from that file.
+        Keep your training history safe. <strong style="color:var(--gold);">Download a backup file</strong> you can save to Files, Drive, or iCloud, then restore it anytime if you switch phones.
+      </div>
+      <div style="background:rgba(var(--accent-rgb), 0.04); border:1px solid var(--gold-dark); border-radius:3px; padding:10px 12px; margin-bottom:14px; font-family:'Barlow'; font-size:12px; color:var(--grey); line-height:1.6;">
+        <strong style="color:var(--gold);">Heads up:</strong> entries are saved on this device today. <strong style="color:var(--gold);">Automatic cross-device sync is coming soon</strong> so your journal moves with you. Until then, a downloaded backup is the safest way to switch phones.
       </div>
 
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
@@ -5597,36 +5659,80 @@ input[type="number"] {
          for dependents (with its billing controls hidden) so kid-payers
          still see their account info — see updateSubscriptionCard(). -->
 
-    <!-- ── FEEDBACK ── -->
-    <!-- id="settings-feedback-card" added 2026-05-17: the More-menu
-         "Send Feedback" button now opens Settings and scrolls to this
-         card so feedback has one canonical surface instead of a mailto
-         link competing with a structured form. -->
+    <!-- ── HELP & SUPPORT ── 2026-05-18: was a standalone Send Feedback
+         card. Reworked into one canonical Help & Support card with three
+         tap rows on top (Tell a Teammate, Help & FAQ, Email Support) and
+         the structured feedback form below. The id="settings-feedback-card"
+         stays on the wrapper so openSettingsAtFeedback() from the More
+         menu still scrolls to the right place.
+
+         "Tell a Teammate" replaces a Rate-the-App popup for now — we're a
+         PWA, no App Store listing exists yet to rate. Once the iOS app
+         ships (Phase 8+), wire SKStoreReviewController to fire ONCE after
+         a positive moment (7-day streak earned, 3rd game saved, goal hit).
+         Never on launch, never after an error. -->
     <div class="card" id="settings-feedback-card" style="margin-bottom:16px; border-color:var(--gold-dark);">
-      <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-message-circle"/></svg> Send Feedback</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.6;">
-        Found a bug? Have a feature request? Just want to share how the app is working for you? Drop me a note. I read every one.
-      </div>
+      <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-help-circle"/></svg> Help &amp; Support</div>
 
-      <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Email <span style="color:#E57373;">*</span></label>
-      <input type="email" id="fb-email" placeholder="you@example.com" autocomplete="email" style="width:100%; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; margin-bottom:14px; box-sizing:border-box;">
-
-      <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Feedback <span style="color:#E57373;">*</span></label>
-      <textarea id="fb-message" placeholder="Tell me what's on your mind. What's working, what's broken, what would make this app better for you..." style="width:100%; min-height:120px; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; line-height:1.6; resize:vertical; box-sizing:border-box; margin-bottom:8px;"></textarea>
-
-      <div id="fb-status" style="display:none; font-family:'Barlow'; font-size:12px; padding:10px 12px; border-radius:3px; margin-bottom:10px; line-height:1.5;"></div>
-
-      <button onclick="sendFeedback()" class="btn btn-gold" style="width:100%; padding:12px 24px;">
-        ✉️ &nbsp;Send Feedback
+      <!-- Action rows -->
+      <button onclick="tellATeammate()" style="display:flex; align-items:center; gap:14px; width:100%; padding:14px 4px; background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; text-align:left;">
+        <span style="width:32px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; color:var(--gold);"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-share"/></svg></span>
+        <span style="flex:1;">Tell a Teammate</span>
+        <span style="color:var(--grey); font-size:18px;">›</span>
       </button>
 
-      <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
-        Goes straight to support@mygrindapp.com
+      <button onclick="openHelpModal()" style="display:flex; align-items:center; gap:14px; width:100%; padding:14px 4px; background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; text-align:left;">
+        <span style="width:32px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; color:var(--gold);"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-help-circle"/></svg></span>
+        <span style="flex:1;">Help &amp; FAQ</span>
+        <span style="color:var(--grey); font-size:18px;">›</span>
+      </button>
+
+      <a href="mailto:support@mygrindapp.com?subject=MyGrind%20Support&body=Hi%20MyGrind%2C%0A%0A" style="display:flex; align-items:center; gap:14px; width:100%; padding:14px 4px; background:transparent; border:none; border-bottom:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase; cursor:pointer; text-align:left; text-decoration:none;">
+        <span style="width:32px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; color:var(--gold);"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-mail"/></svg></span>
+        <span style="flex:1;">Email Support</span>
+        <span style="color:var(--grey); font-size:18px;">›</span>
+      </a>
+
+      <!-- Inline feedback form -->
+      <div style="margin-top:18px; padding-top:18px; border-top:1px solid var(--border);">
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; display:inline-flex; align-items:center; gap:6px;">
+          <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-message-circle"/></svg>
+          Send Feedback
+        </div>
+        <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:14px; line-height:1.6;">
+          Found a bug? Have a feature request? Want to share how the app is working for you? Drop me a note. I read every one.
+        </div>
+
+        <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Email <span style="color:#E57373;">*</span></label>
+        <input type="email" id="fb-email" placeholder="you@example.com" autocomplete="email" style="width:100%; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; margin-bottom:14px; box-sizing:border-box;">
+
+        <label style="display:block; font-family:'Barlow Condensed'; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Your Feedback <span style="color:#E57373;">*</span></label>
+        <textarea id="fb-message" placeholder="Tell me what's on your mind. What's working, what's broken, what would make this app better for you..." style="width:100%; min-height:120px; background:var(--card2); border:1px solid var(--border); color:var(--light); padding:12px; border-radius:3px; font-family:'Barlow'; font-size:14px; line-height:1.6; resize:vertical; box-sizing:border-box; margin-bottom:8px;"></textarea>
+
+        <div id="fb-status" style="display:none; font-family:'Barlow'; font-size:12px; padding:10px 12px; border-radius:3px; margin-bottom:10px; line-height:1.5;"></div>
+
+        <button onclick="sendFeedback()" class="btn btn-gold" style="width:100%; padding:12px 24px;">
+          ✉️ &nbsp;Send Feedback
+        </button>
+
+        <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
+          Goes straight to support@mygrindapp.com
+        </div>
       </div>
     </div>
 
+    <!-- ── WHAT'S NEW ── 2026-05-18: tiny "you're up to date" row that
+         gives the user a glance at recency without taking a card slot.
+         Tap to open the Help & FAQ modal scrolled to a changelog block
+         (added in a follow-up; for now it falls back to the FAQ top). -->
+    <button onclick="openHelpModal()" style="display:flex; align-items:center; gap:10px; width:100%; padding:14px 16px; background:var(--card2); border:1px solid var(--border); border-radius:8px; color:var(--light); font-family:'Barlow'; font-size:13px; cursor:pointer; text-align:left; margin-bottom:14px;">
+        <span style="color:var(--gold); display:inline-flex; align-items:center;">✨</span>
+        <span style="flex:1;"><strong style="color:var(--gold); font-family:'Barlow Condensed'; letter-spacing:1px; text-transform:uppercase; font-size:12px;">What's New</strong> <span style="color:var(--grey); font-size:12px;">· Updated <span id="settings-whats-new-date">May 2026</span></span></span>
+        <span style="color:var(--grey); font-size:18px;">›</span>
+    </button>
+
     <!-- Settings version -->
-    <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); padding:16px 0;">
+    <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); padding:8px 0 20px;">
       My Grind · Version 2026.1
     </div>
 
@@ -12661,11 +12767,20 @@ function loadSettings() {
     set('pref-install',       s.prefInstall);
     set('pref-scroll',        s.prefScroll);
     updateNotifSlider(s.notifDaily);
+    // App Preferences sliders — match the visual state of the underlying
+    // checkbox after load. mgUpdatePrefSlider() is a no-op if the slider
+    // span isn't in the DOM yet (e.g. mid-render race), so safe to call.
+    try {
+      mgUpdatePrefSlider('pref-autosave');
+      mgUpdatePrefSlider('pref-autostats');
+      mgUpdatePrefSlider('pref-scroll');
+    } catch (e) {}
     applySettings(s);
     // updateSettingsAccountInfo removed 2026-05-17 — Account card deleted in
     // the Settings dedup pass; updateSubscriptionCard now owns the same
     // email + access-type display via the Subscription card's bottom section.
     try { updateSubscriptionCard(); } catch (e) {}
+    try { updateSettingsYouHeader(); } catch (e) {}
 
     // Pre-fill the Feedback email field with the user's account email
     // (only if it's a real email, not the legacy placeholder, and the
@@ -12681,6 +12796,135 @@ function loadSettings() {
 
     return s;
   } catch(e) { return DEFAULT_SETTINGS; }
+}
+
+// ─── APP PREFERENCES SLIDERS (custom UI) ───────────────────
+// Used by the App Preferences card so the toggle visuals match the
+// Notifications card slider. The underlying <input type="checkbox"> stays
+// the source of truth (saveSettings() reads it); these helpers just keep
+// the slider span + knob position in sync.
+function mgUpdatePrefSlider(id) {
+  const cb = document.getElementById(id);
+  if (!cb) return;
+  const slider = document.querySelector('.mg-pref-slider[data-pref-target="' + id + '"]');
+  if (!slider) return;
+  const knob = slider.querySelector('.mg-pref-knob');
+  slider.style.background = cb.checked ? 'var(--gold)' : '#333';
+  if (knob) knob.style.transform = cb.checked ? 'translateX(24px)' : 'translateX(0)';
+}
+function mgTogglePref(id) {
+  const cb = document.getElementById(id);
+  if (!cb) return;
+  cb.checked = !cb.checked;
+  mgUpdatePrefSlider(id);
+  try { saveSettings(); } catch (e) {}
+}
+
+// ─── SETTINGS "YOU" HEADER ─────────────────────────────────
+// 2026-05-18: identity strip at the top of the Settings panel — name,
+// email, plan badge, optional sport switcher for family=both users.
+// Mirrors the Strava/Whoop/Duolingo convention of opening Settings with
+// WHO YOU ARE rather than a toggle. Pulls profile from ybg_softball_profile
+// and access state from getAccessState(); the Subscription card below
+// still renders the same email + plan so dependents (who can't see the
+// billing controls) still have their own account-info surface there.
+function updateSettingsYouHeader() {
+  try {
+    const nameEl  = document.getElementById('settings-you-name');
+    const emailEl = document.getElementById('settings-you-email');
+    const badgeEl = document.getElementById('settings-you-plan-badge');
+
+    // Name from softball profile, with sensible fallback.
+    let displayName = 'Player';
+    try {
+      const p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+      if (p && typeof p.name === 'string' && p.name.trim()) displayName = p.name.trim();
+    } catch (e) {}
+    if (nameEl) nameEl.textContent = displayName;
+
+    // Email from access state. Hide the legacy @ybg.app placeholder.
+    let email = '';
+    try {
+      const acc = getAccessState ? getAccessState() : null;
+      if (acc && acc.email && !String(acc.email).endsWith('@ybg.app')) email = acc.email;
+    } catch (e) {}
+    if (emailEl) emailEl.textContent = email || 'No email on file';
+
+    // Plan badge — same logic as updateSubscriptionCard's plan label,
+    // distilled to a 1-2 word badge.
+    if (badgeEl) {
+      try {
+        const acc = getAccessState ? getAccessState() : {};
+        let label = '—';
+        if (typeof isCreator === 'function' && isCreator()) {
+          label = 'Creator';
+        } else if (typeof getBillingRole === 'function' && getBillingRole().role === 'dependent') {
+          label = 'Family';
+        } else if (acc.paid) {
+          label = 'Pro';
+        } else if (acc.trialStart) {
+          const elapsed = (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24);
+          const daysLeft = Math.max(0, Math.ceil(7 - elapsed));
+          label = daysLeft > 0 ? ('Trial · ' + daysLeft + 'd') : 'Trial Ended';
+        } else {
+          label = 'Free';
+        }
+        badgeEl.textContent = label;
+      } catch (e) {
+        badgeEl.textContent = '—';
+      }
+    }
+
+    // Sport switcher — only family=both gets to flip the active sport
+    // from Settings. Mirror the dashboard header toggle visuals so it
+    // feels like the same control in two places.
+    try {
+      const toggleEl = document.getElementById('settings-you-sport-toggle');
+      const family   = localStorage.getItem('mg_family_sport') || '';
+      const current  = (typeof document !== 'undefined' && document.documentElement.getAttribute('data-sport')) || 'baseball';
+      if (toggleEl) {
+        toggleEl.style.display = (family === 'both') ? 'block' : 'none';
+        if (family === 'both') {
+          const bb = document.getElementById('settings-sport-baseball');
+          const sb = document.getElementById('settings-sport-softball');
+          const activeStyle   = function(el, on) {
+            if (!el) return;
+            el.style.background  = on ? 'var(--gold)' : 'var(--card2)';
+            el.style.color       = on ? '#080808'     : 'var(--light)';
+            el.style.borderColor = on ? 'var(--gold)' : 'var(--border)';
+          };
+          activeStyle(bb, current === 'baseball');
+          activeStyle(sb, current === 'softball');
+        }
+      }
+    } catch (e) {}
+  } catch (e) {}
+}
+
+// ─── TELL A TEAMMATE ───────────────────────────────────────
+// Settings → Help & Support → Tell a Teammate. Reuses the existing
+// share infrastructure (shareToSocial('native') falls back to clipboard
+// copy when navigator.share isn't available). Pre-launch substitute for
+// a Rate-the-App popup — we're a PWA, no App Store listing yet to point
+// at. Once the iOS app ships, wire SKStoreReviewController to fire
+// ONCE after a positive moment (7-day streak, 3rd game saved, goal hit).
+function tellATeammate() {
+  try {
+    if (typeof shareToSocial === 'function') {
+      shareToSocial('native');
+      return;
+    }
+    // Fallback if shareToSocial isn't loaded yet for some reason.
+    if (navigator.share) {
+      navigator.share({
+        title: 'My Grind — ' + (window.mgSportName || 'Baseball') + ' Journal App',
+        text:  'Yo you gotta get this. MY GRIND — journal + stats + training plan in one app.',
+        url:   'https://mygrindapp.com'
+      });
+    } else if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText('https://mygrindapp.com');
+    }
+  } catch (e) {}
 }
 
 function applySettings(s) {
