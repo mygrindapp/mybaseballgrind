@@ -4669,6 +4669,15 @@ function buildScreen8() {
   // and the server-side started:false is just an idempotent ack.
   recordTrialStartServerSide();
 
+  // ─── Auto-subscribe to MyGrind Weekly newsletter (2026-05-18) ──
+  // Once a parent reaches Screen 8 they've completed signup. Add their
+  // email to the Mailchimp audience so they start getting the weekly
+  // newsletter (MyGrind Weekly, Tuesday 9am PT per existing memory).
+  // Same audience + tag as the landing-page form, so a single parent
+  // who hit BOTH the waitlist and the paid signup deduplicates cleanly.
+  // CAN-SPAM compliant: every Mailchimp email has standard unsubscribe.
+  mailchimpSyncSignup();
+
   // ─── Hide install prompt card if PWA is already installed ──
   // 2026-05-18 launch polish. If the user is viewing Screen 8 from
   // an installed PWA shortcut (Add to Home Screen already done), the
@@ -4807,6 +4816,53 @@ function recordTrialStartServerSide() {
   } catch (_) {
     // Any synchronous error — fail-open silently. Don't break Screen 8.
   }
+}
+
+// ─── MAILCHIMP NEWSLETTER AUTO-SUBSCRIBE (2026-05-18) ──────
+// Adds the parent's email to the MyGrind Weekly newsletter audience
+// when they reach Screen 8 (post-payment dashboard). Same audience
+// (73280b4c02e9bc56c7e633892) and tag (2216797 = Founder cohort) the
+// landing-page form uses — Mailchimp deduplicates on email so parents
+// who hit the waitlist AND paid signup don't get double-welcomed.
+//
+// Fire-and-forget. Failures NEVER block the dashboard render. The
+// state.mailchimpSynced flag prevents re-firing on Screen 8 refreshes
+// from the same browser. CAN-SPAM compliant via Mailchimp's standard
+// unsubscribe link on every newsletter send.
+function mailchimpSyncSignup() {
+  try {
+    if (state.mailchimpSynced) return; // already fired in this browser session
+    var email = ((state.parent && state.parent.email) || '').trim();
+    if (!email) return;
+    var firstName = ((state.parent && state.parent.firstName) || '').trim();
+
+    // Same Mailchimp audience + tag as index.html (line 1093) so the
+    // existing welcome automation continues to fire untouched.
+    var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
+      + '?u=73280b4c02e9bc56c7e633892'
+      + '&id=a7d801599a'
+      + '&f_id=0089ace1f0'
+      + '&EMAIL='   + encodeURIComponent(email)
+      + (firstName ? '&FNAME=' + encodeURIComponent(firstName) : '')
+      + '&tags=2216797';
+
+    // no-cors fetch fires the subscribe; we never read the response.
+    // Mailchimp deduplicates server-side so this is safe to re-call.
+    if (window.fetch) {
+      fetch(url, { mode: 'no-cors' }).catch(function(){ /* fail-open */ });
+    } else {
+      // Older browsers — fall back to a script-tag JSONP fire.
+      var s = document.createElement('script');
+      s.src = url + '&c=mgmcsubcb_' + Date.now();
+      s.async = true;
+      s.onerror = function(){ try { document.head.removeChild(s); } catch(_) {} };
+      s.onload  = function(){ try { document.head.removeChild(s); } catch(_) {} };
+      document.head.appendChild(s);
+    }
+
+    state.mailchimpSynced = true;
+    try { saveState(); } catch(_) {}
+  } catch (_) { /* fail-open silently — never block signup */ }
 }
 
 // ─── "Trial already used" overlay ─────────────────────────
