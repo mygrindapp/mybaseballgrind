@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>MyGrind — Welcome, Player</title>
+<title>MyGrind: Welcome, Player</title>
 
 <script>
   // Inline-data logo refs so the preview panel and offline contexts render the
@@ -396,7 +396,7 @@ h1 span { color: var(--gold); }
       Since you're using your parent's phone, this PIN keeps your stuff yours. <strong style="color:var(--gold);">Don't share it.</strong>
     </p>
 
-    <div class="pin-helper">Enter 4 numbers — something easy for you to remember.</div>
+    <div class="pin-helper">Enter 4 numbers. Something easy for you to remember.</div>
 
     <div class="pin-row">
       <input type="tel" inputmode="numeric" maxlength="1" class="pin-box" id="pin1" oninput="onPinInput(1, this)">
@@ -405,7 +405,7 @@ h1 span { color: var(--gold); }
       <input type="tel" inputmode="numeric" maxlength="1" class="pin-box" id="pin4" oninput="onPinInput(4, this)">
     </div>
 
-    <div class="pin-error" id="pinErr">Pick a different PIN — 0000 and 1234 are too easy to guess.</div>
+    <div class="pin-error" id="pinErr">Pick a different PIN: 0000 and 1234 are too easy to guess.</div>
 
     <p class="sub" style="font-size:13px;color:#6B5E52;text-align:center;font-style:italic;">
       You'll use this PIN to log in any time you open MyGrind on this phone.
@@ -514,7 +514,7 @@ h1 span { color: var(--gold); }
     <div class="badge">About You</div>
     <h1>What position<br><span>do you play?</span></h1>
     <div class="gold-bar"></div>
-    <p class="sub">Select all that apply — many players cover multiple positions.</p>
+    <p class="sub">Select all that apply. Many players cover multiple positions.</p>
     <div class="multi-hint">✓ Select all that apply</div>
     <div id="posGrid"></div>
   </div>
@@ -542,12 +542,12 @@ h1 span { color: var(--gold); }
     <div class="badge">About You</div>
     <h1>What level do<br><span>you compete at?</span></h1>
     <div class="gold-bar"></div>
-    <p class="sub">Be honest — this calibrates your training load and goals.</p>
+    <p class="sub">Be honest. This calibrates your training load and goals.</p>
     <button class="opt" onclick="pick(this,'level','Recreational')">⚾ &nbsp;Recreational / House League</button>
-    <button class="opt" onclick="pick(this,'level','JV')">📈 &nbsp;JV — Just made the team</button>
-    <button class="opt" onclick="pick(this,'level','Varsity')">🏆 &nbsp;Varsity — Starting or competing for a spot</button>
-    <button class="opt" onclick="pick(this,'level','Travel Ball')">✈️ &nbsp;Travel Ball — Club / Select team</button>
-    <button class="opt" onclick="pick(this,'level','College')">🎓 &nbsp;College — D1, D2, D3, or JUCO</button>
+    <button class="opt" onclick="pick(this,'level','JV')">📈 &nbsp;JV: Just made the team</button>
+    <button class="opt" onclick="pick(this,'level','Varsity')">🏆 &nbsp;Varsity: Starting or competing for a spot</button>
+    <button class="opt" onclick="pick(this,'level','Travel Ball')">✈️ &nbsp;Travel Ball: Club / Select team</button>
+    <button class="opt" onclick="pick(this,'level','College')">🎓 &nbsp;College: D1, D2, D3, or JUCO</button>
   </div>
 
   <div class="bnav">
@@ -574,9 +574,9 @@ h1 span { color: var(--gold); }
     <h1>Do you currently<br><span>play for a team?</span></h1>
     <div class="gold-bar"></div>
     <p class="sub">Your team affiliation helps us personalize your in-season vs off-season plan.</p>
-    <button class="opt" onclick="pick(this,'team','Yes — I am currently on a team')">✅ &nbsp;Yes — I am currently on a team</button>
-    <button class="opt" onclick="pick(this,'team','No — I am between teams')">🔄 &nbsp;No — I am between teams right now</button>
-    <button class="opt" onclick="pick(this,'team','No — I am trying to make a team')">🎯 &nbsp;No — I am trying to make a team</button>
+    <button class="opt" onclick="pick(this,'team','Yes: I am currently on a team')">✅ &nbsp;Yes: I am currently on a team</button>
+    <button class="opt" onclick="pick(this,'team','No: I am between teams')">🔄 &nbsp;No: I am between teams right now</button>
+    <button class="opt" onclick="pick(this,'team','No: I am trying to make a team')">🎯 &nbsp;No: I am trying to make a team</button>
     <button class="opt" onclick="pick(this,'team','I train independently')">💪 &nbsp;I train independently</button>
   </div>
 
@@ -603,7 +603,7 @@ h1 span { color: var(--gold); }
     <div class="badge">Your Journey</div>
     <h1>What are you<br><span>working toward?</span></h1>
     <div class="gold-bar"></div>
-    <p class="sub">Pick everything that applies — most players have more than one goal.</p>
+    <p class="sub">Pick everything that applies. Most players have more than one goal.</p>
     <div class="multi-hint">✓ Select all that apply</div>
     <button class="opt" onclick="toggle(this,'goal','Make a travel team')">🏆 &nbsp;Make a travel / select team</button>
     <button class="opt" onclick="toggle(this,'goal','Improve specific skills')">📈 &nbsp;Improve specific skills</button>
@@ -637,13 +637,13 @@ h1 span { color: var(--gold); }
     <div class="badge">Your Journey</div>
     <h1>Where do you<br><span>struggle most?</span></h1>
     <div class="gold-bar"></div>
-    <p class="sub">Select all that apply — the journal is your private space, no judgment.</p>
+    <p class="sub">Select all that apply. The journal is your private space, no judgment.</p>
     <div class="multi-hint">✓ Select all that apply</div>
-    <button class="opt" onclick="toggle(this,'struggle','Hitting — consistency and approach')">🏏 &nbsp;Hitting — consistency and approach</button>
-    <button class="opt" onclick="toggle(this,'struggle','Pitching — command and confidence')">⚾ &nbsp;Pitching — command and confidence</button>
-    <button class="opt" onclick="toggle(this,'struggle','Fielding — footwork and hands')">🧤 &nbsp;Fielding — footwork and hands</button>
-    <button class="opt" onclick="toggle(this,'struggle','Mental game — pressure and focus')">🧠 &nbsp;Mental game — pressure and focus</button>
-    <button class="opt" onclick="toggle(this,'struggle','Consistency — staying locked in daily')">🔄 &nbsp;Consistency — staying locked in daily</button>
+    <button class="opt" onclick="toggle(this,'struggle','Hitting: consistency and approach')">🏏 &nbsp;Hitting: consistency and approach</button>
+    <button class="opt" onclick="toggle(this,'struggle','Pitching: command and confidence')">⚾ &nbsp;Pitching: command and confidence</button>
+    <button class="opt" onclick="toggle(this,'struggle','Fielding: footwork and hands')">🧤 &nbsp;Fielding: footwork and hands</button>
+    <button class="opt" onclick="toggle(this,'struggle','Mental game: pressure and focus')">🧠 &nbsp;Mental game: pressure and focus</button>
+    <button class="opt" onclick="toggle(this,'struggle','Consistency: staying locked in daily')">🔄 &nbsp;Consistency: staying locked in daily</button>
     <button class="opt" onclick="toggle(this,'struggle','Speed and athleticism')">🏃 &nbsp;Speed and athleticism</button>
   </div>
 
@@ -670,7 +670,7 @@ h1 span { color: var(--gold); }
     <div class="badge">Your Journey</div>
     <h1>What has your coach<br><span>told you to work on?</span></h1>
     <div class="gold-bar"></div>
-    <p class="sub">Select all that apply — we'll build these into your first journal goals.</p>
+    <p class="sub">Select all that apply. We'll build these into your first journal goals.</p>
     <div class="multi-hint">✓ Select all that apply</div>
     <button class="opt" onclick="toggle(this,'coachFeedback','My bat path and swing mechanics')">🏏 &nbsp;My bat path and swing mechanics</button>
     <button class="opt" onclick="toggle(this,'coachFeedback','My footwork and fielding range')">🧤 &nbsp;My footwork and fielding range</button>
@@ -705,11 +705,11 @@ h1 span { color: var(--gold); }
     <h1>How many days per week<br><span>do you currently train?</span></h1>
     <div class="gold-bar"></div>
     <p class="sub">Be honest. The journal meets you where you are and helps you build from there.</p>
-    <button class="opt" onclick="pick(this,'trainingDays','1–2 days — just getting started')">1–2 days &nbsp;— Just getting started</button>
-    <button class="opt" onclick="pick(this,'trainingDays','3–4 days — building my routine')">3–4 days &nbsp;— Building my routine</button>
-    <button class="opt" onclick="pick(this,'trainingDays','5–6 days — serious about my development')">5–6 days &nbsp;— Serious about my development</button>
-    <button class="opt" onclick="pick(this,'trainingDays','Every day — fully committed')">Every day &nbsp;— Fully committed to the grind</button>
-    <button class="opt" onclick="pick(this,'trainingDays','Game days only right now')">Game days only &nbsp;— In-season focus right now</button>
+    <button class="opt" onclick="pick(this,'trainingDays','1–2 days: just getting started')">1–2 days &nbsp;· Just getting started</button>
+    <button class="opt" onclick="pick(this,'trainingDays','3–4 days: building my routine')">3–4 days &nbsp;· Building my routine</button>
+    <button class="opt" onclick="pick(this,'trainingDays','5–6 days: serious about my development')">5–6 days &nbsp;· Serious about my development</button>
+    <button class="opt" onclick="pick(this,'trainingDays','Every day: fully committed')">Every day &nbsp;· Fully committed to the grind</button>
+    <button class="opt" onclick="pick(this,'trainingDays','Game days only right now')">Game days only &nbsp;· In-season focus right now</button>
   </div>
 
   <div class="bnav">
@@ -746,7 +746,7 @@ h1 span { color: var(--gold); }
     <div class="card" style="margin-bottom:12px;">
       <div class="card-title">Example Journal Entry</div>
       <div style="font-size:13px;color:#D4C8BC;line-height:1.8;">
-        <div style="padding:5px 0;border-bottom:1px solid #3D3530;">🟡 <strong style="color:#F5F0EB;">Drill:</strong> <span id="exDrill">Tee work — inside pitch, 40 reps</span></div>
+        <div style="padding:5px 0;border-bottom:1px solid #3D3530;">🟡 <strong style="color:#F5F0EB;">Drill:</strong> <span id="exDrill">Tee work. Inside pitch, 40 reps</span></div>
         <div style="padding:5px 0;border-bottom:1px solid #3D3530;">🟡 <strong style="color:#F5F0EB;">Feel:</strong> Making contact but pulling off the ball</div>
         <div style="padding:5px 0;">🟡 <strong style="color:#F5F0EB;">Fix:</strong> Stay back, shoulder level through contact</div>
       </div>
@@ -847,7 +847,7 @@ h1 span { color: var(--gold); }
       <div class="exit-card-row"><span class="check">&#10003;</span> Coach feedback ready to track</div>
       <div class="exit-card-row"><span class="check">&#10003;</span> Plan calibrated to your training schedule</div>
       <div class="exit-card-row" id="exit_pin_row" style="display:none;">
-        <span class="check">&#10003;</span> PIN set — log in any time on this phone
+        <span class="check">&#10003;</span> PIN set. Log in any time on this phone
       </div>
     </div>
 
@@ -960,7 +960,7 @@ function personalizeWelcome() {
       'We\'ll help you set up a 4-digit PIN that\'s just yours, then walk through your training plan.';
   } else {
     if (d.name) {
-      if (subSpan) subSpan.textContent = "Your parent signed you up — let's finish your profile.";
+      if (subSpan) subSpan.textContent = "Your parent signed you up. Let's finish your profile.";
       if (contextDiv) contextDiv.innerHTML =
         '<strong>Your account is ready.</strong> Just a few quick questions about your sport, your goals, ' +
         'and what you\'re working on. Your answers shape your training plan.';
@@ -1263,13 +1263,13 @@ function buildPlan() {
   var goalLabel = Array.isArray(d.goal) ? d.goal.join(' + ') : (d.goal || 'Your Goal');
 
   var t = document.getElementById('planTitle');
-  if (t) t.textContent = sportLabel + ' Player Plan — ' + goalLabel;
+  if (t) t.textContent = sportLabel + ' Player Plan: ' + goalLabel;
 
   var sub = document.getElementById('s11sub');
-  if (sub) sub.textContent = 'Based on your answers — here\'s what MyGrind built for you, ' + (d.age || 'player') + '.';
+  if (sub) sub.textContent = 'Based on your answers. Here\'s what MyGrind built for you, ' + (d.age || 'player') + '.';
 
   var posLabel = Array.isArray(d.position) && d.position.length ? d.position.join(' / ') : (d.position || 'your position');
-  var drills = d.sport === 'softball' ? 'Fastpitch drills + circle change work — 3x/week' : 'Position drills for ' + posLabel + ' — 3x/week';
+  var drills = d.sport === 'softball' ? 'Fastpitch drills + circle change work. 3x/week' : 'Position drills for ' + posLabel + '. 3x/week';
 
   var coachArr = Array.isArray(d.coachFeedback) ?
     d.coachFeedback.filter(function(x) { return x !== 'Nothing specific yet'; }) : [];
@@ -1291,11 +1291,11 @@ function buildPlan() {
   var drill = document.getElementById('exDrill');
   if (drill) {
     var struggleStr = (Array.isArray(d.struggle) ? d.struggle.join(' ') : (d.struggle || '')).toLowerCase();
-    if (struggleStr.indexOf('hitting') !== -1)        drill.textContent = 'Tee work — inside pitch, 50 reps';
-    else if (struggleStr.indexOf('pitching') !== -1)  drill.textContent = 'Bullpen — location work, 30 pitches';
-    else if (struggleStr.indexOf('fielding') !== -1)  drill.textContent = 'Short hops — backhand drill, 20 reps';
-    else if (struggleStr.indexOf('mental') !== -1)    drill.textContent = 'Visualization — full at-bat routine, 5 min';
-    else                                              drill.textContent = 'Tee work — inside pitch, 40 reps';
+    if (struggleStr.indexOf('hitting') !== -1)        drill.textContent = 'Tee work. Inside pitch, 50 reps';
+    else if (struggleStr.indexOf('pitching') !== -1)  drill.textContent = 'Bullpen: location work, 30 pitches';
+    else if (struggleStr.indexOf('fielding') !== -1)  drill.textContent = 'Short hops. Backhand drill, 20 reps';
+    else if (struggleStr.indexOf('mental') !== -1)    drill.textContent = 'Visualization: full at-bat routine, 5 min';
+    else                                              drill.textContent = 'Tee work. Inside pitch, 40 reps';
   }
 }
 
@@ -1420,7 +1420,7 @@ window.addEventListener('DOMContentLoaded', function() {
   buildDots(0);
 
   // Dev console banner
-  console.log('%c⚾ MyGrind Onboarding — Phase 4 (Player flow, parent-invited)',
+  console.log('%c⚾ MyGrind Onboarding: Phase 4 (Player flow, parent-invited)',
               'color: var(--gold); font-weight: bold; font-size: 14px;');
   console.log('URL params: name=' + (d.name || 'none') + ', fallback=' + d.fallback);
   console.log('State object available as window.mgPlayer for debugging.');
