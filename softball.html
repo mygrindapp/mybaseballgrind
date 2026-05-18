@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v266';
+    const CACHE = 'ybg-mygrind-v267';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -13672,7 +13672,7 @@ function updateStreakDisplay() {
 const YBG_QUOTES = [
   { q: "The grind is not a moment. It is a decision you make every morning.",                       a: "The Grind" },
   { q: "Talent gets you noticed. Preparation gets you starts.",                                     a: "The Grind" },
-  { q: "There are no off days. There is only the day you chose to get better or the day you didn't.", a: "The Grind" },
+  { q: "Even your off days are a choice. Choose recovery on purpose.",                              a: "The Grind" },
   { q: "Play for the name on the front of your jersey. Your name on the back takes care of itself.", a: "The Grind" },
   { q: "Your teammates remember how you played for them. Your stats do not.",                       a: "The Grind" },
   { q: "The best ability is availability. Take care of your arm. Take care of your body.",           a: "The Grind" },
@@ -13683,7 +13683,7 @@ const YBG_QUOTES = [
   { q: "Respect the game. Respect your opponent. Respect yourself.",                                a: "The Grind" },
   { q: "You cannot control the umpire. You cannot control the weather. Control what you can control.", a: "The Grind" },
   { q: "Everybody wants to hit. Nobody wants to take ground balls. That is where the game is won.", a: "The Grind" },
-  { q: "The best hitters in baseball fail 7 out of 10 times. They keep swinging.",                  a: "The Grind" },
+  { q: "The best hitters in this game fail 7 out of 10 times. They keep swinging.",                a: "The Grind" },
   { q: "A great teammate is worth more than a great player. Be both.",                              a: "The Grind" },
   { q: "Your mental game is your biggest advantage. Protect it. Train it.",                         a: "The Grind" },
   { q: "No grades, no game. That is not a threat. That is reality.",                            a: "The Grind" },
@@ -17520,22 +17520,22 @@ var YBG_QOTD = [
   { q: "Talent gets you noticed. Preparation gets you starts.", a: "The Grind" },
   { q: "If you don't journal it, you didn't learn from it.", a: "The Grind" },
   { q: "Play for the name on the front. Your name on the back takes care of itself.", a: "The Grind" },
-  { q: "The circle change that wins games in May is built in the cage in December.", a: "The Grind" },
+  { q: "The circle change that wins games in May is built in the cage in December.", a: "The Grind", sport: "softball" },
   { q: "The scoreboard tells you who won. The journal tells you why.", a: "The Grind" },
   { q: "Confidence comes from the reps nobody saw you take.", a: "The Grind" },
   { q: "One at-bat at a time. One inning at a time. One game at a time.", a: "The Grind" },
-  { q: "The rise ball that fools hitters in the circle is hours of work behind the mound.", a: "The Grind" },
+  { q: "The rise ball that fools hitters in the circle is hours of work behind the mound.", a: "The Grind", sport: "softball" },
   { q: "Two things you control: your effort and your attitude. Own them both.", a: "The Grind" },
   { q: "Hustle is the only stat that never slumps.", a: "The Grind" },
   { q: "You don't rise to the occasion. You fall to your level of preparation.", a: "The Grind" },
   { q: "The best hitters in this game fail 7 out of 10 times. They keep swinging.", a: "The Grind" },
-  { q: "Slapping is a skill. Bunting is an art. Master both and coaches have no answer for you.", a: "The Grind" },
+  { q: "Slapping is a skill. Bunting is an art. Master both and coaches have no answer for you.", a: "The Grind", sport: "softball" },
   { q: "A great teammate is worth more than a great player. Be both.", a: "The Grind" },
   { q: "Your mental game is your biggest advantage. Protect it. Train it.", a: "The Grind" },
   { q: "No Grades · No Game. That is not a threat. That is reality.", a: "The Grind" },
   { q: "The game will humble you. Journal it. Learn it. Come back better tomorrow.", a: "The Grind" },
   { q: "Losing stings. Learning from it lasts.", a: "The Grind" },
-  { q: "The DP and Flex is one of the most strategic positions in sports. Know your role cold.", a: "The Grind" },
+  { q: "The DP and Flex is one of the most strategic positions in sports. Know your role cold.", a: "The Grind", sport: "softball" },
   { q: "Close the book on every game. Learn from it and move on.", a: "The Grind" },
   { q: "Respect the game. Respect your opponent. Respect yourself.", a: "The Grind" },
   { q: "The pitcher who throws 3 pitches for strikes is more dangerous than the one who throws 5 pitches fast.", a: "The Grind" },
@@ -17544,7 +17544,7 @@ var YBG_QOTD = [
   { q: "Your teammates remember how you played for them. Your stats do not.", a: "The Grind" },
   { q: "Coaches don't remember your best game. They remember your effort on your worst day.", a: "The Grind" },
   { q: "Every rep you log is a receipt. Show coaches your receipts.", a: "The Grind" },
-  { q: "The drop ball is just physics. The rise ball is faith. Throw both with conviction.", a: "The Grind" },
+  { q: "The drop ball is just physics. The rise ball is faith. Throw both with conviction.", a: "The Grind", sport: "softball" },
   { q: "Be first to practice and last to leave. Let that be your reputation.", a: "The Grind" },
   { q: "The player who shows up tired and does the work anyway is the one who gets the start in May.", a: "The Grind" },
   { q: "Champions are built in February when no one is watching.", a: "The Grind" },
@@ -17584,7 +17584,21 @@ var YBG_QOTD = [
   { q: "Your worst position is the one you avoid. Get reps there too.", a: "The Grind" },
   { q: "The kid who runs out every ground ball wins something different than the scoreboard.", a: "The Grind" },
   { q: "The game is hard for everyone. The ones who keep going win it.", a: "The Grind" },
-  { q: "Talk less. Train more.", a: "The Grind" }
+  { q: "Talk less. Train more.", a: "The Grind" },
+  // Baseball-specific (Decision #42 follow-up, 2026-05-18). Tagged so
+  // showQotd() only plays these in baseball mode — softball-mode users
+  // skip past them automatically. Built to balance the 5 softball-only
+  // quotes (rise ball / drop / DP-Flex / slap-and-bunt / circle change)
+  // that were tagged earlier in the same pass. Pure baseball lingo
+  // (across the diamond, breaking ball, pickoff move, 60-yard, two-seam)
+  // so the rotation feels native to baseball players instead of borrowing
+  // softball framing.
+  { q: "A scout watches your throw across the diamond before he watches your swing. Make both elite.", a: "The Grind", sport: "baseball" },
+  { q: "The double play turn that wins championships is the one you took 1,000 times in February.",   a: "The Grind", sport: "baseball" },
+  { q: "Your breaking ball is built on your fastball. Throw enough strikes with one and the other becomes a weapon.", a: "The Grind", sport: "baseball" },
+  { q: "The pickoff move that freezes runners is the one no batter on first knows is coming. Build it slow.",         a: "The Grind", sport: "baseball" },
+  { q: "Your 60-yard time changes the room. Train it like a position.",                                a: "The Grind", sport: "baseball" },
+  { q: "The two-seam that runs is the one you trust on 2-1. Build the feel before you need the call.", a: "The Grind", sport: "baseball" }
 ];
 
 function showQotd() {
@@ -17592,7 +17606,27 @@ function showQotd() {
   var now   = new Date();
   var start = new Date(now.getFullYear(), 0, 0);
   var day   = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-  var q     = YBG_QOTD[day % YBG_QOTD.length];
+  var len   = YBG_QOTD.length;
+
+  // Sport-aware rotation (Decision #42 follow-up, 2026-05-18): a quote
+  // with a `sport` field only plays when that sport is active. Untagged
+  // quotes are sport-agnostic and play in both modes. If the day-of-year
+  // index lands on a wrong-sport quote, step forward through the array
+  // to the next eligible quote — keeps rotation deterministic per-day
+  // per-sport without dropping coverage.
+  var activeSport = (function () {
+    try { return window.mgSport || localStorage.getItem('mg_sport') || 'baseball'; }
+    catch (e) { return 'baseball'; }
+  })();
+  var q = null;
+  for (var step = 0; step < len; step++) {
+    var candidate = YBG_QOTD[(day + step) % len];
+    if (!candidate || !candidate.sport || candidate.sport === activeSport) {
+      q = candidate;
+      break;
+    }
+  }
+  if (!q) q = YBG_QOTD[day % len]; // safety: should be unreachable
 
   var textEl   = document.getElementById('qotd-text');
   var authorEl = document.getElementById('qotd-author');
