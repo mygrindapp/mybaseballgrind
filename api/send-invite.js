@@ -19,8 +19,18 @@
 // ═══════════════════════════════════════════════════════════
 
 import twilio from 'twilio';
+import crypto from 'crypto';
 import { checkIpLimit, checkPhoneLimit, recordSend } from '../lib/rate-limit.js';
 import { lookupPhone } from '../lib/lookup.js';
+
+// Short-hash PII for Vercel logs (H3 — security audit 2026-05-18).
+// Phone numbers stay greppable across log entries (same phone → same hash)
+// without sitting in cleartext where any teammate with Vercel project
+// access can read them. 8-char SHA-256 prefix.
+function piiHash(value) {
+  if (!value) return 'none';
+  return crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 8);
+}
 
 // ─── Config flags ─────────────────────────────────────────
 const DRY_RUN = process.env.SMS_DRY_RUN !== 'false';
@@ -116,7 +126,7 @@ export default async function handler(req, res) {
   // ─── Phone normalization ─────────────────────────────────
   const e164Phone = toE164(playerPhone);
   if (!e164Phone) {
-    console.warn('[send-invite] Invalid phone format:', playerPhone);
+    console.warn('[send-invite] Invalid phone format:', { phoneHash: piiHash(playerPhone) });
     return res.status(400).json({
       success: false,
       error: 'Invalid phone number',
@@ -178,11 +188,12 @@ export default async function handler(req, res) {
   // DRY_RUN responses count against rate limits — that's
   // intentional, so testing simulates real protection behavior.
   if (DRY_RUN) {
+    // DRY_RUN log: hash recipient phone, omit full body (contains player
+    // first name in plaintext). Keep bodyLength so we can verify SMS
+    // segment count without storing PII. H3 — security audit 2026-05-18.
     console.log('[send-invite DRY_RUN] Would send SMS:', {
-      to: e164Phone,
-      from: process.env.TWILIO_FROM_NUMBER,
+      toHash: piiHash(e164Phone),
       bodyLength: smsBody.length,
-      body: smsBody,
       signupSessionId,
     });
     return res.status(200).json({

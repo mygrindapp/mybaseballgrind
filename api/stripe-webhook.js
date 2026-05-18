@@ -25,7 +25,17 @@
 
 import Stripe from 'stripe';
 import { Resend } from 'resend';
+import crypto from 'crypto';
 import { upsertSubscription } from '../lib/subscription-store.js';
+
+// Short-hash PII for Vercel logs (H3 — security audit 2026-05-18).
+// Email and customer-id stay greppable across log entries (same email
+// always hashes to the same prefix) without sitting in cleartext where
+// any teammate with Vercel project access can read them.
+function piiHash(value) {
+  if (!value) return 'none';
+  return crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 8);
+}
 
 // ─── CANCELLATION EMAIL ────────────────────────────────────
 // Closes the loop on the cancellation policy promised in Settings on
@@ -123,7 +133,7 @@ async function sendCancellationEmail({ email, currentPeriodEndUnix, plan }) {
     const resend = new Resend(apiKey);
     const subject = 'Your MyGrind subscription has been canceled';
     const result = await resend.emails.send({ from, to, subject, html, text });
-    console.log('[stripe-webhook] cancellation email sent', { to, plan, redirected: !!testRedirect, resendId: result?.data?.id });
+    console.log('[stripe-webhook] cancellation email sent', { toHash: piiHash(to), plan, redirected: !!testRedirect, resendId: result?.data?.id });
     return { ok: true, id: result?.data?.id || null };
   } catch (e) {
     console.error('[stripe-webhook] cancellation email send failed:', e.message);

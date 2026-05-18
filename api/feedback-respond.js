@@ -8,7 +8,14 @@
 // ═══════════════════════════════════════════════════════════
 
 import twilio from 'twilio';
+import crypto from 'crypto';
 import { recordResponse, getRequest } from '../lib/feedback-store.js';
+
+// Short-hash PII for Vercel logs (H3 — security audit 2026-05-18).
+function piiHash(value) {
+  if (!value) return 'none';
+  return crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 8);
+}
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -50,7 +57,10 @@ async function sendSms(toPhone, body) {
   const fromNumber = process.env.TWILIO_FROM_NUMBER;
 
   if (DRY_RUN) {
-    console.log('[feedback-respond DRY_RUN] Would SMS player:', { to: toPhone, body });
+    // DRY_RUN log: hash player phone, omit full body (includes coach's
+    // response chip + the player's first name). H3 — security audit
+    // 2026-05-18.
+    console.log('[feedback-respond DRY_RUN] Would SMS player:', { toHash: piiHash(toPhone), bodyLength: body.length });
     return { ok: true, dryRun: true };
   }
   if (!accountSid || !authToken || !fromNumber) return { ok: false, error: 'twilio_unconfigured' };

@@ -7,7 +7,22 @@
 // ═══════════════════════════════════════════════════════════
 
 import twilio from 'twilio';
+import crypto from 'crypto';
 import { createRequest } from '../lib/feedback-store.js';
+import { checkIpLimit, checkPhoneLimit, recordSend } from '../lib/rate-limit.js';
+
+// ─── Extract real client IP from Vercel proxy headers ─────
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.headers['x-real-ip'] || null;
+}
+
+// ─── Short-hash for PII-safe logs (Decision: never log raw email/phone) ─
+function piiHash(value) {
+  if (!value) return 'none';
+  return crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 8);
+}
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -43,7 +58,10 @@ async function sendSmsViaTwilio(toPhone, body) {
   const fromNumber = process.env.TWILIO_FROM_NUMBER;
 
   if (DRY_RUN) {
-    console.log('[feedback-request DRY_RUN] Would SMS coach:', { to: toPhone, body });
+    // DRY_RUN log: hash coach phone, omit full body (includes magic-link
+    // token in URL which grants response access for 90 days). H3 —
+    // security audit 2026-05-18.
+    console.log('[feedback-request DRY_RUN] Would SMS coach:', { toHash: piiHash(toPhone), bodyLength: body.length });
     return { ok: true, dryRun: true };
   }
   if (!accountSid || !authToken || !fromNumber) {
@@ -83,6 +101,50 @@ export default async function handler(req, res) {
   }
   if (!coachEmail && !coachPhone) {
     return res.status(400).json({ ok: false, error: 'coach_contact_required' });
+  }
+
+  // ─── Rate limiting (H2 — security audit 2026-05-18) ──────
+  // Per-IP limit (3/hr, 10/day) prevents endpoint flood.
+  // Per-coach-phone limit (2/24h) prevents weaponized SMS spam
+  // to a single coach number once Twilio TFV approves. Reuses
+  // the same Redis-backed limiter as send-invite.js. Fail-open
+  // on Redis outage by design — legit feedback flow keeps working
+  // during a Redis blip rather than blocking everyone.
+  const clientIp = getClientIp(req);
+  const ipCheck = await checkIpLimit(clientIp);
+  if (!ipCheck.ok) {
+    console.warn('[feedback-request] IP rate limited', { ipHash: piiHash(clientIp), reason: ipCheck.reason });
+    return res.status(429).json({ ok: false, error: 'rate_limited' });
+  }
+
+  // Coach-phone bucket (only if we have a phone to rate-limit against).
+  // We use the COACH's phone as the rate-limit key here, not the player's,
+  // because the abuse pattern is "send 50 harassing SMS to coach X" —
+  // which would be invisible to a player-keyed limiter.
+  if (coachPhone) {
+    const digits = String(coachPhone).replace(/\D/g, '');
+    const coachE164 = digits.length === 10 ? '+1' + digits
+                    : (digits.length === 11 && digits.startsWith('1')) ? '+' + digits
+                    : null;
+    if (coachE164) {
+      const phoneCheck = await checkPhoneLimit(coachE164);
+      if (!phoneCheck.ok) {
+        console.warn('[feedback-request] Coach phone rate limited', { coachPhoneHash: piiHash(coachE164), reason: phoneCheck.reason });
+        return res.status(429).json({ ok: false, error: 'rate_limited' });
+      }
+      // Record the attempt against IP + coach phone BEFORE we write Redis
+      // or call Twilio. Matches send-invite.js Option C architecture:
+      // protects against bursts even when downstream services misbehave.
+      await recordSend(clientIp, coachE164);
+    } else {
+      // Coach phone is malformed but not empty — record IP only so this
+      // path still costs against the IP budget. Don't reject yet; the
+      // record will still be created (player may have intended email).
+      await recordSend(clientIp, null);
+    }
+  } else {
+    // Email-only flow (no coach phone) — still record IP cost.
+    await recordSend(clientIp, null);
   }
 
   const created = await createRequest({

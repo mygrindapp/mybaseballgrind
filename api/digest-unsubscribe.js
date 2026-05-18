@@ -47,6 +47,15 @@ function expectedToken(email) {
     .slice(0, 16);
 }
 
+// Short-hash PII for Vercel logs (H3 — security audit 2026-05-18).
+// CCPA + privacy hygiene — emails should not sit in cleartext in logs
+// that any teammate with Vercel project access can read. 8-char SHA-256
+// prefix is short enough to grep across logs but irreversible.
+function piiHash(value) {
+  if (!value) return 'none';
+  return crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 8);
+}
+
 // Brand-matched confirmation page (same warm-dark palette as the digest itself
 // so the parent recognizes the page as MyGrind, not a phishing site).
 function htmlPage({ ok, email, message }) {
@@ -117,7 +126,7 @@ export default async function handler(req, res) {
 
   try {
     await r.set('feedback:digest-optout:' + email, '1');
-    console.log('[digest-unsubscribe] opted out:', email);
+    console.log('[digest-unsubscribe] opted out:', { emailHash: piiHash(email) });
     return sendHtml(res, 200, htmlPage({
       ok: true,
       email,
