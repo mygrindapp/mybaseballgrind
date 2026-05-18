@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MyGrind — Sign Up Your Player</title>
+<title>MyGrind: Sign Up Your Player</title>
 
 <script>
   // Inline-data logo refs so the preview panel and offline contexts render the
@@ -513,6 +513,15 @@ h1 span {
   line-height: 1;
   width: 40px;
   text-align: center;
+  /* Lucide icons inside .tap-card-emoji inherit currentColor — brand gold
+     by default, matches the title accent when selected. 2026-05-18. */
+  color: #C9A84C;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.tap-card-emoji .mg-icon {
+  display: block;
 }
 .tap-card-body { flex: 1; }
 .tap-card-title {
@@ -530,35 +539,10 @@ h1 span {
   line-height: 1.4;
 }
 
-/* Phase 1F — "Coming soon for: Football · Volleyball · ..." strip on Screen 0.
-   Quiet typography so it doesn't compete with the audience-picker tiles, but
-   visible enough that parents searching for other sports see we're expanding. */
-.coming-soon-strip {
-  margin: 32px auto 0 auto;
-  max-width: 360px;
-  text-align: center;
-  padding-top: 18px;
-  border-top: 1px solid #232020;
-}
-.coming-soon-label {
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 11px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #5A5048;
-  margin-bottom: 8px;
-}
-.coming-soon-sports {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 6px 10px;
-  font-family: 'Barlow', sans-serif;
-  font-size: 14px;
-  color: #8A7E70;
-  line-height: 1.4;
-}
-.coming-soon-sports span:nth-child(even) { color: #3A332D; }   /* dim the · separators */
+/* Phase 1F coming-soon strip CSS removed 2026-05-18 — strip block
+   pulled from Screen 0 (read as gimmicky per Coach Young). Classes
+   ".coming-soon-strip", ".coming-soon-label", ".coming-soon-sports"
+   are no longer referenced anywhere in this file. */
 
 .tap-card-check {
   flex-shrink: 0;
@@ -716,6 +700,13 @@ h1 span {
   line-height: 1;
   width: 32px;
   text-align: center;
+  color: #C9A84C;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.goal-toggle-emoji .mg-icon {
+  display: block;
 }
 .goal-toggle-text {
   flex: 1;
@@ -1975,6 +1966,56 @@ select.field-input {
 </head>
 <body>
 
+<!-- ═══════════════════════════════════════════════════════════
+     LUCIDE ICON SPRITE — 2026-05-18 Coach Young north-star pass.
+     Brings signup.html into the same Lucide stroke-icon language
+     softball.html uses (Phase 1-3 swap, 2026-05-16/17). Chrome
+     icons (CTAs, family-unit cards, goal toggles, QR button) are
+     stroke icons in the brand gold. Sport identifiers (⚾/🥎) stay
+     as emoji because they ARE the content (player's sport choice),
+     not chrome. Same rule softball.html enforces.
+
+     Subset of softball.html's sprite — only what signup.html uses.
+     ═══════════════════════════════════════════════════════════ -->
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none;" aria-hidden="true">
+  <symbol id="mg-icon-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+  </symbol>
+  <symbol id="mg-icon-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+  </symbol>
+  <symbol id="mg-icon-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>
+  </symbol>
+  <symbol id="mg-icon-bar-chart-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/>
+  </symbol>
+  <symbol id="mg-icon-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+  </symbol>
+  <symbol id="mg-icon-qr-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/>
+  </symbol>
+  <symbol id="mg-icon-arrow-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+  </symbol>
+  <symbol id="mg-icon-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+  </symbol>
+  <symbol id="mg-icon-brain" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 5a3 3 0 1 0-5.997.125 4 4 0 0 0-2.526 5.77 4 4 0 0 0 .556 6.588A4 4 0 1 0 12 18Z"/><path d="M12 5a3 3 0 1 1 5.997.125 4 4 0 0 1 2.526 5.77 4 4 0 0 1-.556 6.588A4 4 0 1 1 12 18Z"/><path d="M15 13a4.5 4.5 0 0 1-3-4 4.5 4.5 0 0 1-3 4"/>
+  </symbol>
+  <symbol id="mg-icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+  </symbol>
+  <symbol id="mg-icon-map" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21 3 6"/><line x1="9" x2="9" y1="3" y2="18"/><line x1="15" x2="15" y1="6" y2="21"/>
+  </symbol>
+  <symbol id="mg-icon-lightbulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/>
+  </symbol>
+</svg>
+
 <div class="app">
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -2021,7 +2062,7 @@ select.field-input {
     <div style="margin-top: 28px;">
 
       <button type="button" class="tap-card" onclick="selectAudience('kid')">
-        <div class="tap-card-emoji">👨‍👧</div>
+        <div class="tap-card-emoji"><svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-users"/></svg></div>
         <div class="tap-card-body">
           <div class="tap-card-title">My athlete</div>
           <div class="tap-card-desc">I'm signing up my kid (or kids). I'll create the account and they'll get a text invite.</div>
@@ -2029,7 +2070,7 @@ select.field-input {
       </button>
 
       <button type="button" class="tap-card" onclick="selectAudience('self')">
-        <div class="tap-card-emoji">⚾</div>
+        <div class="tap-card-emoji"><svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg></div>
         <div class="tap-card-body">
           <div class="tap-card-title">Myself</div>
           <div class="tap-card-desc">I'm 18 or older and signing up for my own training journal.</div>
@@ -2038,26 +2079,11 @@ select.field-input {
 
     </div>
 
-    <!-- Coming-soon marketing strip (Phase 1F, 2026-05-06).
-         Signals expansion plans without committing dates. SEO bonus: a parent
-         searching "football training app" finds us, sees we're growing, can
-         email coach@mygrindapp.com to express interest (we build a waitlist
-         BEFORE we build the content). Update this list when launching a new
-         sport — see docs/ADD_A_SPORT.md. -->
-    <div class="coming-soon-strip" id="coming-soon-strip">
-      <div class="coming-soon-label">Coming soon for</div>
-      <div class="coming-soon-sports">
-        <span>🏈 Football</span>
-        <span>·</span>
-        <span>🏐 Volleyball</span>
-        <span>·</span>
-        <span>🏀 Basketball</span>
-        <span>·</span>
-        <span>⚽ Soccer</span>
-        <span>·</span>
-        <span>more</span>
-      </div>
-    </div>
+    <!-- Coming-soon marketing strip removed 2026-05-18 per Coach Young —
+         read as gimmicky on Screen 0 first impression. Multi-sport expansion
+         lives in the north-star vision (mygrind_north_star.md) and gets
+         announced when each new sport actually ships, not as a teaser strip
+         on the audience picker. Original block was Phase 1F (2026-05-06). -->
   </div>
 
   <!-- Bottom nav (no back on screen 0; no dots) -->
@@ -2113,7 +2139,7 @@ select.field-input {
     </div>
 
     <!-- Big CTA -->
-    <button class="cta-primary" onclick="goNext(1, 2)"><span class="cta-icon">⚡</span>Get Started &rarr;</button>
+    <button class="cta-primary" onclick="goNext(1, 2)"><span class="cta-icon" style="display:inline-flex; align-items:center; justify-content:center; vertical-align:-2px;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-zap"/></svg></span>Get Started &rarr;</button>
 
     <!-- Trust strip -->
     <div class="trust-strip">
@@ -2295,7 +2321,7 @@ select.field-input {
       <div class="section-label">How many players are you signing up?</div>
 
       <button type="button" class="tap-card" id="pc_1" onclick="selectPlayerCount(1)">
-        <div class="tap-card-emoji">👤</div>
+        <div class="tap-card-emoji"><svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg></div>
         <div class="tap-card-body">
           <div class="tap-card-title">One Player</div>
           <div class="tap-card-desc">Just my one.</div>
@@ -2304,16 +2330,19 @@ select.field-input {
       </button>
 
       <button type="button" class="tap-card" id="pc_2" onclick="selectPlayerCount(2)">
-        <div class="tap-card-emoji">👥</div>
+        <div class="tap-card-emoji"><svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-users"/></svg></div>
         <div class="tap-card-body">
           <div class="tap-card-title">Two Players</div>
-          <div class="tap-card-desc">Siblings — set them both up.</div>
+          <div class="tap-card-desc">Siblings. Set them both up.</div>
         </div>
         <div class="tap-card-check">✓</div>
       </button>
 
       <button type="button" class="tap-card" id="pc_3" onclick="selectPlayerCount(3)">
-        <div class="tap-card-emoji">👨‍👩‍👧‍👦</div>
+        <div class="tap-card-emoji" style="position:relative;">
+          <svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-users"/></svg>
+          <span style="position:absolute; bottom:-2px; right:-6px; background:var(--gold,#E8C97A); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:0.5px; padding:1px 5px; border-radius:8px; line-height:1.3;">3+</span>
+        </div>
         <div class="tap-card-body">
           <div class="tap-card-title">Three or More</div>
           <div class="tap-card-desc">Big family.</div>
@@ -2362,49 +2391,49 @@ select.field-input {
     <div class="gold-bar"></div>
 
     <p class="sub">
-      Helps us shape your dashboard. Pick whatever fits — there's no wrong answer.
+      Helps us shape your dashboard. Pick whatever fits. There's no wrong answer.
     </p>
 
     <div class="multi-select-hint">✓ Select all that apply</div>
 
     <button type="button" class="goal-toggle" id="g_see" onclick="toggleGoal('see')">
-      <div class="goal-toggle-emoji">🎯</div>
+      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-target"/></svg></div>
       <div class="goal-toggle-text" id="g_see_text">I want to see what my player is putting in</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_habits" onclick="toggleGoal('habits')">
-      <div class="goal-toggle-emoji">📊</div>
+      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg></div>
       <div class="goal-toggle-text" id="g_habits_text">I want them building better daily habits</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_recruit" onclick="toggleGoal('recruit')">
-      <div class="goal-toggle-emoji">🏆</div>
+      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-trophy"/></svg></div>
       <div class="goal-toggle-text" id="g_recruit_text">They're trying to make a team or get recruited</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_support" onclick="toggleGoal('support')">
-      <div class="goal-toggle-emoji">🧠</div>
+      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-brain"/></svg></div>
       <div class="goal-toggle-text" id="g_support_text">I want to support them, not pressure them</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
     <button type="button" class="goal-toggle" id="g_accountable" onclick="toggleGoal('accountable')">
-      <div class="goal-toggle-emoji">⏰</div>
+      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-clock"/></svg></div>
       <div class="goal-toggle-text" id="g_accountable_text">I want them more accountable for their own work</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
  <button type="button" class="goal-toggle" id="g_roadmap" onclick="toggleGoal('roadmap')">
-      <div class="goal-toggle-emoji">🗺️</div>
+      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-map"/></svg></div>
       <div class="goal-toggle-text" id="g_roadmap_text">I want guidance on their journey</div>
       <div class="goal-toggle-check">✓</div>
     </button>
 
      <button type="button" class="goal-toggle" id="g_explore" onclick="toggleGoal('explore')">
-      <div class="goal-toggle-emoji">💡</div>
+      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-lightbulb"/></svg></div>
       <div class="goal-toggle-text">I'm just exploring</div>
       <div class="goal-toggle-check">✓</div>
     </button>
@@ -2595,7 +2624,7 @@ select.field-input {
           autocomplete="off"
           autocapitalize="words"
           oninput="onPlayerInput()">
-        <div class="field-helper">First name or nickname is fine — whatever you call them.</div>
+        <div class="field-helper">First name or nickname is fine. Whatever you call them.</div>
       </div>
 
       <!-- Relationship -->
@@ -2876,7 +2905,7 @@ select.field-input {
       <button type="button" class="share-action-btn secondary" onclick="onNativeShare()" id="share_native_btn" style="display:none;">Share…</button>
     </div>
     <button type="button" class="share-action-btn qr" onclick="onToggleShareQR()" id="share_qr_btn">
-      <span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Show QR Code
+      <span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Show QR Code
     </button>
     <div class="share-qr-display" id="share_qr_display">
       <img class="share-qr-img" id="share_qr_img" alt="QR code linking to MyGrind signup" />
@@ -3099,7 +3128,7 @@ function applySelfLabels(n) {
     setText('g_see_text',         "I want to see my own work and progress");
     setText('g_habits_text',      "I want to build better daily habits");
     setText('g_recruit_text',     "I'm trying to make a team or get recruited");
-    setText('g_support_text',     "I want a healthy approach — not all pressure");
+    setText('g_support_text',     "I want a healthy approach, not all pressure");
     setText('g_accountable_text', "I want to be more accountable to myself");
     setText('g_roadmap_text',     "I want guidance on my journey");
     // g_explore ("I'm just exploring") already neutral — no swap needed.
@@ -3230,7 +3259,7 @@ function getPhoneError(s) {
 
   if (digits.length === 0) return 'Please enter a phone number.';
   if (digits.length < 10)  return 'A US phone number needs 10 digits.';
-  if (digits.length > 10)  return 'Too many digits — US numbers are 10 digits.';
+  if (digits.length > 10)  return 'Too many digits. US numbers are 10 digits.';
 
   const first = digits.charAt(0);
   if (first === '0' || first === '1') {
@@ -5019,7 +5048,7 @@ function openShareModal() {
   const qr      = document.getElementById('share_qr_display');
   const qrBtn   = document.getElementById('share_qr_btn');
   if (qr)    qr.classList.remove('shown');
-  if (qrBtn) qrBtn.innerHTML = '<span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Show QR Code';
+  if (qrBtn) qrBtn.innerHTML = '<span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Show QR Code';
 }
 
 function closeShareModal() {
@@ -5042,14 +5071,14 @@ function onToggleShareQR() {
   const isOpen = qr.classList.contains('shown');
   if (isOpen) {
     qr.classList.remove('shown');
-    btn.innerHTML = '<span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Show QR Code';
+    btn.innerHTML = '<span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Show QR Code';
   } else {
     if (!img.src) {
       const url = encodeURIComponent(SHARE_URL);
       img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' + url;
     }
     qr.classList.add('shown');
-    btn.innerHTML = '<span style="font-size:17px;vertical-align:-1px;margin-right:6px;">📱</span>Hide QR Code';
+    btn.innerHTML = '<span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Hide QR Code';
   }
 }
 
