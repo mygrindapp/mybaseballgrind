@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v269';
+    const CACHE = 'ybg-mygrind-v270';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5590,7 +5590,7 @@ input[type="number"] {
         <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; text-align:center;">
           Parent Only · Uses billing email on file
         </div>
-        <a href="https://billing.stripe.com/p/login/4gM5kFgiu53D1yq8eZ4gg04" id="stripe-portal-btn" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 14px; border-radius:8px; text-decoration:none; text-align:center;">
+        <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" id="stripe-portal-btn" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 14px; border-radius:8px; text-decoration:none; text-align:center;">
           💳 &nbsp;Manage Subscription
         </a>
         <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; margin-top:10px; line-height:1.5;">
