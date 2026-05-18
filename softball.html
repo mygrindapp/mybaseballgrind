@@ -1381,7 +1381,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v265';
+    const CACHE = 'ybg-mygrind-v266';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -3024,7 +3024,7 @@ input[type="number"] {
 
     <!-- ── DAILY QUOTE (rotates each day) — bigger format for journal ── -->
     <div id="daily-quote-card" class="card" style="margin-bottom:20px; background:linear-gradient(135deg,#1A0010,#0E000A); border-left:4px solid var(--gold); padding:24px 26px;">
-      <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:14px; text-align:center; display:inline-flex; width:100%; align-items:center; justify-content:center; gap:6px;"><svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-target"/></svg> Today's Grind</div>
+      <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:14px; text-align:center;">Today's Grind</div>
       <div id="daily-quote-text" style="font-family:Georgia,serif; font-size:20px; font-style:italic; color:var(--white); line-height:1.6; text-align:center;"></div>
       <div id="daily-quote-author" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:2px; color:var(--gold); margin-top:14px; text-align:center; text-transform:uppercase;"></div>
     </div>
@@ -18275,6 +18275,148 @@ if (document.readyState === 'loading') {
   document.addEventListener('touchstart', function (e) {
     if (e.target) suppress(e.target);
   }, { capture: true, passive: true });
+})();
+</script>
+
+<!-- ── DEBUG OVERLAY ── 2026-05-18.
+     Adds `?debug=1` URL flag. When present, paints a floating panel with
+     entry-state diagnostics so Coach can see on his phone what's in
+     localStorage without needing DevTools / a Mac tether. Specifically
+     surfaces the sport-filter mismatch that hides entries from the
+     journal list when entry.sport doesn't match the active sport
+     (_filteredEntries() in this file).
+
+     Activation: open mygrindapp.com/softball.html?debug=1 — overlay
+     appears bottom-right. Tap "Refresh" to re-read state after logging
+     a new entry. Tap "Copy" to share-sheet the JSON. Tap "×" to dismiss
+     for the session (re-add ?debug=1 to bring it back).
+
+     Safe to ship to prod — no-op without the flag, read-only, no PII
+     leaves the device. Will be removed once the entry-visibility bug
+     is reproed and fixed. -->
+<script>
+(function () {
+  try {
+    var qs = (window.location.search || '').toLowerCase();
+    if (qs.indexOf('debug=1') === -1) return;
+
+    function collect() {
+      var out = {
+        mg_sport:        null,
+        mg_family_sport: null,
+        window_mgSport:  null,
+        data_sport_attr: null,
+        total_entries:   0,
+        by_sport:        {},
+        in_last_7_days:  0,
+        last_5_entries:  [],
+        raw_keys_present:[]
+      };
+      try { out.mg_sport        = localStorage.getItem('mg_sport'); } catch (e) {}
+      try { out.mg_family_sport = localStorage.getItem('mg_family_sport'); } catch (e) {}
+      try { out.window_mgSport  = window.mgSport || null; } catch (e) {}
+      try { out.data_sport_attr = document.documentElement.getAttribute('data-sport'); } catch (e) {}
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (k && k.indexOf('ybg_') === 0) out.raw_keys_present.push(k);
+        }
+      } catch (e) {}
+      try {
+        var s = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
+        var entries = (s && Array.isArray(s.entries)) ? s.entries : [];
+        out.total_entries = entries.length;
+        var weekAgo = new Date(); weekAgo.setDate(weekAgo.getDate() - 7);
+        entries.forEach(function (e) {
+          var tag = (e && e.sport) ? e.sport : '(untagged)';
+          out.by_sport[tag] = (out.by_sport[tag] || 0) + 1;
+          var d = e && e.date ? new Date(e.date) : null;
+          if (d && !isNaN(d.getTime()) && d >= weekAgo) out.in_last_7_days++;
+        });
+        out.last_5_entries = entries.slice(-5).map(function (e) {
+          return [
+            (e && e.date) || '?',
+            (e && e.type) || '?',
+            (e && e.sport) || 'untagged'
+          ].join(' · ');
+        });
+      } catch (e) {
+        out.error = String(e && e.message || e);
+      }
+      return out;
+    }
+
+    function fmt(o) {
+      try { return JSON.stringify(o, null, 2); } catch (e) { return String(o); }
+    }
+
+    function render(panel, data) {
+      var pre = panel.querySelector('[data-debug-body]');
+      if (pre) pre.textContent = fmt(data);
+    }
+
+    function mount() {
+      if (document.getElementById('mg-debug-overlay')) return;
+      var box = document.createElement('div');
+      box.id = 'mg-debug-overlay';
+      box.style.cssText = [
+        'position:fixed',
+        'right:12px',
+        'bottom:88px',
+        'z-index:99999',
+        'max-width:380px',
+        'width:calc(100vw - 24px)',
+        'max-height:55vh',
+        'overflow:auto',
+        'background:#0E0006',
+        'border:1px solid #B89A4B',
+        'border-radius:8px',
+        'padding:12px 14px 14px',
+        'font-family:ui-monospace,SFMono-Regular,Menlo,monospace',
+        'font-size:11px',
+        'color:#F2EAD9',
+        'line-height:1.5',
+        'box-shadow:0 8px 24px rgba(0,0,0,0.55)'
+      ].join(';');
+
+      box.innerHTML = ''
+        + '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">'
+        +   '<div style="flex:1;font-family:\'Barlow Condensed\',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#E8C97A;">🔎 Debug · Entries</div>'
+        +   '<button data-debug-refresh style="background:transparent;border:1px solid #B89A4B;color:#E8C97A;font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;border-radius:4px;cursor:pointer;">Refresh</button>'
+        +   '<button data-debug-copy style="background:transparent;border:1px solid #B89A4B;color:#E8C97A;font-family:\'Barlow Condensed\',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 8px;border-radius:4px;cursor:pointer;">Copy</button>'
+        +   '<button data-debug-close style="background:transparent;border:1px solid #555;color:#999;font-size:14px;line-height:1;padding:2px 8px;border-radius:4px;cursor:pointer;">×</button>'
+        + '</div>'
+        + '<pre data-debug-body style="white-space:pre-wrap;word-break:break-word;margin:0;font-size:11px;color:#F2EAD9;"></pre>';
+
+      document.body.appendChild(box);
+
+      function refresh() { render(box, collect()); }
+      refresh();
+
+      box.querySelector('[data-debug-refresh]').addEventListener('click', refresh);
+      box.querySelector('[data-debug-close]').addEventListener('click', function () {
+        box.parentNode && box.parentNode.removeChild(box);
+      });
+      box.querySelector('[data-debug-copy]').addEventListener('click', function () {
+        var text = fmt(collect());
+        var done = function () {
+          var btn = box.querySelector('[data-debug-copy]');
+          if (btn) { var prev = btn.textContent; btn.textContent = '✓'; setTimeout(function(){ btn.textContent = prev; }, 1200); }
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(done, function () {
+            // Fallback: native share sheet (lets Coach send the dump to himself via Messages / Mail)
+            if (navigator.share) { navigator.share({ text: text }).then(done, function(){}); }
+          });
+        } else if (navigator.share) {
+          navigator.share({ text: text }).then(done, function(){});
+        }
+      });
+    }
+
+    if (document.body) mount();
+    else document.addEventListener('DOMContentLoaded', mount);
+  } catch (e) {}
 })();
 </script>
 </body>
