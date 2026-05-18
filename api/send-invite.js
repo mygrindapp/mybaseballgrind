@@ -22,6 +22,7 @@ import twilio from 'twilio';
 import crypto from 'crypto';
 import { checkIpLimit, checkPhoneLimit, recordSend } from '../lib/rate-limit.js';
 import { lookupPhone } from '../lib/lookup.js';
+import { checkTrialEligibility, recordTrialUsed } from '../lib/trial-eligibility-store.js';
 
 // Short-hash PII for Vercel logs (H3 — security audit 2026-05-18).
 // Phone numbers stay greppable across log entries (same phone → same hash)
@@ -106,7 +107,10 @@ export default async function handler(req, res) {
   }
 
   // ─── Request shape validation ────────────────────────────
-  const { parentName, playerName, playerPhone, sport, signupSessionId } = req.body || {};
+  // parentEmail added 2026-05-18 for trial-abuse prevention (Tier 1).
+  // Optional in v1 — older clients can still call without it. When present,
+  // it's checked against the trial-eligibility-store + recorded at success.
+  const { parentName, playerName, playerPhone, sport, signupSessionId, parentEmail } = req.body || {};
 
   const missing = [];
   if (!parentName       || typeof parentName       !== 'string') missing.push('parentName');
@@ -130,6 +134,25 @@ export default async function handler(req, res) {
     return res.status(400).json({
       success: false,
       error: 'Invalid phone number',
+    });
+  }
+
+  // ─── Trial eligibility check (Tier 1 abuse prevention) ──
+  // Belt-and-suspenders: signup.html SHOULD have already gated the
+  // user before they reached this endpoint via /api/check-trial-eligibility.
+  // But a determined abuser could call /api/send-invite directly and
+  // bypass the client check. Re-validate here. Fail-open on Redis
+  // outage matches the rate-limit + lookup behavior.
+  const trial = await checkTrialEligibility({ email: parentEmail, phone: e164Phone });
+  if (!trial.eligible) {
+    console.warn('[send-invite] trial ineligible', { reason: trial.reason, signupSessionId });
+    return res.status(409).json({
+      success: false,
+      error: trial.reason === 'email_used'
+        ? 'It looks like this email already has a MyGrind account. Sign in or email support@mygrindapp.com.'
+        : 'It looks like this phone number already has a MyGrind account. Sign in or email support@mygrindapp.com.',
+      code: 'TRIAL_USED',
+      reason: trial.reason,
     });
   }
 
@@ -196,6 +219,21 @@ export default async function handler(req, res) {
       bodyLength: smsBody.length,
       signupSessionId,
     });
+
+    // Record trial-used even in DRY_RUN. The user has completed the
+    // signup flow — they've consumed their free trial. SMS delivery
+    // status doesn't change that. Idempotent via SET NX in the store.
+    try {
+      const r = await recordTrialUsed({
+        email: parentEmail,
+        phone: e164Phone,
+        source: 'send-invite-dry-run',
+      });
+      if (r.recorded && r.recorded.length) {
+        console.log('[send-invite] trial recorded (DRY_RUN):', { recorded: r.recorded, signupSessionId });
+      }
+    } catch (e) { /* fail-open — never block signup on bookkeeping error */ }
+
     return res.status(200).json({
       success: true,
       smsSid: 'DRY-RUN-NO-MESSAGE-SENT',
@@ -235,6 +273,20 @@ export default async function handler(req, res) {
       smsSid: message.sid,
       signupSessionId,
     });
+
+    // Record trial-used after a real successful SMS send. This is the
+    // canonical "signup completed" event in the funnel today. Idempotent
+    // via SET NX. Never blocks the signup response on bookkeeping error.
+    try {
+      const r = await recordTrialUsed({
+        email: parentEmail,
+        phone: e164Phone,
+        source: 'send-invite-live',
+      });
+      if (r.recorded && r.recorded.length) {
+        console.log('[send-invite] trial recorded:', { recorded: r.recorded, signupSessionId });
+      }
+    } catch (e) { /* fail-open — never block signup on bookkeeping error */ }
 
     return res.status(200).json({
       success: true,

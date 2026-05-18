@@ -4606,6 +4606,17 @@ function renderDashPlayerCard(player, index) {
 }
 
 function buildScreen8() {
+  // ─── Trial abuse prevention (Tier 1, 2026-05-18) ─────────
+  // Fire-and-forget call to /api/start-trial. Records the email/phone
+  // pair server-side so a future attempt to re-trial with same email
+  // OR same phone gets blocked at /api/check-trial-eligibility.
+  // Idempotent — calling on every Screen 8 entry is safe.
+  // On "already used" response: only show the abuse overlay if this
+  // browser is FRESH (no state.startedAt yet). A legit returning user
+  // who completed signup yesterday already has state.startedAt set,
+  // and the server-side started:false is just an idempotent ack.
+  recordTrialStartServerSide();
+
   // Personalize headline with parent's first name
   const parentNameSpan = document.getElementById('s8_parent_name');
   if (parentNameSpan) {
@@ -4657,6 +4668,111 @@ function buildScreen8() {
   // what Stripe webhooks have synced into our store. If parent is paid,
   // hide trial countdown + swap "Pay early" link for "Manage Subscription".
   loadSubscriptionStatus();
+}
+
+// ─── TRIAL ABUSE PREVENTION (Tier 1, 2026-05-18 Coach Young) ───
+// On Screen 8 entry (post-signup dashboard), call /api/start-trial
+// to atomically record the email+phone pair server-side. Prevents
+// the "clear localStorage and get another 14-day trial" attack.
+//
+// Recording happens here AND in stripe-webhook.js on subscription.created
+// AND in send-invite.js on SMS send. All recordings are idempotent
+// via Redis SET NX — calling from multiple flows is safe.
+//
+// The server response tells us if this was a brand-new trial (`started:
+// true`) or a re-attempt (`started: false`). For re-attempts, we only
+// show the abuse-block overlay if this browser is FRESH (no
+// state.startedAt yet). A legit user returning to Screen 8 after they
+// completed signup yesterday already has state.startedAt set, and the
+// server-side "false" is just an idempotent ack — no overlay needed.
+function recordTrialStartServerSide() {
+  try {
+    const email = ((state.parent && state.parent.email) || '').trim().toLowerCase();
+    const players = Array.isArray(state.players) ? state.players : [];
+    // Use the first player's phone as the trial-key. The eligibility
+    // check enforces "phone OR email already used" so any one valid
+    // identifier is enough to block a re-trial. Players 2 and 3 in a
+    // family signup share the parent email — that's the actual abuse
+    // key here. The phone is belt-and-suspenders.
+    const phone = (players[0] && players[0].phone) ? String(players[0].phone) : '';
+
+    if (!email && !phone) return; // Nothing to record — abandoned signup state.
+
+    // If this browser already has state.startedAt set, the trial is
+    // already recorded. Skip the server roundtrip — saves a serverless
+    // invocation and avoids the (rare) chance of false-positive overlay
+    // on a Redis blip.
+    if (state.startedAt) return;
+
+    fetch('/api/start-trial', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, phone })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data || !data.ok) return;
+        if (data.started) {
+          // Brand-new trial recorded. Stamp local state so we never
+          // re-call /api/start-trial from this browser (idempotent on
+          // the client side too).
+          state.startedAt = new Date().toISOString();
+          saveState();
+          return;
+        }
+        // Server says "already used" AND we have no state.startedAt
+        // locally — this is the abuse signal (or a returning user from
+        // a different browser/incognito). Show the friendly overlay.
+        if (!state.startedAt) {
+          showTrialAlreadyUsedOverlay(data.reason || 'already_used');
+        }
+      })
+      .catch(function (err) {
+        // Network blip. Fail-open — let the user use the app. The
+        // server already blocks the worst abuse via the eligibility
+        // check at /api/send-invite when SMS is wired. Logging only.
+        try { console.warn('[start-trial] request failed:', err && err.message); } catch (_) {}
+      });
+  } catch (_) {
+    // Any synchronous error — fail-open silently. Don't break Screen 8.
+  }
+}
+
+// ─── "Trial already used" overlay ─────────────────────────
+// Fires when /api/start-trial returns started:false on a fresh browser.
+// Friendly, not punitive — most "abuse" turns out to be a parent who
+// forgot they already signed up. Surface the recovery path.
+function showTrialAlreadyUsedOverlay(reason) {
+  if (document.getElementById('trial-used-overlay')) return; // Already shown
+  const reasonLine = reason === 'phone_used'
+    ? "It looks like this phone number is already on a MyGrind account."
+    : "It looks like this email is already on a MyGrind account.";
+
+  const overlay = document.createElement('div');
+  overlay.id = 'trial-used-overlay';
+  overlay.style.cssText = [
+    'position:fixed', 'inset:0',
+    'background:rgba(8,8,8,0.92)',
+    'backdrop-filter:blur(10px)',
+    '-webkit-backdrop-filter:blur(10px)',
+    'z-index:99999',
+    'display:flex', 'align-items:center', 'justify-content:center',
+    'padding:24px',
+    'font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif',
+    'color:#F2EAD9'
+  ].join(';');
+  overlay.innerHTML =
+    '<div style="max-width:440px;width:100%;background:#0E0006;border:1px solid #B89A4B;border-radius:12px;padding:28px 24px;text-align:center;">'
+    + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:28px;letter-spacing:2px;color:#E8C97A;margin-bottom:8px;">WELCOME BACK</div>'
+    + '<div style="height:2px;background:#B89A4B;width:48px;margin:0 auto 18px;"></div>'
+    + '<p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#F2EAD9;">' + reasonLine + '</p>'
+    + '<p style="font-size:14px;line-height:1.6;margin:0 0 22px;color:#9F9486;">If that was you, sign in on your existing device or tap below to email support. We will get you back in.</p>'
+    + '<div style="display:flex;flex-direction:column;gap:10px;">'
+    +   '<a href="mailto:support@mygrindapp.com?subject=Help%20me%20get%20back%20into%20MyGrind&body=Hi%20MyGrind%2C%0A%0AI%20already%20have%20an%20account%20and%20need%20help%20signing%20back%20in.%0A%0AMy%20email%3A%20" style="display:block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:14px 16px;border-radius:8px;text-decoration:none;">Email Support</a>'
+    +   '<button onclick="document.getElementById(\'trial-used-overlay\').remove();" style="background:transparent;border:1px solid #555;color:#9F9486;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;cursor:pointer;">Close</button>'
+    + '</div>'
+    + '</div>';
+  document.body.appendChild(overlay);
 }
 
 // Phase 5 Step 3 — small "pay early" handler on Screen 8 dashboard.

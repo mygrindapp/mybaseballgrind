@@ -27,6 +27,7 @@ import Stripe from 'stripe';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 import { upsertSubscription } from '../lib/subscription-store.js';
+import { recordTrialUsed } from '../lib/trial-eligibility-store.js';
 
 // Short-hash PII for Vercel logs (H3 — security audit 2026-05-18).
 // Email and customer-id stay greppable across log entries (same email
@@ -250,6 +251,28 @@ export default async function handler(req, res) {
           cancelAtPeriodEnd: !!sub.cancel_at_period_end,
           rawEventId:        event.id,
         });
+
+        // Belt-and-suspenders trial-used recording (Tier 1 abuse prevention,
+        // 2026-05-18). Catches the "user pays upfront via skip-trial path"
+        // case — they hit Stripe directly without ever reaching Screen 8 of
+        // signup.html, so /api/start-trial wouldn't have recorded them.
+        // Stripe doesn't include phone on the subscription object, so we
+        // only record by email here. The signup.html /api/start-trial call
+        // records phone too on the regular trial path. Idempotent via SET NX.
+        if (event.type === 'customer.subscription.created') {
+          try {
+            const rec = await recordTrialUsed({
+              email,
+              phone: null, // Stripe webhook doesn't carry the player phone
+              source: 'stripe-webhook-' + event.type.replace(/\./g, '-'),
+            });
+            if (rec.ok && rec.recorded && rec.recorded.length) {
+              console.log('[stripe-webhook] trial recorded:', { emailHash: piiHash(email), recorded: rec.recorded });
+            }
+          } catch (e) {
+            console.error('[stripe-webhook] trial record failed (non-fatal):', e.message);
+          }
+        }
         break;
       }
 
