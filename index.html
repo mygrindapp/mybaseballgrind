@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>MyGrind — Baseball &amp; Softball Training Journal App</title>
+<title>MyGrind: Baseball &amp; Softball Training Journal App</title>
 <meta name="description" content="MyGrind is a daily training journal app for serious baseball and softball players. Track stats, set goals, log practices and games, and stay accountable to the grind.">
 <meta name="keywords" content="MyGrind, MyGrind app, baseball journal app, softball journal app, baseball training app, softball training app, player development, daily training journal, baseball stats tracker, softball stats tracker">
 <meta name="author" content="MyGrind">
@@ -12,7 +12,7 @@
 
 <!-- Open Graph (Facebook, LinkedIn, iMessage previews) -->
 <meta property="og:type" content="website">
-<meta property="og:title" content="MyGrind — Baseball &amp; Softball Training Journal App">
+<meta property="og:title" content="MyGrind: Baseball &amp; Softball Training Journal App">
 <meta property="og:description" content="The daily training journal app for serious baseball and softball players. Track stats, set goals, stay accountable to the grind.">
 <meta property="og:url" content="https://www.mygrindapp.com/">
 <meta property="og:site_name" content="MyGrind">
@@ -20,15 +20,15 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/png">
-<meta property="og:image:alt" content="MyGrind — Daily Training Journal for Baseball &amp; Softball Players">
+<meta property="og:image:alt" content="MyGrind: Daily Training Journal for Baseball &amp; Softball Players">
 <meta property="og:locale" content="en_US">
 
 <!-- Twitter Card (X / Twitter previews) -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="MyGrind — Baseball &amp; Softball Training Journal App">
+<meta name="twitter:title" content="MyGrind: Baseball &amp; Softball Training Journal App">
 <meta name="twitter:description" content="The daily training journal app for serious baseball and softball players. Track stats, set goals, stay accountable to the grind.">
 <meta name="twitter:image" content="https://www.mygrindapp.com/assets/og-card.png">
-<meta name="twitter:image:alt" content="MyGrind — Daily Training Journal for Baseball &amp; Softball Players">
+<meta name="twitter:image:alt" content="MyGrind: Daily Training Journal for Baseball &amp; Softball Players">
 
 <link rel="canonical" href="https://www.mygrindapp.com/">
 
@@ -995,7 +995,7 @@
 
       // 2. Block disposable / temp-mail providers
       if (disposableDomains.indexOf(domain) !== -1) {
-        showError("Please use a permanent email — disposable inboxes won't get our launch announcement.");
+        showError("Please use a permanent email. Disposable inboxes won't get our launch announcement.");
         return;
       }
 
@@ -1007,7 +1007,7 @@
       var now = Date.now();
       submitTimestamps = submitTimestamps.filter(function (t) { return now - t < COOLDOWN_WINDOW; });
       if (submitTimestamps.length >= COOLDOWN_MAX) {
-        showError("You've already submitted — check your inbox for our confirmation email.");
+        showError("You've already submitted. Check your inbox for our confirmation email.");
         return;
       }
       submitTimestamps.push(now);
