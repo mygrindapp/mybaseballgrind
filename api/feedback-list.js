@@ -13,7 +13,9 @@
 // Firebase auth-scoped reads.
 // ═══════════════════════════════════════════════════════════
 
+import crypto from 'crypto';
 import { listForPlayer, listForParent } from '../lib/feedback-store.js';
+import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -30,6 +32,17 @@ function setCors(req, res) {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 }
 
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.headers['x-real-ip'] || null;
+}
+
+function piiHash(value) {
+  if (!value) return 'none';
+  return crypto.createHash('sha256').update(String(value)).digest('hex').slice(0, 8);
+}
+
 export default async function handler(req, res) {
   setCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -42,6 +55,21 @@ export default async function handler(req, res) {
   if (!playerPhone && !parentEmail) {
     return res.status(400).json({ ok: false, error: 'missing_filter', items: [] });
   }
+
+  // ─── Rate limit (H1 partial — security audit 2026-05-18) ──
+  // Defeats bulk phone enumeration: an attacker trying many phones to
+  // find which return data hits the 3/hr 10/day IP cap quickly. Does
+  // NOT defeat a TARGETED attack where someone already knows a specific
+  // player's phone — that residual risk is documented and queued for
+  // V2 (full Firebase auth scope per the file's existing security note).
+  // Fail-open on Redis outage matches the rest of the rate-limit infra.
+  const clientIp = getClientIp(req);
+  const ipCheck = await checkIpReadLimit(clientIp);
+  if (!ipCheck.ok) {
+    console.warn('[feedback-list] IP rate limited', { ipHash: piiHash(clientIp), reason: ipCheck.reason });
+    return res.status(429).json({ ok: false, error: 'rate_limited', items: [] });
+  }
+  await recordRead(clientIp);
 
   const sinceTs = Date.now() - (days * 24 * 60 * 60 * 1000);
 
