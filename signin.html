@@ -394,6 +394,12 @@ async function persistLocalAuthState(user) {
 }
 
 // ─── STEP 1: SEND THE LINK ───────────────────────────────
+// Tries the branded Resend flow first (POST /api/magic-link-request).
+// If that endpoint returns server_misconfigured or admin_not_configured
+// (i.e. the FIREBASE_ADMIN_SERVICE_ACCOUNT env var isn't set yet), falls
+// back to Firebase's built-in sendSignInLinkToEmail. So the UI keeps
+// working from day one and gets a brand polish the moment Coach sets
+// up the service account in Vercel env.
 async function sendSignInLink() {
   clearError('email-error');
   const input = document.getElementById('email-input');
@@ -409,9 +415,41 @@ async function sendSignInLink() {
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Sending...';
 
-  // actionCodeSettings.url is where Firebase routes the user AFTER they click
-  // the link in email + Firebase validates the oobCode. The URL receives
-  // mode=signIn + oobCode=... params that signInWithEmailLink() consumes.
+  // 1) Try the Resend-branded path first. Endpoint returns 200 on success
+  //    with no body details (anti-enumeration). Any non-2xx flips us to
+  //    the Firebase fallback path.
+  let brandedSent = false;
+  try {
+    const resp = await fetch('/api/magic-link-request', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email }),
+    });
+    if (resp.ok) {
+      const data = await resp.json().catch(() => ({}));
+      if (data && data.ok) brandedSent = true;
+    } else if (resp.status === 429) {
+      showError('email-error', 'Too many sign-in attempts. Wait a moment and try again.');
+      btn.disabled = false;
+      btn.textContent = orig;
+      return;
+    }
+    // Other non-2xx (e.g. 500 server_misconfigured before Coach sets up
+    // the service account, or send_failed if Resend hiccups) silently
+    // falls through to the Firebase path below.
+  } catch (e) {
+    console.warn('[signin] branded magic-link request failed; falling back:', e && e.message);
+  }
+
+  if (brandedSent) {
+    document.getElementById('sent-to-email').textContent = email;
+    showState('state-email-sent');
+    return;
+  }
+
+  // 2) Fallback — Firebase's built-in passwordless email. Generic template
+  //    from noreply@my-grind-b8486.firebaseapp.com, but functional and
+  //    keeps the flow working before service-account setup lands.
   const actionCodeSettings = {
     url: 'https://www.mygrindapp.com/signin.html?signedIn=1',
     handleCodeInApp: true,
@@ -419,9 +457,6 @@ async function sendSignInLink() {
 
   try {
     await auth.sendSignInLinkToEmail(email, actionCodeSettings);
-    // Save the email locally so we can complete sign-in when the user clicks
-    // the link from email. Without this we'd have to ask them to type it
-    // again. Localstorage scoped to this domain — same browser only.
     try { localStorage.setItem(EMAIL_STORAGE_KEY, email); } catch (e) {}
     document.getElementById('sent-to-email').textContent = email;
     showState('state-email-sent');
@@ -445,10 +480,67 @@ function goBackToEmailEntry() {
 }
 
 // ─── STEP 2: HANDLE THE RETURN ───────────────────────────
-// On page load, check if this URL is a sign-in link click. If so, sign the
-// user in using the email stored in localStorage. If that email isn't here
-// (different device), prompt for it.
+// Two return-path shapes to handle:
+//   (a) Branded Resend link: /signin.html?mode=magicLink&token=<32hex>
+//       — verifies token via /api/magic-link-verify, gets a Firebase
+//       custom token back, signs in via signInWithCustomToken.
+//   (b) Firebase built-in link: /signin.html?signedIn=1&apiKey=...
+//       &mode=signIn&oobCode=... — handed off to auth.signInWithEmailLink.
 async function handleSignInReturn() {
+  // (a) Branded Resend path — token in URL, server-minted custom token.
+  try {
+    const qs = new URLSearchParams(window.location.search);
+    const mode = qs.get('mode');
+    const token = qs.get('token');
+    if (mode === 'magicLink' && token && /^[a-f0-9]{32}$/.test(token)) {
+      showState('state-processing');
+      const resp = await fetch('/api/magic-link-verify', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ token }),
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || !data || !data.ok || !data.customToken) {
+        let msg = 'Sign-in link is invalid or has expired. Request a new one.';
+        if (resp.status === 429) msg = 'Too many sign-in attempts. Wait a moment and try again.';
+        showState('state-enter-email');
+        showError('email-error', msg);
+        // Strip ?mode=&token= so a refresh doesn't re-fire the failure.
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.delete('mode');
+          url.searchParams.delete('token');
+          window.history.replaceState(null, '', url.pathname + (url.search || ''));
+        } catch (e) {}
+        return true;
+      }
+      try {
+        const result = await auth.signInWithCustomToken(data.customToken);
+        await persistLocalAuthState(result.user);
+        // Strip the token from URL so a refresh after the redirect doesn't
+        // re-POST a now-consumed token.
+        try {
+          const url = new URL(window.location.href);
+          url.searchParams.delete('mode');
+          url.searchParams.delete('token');
+          window.history.replaceState(null, '', url.pathname + (url.search || ''));
+        } catch (e) {}
+        showState('state-success');
+        setTimeout(() => { window.location.href = '/softball.html'; }, 700);
+        return true;
+      } catch (e) {
+        console.error('[signin] signInWithCustomToken failed:', e);
+        showState('state-enter-email');
+        showError('email-error', 'Sign-in failed. Request a new link and try again.');
+        return true;
+      }
+    }
+  } catch (e) {
+    console.warn('[signin] branded return handler:', e && e.message);
+    // Fall through to the Firebase path below.
+  }
+
+  // (b) Firebase built-in link path — same logic as before.
   if (!auth.isSignInWithEmailLink(window.location.href)) return false;
 
   showState('state-processing');
