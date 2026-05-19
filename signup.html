@@ -4892,12 +4892,29 @@ function mailchimpSyncSignup() {
 // ─── "Trial already used" overlay ─────────────────────────
 // Fires when /api/start-trial returns started:false on a fresh browser.
 // Friendly, not punitive — most "abuse" turns out to be a parent who
-// forgot they already signed up. Surface the recovery path.
+// forgot they already signed up, or a second adult who's been set up on
+// someone else's phone and is now trying to claim their account on their
+// own device.
+//
+// 2026-05-18 PM update: passwordless sign-in flow shipped at /signin.html.
+// Promoted "Sign In to Your Account" to the PRIMARY CTA (gold button)
+// with the parent's email passed as URL param so it pre-fills. Demoted
+// Email Support to a secondary text link below — still there for users
+// who legitimately can't get their email link working.
 function showTrialAlreadyUsedOverlay(reason) {
   if (document.getElementById('trial-used-overlay')) return; // Already shown
   const reasonLine = reason === 'phone_used'
     ? "It looks like this phone number is already on a MyGrind account."
     : "It looks like this email is already on a MyGrind account.";
+
+  // Pull the parent's email from in-progress signup state so signin.html
+  // can pre-fill the input — saves the user from retyping it.
+  let signinEmail = '';
+  try {
+    const e = (state && state.parent && state.parent.email) || '';
+    signinEmail = e.trim().toLowerCase();
+  } catch (_) {}
+  const signinHref = '/signin.html' + (signinEmail ? ('?email=' + encodeURIComponent(signinEmail)) : '');
 
   const overlay = document.createElement('div');
   overlay.id = 'trial-used-overlay';
@@ -4917,10 +4934,13 @@ function showTrialAlreadyUsedOverlay(reason) {
     + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:28px;letter-spacing:2px;color:#E8C97A;margin-bottom:8px;">WELCOME BACK</div>'
     + '<div style="height:2px;background:#B89A4B;width:48px;margin:0 auto 18px;"></div>'
     + '<p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#F2EAD9;">' + reasonLine + '</p>'
-    + '<p style="font-size:14px;line-height:1.6;margin:0 0 22px;color:#9F9486;">If that was you, sign in on your existing device or tap below to email support. We will get you back in.</p>'
+    + '<p style="font-size:14px;line-height:1.6;margin:0 0 22px;color:#9F9486;">Sign in to restore your account on this device. We will email you a one-time link to get you back in.</p>'
     + '<div style="display:flex;flex-direction:column;gap:10px;">'
-    +   '<a href="mailto:support@mygrindapp.com?subject=Help%20me%20get%20back%20into%20MyGrind&body=Hi%20MyGrind%2C%0A%0AI%20already%20have%20an%20account%20and%20need%20help%20signing%20back%20in.%0A%0AMy%20email%3A%20" style="display:block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:14px 16px;border-radius:8px;text-decoration:none;">Email Support</a>'
+    +   '<a href="' + signinHref + '" style="display:block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:14px 16px;border-radius:8px;text-decoration:none;">Sign In to Your Account →</a>'
     +   '<button onclick="document.getElementById(\'trial-used-overlay\').remove();" style="background:transparent;border:1px solid #555;color:#9F9486;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;cursor:pointer;">Close</button>'
+    + '</div>'
+    + '<div style="margin-top:14px; padding-top:14px; border-top:1px solid #2A1810;">'
+    +   '<a href="mailto:support@mygrindapp.com?subject=Help%20me%20get%20back%20into%20MyGrind&body=Hi%20MyGrind%2C%0A%0AI%20already%20have%20an%20account%20and%20need%20help%20signing%20back%20in.%0A%0AMy%20email%3A%20" style="font-family:\'Barlow\',sans-serif;font-size:12px;color:#9F9486;text-decoration:none;border-bottom:1px solid #3D2018;padding-bottom:1px;">Sign-in not working? Email support</a>'
     + '</div>'
     + '</div>';
   document.body.appendChild(overlay);

@@ -520,6 +520,18 @@ window.addEventListener('DOMContentLoaded', async () => {
   const handled = await handleSignInReturn();
   if (!handled) {
     showState('state-enter-email');
+    // Pre-fill the email if signup.html (or any other page) passed it via
+    // ?email=... URL param. Saves the user from retyping their address
+    // when they hit the "already used" overlay and tap "Sign In to Your
+    // Account →".
+    try {
+      const qsEmail = new URLSearchParams(window.location.search).get('email') || '';
+      const trimmed = qsEmail.trim().toLowerCase();
+      if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+        const input = document.getElementById('email-input');
+        if (input) input.value = trimmed;
+      }
+    } catch (e) { /* old browser — leave blank */ }
   }
 });
 </script>
