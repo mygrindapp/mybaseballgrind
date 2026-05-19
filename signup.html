@@ -4520,6 +4520,12 @@ function buildScreen7() {
   // If a known promo code was applied on Screen 5, swap the "Days 12 & 14"
   // notify line so 6-month / lifetime users don't see the wrong reminder copy.
   applyPromoMessaging();
+
+  // Grant the actual access state ybg_access reads. Before this, promo copy
+  // promised lifetime / 6-months but the journal still gave 14 days. Now
+  // FOREVERYOUNG2026 writes paid:true (forever) and FOUNDERMYGRIND writes
+  // trialDurationDays=180. Idempotent — safe to call on every Screen 7 build.
+  grantPromoAccess();
 }
 
 function onScreen7Continue() {
@@ -5098,6 +5104,73 @@ const PROMO_INFO = {
 function getPromoInfo(code) {
   if (!code) return null;
   return PROMO_INFO[code.trim().toUpperCase()] || null;
+}
+
+// ─── PROMO ACCESS GRANT ─────────────────────────────────────
+// Writes the access state ybg_access so the journal honors the promo
+// when the user finishes signup. Without this, promo copy promised the
+// user "free for life" or "6 months free" but the actual journal still
+// gave them a 14-day trial and paywalled them after — Coach Young flagged
+// this 2026-05-18 launch evening.
+//
+// FOREVERYOUNG2026 (lifetime): paid=true, plan='lifetime'. The journal's
+// validateSession() returns 'paid' for these users, so they bypass the
+// trial banner, the expiry overlay, and the day-14 paywall forever.
+//
+// FOUNDERMYGRIND (6 months): trialStart=now, trialDurationDays=180. The
+// journal still treats them as 'trial' but the cliff is 180 days, not 14.
+// On day 180 they fall into the normal Day-11 CC-capture flow.
+//
+// Safe to call repeatedly — if the user already has a stronger grant (paid
+// or longer trial), we preserve it.
+function grantPromoAccess() {
+  try {
+    const info = getPromoInfo(state.promoCode);
+    if (!info) return;
+    const email = (state.parent && state.parent.email) ? state.parent.email.trim().toLowerCase() : '';
+    let existing = {};
+    try {
+      existing = JSON.parse(
+        localStorage.getItem('ybg_access') ||
+        localStorage.getItem('ybg_softball_access') ||
+        '{}'
+      );
+    } catch (e) {}
+
+    // Never weaken an existing grant. Paid > longer trial > shorter trial.
+    if (existing.paid && existing.plan === 'lifetime') return;
+
+    let next = Object.assign({}, existing, {
+      email:      existing.email || email,
+      promoCode:  state.promoCode,
+      grantedAt:  new Date().toISOString()
+    });
+
+    if (info.kind === 'lifetime') {
+      next.paid = true;
+      next.plan = 'lifetime';
+      // Lifetime users keep any trialStart (harmless) but never expire.
+    } else if (info.kind === 'months') {
+      // 6 months free = 180 days. Preserve trialStart if already set so the
+      // founder cliff doesn't reset on re-entry. trialDurationDays is read by
+      // softball.html's validateSession() to override the default TRIAL_DAYS=14.
+      next.trialStart        = existing.trialStart || Date.now();
+      next.trialDurationDays = Math.max(existing.trialDurationDays || 0, 180);
+      next.plan              = next.plan || 'founder';
+      next.mode              = next.mode || 'promo_founder';
+    }
+
+    const serialized = JSON.stringify(next);
+    localStorage.setItem('ybg_access', serialized);
+    try { sessionStorage.setItem('ybg_access', serialized); } catch (e) {}
+    try { localStorage.setItem('ybg_softball_access', serialized); } catch (e) {}
+    // Pass the promo code through to onboarding.html so the player flow can
+    // see it too — onFinalExit reads this before falling back to the default
+    // 14-day trial grant.
+    try { localStorage.setItem('mg_promo_code', state.promoCode); } catch (e) {}
+  } catch (e) {
+    console.warn('[MG] grantPromoAccess failed:', e);
+  }
 }
 
 // Rewrites Screen 5 + Screen 7 trial copy based on whether a recognized

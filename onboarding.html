@@ -1391,10 +1391,16 @@ function onFinalExit() {
         '{}'
       );
     } catch(_){}
+    // Promo grants run on signup Screen 7 and write either paid:true
+    // (FOREVERYOUNG2026 lifetime) or trialDurationDays=180 (FOUNDERMYGRIND
+    // 6 months). If either is present, preserve it — never downgrade to the
+    // default 14-day trial. Lifetime + founder users finish onboarding
+    // straight into the journal with their full grant intact.
+    var trialDays   = acc.trialDurationDays || 14;
     var elapsedDays = acc.trialStart
       ? (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24)
       : null;
-    var trialActive = elapsedDays !== null && elapsedDays <= 14;
+    var trialActive = elapsedDays !== null && elapsedDays <= trialDays;
     if (!acc.paid && !trialActive) {
       acc.trialStart = Date.now();
       acc.mode       = acc.mode || 'onboarded';

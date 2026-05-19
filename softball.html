@@ -6457,7 +6457,11 @@ function validateSession() {
   if (state.paid) return 'paid';
   if (state.trialStart) {
     const elapsed = (Date.now() - state.trialStart) / (1000 * 60 * 60 * 24);
-    if (elapsed > TRIAL_DAYS) return 'expired';
+    // Honor per-user trial duration when set by a promo grant
+    // (FOUNDERMYGRIND writes trialDurationDays=180 for the 6-month free
+    // cohort). Default TRIAL_DAYS=14 covers everyone else.
+    const cliff = state.trialDurationDays || TRIAL_DAYS;
+    if (elapsed > cliff) return 'expired';
     return 'trial';
   }
   return 'no_trial';
@@ -6473,10 +6477,14 @@ function checkAccess() {
   // A player who completed onboarding (mg_player_profile is set) should
   // be IN the journal. If onboarding.html's onFinalExit() didn't sync
   // the access state for any reason (browser cache, race, private mode,
-  // stale deploy of onboarding.html), grant trial here so the player
+  // stale deploy of onboarding.html), grant access here so the player
   // doesn't bounce to signup. No-op if already paid, already on a trial,
   // or has an expired trial (preserves the original trialStart — re-
   // completing onboarding never refreshes an expired trial).
+  //
+  // Promo-aware: if mg_promo_code is FOREVERYOUNG2026, grant lifetime
+  // (paid:true). If FOUNDERMYGRIND, grant a 180-day trial. Otherwise the
+  // default trial (no trialDurationDays, journal reads TRIAL_DAYS=14).
   try {
     const _hasProfile = !!localStorage.getItem('mg_player_profile');
     const _existing = JSON.parse(
@@ -6485,8 +6493,22 @@ function checkAccess() {
       '{}'
     );
     if (_hasProfile && !_existing.trialStart && !_existing.paid) {
-      _existing.trialStart = Date.now();
-      _existing.mode = _existing.mode || 'onboarded';
+      const _promo = (localStorage.getItem('mg_promo_code') || '').trim().toUpperCase();
+      if (_promo === 'FOREVERYOUNG2026') {
+        _existing.paid = true;
+        _existing.plan = 'lifetime';
+        _existing.promoCode = _promo;
+      } else if (_promo === 'FOUNDERMYGRIND') {
+        _existing.trialStart        = Date.now();
+        _existing.trialDurationDays = 180;
+        _existing.plan              = 'founder';
+        _existing.mode              = 'promo_founder';
+        _existing.promoCode         = _promo;
+      } else {
+        _existing.trialStart = Date.now();
+        _existing.mode = _existing.mode || 'onboarded';
+      }
+      _existing.grantedAt = new Date().toISOString();
       const _ser = JSON.stringify(_existing);
       localStorage.setItem('ybg_access', _ser);
       try { sessionStorage.setItem('ybg_access', _ser); } catch(_e) {}
@@ -6591,8 +6613,14 @@ function showTrialBanner() {
   // or upgrade pricing — those are payer surfaces. Creator + payer see it.
   if (getBillingRole().role === 'dependent') { removeBanner(); return; }
   const state = getAccessState();
+  // Lifetime users (paid:true) shouldn't show a banner at all — they reach
+  // validateSession()='paid' before this fires, but guard defensively.
+  if (state.paid) { removeBanner(); return; }
   const elapsed = (Date.now() - (state.trialStart || Date.now())) / (1000 * 60 * 60 * 24);
-  const days = Math.max(0, Math.ceil(TRIAL_DAYS - elapsed));
+  // Honor the per-user cliff written by a promo grant (FOUNDERMYGRIND=180);
+  // default TRIAL_DAYS=14 for everyone else.
+  const cliff = state.trialDurationDays || TRIAL_DAYS;
+  const days = Math.max(0, Math.ceil(cliff - elapsed));
   const banner = document.getElementById('trial-banner');
   if (banner) {
     banner.style.display = 'flex';
