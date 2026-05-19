@@ -1470,6 +1470,60 @@ function dismissIosBanner() {
   if (banner) banner.style.display = 'none';
   localStorage.setItem('ybg_ios_dismissed', '1');
 }
+
+// ── INSTALL CARD (Settings panel) ──
+// Coach Young 2026-05-18: lives permanently in Settings so users can find
+// install instructions any time, not just when the bottom banner is open.
+// Picks one of four states based on platform + install status:
+//   - installed : already in standalone (PWA) mode
+//   - android   : Chrome/Edge with beforeinstallprompt available → 1-tap
+//   - ios       : iOS Safari → 3-step manual guide
+//   - other     : everything else (desktop, Firefox iOS, etc.)
+function renderInstallCard() {
+  const states = ['installed', 'android', 'ios', 'other'];
+  states.forEach(s => {
+    const el = document.getElementById('install-state-' + s);
+    if (el) el.style.display = 'none';
+  });
+  const isInStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  let state;
+  if (isInStandalone) {
+    state = 'installed';
+  } else if (deferredInstallPrompt) {
+    state = 'android';
+  } else if (isIos) {
+    state = 'ios';
+  } else {
+    state = 'other';
+  }
+  const target = document.getElementById('install-state-' + state);
+  if (target) target.style.display = 'block';
+}
+
+// "Find these steps later in Settings →" link in the iOS bottom banner.
+// Opens Settings panel and scrolls the install card into view so the user
+// can read the steps with the Share button still visible at the bottom of
+// Safari (banner gets dismissed once they tap the link).
+function openInstallHelp(event) {
+  if (event && event.preventDefault) event.preventDefault();
+  try { dismissIosBanner(); } catch (e) {}
+  try {
+    if (typeof mgTab === 'function') mgTab('settings', 'tab-settings');
+  } catch (e) {}
+  setTimeout(function() {
+    const card = document.getElementById('settings-install-card');
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 100);
+  return false;
+}
+
+// Re-render the install card whenever Android fires the deferred prompt
+// (event arrives async, after first render). Hooks into the existing
+// beforeinstallprompt listener at the top of this section.
+window.addEventListener('beforeinstallprompt', () => {
+  setTimeout(renderInstallCard, 0);
+});
 </script>
 <!-- ══ FIREBASE INTEGRATION ══════════════════════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -1710,15 +1764,24 @@ function dismissIosBanner() {
   </div>
 </div>
 
-<!-- ── IOS / SAFARI INSTALL BANNER ── -->
+<!-- ── IOS / SAFARI INSTALL BANNER ──
+     Apple doesn't expose beforeinstallprompt on iOS Safari, so we can't
+     ship a one-tap Install button on iPhone. Users have to walk the
+     native Share → Add to Home Screen path. "Scroll down" copy 2026-05-18
+     confused parents who tried scrolling the PAGE; rewrote as "swipe up
+     in the Share menu" with a more visible Open Settings escape hatch
+     so users who dismiss the banner can find the steps again. -->
 <div id="ios-install-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9998; background:linear-gradient(135deg,#1A0010,#161210); border-top:1px solid var(--gold-dark, #8B6914); padding:14px 20px;">
   <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
     <div style="flex:1;">
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">⚾ Add My Grind to Home Screen</div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">⚾ Add MyGrind to Home Screen</div>
       <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#AAAAAA; line-height:1.6;">
         1. Tap the <strong style="color:#DDDDDD;">Share</strong> button <span style="font-size:14px;">⎋</span> at the bottom of Safari<br>
-        2. Scroll down and tap <strong style="color:#DDDDDD;">"Add to Home Screen"</strong><br>
-        3. Tap <strong style="color:#DDDDDD;">Add</strong>. The app icon appears on your home screen
+        2. In the menu that opens, <strong style="color:#DDDDDD;">swipe up</strong> and tap <strong style="color:#DDDDDD;">"Add to Home Screen"</strong><br>
+        3. Tap <strong style="color:#DDDDDD;">Add</strong>. The app icon lands on your home screen
+      </div>
+      <div style="margin-top:8px;">
+        <a href="#" onclick="openInstallHelp(event)" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold-dark, #8B6914); padding-bottom:1px;">Find these steps later in Settings →</a>
       </div>
     </div>
     <button onclick="dismissIosBanner()" style="background:transparent; border:none; color:#555; font-size:20px; cursor:pointer; padding:0; flex-shrink:0; line-height:1;">✕</button>
@@ -5469,6 +5532,59 @@ input[type="number"] {
       </div>
 
       <button onclick="mgTab('profile', 'tab-profile')" style="margin-top:14px; width:100%; background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 14px; border-radius:6px; cursor:pointer;">Edit Profile →</button>
+    </div>
+
+    <!-- ── INSTALL MYGRIND ON HOME SCREEN ──
+         Coach Young 2026-05-18: the bottom install banner is easy to
+         miss or dismiss, and once dismissed there was no way to find
+         the steps again. This card lives permanently in Settings so
+         users can always come back. JS at the bottom of init detects
+         platform: Android/Chrome gets a real one-tap Install button
+         (deferredInstallPrompt path), iOS Safari gets the 3-step
+         guide, already-installed users see a green "Installed" badge. -->
+    <div class="card" id="settings-install-card" style="margin-bottom:16px;">
+      <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;">
+        <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-home"/></svg>
+        Install MyGrind on Your Phone
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--grey); line-height:1.6; margin-bottom:14px;">
+        One-tap access from your home screen. Loads instantly. Works offline. No App Store needed.
+      </div>
+
+      <!-- ALREADY INSTALLED state — shown when in standalone (PWA) mode -->
+      <div id="install-state-installed" style="display:none; background:rgba(39, 174, 96, 0.08); border:1px solid #27AE60; border-radius:6px; padding:12px 14px;">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#27AE60;">✓ Installed</div>
+        <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); margin-top:4px;">MyGrind opens straight from your home screen.</div>
+      </div>
+
+      <!-- ANDROID / CHROME state — real one-tap install -->
+      <div id="install-state-android" style="display:none;">
+        <button onclick="installApp()" class="btn btn-gold" style="width:100%; padding:14px 24px; font-size:14px;">
+          ⚾ &nbsp;Install MyGrind Now
+        </button>
+        <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:8px; text-align:center;">
+          Your browser will ask to confirm. Tap <strong style="color:var(--light);">Install</strong>.
+        </div>
+      </div>
+
+      <!-- IOS state — the 3-step manual flow -->
+      <div id="install-state-ios" style="display:none;">
+        <ol style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.8; margin:0; padding-left:22px;">
+          <li>Tap the <strong style="color:var(--gold);">Share</strong> button <span style="font-size:15px;">⎋</span> at the bottom of Safari.</li>
+          <li>In the menu that opens, <strong style="color:var(--gold);">swipe up</strong> and tap <strong style="color:var(--gold);">"Add to Home Screen"</strong>.</li>
+          <li>Tap <strong style="color:var(--gold);">Add</strong>. The MyGrind icon lands on your home screen.</li>
+        </ol>
+        <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:12px; padding:10px 12px; background:rgba(var(--accent-rgb), 0.06); border-radius:6px;">
+          <strong style="color:var(--gold);">Tip:</strong> The Share button is the square with an arrow pointing up. It lives at the bottom of Safari (or top-right on iPad).
+        </div>
+      </div>
+
+      <!-- FALLBACK state — non-iOS non-Chrome browser -->
+      <div id="install-state-other" style="display:none;">
+        <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6;">
+          Open MyGrind in <strong style="color:var(--gold);">Safari</strong> (iPhone/iPad) or <strong style="color:var(--gold);">Chrome</strong> (Android) to install. Other browsers don't support home-screen install.
+        </div>
+      </div>
     </div>
 
     <!-- ── NOTIFICATIONS ── -->
@@ -12779,6 +12895,7 @@ loadGradesUI();
 loadGrades();
 renderHWTracker();
 updateSubscriptionCard();
+try { renderInstallCard(); } catch (e) { console.warn('[MG] renderInstallCard:', e); }
 // Journal page is the default active panel — paint reminder banners on
 // load so the player sees grade-update / H&W-overdue prompts on landing.
 try { renderJournalReminders(); } catch (e) {}
