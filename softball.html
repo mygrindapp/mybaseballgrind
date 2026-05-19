@@ -5824,7 +5824,7 @@ input[type="number"] {
         <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; text-align:center;">
           Parent Only · Uses billing email on file
         </div>
-        <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" id="stripe-portal-btn" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 14px; border-radius:8px; text-decoration:none; text-align:center;">
+        <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" id="stripe-portal-btn" target="_blank" rel="noopener" onclick="return openStripePortal(event)" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 14px; border-radius:8px; text-decoration:none; text-align:center;">
           💳 &nbsp;Manage Subscription
         </a>
         <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; margin-top:10px; line-height:1.5;">
@@ -18614,6 +18614,56 @@ auth.onAuthStateChanged(function(user) {
   setTimeout(renderCloudBackupBanner, 200);
   setTimeout(function() { renderCloudBackupSettingsBtn(user); }, 200);
 });
+
+// ── STRIPE CUSTOMER PORTAL — one-click manage subscription ─────
+// Intercepts the click on #stripe-portal-btn. Tries to create a
+// pre-authenticated portal session via /api/stripe-portal-session
+// using the user's email; on success, redirects to the session URL
+// (user lands inside the portal already signed in). On any failure
+// (no email on file, no Stripe customer record, network blip, env
+// not set), falls through to the hardcoded Stripe login link the
+// <a href> already points at — Stripe's own UI then prompts the user
+// for their email + one-time verification code.
+//
+// Return values matter: returning true from an onclick handler lets
+// the browser follow the <a href> normally (the fallback). Returning
+// false suppresses navigation while we redirect manually to the
+// dynamic portal URL.
+async function openStripePortal(event) {
+  try {
+    const acc = getAccessState ? getAccessState() : {};
+    const email = (acc && acc.email) ? acc.email.trim() : '';
+    if (!email) {
+      console.log('[stripe-portal] no email on file, falling through to login link');
+      return true; // let the <a href> open the Stripe login page
+    }
+    if (event && event.preventDefault) event.preventDefault();
+
+    const resp = await fetch('/api/stripe-portal-session', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (resp.ok && data && data.ok && data.url) {
+      window.location.href = data.url;
+      return false;
+    }
+    // Endpoint says no_customer / rate_limited / stripe_error — gracefully
+    // fall through to the static Stripe login URL by clicking the original
+    // <a href>. window.location works fine for that fallback.
+    console.warn('[stripe-portal] dynamic session failed; falling back', { status: resp.status, data });
+    const link = document.getElementById('stripe-portal-btn');
+    const href = link && link.getAttribute('href');
+    if (href) window.open(href, '_blank', 'noopener');
+  } catch (e) {
+    console.warn('[stripe-portal] error; falling back to login link:', e && e.message);
+    const link = document.getElementById('stripe-portal-btn');
+    const href = link && link.getAttribute('href');
+    if (href) window.open(href, '_blank', 'noopener');
+  }
+  return false;
+}
 
 // Settings → Backup & Restore card: enable the Save to Cloud button +
 // swap the helper note to reflect signed-in status. Called from the
