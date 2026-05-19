@@ -6,6 +6,10 @@
 
 ## 🔥 This Week (pick 1 per session)
 
+### P0 — Post-launch validation (added 2026-05-18 PM)
+1. **Real-customer testing pass on launch-day fixes.** Walk through the launch flow on a non-creator email in a private window: `mygrindapp.com/signup.html?promo=FOREVERYOUNG2026` → complete signup → onboarding → "Open My Journal." Should land in journal with NO trial banner (lifetime). Repeat with `?promo=FOUNDERMYGRIND` (180 days). Default no-promo signup (14 days). Self-signup path verifies the onboarding-loop fix from `e42d220` holds. ~30 min.
+2. **Endpoint consolidation to recover branded email + one-click Stripe portal.** Merge `magic-link-request + magic-link-verify` into single `api/magic-link.js` with `?action=request|verify` (-1 slot). Merge `stripe-portal-session` into `get-subscription` with `?action=read|portal` (-1 slot). Both polish features come back + 1 slot headroom on Hobby. Dependency: `FIREBASE_ADMIN_SERVICE_ACCOUNT` env var in Vercel (Firebase Console → Service Accounts → Generate new private key → paste full JSON, mark Sensitive). ~1 hr. Alternative: upgrade Vercel to Pro $20/mo to remove the 12-function cap entirely.
+
 ### P0 — Polish leftover from the audit
 1. **Fix duplicate `escapeHtml()` in `signup.html`** — defined at lines 3264 + 3417. Consolidate to one definition. ~5 min.
 2. **Fix the SMS preview URL in `signup.html`** — `buildSmsForPlayer()` (line ~3344) hardcodes `mygrind.app/start/abc123`. Should use `mygrindapp.com/onboarding.html?name=...` so the preview matches what Twilio will actually send when Phase 3b unblocks. ~10 min.
@@ -86,6 +90,22 @@ If beta users aren't logging entries daily:
 ## ✅ Recently Shipped (last 7 days)
 
 *Move shipped items here from "This Week" so you have a record of progress.*
+
+### 2026-05-18 (LAUNCH DAY · 32 commits · Cross-Device Sign-In Live)
+- ✅ **LANDING FLIPPED TO LIVE** 10:49am PT — `index.html` waitlist form replaced with "Now Live" + primary CTA `/signup.html?promo=FOUNDERMYGRIND` (commit `7b8a1cb`).
+- ✅ **4 customer-facing launch bugs found via real testing + fixed within hours**: onboarding→journal canonical key (`e42d220`); trial 7→14 days swept across 13 surfaces (`eed3e36`); defensive trial-grant in journal as safety net (`7dd8e88`); FOUNDERMYGRIND + FOREVERYOUNG2026 grant real access not just copy (`6cb9ae4`).
+- ✅ **Cross-Device Sign-In V1 COMPLETE end-to-end** — new `signin.html` passwordless email-link flow (`582c2ac`). Firebase Console configured (Email/Password + Email link passwordless enabled, Authorized domains `mygrindapp.com` + `www.mygrindapp.com` added). Coach verified full round-trip on production. Entry points in signup Screen 0, softball welcome, landing footer, trial-abuse overlay (`64cdb36`), Settings Sign Out card (`a4f7481`).
+- ✅ **Cloud backup banner + Settings card** — `bulkBackupToCloud()` uploads existing local journal entries to Firestore on first sign-in (`36a7ae5`, `52ce4a5`).
+- ✅ **Trial-abuse Tier 1 LIVE** — atomic email + phone Redis SET NX block on re-signup (`043abec`).
+- ✅ **Stripe webhook cancellation email** — closes Settings policy promise (`520668b`).
+- ✅ **Option A v1 — Day-11 CC capture** — new `api/create-checkout-session.js` creates Stripe Checkout with `trial_end` set to MyGrind cliff. All behind `OPTION_A_DEFAULT_ENABLED = false` flag. Test plan in commit `8d793aa` message.
+- ✅ **Install card permanent in Settings + iOS banner copy fix** — "Scroll down" → "Swipe up in the menu that opens" (`54a1c26`).
+- ✅ **Sign Out + Screen 0 cross-device guardrail** (`a4f7481`).
+- ✅ **Security audit follow-ups** — feedback endpoints rate-limited, PII hashed in Vercel logs (`36bd2fa`, `dfb2f46`).
+- ✅ **Legal entity flip** — "My Grind Sports LLC" language live across privacy/terms/footer/schema, pre-CA-approval with rollback ready (`cd8e17b`).
+- ✅ **Football multi-sport architecture** — added then hidden from public funnel for phased Phase 3 rollout (`8f6627b`, `aa20c5f`).
+- ✅ **Em-dash sweep (Decision #35) fully closed** — 820 → 663, all remaining instances are internal-only (`48c5d74`, `c3ff11a`, `51f07fe`, `ff8770f`, `12fc62e`).
+- 🛑 **Branded magic-link email + one-click Stripe Customer Portal** built then rolled back same night — Vercel Hobby plan caps at 12 serverless functions per deployment, my commits pushed to 14 and build failed. Hotfix `e65ea11` deleted `api/magic-link-request.js`, `api/magic-link-verify.js`, `api/stripe-portal-session.js`, `lib/firebase-admin.js`, and the `firebase-admin` dep. All callers have built-in fallbacks (signin.html falls to Firebase built-in email; Settings portal button falls to hardcoded Stripe login URL; signup dashboard portal link falls to mailto). Recovery: merge magic-link-request + magic-link-verify into single endpoint with `?action=request|verify`, merge stripe-portal-session into get-subscription — both polish features come back AND leaves 1 slot headroom. OR upgrade Vercel to Pro ($20/mo) to remove the cap.
 
 ### 2026-05-13 (Founder Offer + Email Stack — 3 commits + heavy ops work)
 - Stripe coupon swap: `MYGRIND6` deactivated, new `FOUNDERMYGRIND` promotion code live (0/100, 6 months free). Coupon renamed "MyGrind Founders - 6 Month Free."

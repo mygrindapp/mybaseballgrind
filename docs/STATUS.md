@@ -1,6 +1,6 @@
 # 📊 My Grind — Current Status
 
-*Last updated: 2026-05-16 PM. Update this file at the end of every coding session.*
+*Last updated: 2026-05-18 PM (LAUNCH DAY + cross-device sign-in shipped). Update this file at the end of every coding session.*
 
 ---
 
@@ -31,6 +31,8 @@
 
 ## 🧱 Phase Status (Notion is authoritative — see "MyGrind Worldwide Launch HQ")
 
+- **LAUNCH** — LIVE as of 2026-05-18 10:49am PT. `index.html` flipped from pre-launch waitlist to "Now Live" with primary CTA `/signup.html?promo=FOUNDERMYGRIND`. First customer trial loop discovered and fixed within hours. End-to-end sign-in flow verified in production by Coach.
+- **Cross-Device Sign-In V1** — COMPLETE 2026-05-18 PM. New `signin.html` passwordless email-link flow live and verified end-to-end. Coach completed full round-trip on production (request → Gmail → tap link → land in journal). Firebase Console configured: Email/Password + Email link (passwordless sign-in) enabled, Authorized domains include `mygrindapp.com` + `www.mygrindapp.com`. Entry points wired across signup Screen 0, softball welcome screen, landing footer, trial-abuse overlay, Settings Sign Out card. Cloud backup banner + Settings card auto-prompts existing local-only users to push journal entries to Firestore on first sign-in. Branded Resend email + one-click Stripe portal both built but rolled back same night to fit Vercel Hobby 12-function cap; recovery via endpoint consolidation queued.
 - **Phase 2 — Parent Signup Flow** — front-end complete (8 screens in `signup.html`). No backend wiring yet.
 - **Phase 3a (Skeleton + Auth)** — COMPLETE
 - **Phase 3b (Twilio SDK + Live Send)** — code complete, BLOCKED on toll-free verification. Submitted 2026-05-13 (rejected: Error 30489 + 30513), resubmitted 2026-05-14 under sole-prop track (rejected again 2026-05-15: Error 30484 legal entity name mismatch + Error 30489 website not established). My Grind Sports LLC was filed 2026-05-15 specifically to fix Error 30484; LLC approval check 2026-05-20 at bizfile.sos.ca.gov. Plan: 5-20 verify CA approval and download stamped Articles, 5-21 update privacy.html + terms.html + footer to reference My Grind Sports LLC, 5-21 or 5-22 resubmit Twilio with legal entity "My Grind Sports LLC" + EIN 42-2579197 + Business Type LLC. Prioritized-review deadline 2026-05-22. Until approval, SMS stays in DRY_RUN mode and parent invite flow falls back to email or use-this-device path.
