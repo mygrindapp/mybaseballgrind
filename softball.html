@@ -1830,6 +1830,35 @@ function signOutAndSwitchAccount() {
   </div>
 </div>
 
+<!-- ── CLOUD BACKUP BANNER ──
+     Coach Young 2026-05-18 PM: post-sign-in flow ships the email-link
+     auth, but users who signed up BEFORE tonight have all their journal
+     entries in localStorage on their original device only — they'd land
+     on a second device empty-handed. This banner fires once on softball.html
+     load when: (a) fbUser is set (signed in to Firebase), (b) localStorage
+     has entries, (c) mg_cloud_backup_done flag is not set. Tap "Save to
+     Cloud" → bulkBackupToCloud() uploads profile + all entries to
+     Firestore → flag set → never shows again. -->
+<div id="cloud-backup-banner" style="display:none; background:linear-gradient(90deg,#0E1A12,#10241A,#0E1A12); border-bottom:1px solid #1A5F3E; padding:12px 24px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; z-index:99; position:relative;">
+  <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:240px;">
+    <span style="font-size:18px;">☁️</span>
+    <div>
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#5DCFA0;">Back Up Your Journal</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#A8C8B8; line-height:1.5; margin-top:2px;">
+        Save <strong style="color:#5DCFA0;" id="cloud-backup-count">0</strong> entries to cloud so they restore on any device you sign in on.
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; gap:8px;">
+    <button id="cloud-backup-cta" onclick="bulkBackupToCloud()" style="background:#5DCFA0; color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 16px; border:none; border-radius:8px; cursor:pointer; white-space:nowrap;">
+      Save to Cloud
+    </button>
+    <button onclick="dismissCloudBackupBanner()" style="background:transparent; color:#6F8B7E; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 12px; border:1px solid #1F3D2E; border-radius:8px; cursor:pointer; white-space:nowrap;">
+      Not Now
+    </button>
+  </div>
+</div>
+
 <!-- ── IOS / SAFARI INSTALL BANNER ──
      Apple doesn't expose beforeinstallprompt on iOS Safari, so we can't
      ship a one-tap Install button on iPhone. Users have to walk the
@@ -18419,6 +18448,10 @@ function syncFromCloud(uid) {
 }
 
 // ══ SYNC LOCAL → CLOUD ════════════════════════════════════════════
+// Legacy partial sync — kept for any incidental callers but superseded
+// by bulkBackupToCloud() below. Reads the OLD ybg_state / ybg_profile
+// keys (canonical keys are ybg_softball_state / ybg_softball_profile)
+// and caps at 10 entries. Real backup → bulkBackupToCloud().
 function syncToCloud() {
   if (!fbUser) return;
   try {
@@ -18428,6 +18461,147 @@ function syncToCloud() {
     (s.entries || []).slice(0,10).forEach(function(e) { fbSaveEntry(e); });
   } catch(e) { console.warn('[FB] syncToCloud:', e); }
 }
+
+// ══ FULL BACKUP — local → Firestore ═══════════════════════════════
+// Coach Young 2026-05-18: one-time bulk upload for users who signed up
+// before tonight. Their entries are local-only because no fbUser
+// existed at save time (sign-in shipped 2026-05-18 PM). After they
+// sign in via signin.html, this function pushes the historical entries
+// + profile to Firestore so other devices restore on next sign-in.
+//
+// Future saves auto-sync via the existing fbSaveEntry / fbSaveProfile
+// calls inside saveEntry / saveProfile (no-op until fbUser exists,
+// active once it does). This function is only needed for the historical
+// catch-up.
+//
+// Reads CANONICAL keys (ybg_softball_state / ybg_softball_profile),
+// uploads ALL entries (no .slice(0, 10) cap), reports progress via
+// the banner CTA + a toast on completion. Sets mg_cloud_backup_done
+// so the banner never re-fires.
+async function bulkBackupToCloud() {
+  if (!fbUser) {
+    alert('You need to be signed in first. Tap Settings → Sign Out, then visit /signin.html to sign in.');
+    return;
+  }
+
+  const cta = document.getElementById('cloud-backup-cta');
+  const original = cta ? cta.textContent : 'Save to Cloud';
+
+  try {
+    if (cta) { cta.disabled = true; cta.textContent = 'Uploading…'; }
+
+    // Profile first — small, fast, source of truth for header / dashboard.
+    try {
+      const profile = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+      if (profile && Object.keys(profile).length) {
+        fbSaveProfile(profile);
+      }
+    } catch (e) { console.warn('[cloud-backup] profile read:', e); }
+
+    // State (goals etc.) — fbSaveState writes the goals slice. The full
+    // ybg_softball_state JSON also gets backed up implicitly via the
+    // per-entry uploads below.
+    let entries = [];
+    try {
+      const state = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
+      if (state) {
+        fbSaveState(state);
+        entries = Array.isArray(state.entries) ? state.entries : [];
+      }
+    } catch (e) { console.warn('[cloud-backup] state read:', e); }
+
+    // Entries — uploaded one by one. fbSaveEntry uses .set({merge:true})
+    // keyed by entry.id, so re-running this function is idempotent.
+    // Show progress so a 100-entry account doesn't look frozen.
+    let uploaded = 0;
+    for (const e of entries) {
+      try {
+        fbSaveEntry(e);
+        uploaded++;
+        if (cta && uploaded % 5 === 0) {
+          cta.textContent = 'Uploading… ' + uploaded + '/' + entries.length;
+        }
+      } catch (err) { console.warn('[cloud-backup] entry:', err); }
+    }
+
+    // Mark done so the banner never re-fires for this device. Also
+    // stamp the count + timestamp for future debugging.
+    try {
+      localStorage.setItem('mg_cloud_backup_done', JSON.stringify({
+        at:      new Date().toISOString(),
+        entries: uploaded,
+        uid:     fbUser.uid,
+      }));
+    } catch (e) {}
+
+    // Hide banner + success feedback.
+    const banner = document.getElementById('cloud-backup-banner');
+    if (banner) banner.style.display = 'none';
+    try {
+      if (typeof showShareToast === 'function') {
+        showShareToast('☁️ Backed up ' + uploaded + ' entries to cloud.');
+      }
+    } catch (e) {}
+  } catch (e) {
+    console.error('[cloud-backup] failed:', e);
+    if (cta) { cta.disabled = false; cta.textContent = original; }
+    alert('Backup hit a snag. Try again in a moment, or use Settings → Backup & Restore → Export to save a local file.');
+  }
+}
+
+// Dismiss handler — stamp the time so we can soft-throttle re-prompts
+// (re-show in ~14 days if user keeps adding entries without backing up).
+function dismissCloudBackupBanner() {
+  try {
+    localStorage.setItem('mg_cloud_backup_dismissed', new Date().toISOString());
+  } catch (e) {}
+  const banner = document.getElementById('cloud-backup-banner');
+  if (banner) banner.style.display = 'none';
+}
+
+// Decide whether to show the cloud-backup banner. Conditions:
+//   - User is signed in to Firebase (fbUser set)
+//   - localStorage has at least 1 journal entry
+//   - mg_cloud_backup_done is NOT set
+//   - mg_cloud_backup_dismissed was either never set or > 14 days ago
+function renderCloudBackupBanner() {
+  try {
+    const banner = document.getElementById('cloud-backup-banner');
+    if (!banner) return;
+    if (!fbUser) { banner.style.display = 'none'; return; }
+    if (localStorage.getItem('mg_cloud_backup_done')) { banner.style.display = 'none'; return; }
+
+    const dismissedAt = localStorage.getItem('mg_cloud_backup_dismissed');
+    if (dismissedAt) {
+      const elapsedDays = (Date.now() - new Date(dismissedAt).getTime()) / (1000 * 60 * 60 * 24);
+      if (Number.isFinite(elapsedDays) && elapsedDays < 14) {
+        banner.style.display = 'none';
+        return;
+      }
+    }
+
+    let entryCount = 0;
+    try {
+      const state = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
+      entryCount = Array.isArray(state.entries) ? state.entries.length : 0;
+    } catch (e) {}
+    if (entryCount === 0) { banner.style.display = 'none'; return; }
+
+    const countEl = document.getElementById('cloud-backup-count');
+    if (countEl) countEl.textContent = entryCount;
+    banner.style.display = 'flex';
+  } catch (e) {
+    console.warn('[cloud-backup] render:', e);
+  }
+}
+
+// Hook into Firebase auth-state changes so the banner appears the moment
+// a sign-in completes (not on next reload). onAuthStateChanged fires
+// once on page load too; renderCloudBackupBanner is safe to call when
+// !fbUser (just hides the banner).
+auth.onAuthStateChanged(function() {
+  setTimeout(renderCloudBackupBanner, 200);
+});
 
 console.log('[Firebase] Ready. My-grind-b8486');
 </script>
