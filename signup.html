@@ -2078,13 +2078,22 @@ select.field-input {
       </button>
 
       <!-- Cross-device guardrail. Coach Young 2026-05-18: signing someone
-           else up on your own phone writes their account to your localStorage,
-           and there's no in-app sign-in flow yet to recover it on their
-           phone. Until that ships, this footnote steers users to do their
-           signup on their own device. -->
+           else up on your own phone writes their account to your localStorage.
+           The sign-in flow at /signin.html (shipped 2026-05-18 PM) lets a
+           locked-out user recover on their own device — link below points
+           them to it. Guardrail copy still tells fresh signers to use their
+           own phone so we don't compound the problem. -->
       <p style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.6; text-align:center; margin-top:20px; padding:0 4px;">
         Sign up on <strong style="color:var(--gold);">your own phone</strong> — your account locks to this device. Setting up someone else? Pick <strong style="color:var(--light);">My athlete</strong> and we'll text them their setup link to start on their own phone.
       </p>
+
+      <!-- Returning-user sign-in entry. Lives below the two audience tiles so
+           it never competes with the primary signup CTAs. Direct link to the
+           passwordless sign-in flow at /signin.html. -->
+      <div style="text-align:center; margin-top:24px; padding-top:20px; border-top:1px solid var(--border, #3D3530);">
+        <p style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--grey); margin-bottom:6px;">Already have an account?</p>
+        <a href="/signin.html" style="display:inline-block; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold-dark, #8B6914); padding-bottom:2px;">Sign In →</a>
+      </div>
 
     </div>
 

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Sign In · MyGrind</title>
+
+<!-- ── BRAND ── -->
+<meta name="theme-color" content="#181614">
+<meta name="application-name" content="MyGrind">
+<meta name="apple-mobile-web-app-title" content="MyGrind">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+<!-- ── SEO ── -->
+<meta name="description" content="Sign in to your MyGrind account. Restore your journal, stats, and training plan on any device.">
+<meta name="robots" content="noindex,nofollow">
+<link rel="canonical" href="https://www.mygrindapp.com/signin.html">
+
+<!-- ── ANALYTICS ── -->
+<script defer src="/_vercel/insights/script.js"></script>
+
+<style>
+:root {
+  --bg:         #0A0A0A;
+  --card:       #1A1614;
+  --card2:      #231F1C;
+  --border:     #3D3530;
+  --gold:       #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dark:  #8B6914;
+  --white:      #F4F4F4;
+  --light:      #D4C8BC;
+  --grey:       #8B7E6F;
+  --error:      #E57373;
+  --success:    #27AE60;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, Inter, 'Barlow', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 20px;
+  background-image:
+    radial-gradient(circle at top, rgba(201, 168, 76, 0.04), transparent 60%),
+    radial-gradient(circle at bottom right, rgba(212, 84, 122, 0.03), transparent 50%);
+}
+
+.wordmark {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+  font-size: 28px;
+  letter-spacing: 3px;
+  color: var(--white);
+  margin-bottom: 4px;
+  text-align: center;
+}
+.wordmark span { color: var(--gold); }
+
+.tagline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--grey);
+  text-transform: uppercase;
+  margin-bottom: 36px;
+  text-align: center;
+}
+
+.card {
+  width: 100%;
+  max-width: 420px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 28px 24px 24px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+  font-size: 32px;
+  letter-spacing: 1.5px;
+  line-height: 1.1;
+  margin-bottom: 6px;
+  color: var(--white);
+}
+h1 span { color: var(--gold); }
+
+.gold-bar {
+  width: 48px;
+  height: 2px;
+  background: var(--gold);
+  margin: 14px 0 18px;
+}
+
+.sub {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--light);
+  margin-bottom: 22px;
+}
+
+label {
+  display: block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--grey);
+  margin-bottom: 8px;
+}
+
+input[type="email"] {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--white);
+  font-family: 'Barlow', sans-serif;
+  font-size: 16px; /* 16 to suppress iOS auto-zoom */
+  padding: 14px 14px;
+  border-radius: 8px;
+  outline: none;
+  margin-bottom: 6px;
+  transition: border-color 0.15s;
+}
+input[type="email"]:focus { border-color: var(--gold); }
+
+.helper {
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--grey);
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.error {
+  display: none;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--error);
+  background: rgba(229, 115, 115, 0.08);
+  border: 1px solid rgba(229, 115, 115, 0.3);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.cta {
+  width: 100%;
+  background: var(--gold);
+  color: #080808;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.05s;
+}
+.cta:hover { background: var(--gold-light); }
+.cta:active { transform: scale(0.98); }
+.cta:disabled { background: #555; color: #999; cursor: not-allowed; }
+
+.footnote {
+  text-align: center;
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  color: var(--grey);
+  line-height: 1.6;
+  margin-top: 20px;
+}
+.footnote a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dark); padding-bottom: 1px; }
+.footnote a:hover { color: var(--gold-light); }
+
+.success-card {
+  text-align: center;
+  padding: 16px 4px;
+}
+.success-icon { font-size: 42px; margin-bottom: 12px; }
+.success-card h2 {
+  font-family: 'Bebas Neue', 'Barlow Condensed', sans-serif;
+  font-size: 26px;
+  letter-spacing: 1.5px;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+.success-card .email {
+  font-family: 'Barlow', sans-serif;
+  font-size: 15px;
+  color: var(--white);
+  margin-bottom: 8px;
+  word-break: break-all;
+}
+
+.spinner {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 2px solid rgba(201, 168, 76, 0.3);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="wordmark">MY<span>GRIND</span></div>
+<div class="tagline">Players Journal · Built for the Grind</div>
+
+<!-- ─── STATE: ENTER EMAIL ─────────────────────────────────── -->
+<div class="card" id="state-enter-email">
+  <h1>Sign <span>In</span></h1>
+  <div class="gold-bar"></div>
+  <p class="sub">We'll email you a one-time sign-in link. Tap it from this device to log into your account. No password needed.</p>
+
+  <label for="email-input">Your Email</label>
+  <input type="email" id="email-input" placeholder="you@email.com" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off">
+  <div class="helper">Use the same email you signed up with. Your journal, plan, and progress will restore on this device.</div>
+
+  <div class="error" id="email-error"></div>
+
+  <button class="cta" id="send-link-btn" onclick="sendSignInLink()">Email Me a Sign-In Link →</button>
+
+  <div class="footnote">
+    New to MyGrind? <a href="/signup.html">Start your free trial →</a>
+  </div>
+</div>
+
+<!-- ─── STATE: EMAIL SENT ──────────────────────────────────── -->
+<div class="card success-card" id="state-email-sent" style="display:none;">
+  <div class="success-icon">✉️</div>
+  <h2>Check Your Email</h2>
+  <div class="email" id="sent-to-email">—</div>
+  <p class="sub" style="margin-top:14px;">We sent you a sign-in link. Tap it from this device to finish signing in.</p>
+  <p class="helper" style="margin-bottom:18px;">Didn't get it? Check your spam folder. The link expires in 1 hour.</p>
+  <button class="cta" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold);" onclick="goBackToEmailEntry()">Use a Different Email</button>
+</div>
+
+<!-- ─── STATE: PROCESSING (link clicked) ───────────────────── -->
+<div class="card success-card" id="state-processing" style="display:none;">
+  <div style="margin-bottom:12px;"><span class="spinner"></span></div>
+  <h2>Signing You In</h2>
+  <p class="sub" style="margin-top:10px;">Restoring your account on this device. One sec.</p>
+</div>
+
+<!-- ─── STATE: NEED EMAIL (clicked from different device) ──── -->
+<div class="card" id="state-need-email" style="display:none;">
+  <h1>One More <span>Step</span></h1>
+  <div class="gold-bar"></div>
+  <p class="sub">Looks like you opened the sign-in link on a different device than you started on. Enter your email again so we can verify it's you.</p>
+
+  <label for="confirm-email-input">Your Email</label>
+  <input type="email" id="confirm-email-input" placeholder="you@email.com" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off">
+
+  <div class="error" id="confirm-error"></div>
+
+  <button class="cta" style="margin-top:14px;" onclick="confirmSignInWithEmail()">Finish Signing In →</button>
+</div>
+
+<!-- ─── STATE: SUCCESS (very brief, before redirect) ───────── -->
+<div class="card success-card" id="state-success" style="display:none;">
+  <div class="success-icon">✓</div>
+  <h2 style="color:var(--success);">Welcome Back</h2>
+  <p class="sub" style="margin-top:10px;">Opening your journal.</p>
+</div>
+
+<!-- ═══ FIREBASE ═══════════════════════════════════════════════ -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script>
+// Firebase config — MUST match softball.html so the same auth state persists
+// across both surfaces. Coach Young 2026-05-18 v1 build: passwordless email
+// link via Firebase's built-in sendSignInLinkToEmail / signInWithEmailLink.
+// V2 swaps Firebase's default email for a Resend-branded one via Admin SDK
+// custom tokens. For tonight, the Firebase default email is fine.
+const firebaseConfig = {
+  apiKey:            "AIzaSyBEftxaT0v6gHYW1dz_THm-JbLQ4CaOI9c",
+  authDomain:        "my-grind-b8486.firebaseapp.com",
+  projectId:         "my-grind-b8486",
+  storageBucket:     "my-grind-b8486.firebasestorage.app",
+  messagingSenderId: "627787811658",
+  appId:             "1:627787811658:web:2558d568cd92822db90fb3"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// ─── HELPERS ─────────────────────────────────────────────
+const EMAIL_STORAGE_KEY = 'mg_signin_email'; // localStorage key for the email
+                                              // we sent the link to. Read back
+                                              // when the user returns via the
+                                              // emailed link so we can verify.
+
+function showState(id) {
+  ['state-enter-email','state-email-sent','state-processing','state-need-email','state-success']
+    .forEach(s => {
+      const el = document.getElementById(s);
+      if (el) el.style.display = (s === id) ? '' : 'none';
+    });
+}
+
+function showError(elId, msg) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function clearError(elId) {
+  const el = document.getElementById(elId);
+  if (el) el.style.display = 'none';
+}
+
+function isValidEmail(s) {
+  return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+}
+
+// Writes the local state softball.html needs to recognize this user. Also
+// reaches /api/get-subscription to restore paid status from Stripe (keyed
+// by email), and grants a trial if they're not paid + don't already have
+// one. Without the trial fallback, a returning user signing in on a fresh
+// device gets validateSession()='no_trial' and bounces back to signup —
+// which would defeat the whole point of cross-device sign-in.
+//
+// Trial-abuse note: this can't be exploited to get unlimited trials.
+// trial-eligibility-store (Tier 1 abuse prevention) blocks DUPLICATE
+// SIGNUPS by email/phone. Sign-in by definition uses an email that
+// already exists — they can only restore THEIR account, not create a
+// fresh one with the same address.
+async function persistLocalAuthState(user) {
+  if (!user) return;
+  try {
+    let acc = {};
+    try { acc = JSON.parse(localStorage.getItem('ybg_access') || '{}'); } catch(e) {}
+    acc.email          = (user.email || acc.email || '').toLowerCase();
+    acc.fbUid          = user.uid;
+    acc.signedInVia    = 'email_link';
+    acc.signedInAt     = new Date().toISOString();
+
+    // Server-authoritative paid lookup. If Stripe has a record for this
+    // email, restore paid:true + plan + card-on-file flag so the journal
+    // shows the right state on first load (no flicker through trial UI
+    // before syncSubscriptionFromServer fires).
+    try {
+      const resp = await fetch('/api/get-subscription?email=' + encodeURIComponent(acc.email));
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && data.ok && data.isPaid) {
+          acc.paid         = true;
+          acc.plan         = data.subscription && data.subscription.plan;
+          acc.cardCaptured = !!data.hasCardOnFile || !!acc.cardCaptured;
+        }
+      }
+    } catch (e) { /* offline or 4xx — fall through and grant trial */ }
+
+    // Not paid + no existing local trial → grant one. The user proved they
+    // own this email by completing the sign-in link round-trip, so handing
+    // them access is the right default.
+    if (!acc.paid && !acc.trialStart) {
+      acc.trialStart = Date.now();
+      acc.mode       = acc.mode || 'signed_in';
+    }
+
+    const serialized = JSON.stringify(acc);
+    localStorage.setItem('ybg_access', serialized);
+    try { sessionStorage.setItem('ybg_access', serialized); } catch (e) {}
+    // Legacy key mirror so anything still reading ybg_softball_access sees
+    // the same user identity.
+    try { localStorage.setItem('ybg_softball_access', serialized); } catch (e) {}
+  } catch (e) {
+    console.warn('[signin] persistLocalAuthState:', e);
+  }
+}
+
+// ─── STEP 1: SEND THE LINK ───────────────────────────────
+async function sendSignInLink() {
+  clearError('email-error');
+  const input = document.getElementById('email-input');
+  const email = (input.value || '').trim().toLowerCase();
+
+  if (!isValidEmail(email)) {
+    showError('email-error', 'Please enter a valid email address.');
+    return;
+  }
+
+  const btn = document.getElementById('send-link-btn');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sending...';
+
+  // actionCodeSettings.url is where Firebase routes the user AFTER they click
+  // the link in email + Firebase validates the oobCode. The URL receives
+  // mode=signIn + oobCode=... params that signInWithEmailLink() consumes.
+  const actionCodeSettings = {
+    url: 'https://www.mygrindapp.com/signin.html?signedIn=1',
+    handleCodeInApp: true,
+  };
+
+  try {
+    await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    // Save the email locally so we can complete sign-in when the user clicks
+    // the link from email. Without this we'd have to ask them to type it
+    // again. Localstorage scoped to this domain — same browser only.
+    try { localStorage.setItem(EMAIL_STORAGE_KEY, email); } catch (e) {}
+    document.getElementById('sent-to-email').textContent = email;
+    showState('state-email-sent');
+  } catch (e) {
+    console.error('[signin] sendSignInLinkToEmail failed:', e);
+    let msg = 'Could not send the sign-in link. Try again in a moment.';
+    if (e && e.code === 'auth/invalid-email') msg = 'That email doesn\'t look right. Double-check the spelling.';
+    if (e && e.code === 'auth/missing-android-pkg-name') msg = 'Configuration error. Reach out to support@mygrindapp.com.';
+    if (e && e.code === 'auth/unauthorized-continue-uri') msg = 'Configuration error. Reach out to support@mygrindapp.com.';
+    showError('email-error', msg);
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
+
+function goBackToEmailEntry() {
+  showState('state-enter-email');
+  const btn = document.getElementById('send-link-btn');
+  btn.disabled = false;
+  btn.textContent = 'Email Me a Sign-In Link →';
+}
+
+// ─── STEP 2: HANDLE THE RETURN ───────────────────────────
+// On page load, check if this URL is a sign-in link click. If so, sign the
+// user in using the email stored in localStorage. If that email isn't here
+// (different device), prompt for it.
+async function handleSignInReturn() {
+  if (!auth.isSignInWithEmailLink(window.location.href)) return false;
+
+  showState('state-processing');
+
+  let email = '';
+  try { email = localStorage.getItem(EMAIL_STORAGE_KEY) || ''; } catch (e) {}
+
+  if (!email) {
+    showState('state-need-email');
+    return true;
+  }
+
+  try {
+    const result = await auth.signInWithEmailLink(email, window.location.href);
+    try { localStorage.removeItem(EMAIL_STORAGE_KEY); } catch (e) {}
+    await persistLocalAuthState(result.user);
+    showState('state-success');
+    setTimeout(() => { window.location.href = '/softball.html'; }, 700);
+  } catch (e) {
+    console.error('[signin] signInWithEmailLink failed:', e);
+    showState('state-need-email');
+    showError('confirm-error', 'Sign-in link failed. Confirm your email below to try again.');
+  }
+  return true;
+}
+
+// ─── STEP 3: FALLBACK (link clicked on different device) ───
+async function confirmSignInWithEmail() {
+  clearError('confirm-error');
+  const input = document.getElementById('confirm-email-input');
+  const email = (input.value || '').trim().toLowerCase();
+
+  if (!isValidEmail(email)) {
+    showError('confirm-error', 'Please enter a valid email address.');
+    return;
+  }
+
+  try {
+    const result = await auth.signInWithEmailLink(email, window.location.href);
+    await persistLocalAuthState(result.user);
+    showState('state-success');
+    setTimeout(() => { window.location.href = '/softball.html'; }, 700);
+  } catch (e) {
+    console.error('[signin] confirmSignInWithEmail failed:', e);
+    let msg = 'That email doesn\'t match the link. Double-check and try again.';
+    if (e && e.code === 'auth/invalid-action-code') msg = 'This link has expired or already been used. Request a new one.';
+    if (e && e.code === 'auth/expired-action-code')  msg = 'This link has expired. Request a new one.';
+    showError('confirm-error', msg);
+  }
+}
+
+// ─── INIT ────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+  // Already signed in? Skip the form entirely and route to the journal.
+  // onAuthStateChanged is async so we wait one tick before checking.
+  auth.onAuthStateChanged(async function(user) {
+    if (user) {
+      await persistLocalAuthState(user);
+      // If this load was a fresh sign-in link click, handleSignInReturn
+      // shows the success state. Otherwise (already-signed-in revisit),
+      // just redirect to the journal directly.
+      if (!auth.isSignInWithEmailLink(window.location.href)) {
+        window.location.href = '/softball.html';
+        return;
+      }
+    }
+  });
+
+  const handled = await handleSignInReturn();
+  if (!handled) {
+    showState('state-enter-email');
+  }
+});
+</script>
+
+</body>
+</html>
