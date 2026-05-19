@@ -2077,6 +2077,15 @@ select.field-input {
         </div>
       </button>
 
+      <!-- Cross-device guardrail. Coach Young 2026-05-18: signing someone
+           else up on your own phone writes their account to your localStorage,
+           and there's no in-app sign-in flow yet to recover it on their
+           phone. Until that ships, this footnote steers users to do their
+           signup on their own device. -->
+      <p style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.6; text-align:center; margin-top:20px; padding:0 4px;">
+        Sign up on <strong style="color:var(--gold);">your own phone</strong> — your account locks to this device. Setting up someone else? Pick <strong style="color:var(--light);">My athlete</strong> and we'll text them their setup link to start on their own phone.
+      </p>
+
     </div>
 
     <!-- Coming-soon marketing strip removed 2026-05-18 per Coach Young —

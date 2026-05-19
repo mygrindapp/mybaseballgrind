@@ -1524,6 +1524,72 @@ function openInstallHelp(event) {
 window.addEventListener('beforeinstallprompt', () => {
   setTimeout(renderInstallCard, 0);
 });
+
+// ── SIGN OUT / SWITCH ACCOUNT ──
+// Coach Young 2026-05-18 launch-night fix for the cross-account state
+// problem (parent set up another adult on their own phone → stuck with
+// other person's account on their device, no recovery).
+//
+// SOFT CLEAR: wipes identity + signup state ONLY. Preserves journal
+// entries (ybg_state), profile fields (ybg_profile, ybg_softball_profile),
+// grades, photos, etc. — so a returning user who signs back in (next-
+// session build) restores into their existing work. The keys cleared
+// here are the ones that say "WHO am I" + "WHERE in signup am I":
+//   - ybg_access / ybg_softball_access — auth state, trial timer, email
+//   - mg_signup_state                  — half-finished signup form
+//   - mg_signup_for                    — kid/self audience flag
+//   - mg_player_profile                — onboarding output (name, sport, etc.)
+//   - mg_promo_code                    — last redeemed promo
+//   - mg_first_journal_open            — welcome-state flag
+//   - ybg_creator / ybg_pin_unlocked   — admin flags
+//   - ybg_fb_pass                      — firebase auto-signin cache
+//   - ybg_ios_dismissed / ybg_install_dismissed — install banner flags
+// Also signs out of Firebase if a user is active. Then reload to a fresh
+// signup.html so the visible state matches the cleared underlying state.
+function signOutAndSwitchAccount() {
+  const ok = confirm(
+    "Sign out of this account on this device?\n\n" +
+    "Your journal entries stay safe locally — only the account identity is cleared. " +
+    "After signing out, you'll land back on the signup flow.\n\n" +
+    "Continue?"
+  );
+  if (!ok) return;
+
+  const IDENTITY_KEYS = [
+    'ybg_access',
+    'ybg_softball_access',
+    'mg_signup_state',
+    'mg_signup_for',
+    'mg_player_profile',
+    'mg_promo_code',
+    'mg_first_journal_open',
+    'ybg_creator',
+    'ybg_pin_unlocked',
+    'ybg_fb_pass',
+    'ybg_ios_dismissed',
+    'ybg_install_dismissed',
+    'ybg_qr_scan',
+  ];
+  IDENTITY_KEYS.forEach(function(k) {
+    try { localStorage.removeItem(k);   } catch (e) {}
+    try { sessionStorage.removeItem(k); } catch (e) {}
+  });
+
+  // Firebase sign-out — non-blocking. If it fails or there's no signed-in
+  // user, fall through to reload anyway.
+  const finish = function() {
+    window.location.href = '/signup.html';
+  };
+  try {
+    if (typeof fbSignOut === 'function' && typeof fbUser !== 'undefined' && fbUser) {
+      fbSignOut().then(finish, finish);
+    } else {
+      finish();
+    }
+  } catch (e) {
+    finish();
+  }
+}
 </script>
 <!-- ══ FIREBASE INTEGRATION ══════════════════════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -5887,6 +5953,30 @@ input[type="number"] {
         <span style="flex:1;"><strong style="color:var(--gold); font-family:'Barlow Condensed'; letter-spacing:1px; text-transform:uppercase; font-size:12px;">What's New</strong> <span style="color:var(--grey); font-size:12px;">· Updated <span id="settings-whats-new-date">May 2026</span></span></span>
         <span style="color:var(--grey); font-size:18px;">›</span>
     </button>
+
+    <!-- ── SIGN OUT / SWITCH ACCOUNT ──
+         Coach Young 2026-05-18: until the full email-sign-in flow ships
+         (next session), users who set up the wrong account on a device
+         have no way to recover. This is the escape hatch — wipes the
+         identity state so signup.html runs clean again. Soft-clear by
+         default (preserves journal entries + profile so a returning user
+         doesn't lose their work). Confirms before firing. Lives at the
+         bottom of Settings — destructive actions go last. -->
+    <div class="card" id="settings-signout-card" style="margin-bottom:16px; border-color:#3D2018;">
+      <div class="card-title" style="display:inline-flex; align-items:center; gap:8px; color:#E0A080;">
+        <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg>
+        Sign Out / Switch Account
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--grey); line-height:1.6; margin-bottom:14px;">
+        Set up the wrong account on this phone? Want to test as a different person? This signs you out and resets the signup flow on this device. Your journal entries stay safe locally — only the account identity is cleared.
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#8B6F50; line-height:1.5; padding:10px 12px; background:rgba(224, 160, 128, 0.06); border:1px solid #3D2018; border-radius:6px; margin-bottom:14px;">
+        <strong style="color:#E0A080;">Heads up:</strong> the full "Sign in to your account on a different phone" flow ships next. For now, signing out here is best for fixing a wrong-account state on this device.
+      </div>
+      <button onclick="signOutAndSwitchAccount()" style="width:100%; background:transparent; border:1px solid #8B4513; color:#E0A080; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:13px 18px; border-radius:8px; cursor:pointer;" onmouseover="this.style.background='rgba(139, 69, 19, 0.15)'" onmouseout="this.style.background='transparent'">
+        Sign Out of This Account
+      </button>
+    </div>
 
     <!-- Settings version -->
     <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); padding:8px 0 20px;">
