@@ -6469,6 +6469,31 @@ function checkAccess() {
   const overlay = document.getElementById('trial-overlay');
   if (overlay) overlay.style.display = 'none';
 
+  // Defensive trial-grant — Coach Young 2026-05-18 launch-day fix.
+  // A player who completed onboarding (mg_player_profile is set) should
+  // be IN the journal. If onboarding.html's onFinalExit() didn't sync
+  // the access state for any reason (browser cache, race, private mode,
+  // stale deploy of onboarding.html), grant trial here so the player
+  // doesn't bounce to signup. No-op if already paid, already on a trial,
+  // or has an expired trial (preserves the original trialStart — re-
+  // completing onboarding never refreshes an expired trial).
+  try {
+    const _hasProfile = !!localStorage.getItem('mg_player_profile');
+    const _existing = JSON.parse(
+      localStorage.getItem('ybg_access') ||
+      localStorage.getItem('ybg_softball_access') ||
+      '{}'
+    );
+    if (_hasProfile && !_existing.trialStart && !_existing.paid) {
+      _existing.trialStart = Date.now();
+      _existing.mode = _existing.mode || 'onboarded';
+      const _ser = JSON.stringify(_existing);
+      localStorage.setItem('ybg_access', _ser);
+      try { sessionStorage.setItem('ybg_access', _ser); } catch(_e) {}
+      try { localStorage.setItem('ybg_softball_access', _ser); } catch(_e) {}
+    }
+  } catch(_) {}
+
   // Note: ?unlock=1 dev bypass is handled at the top of init() — has to
   // fire BEFORE the creator-flag cleanup further down init(), so checking
   // it again here is redundant.
