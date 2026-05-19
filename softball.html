@@ -1770,6 +1770,29 @@ function dismissIosBanner() {
   </div>
 </div>
 
+<!-- ── OPTION A — Day-11 CC CAPTURE BANNER ──
+     Closes the trial-end conversion gap by capturing the card 3 days
+     before expiry. Stripe Checkout with subscription_data.trial_end
+     auto-charges on the user's exact cliff. Shown by showTrialBanner()
+     when daysRemaining <= 3, not paid, no card on file yet, AND the
+     OPTION_A_ENABLED flag is true. -->
+<div id="trial-capture-banner" style="display:none; background:linear-gradient(90deg,#1E0E00,#2A1400,#1E0E00); border-bottom:1px solid #B89A4B; padding:14px 24px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:14px; z-index:99; position:relative;">
+  <div style="display:flex; align-items:center; gap:12px; flex:1; min-width:240px;">
+    <span style="font-size:20px;">🔐</span>
+    <div>
+      <div style="font-family:'Bebas Neue',cursive; font-size:18px; letter-spacing:1.5px; color:var(--gold);">Lock In Your Spot</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#E0D5BB; line-height:1.5; margin-top:2px;">
+        Trial ends in <span id="trial-capture-days">3</span> days. Add a card now. We won't charge until day <span id="trial-capture-cliff">14</span>. Cancel anytime.
+      </div>
+    </div>
+  </div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button id="trial-capture-cta" onclick="lockInCardForTrialEnd()" style="background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:11px 20px; border:none; border-radius:8px; cursor:pointer; white-space:nowrap;">
+      Lock In My Card →
+    </button>
+  </div>
+</div>
+
 <!-- ── PAID SUCCESS TOAST ── -->
 <div id="paid-toast" style="display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1A3A1A; border:1px solid #27AE60; border-radius:4px; padding:14px 24px; z-index:9999; align-items:center; gap:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
   <span style="font-size:24px;">✅</span>
@@ -6430,17 +6453,30 @@ async function syncSubscriptionFromServer() {
     if (!data.ok) return;
     const serverPaid = !!data.isPaid;
     const localPaid  = !!acc.paid;
-    if (serverPaid === localPaid) return; // nothing to update
+    // Option A — server-side mirror of the card-on-file flag, set by the
+    // Stripe webhook when customer.subscription.created arrives. Lets a
+    // user on a second device see "card captured" even though their local
+    // ?co=success return only fired on the first device.
+    const serverCardCaptured = !!data.hasCardOnFile;
+    const localCardCaptured  = !!acc.cardCaptured;
+    const cardChanged = serverCardCaptured && !localCardCaptured;
+    if (serverPaid === localPaid && !cardChanged) return; // nothing to update
     saveAccessState(Object.assign({}, acc, {
       paid: serverPaid,
       plan: data.subscription && data.subscription.plan,
       subStatus: data.subscription && data.subscription.status,
+      cardCaptured: serverCardCaptured || acc.cardCaptured, // one-way TRUE
       subSyncedAt: new Date().toISOString(),
     }));
     if (serverPaid) {
       // Just promoted — clear any "trial expiring" banners/overlays
       try { removeBanner(); } catch (e) {}
+      try { removeCaptureBanner(); } catch (e) {}
       try { hideOverlay(); } catch (e) {}
+    } else if (cardChanged) {
+      // Card just captured on another device — refresh banner state so the
+      // Day-11 CTA disappears here too.
+      try { showTrialBanner(); } catch (e) {}
     }
   } catch (e) {
     // Silent fail — keep using cached state. Stripe is source of truth on next reload.
@@ -6608,14 +6644,34 @@ function showBlocked(msg) {
   document.getElementById('trial-overlay').style.display = 'flex';
 }
 
+// ─── OPTION A — Day-11 CC CAPTURE FEATURE FLAG ──────────────
+// MASTER SWITCH for the Day-11 "Lock In My Card" banner + the
+// /api/create-checkout-session endpoint hook. Default OFF until Coach
+// verifies the endpoint in Stripe TEST mode end-to-end (see commit
+// message for the test plan). Flip to true in the source OR set
+// localStorage['mg_option_a'] = 'on' to enable per-device for testing.
+const OPTION_A_DEFAULT_ENABLED = false;
+function isOptionAEnabled() {
+  try {
+    if (localStorage.getItem('mg_option_a') === 'on') return true;
+    if (localStorage.getItem('mg_option_a') === 'off') return false;
+  } catch (e) {}
+  return OPTION_A_DEFAULT_ENABLED;
+}
+
+// Day-11 trigger: how many days before the trial cliff to start showing
+// the CC capture banner. Tuned to 3 — matches Coach's "Day 11/12/13"
+// reminder cadence. Easy to tune later from Mailchimp engagement data.
+const OPTION_A_CAPTURE_WINDOW_DAYS = 3;
+
 function showTrialBanner() {
   // Dependents (kids on a parent-managed plan) never see the trial countdown
   // or upgrade pricing — those are payer surfaces. Creator + payer see it.
-  if (getBillingRole().role === 'dependent') { removeBanner(); return; }
+  if (getBillingRole().role === 'dependent') { removeBanner(); removeCaptureBanner(); return; }
   const state = getAccessState();
   // Lifetime users (paid:true) shouldn't show a banner at all — they reach
   // validateSession()='paid' before this fires, but guard defensively.
-  if (state.paid) { removeBanner(); return; }
+  if (state.paid) { removeBanner(); removeCaptureBanner(); return; }
   const elapsed = (Date.now() - (state.trialStart || Date.now())) / (1000 * 60 * 60 * 24);
   // Honor the per-user cliff written by a promo grant (FOUNDERMYGRIND=180);
   // default TRIAL_DAYS=14 for everyone else.
@@ -6628,6 +6684,125 @@ function showTrialBanner() {
     document.getElementById('trial-days-word').textContent  = days === 1 ? 'day' : 'days';
     const emailEl = document.getElementById('trial-banner-email');
     if (emailEl && state.email) emailEl.textContent = state.email;
+  }
+
+  // ── OPTION A — Day-11 CC capture trigger ─────────────────
+  // Show the Lock-In banner when we're inside the capture window AND the
+  // user hasn't captured a card yet. cardCaptured is set on return from
+  // a successful Stripe Checkout (?co=success) and also written by the
+  // webhook side when customer.subscription.created fires.
+  const captureBanner = document.getElementById('trial-capture-banner');
+  if (!captureBanner) return;
+  const inCaptureWindow = days <= OPTION_A_CAPTURE_WINDOW_DAYS;
+  const cardCaptured    = !!state.cardCaptured;
+  if (isOptionAEnabled() && inCaptureWindow && !cardCaptured && days > 0) {
+    captureBanner.style.display = 'flex';
+    const daysEl  = document.getElementById('trial-capture-days');
+    const cliffEl = document.getElementById('trial-capture-cliff');
+    if (daysEl)  daysEl.textContent  = days;
+    if (cliffEl) cliffEl.textContent = Math.round(cliff);
+  } else {
+    captureBanner.style.display = 'none';
+  }
+}
+
+function removeCaptureBanner() {
+  const c = document.getElementById('trial-capture-banner');
+  if (c) c.style.display = 'none';
+}
+
+// ─── OPTION A — LOCK-IN-CARD HANDLER ────────────────────────
+// Calls /api/create-checkout-session with the user's email + current
+// trial cliff (Unix seconds), then redirects to the Stripe-hosted
+// Checkout URL it returns. Stripe creates a subscription in 'trialing'
+// status with trial_end = the user's MyGrind cliff. No charge today —
+// Stripe automatically charges on day 14 (or day 180 for founder users)
+// using the card the user just entered.
+//
+// Defaults to single_monthly plan for the lowest-commitment CTA. A future
+// pass can add a plan picker (monthly vs annual, single vs family) on the
+// banner or a follow-on screen.
+async function lockInCardForTrialEnd() {
+  const cta = document.getElementById('trial-capture-cta');
+  const originalLabel = cta ? cta.textContent : '';
+  try {
+    const state = getAccessState();
+    const email = state.email || state.purchaserEmail || '';
+    if (!email) {
+      alert('We need your email on file before locking in. Tap Profile → add your email, then try again.');
+      return;
+    }
+    const cliff = state.trialDurationDays || TRIAL_DAYS;
+    const trialStartMs = state.trialStart || Date.now();
+    const trialEndUnix = Math.floor((trialStartMs + cliff * 86400 * 1000) / 1000);
+    if (trialEndUnix <= Math.floor(Date.now() / 1000)) {
+      alert('Your trial has already ended. Tap one of the pricing buttons above to start your subscription.');
+      return;
+    }
+
+    if (cta) { cta.disabled = true; cta.textContent = 'Opening checkout…'; }
+
+    // promoCode is best-effort — if the user redeemed FOUNDERMYGRIND they
+    // probably don't need this CTA (180 days), but pass it through so
+    // Stripe can honor any per-product discount they configured. Lifetime
+    // users never reach this code path (paid:true short-circuits the banner).
+    let promoCode = '';
+    try { promoCode = localStorage.getItem('mg_promo_code') || ''; } catch (e) {}
+
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email,
+        planType:     'single_monthly', // sensible default for the Day-11 CTA
+        trialEndUnix,
+        promoCode,
+      }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok || !data.ok || !data.url) {
+      console.error('[Option A] checkout session failed', { status: resp.status, data });
+      alert('We hit a snag opening checkout. Try again in a sec, or tap one of the pricing buttons above.');
+      if (cta) { cta.disabled = false; cta.textContent = originalLabel; }
+      return;
+    }
+    // Redirect — Stripe Checkout handles the rest. On success Stripe sends
+    // the user back to /softball.html?co=success which lockInCardReturnHandler()
+    // catches on next load.
+    window.location.href = data.url;
+  } catch (e) {
+    console.error('[Option A] lockInCardForTrialEnd error:', e);
+    alert('We hit a snag opening checkout. Try again in a sec.');
+    if (cta) { cta.disabled = false; cta.textContent = originalLabel; }
+  }
+}
+
+// ─── OPTION A — STRIPE CHECKOUT RETURN HANDLER ──────────────
+// Stripe redirects back to /softball.html?co=success after successful
+// card capture. Set cardCaptured=true locally so showTrialBanner() stops
+// showing the Lock-In CTA. Also strip the param so a refresh doesn't keep
+// re-triggering the toast. The webhook also flips this state server-side
+// when customer.subscription.created arrives — local flag is the fast path.
+function lockInCardReturnHandler() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const co = params.get('co');
+    if (co !== 'success' && co !== 'cancel') return;
+    if (co === 'success') {
+      const acc = getAccessState();
+      acc.cardCaptured = true;
+      acc.cardCapturedAt = new Date().toISOString();
+      saveAccessState(acc);
+      // Light-touch confirmation. The trial countdown keeps running; the
+      // user just stops seeing the Lock-In CTA.
+      showShareToast && showShareToast('🔐 Card locked in. We will charge on day ' + (acc.trialDurationDays || TRIAL_DAYS) + '.');
+    }
+    // Strip ?co=... from the URL so a refresh doesn't replay this branch.
+    params.delete('co');
+    const clean = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
+    window.history.replaceState(null, '', clean);
+  } catch (e) {
+    console.warn('[Option A] return handler error:', e.message);
   }
 }
 
@@ -12592,6 +12767,9 @@ function renderHWTracker() {
 }
 
 // ─── START ────────────────────────────────────────────────
+// Option A — handle Stripe Checkout return BEFORE init() runs so the
+// cardCaptured flag is set before checkAccess() reads it on the same tick.
+try { lockInCardReturnHandler(); } catch (e) { console.warn('[Option A] return handler init:', e); }
 init();
 initStats();
 bridgeFromOnboarding();

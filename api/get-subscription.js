@@ -42,13 +42,16 @@ export default async function handler(req, res) {
 
   // Don't echo the customerId / subscriptionId to the client — they're
   // internal identifiers. Just send the boolean flag + plan + period end.
+  // hasCardOnFile is exposed so softball.html's Option A banner can suppress
+  // the Day-11 "Lock In Your Card" CTA for users who already captured.
   const safe = result.record ? {
     isPaid:           result.isPaid,
     status:           result.record.status,
     plan:             result.record.plan,
     currentPeriodEnd: result.record.currentPeriodEnd,
     cancelAtPeriodEnd:result.record.cancelAtPeriodEnd,
+    hasCardOnFile:    !!result.record.hasCardOnFile,
   } : null;
 
-  return res.status(200).json({ ok: true, isPaid: result.isPaid, subscription: safe });
+  return res.status(200).json({ ok: true, isPaid: result.isPaid, hasCardOnFile: !!(result.record && result.record.hasCardOnFile), subscription: safe });
 }

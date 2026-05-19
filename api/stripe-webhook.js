@@ -241,6 +241,12 @@ export default async function handler(req, res) {
           console.warn('[stripe-webhook] subscription.created/updated: no email (customer likely deleted)', { customerId: sub.customer, subId: sub.id, type: event.type });
           break;
         }
+        // Option A — if the subscription has any active status (trialing /
+        // active / past_due) it means Stripe has a payment method on file.
+        // Webhook events don't always include the payment_method id, so we
+        // infer card-on-file from the subscription status itself.
+        const STATUSES_WITH_CARD = new Set(['trialing', 'active', 'past_due']);
+        const hasCardOnFile = STATUSES_WITH_CARD.has(sub.status);
         await upsertSubscription({
           email,
           customerId:        sub.customer,
@@ -249,6 +255,7 @@ export default async function handler(req, res) {
           plan:              planForSubscription(sub),
           currentPeriodEnd:  sub.current_period_end || null,
           cancelAtPeriodEnd: !!sub.cancel_at_period_end,
+          hasCardOnFile,
           rawEventId:        event.id,
         });
 
