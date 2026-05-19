@@ -5873,21 +5873,31 @@ input[type="number"] {
     </div>
 
     <!-- ── BACKUP & RESTORE ── 2026-05-18 reword: positive framing
-         ("keep your training history safe") + honest cloud-sync truth
-         ("cross-device cloud sync ships with MyGrind Pro"). Replaces the
-         old slightly scary "your data lives on this device" framing. -->
+         ("keep your training history safe") + honest cloud-sync truth.
+         2026-05-18 PM update: cloud sync NOW ships via Firebase email-link
+         sign-in. "Save to Cloud" button is the primary path; local JSON
+         backup stays as belt-and-suspenders for users without an account
+         or who want an offline copy. -->
     <div class="card" style="margin-bottom:16px; border-color:var(--gold-dark);">
       <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-save"/></svg> Backup &amp; Restore</div>
       <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.7; margin-bottom:14px;">
-        Keep your training history safe. <strong style="color:var(--gold);">Download a backup file</strong> you can save to Files, Drive, or iCloud, then restore it anytime if you switch phones.
+        Keep your training history safe. <strong style="color:var(--gold);">Save to cloud</strong> so your journal restores on any device you sign in on, or <strong style="color:var(--gold);">download a backup file</strong> to keep an offline copy.
       </div>
-      <div style="background:rgba(var(--accent-rgb), 0.04); border:1px solid var(--gold-dark); border-radius:3px; padding:10px 12px; margin-bottom:14px; font-family:'Barlow'; font-size:12px; color:var(--grey); line-height:1.6;">
-        <strong style="color:var(--gold);">Heads up:</strong> entries are saved on this device today. <strong style="color:var(--gold);">Automatic cross-device sync is coming soon</strong> so your journal moves with you. Until then, a downloaded backup is the safest way to switch phones.
+
+      <!-- Cloud backup button. Disabled until the user is signed in to
+           Firebase; the helper text below explains why. The auto-prompt
+           banner at the top of the journal calls the same function for
+           first-time historical sync. -->
+      <button id="cloud-backup-settings-btn" onclick="bulkBackupToCloud()" disabled style="width:100%; background:#5DCFA0; color:#080808; font-family:'Barlow Condensed'; font-size:14px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:14px 18px; border:none; border-radius:8px; cursor:pointer; margin-bottom:8px; opacity:0.45;">
+        ☁️ &nbsp;Save to Cloud
+      </button>
+      <div id="cloud-backup-settings-note" style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; line-height:1.5; margin-bottom:14px;">
+        Sign in first to enable cloud backup. <a href="/signin.html" style="color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold-dark);">Sign in →</a>
       </div>
 
       <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-        <button onclick="downloadBackup()" style="flex:1; min-width:140px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 12px; border:none; border-radius:8px; cursor:pointer;">
-          ⬇️ &nbsp;Download Backup
+        <button onclick="downloadBackup()" style="flex:1; min-width:140px; background:var(--card2); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 12px; border:1px solid var(--border); border-radius:8px; cursor:pointer;">
+          ⬇️ &nbsp;Download File
         </button>
         <button onclick="document.getElementById('restore-file-input').click()" style="flex:1; min-width:140px; background:var(--card2); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 12px; border:1px solid var(--border); border-radius:8px; cursor:pointer;">
           ⬆️ &nbsp;Restore from File
@@ -18598,10 +18608,43 @@ function renderCloudBackupBanner() {
 // Hook into Firebase auth-state changes so the banner appears the moment
 // a sign-in completes (not on next reload). onAuthStateChanged fires
 // once on page load too; renderCloudBackupBanner is safe to call when
-// !fbUser (just hides the banner).
-auth.onAuthStateChanged(function() {
+// !fbUser (just hides the banner). Same listener updates the Settings
+// "Save to Cloud" button enabled/disabled state + helper-text copy.
+auth.onAuthStateChanged(function(user) {
   setTimeout(renderCloudBackupBanner, 200);
+  setTimeout(function() { renderCloudBackupSettingsBtn(user); }, 200);
 });
+
+// Settings → Backup & Restore card: enable the Save to Cloud button +
+// swap the helper note to reflect signed-in status. Called from the
+// onAuthStateChanged listener above + once on initial load.
+function renderCloudBackupSettingsBtn(user) {
+  const btn = document.getElementById('cloud-backup-settings-btn');
+  const note = document.getElementById('cloud-backup-settings-note');
+  if (!btn || !note) return;
+  if (user && user.email) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    btn.style.cursor = 'pointer';
+    const doneRaw = localStorage.getItem('mg_cloud_backup_done');
+    if (doneRaw) {
+      let done = {};
+      try { done = JSON.parse(doneRaw); } catch (e) {}
+      const when = done.at ? new Date(done.at).toLocaleDateString() : 'previously';
+      note.innerHTML = '☁️ Last cloud backup: <strong style="color:var(--gold);">' +
+        when + '</strong> · ' + (done.entries || 0) + ' entries · tap to re-sync.';
+    } else {
+      note.innerHTML = 'Signed in as <strong style="color:var(--gold);">' +
+        user.email + '</strong>. Tap above to push your journal to cloud.';
+    }
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = '0.45';
+    btn.style.cursor = 'not-allowed';
+    note.innerHTML = 'Sign in first to enable cloud backup. ' +
+      '<a href="/signin.html" style="color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold-dark);">Sign in →</a>';
+  }
+}
 
 console.log('[Firebase] Ready. My-grind-b8486');
 </script>
