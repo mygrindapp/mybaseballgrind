@@ -6,9 +6,20 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Post-launch validation (added 2026-05-18 PM)
-1. **Real-customer testing pass on launch-day fixes.** Walk through the launch flow on a non-creator email in a private window: `mygrindapp.com/signup.html?promo=FOREVERYOUNG2026` → complete signup → onboarding → "Open My Journal." Should land in journal with NO trial banner (lifetime). Repeat with `?promo=FOUNDERMYGRIND` (180 days). Default no-promo signup (14 days). Self-signup path verifies the onboarding-loop fix from `e42d220` holds. ~30 min.
-2. **Endpoint consolidation to recover branded email + one-click Stripe portal.** Merge `magic-link-request + magic-link-verify` into single `api/magic-link.js` with `?action=request|verify` (-1 slot). Merge `stripe-portal-session` into `get-subscription` with `?action=read|portal` (-1 slot). Both polish features come back + 1 slot headroom on Hobby. Dependency: `FIREBASE_ADMIN_SERVICE_ACCOUNT` env var in Vercel (Firebase Console → Service Accounts → Generate new private key → paste full JSON, mark Sensitive). ~1 hr. Alternative: upgrade Vercel to Pro $20/mo to remove the 12-function cap entirely.
+### P0 — Day +2 follow-throughs (added 2026-05-19 PM)
+1. **Send Mailchimp broadcast to launch-day cohort about sign-in spam.** Drafted in conversation, never sent. Audience `73280b4c02e9bc56c7e633892`, segment Date Added = Last 7 days. Subject "Quick note about signing back in." Heads-up about Firebase sign-in emails landing in Gmail spam + offer to email coach@mygrindapp.com for direct rescue. Protects every launch-day customer who might be stuck silently. ~5 min.
+2. **Open the LLC business bank account.** All required docs are filed in `~/Desktop/MyGrind Business/01 Legal/LLC Filings/`: Articles of Organization, Certificate of Status, EIN Letter, Acknowledgment, Receipt. Print 2 copies of each + photo ID, walk into Chase / BofA / credit union. From that point forward all MyGrind expenses run through the LLC account. ~30 min at the branch.
+3. **Update Stripe business profile with LLC + EIN.** Stripe Dashboard → Settings → Business → Legal Entity. Set Legal Name "My Grind Sports LLC", Tax ID 42-2579197, Business Type LLC. Unblocks enterprise invoicing later. ~10 min.
+
+<!-- SHIPPED 2026-05-19 (was P0 above):
+- Real-customer testing pass on launch-day fixes: COMPLETE. All 4 paths verified (FOREVERYOUNG2026, FOUNDERMYGRIND, default 14-day, onboarding-loop fix).
+- Endpoint consolidation for branded email + Stripe portal: REPLACED with Vercel Pro upgrade ($20/mo). 12-function cap eliminated, hotfix `e65ea11` reverted in commit `5662ffe`. Both endpoints restored without consolidation. Branded email still gated on Resend domain verification.
+-->
+
+### P0 — Cross-cohort safety (added 2026-05-19 PM)
+4. **`/api/admin/signin-link` admin rescue endpoint.** SHIPPED in commit `694e18c`. Coach hits `https://www.mygrindapp.com/api/admin/signin-link?email=X&token=ADMIN_RESCUE_TOKEN` in browser, gets a working magic-link URL via Firebase Admin SDK, pastes into iMessage to any stuck customer. Token in 1Password. Use whenever a customer can't sign back in regardless of cause.
+5. **Send Setup Link modal on signup.html Screen 8.** SHIPPED in commit `aeb4038`. Replaces dead Phase 3 placeholder alert with 4-path share modal (Copy Link, Send via Messages, Open on this device, QR Code). No backend dependency, no phone-number ask.
+6. **SMS opt-in consent strengthened.** SHIPPED in commit `d0e1df1`. Added HELP keyword, message frequency disclosure, inline Privacy Policy link. Clears Twilio TFV Errors 30506/30513.
 
 ### P0 — Polish leftover from the audit
 1. **Fix duplicate `escapeHtml()` in `signup.html`** — defined at lines 3264 + 3417. Consolidate to one definition. ~5 min.
