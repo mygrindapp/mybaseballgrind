@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v271';
+    const CACHE = 'ybg-mygrind-v272';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4358,7 +4358,7 @@ input[type="number"] {
       <!-- Name input below the hero, since the display above shows whatever they type here -->
       <div style="margin-top:18px; padding-top:18px; border-top:1px solid var(--border);">
         <label>My Name</label>
-        <input type="text" id="pl-name" placeholder="Your name" oninput="saveProfile()">
+        <input type="text" id="pl-name" placeholder="Your name" oninput="saveProfile()" onblur="formatProperNounField(this)">
       </div>
     </div>
 
@@ -4395,7 +4395,7 @@ input[type="number"] {
         </div>
       </div>
       <label>School / Team</label>
-      <input type="text" id="pl-school" placeholder="e.g. Middle School · High School · College · Travel Team" oninput="saveProfile()" style="max-width:380px; margin-bottom:16px;">
+      <input type="text" id="pl-school" placeholder="e.g. Middle School · High School · College · Travel Team" oninput="saveProfile()" onblur="formatProperNounField(this)" style="max-width:380px; margin-bottom:16px;">
 
       <!-- Physical Development subsection — Coach Young 2026-05-11
            iteration 3: "Reorganize so it makes sense and flows better."
@@ -12668,6 +12668,31 @@ function refreshAutosavePillLabel() {
   else                pill.textContent = '✓ Auto-saved · ' + Math.floor(mins / 1440) + 'd ago';
 }
 setInterval(refreshAutosavePillLabel, 60000);
+
+// Format a proper noun input (player name, school/team) on blur. Catches
+// the "usc" -> "USC" case + "michael" -> "Michael" without fighting users
+// who intentionally enter mixed case (e.g. "iLearn Academy", "St. Mary's").
+function formatProperNoun(s) {
+  if (!s) return '';
+  const t = s.trim();
+  if (!t) return '';
+  // Short single token all-lowercase -> likely an acronym (usc, ucla, byu).
+  if (t.length <= 5 && !/\s/.test(t) && t === t.toLowerCase()) {
+    return t.toUpperCase();
+  }
+  // User entered mixed case -> respect their intent (iLearn, McMahon).
+  if (t !== t.toLowerCase() && t !== t.toUpperCase()) return t;
+  // Otherwise Title Case (handles "michael" + "MICHAEL" + "santa clarita").
+  return t.toLowerCase().replace(/\b([a-z])/g, ch => ch.toUpperCase());
+}
+function formatProperNounField(el) {
+  if (!el) return;
+  const formatted = formatProperNoun(el.value);
+  if (formatted !== el.value) {
+    el.value = formatted;
+    if (typeof saveProfile === 'function') saveProfile();
+  }
+}
 
 function saveProfile() {
   // Firebase cloud save
