@@ -2987,6 +2987,42 @@ select.field-input {
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
+     SEND SETUP LINK MODAL
+     Triggered from Screen 8 player tile "Send Setup Link" button.
+     SMS via Twilio is in DRY_RUN until carrier verification
+     approves, so parents need a way to deliver the onboarding
+     link to their kid that doesn't depend on our backend. This
+     modal offers 4 paths: Copy Link, Send via Messages
+     (navigator.share), Open on this device, and a QR code.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="phone-confirm-overlay" id="invite_share_modal_overlay" aria-hidden="true">
+  <div class="phone-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="invite_share_modal_title">
+    <div class="phone-confirm-eyebrow">Get them set up</div>
+    <h2 class="phone-confirm-title" id="invite_share_modal_title">Send <span id="invite_share_name">your player</span> the setup link</h2>
+    <p class="phone-confirm-sub">
+      Pick the easiest way to get the link to them. They tap it, set their PIN, and they're in.
+    </p>
+    <div class="share-link-row">
+      <input type="text" class="share-link-input" id="invite_share_link_input" readonly value="">
+    </div>
+    <div class="share-actions">
+      <button type="button" class="share-action-btn primary" onclick="onCopyInviteLink()" id="invite_copy_btn">Copy Link</button>
+      <button type="button" class="share-action-btn secondary" onclick="onShareInviteNative()" id="invite_share_native_btn" style="display:none;">Send via Messages…</button>
+    </div>
+    <button type="button" class="share-action-btn secondary" onclick="onOpenInviteHere()" style="margin-top:8px; width:100%;">Open on this device</button>
+    <button type="button" class="share-action-btn qr" onclick="onToggleInviteQR()" id="invite_qr_btn">
+      <span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Show QR Code
+    </button>
+    <div class="share-qr-display" id="invite_qr_display">
+      <img class="share-qr-img" id="invite_qr_img" alt="QR code linking to MyGrind player setup" />
+      <div class="share-qr-caption">Have them scan with their phone camera.</div>
+    </div>
+    <div class="share-toast" id="invite_share_toast">✓ Link copied to clipboard</div>
+    <button type="button" class="modal-close-btn" onclick="closeInviteShareModal()">Close</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
      PHASE 6 — SETTINGS MODAL
      Read-only account summary + support contact. Editable fields
      land when Phase 5 (Stripe + backend account management) ships.
@@ -4604,7 +4640,7 @@ function renderDashPlayerCard(player, index) {
 
   // Build the resend button only for SMS-invited kids (fallback kids don't have one)
   const resendButton = player.fallback ? '' :
-    '<button type="button" class="dash-resend" onclick="onResendInvite(' + index + ')">Resend invite</button>';
+    '<button type="button" class="dash-resend" onclick="onResendInvite(' + index + ')">Send setup link</button>';
 
   return (
     '<div class="dash-player-card">' +
@@ -5121,14 +5157,14 @@ function renderWeeklyReview(items) {
   body.innerHTML = html;
 }
 
-// Resend invite button handler (placeholder — Phase 3 wires this to Twilio)
+// Send Setup Link button handler. SMS via Twilio is in DRY_RUN
+// until carrier verification approves, so this opens the Send
+// Setup Link modal instead of attempting an SMS resend the
+// backend won't actually deliver. The modal gives parents 4
+// working ways to get the onboarding link to their kid without
+// any backend dependency.
 function onResendInvite(playerIndex) {
-  if (!Array.isArray(state.players)) return;
-  const player = state.players[playerIndex];
-  if (!player) return;
-  alert('Invite would be re-sent to ' + (player.firstName || 'your player') +
-        ' at ' + (player.phone || 'their phone') +
-        '.\n\n(Twilio integration ships in Phase 3 — for now this is a placeholder.)');
+  openInviteShareModal(playerIndex);
 }
 
 // Stripe Payment Links (LIVE mode). One link per (Single|Family) × (Annual|Monthly).
@@ -5508,6 +5544,146 @@ function onNativeShare() {
     if (err && err.name === 'AbortError') return;
     onCopyShareLink();
   });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SEND SETUP LINK MODAL — replaces the legacy onResendInvite
+   alert. SMS via Twilio is in DRY_RUN until carrier verification
+   approves, so parents get 4 working ways to deliver the
+   onboarding link to their kid without depending on our backend:
+     1. Copy Link
+     2. Send via Messages (navigator.share on iOS / modern Chrome)
+     3. Open on this device (kid sets up on parent's phone)
+     4. QR Code (kid scans with phone camera)
+   ═══════════════════════════════════════════════════════════ */
+
+let _inviteShareCurrentUrl = '';
+
+function openInviteShareModal(playerIndex) {
+  if (!Array.isArray(state.players)) return;
+  const player = state.players[playerIndex];
+  if (!player) return;
+
+  const name  = player.firstName || 'your player';
+  const sport = player.sport || state.familySport || 'baseball';
+  const url   = 'https://mygrindapp.com/onboarding.html' +
+                '?name='  + encodeURIComponent(name) +
+                '&sport=' + encodeURIComponent(sport);
+
+  _inviteShareCurrentUrl = url;
+
+  const nameSpan = document.getElementById('invite_share_name');
+  if (nameSpan) nameSpan.textContent = name;
+
+  const input = document.getElementById('invite_share_link_input');
+  if (input) input.value = url;
+
+  // Force QR regeneration for this player on next "Show QR" tap
+  const qrImg = document.getElementById('invite_qr_img');
+  if (qrImg) qrImg.src = '';
+
+  const overlay = document.getElementById('invite_share_modal_overlay');
+  if (!overlay) return;
+  overlay.classList.add('shown');
+  overlay.setAttribute('aria-hidden', 'false');
+
+  const nativeBtn = document.getElementById('invite_share_native_btn');
+  if (nativeBtn && typeof navigator.share === 'function') {
+    nativeBtn.style.display = '';
+  } else if (nativeBtn) {
+    nativeBtn.style.display = 'none';
+  }
+
+  const toast = document.getElementById('invite_share_toast');
+  if (toast) toast.classList.remove('shown');
+  const qr = document.getElementById('invite_qr_display');
+  if (qr) qr.classList.remove('shown');
+  const qrBtn = document.getElementById('invite_qr_btn');
+  if (qrBtn) qrBtn.innerHTML = '<span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Show QR Code';
+}
+
+function closeInviteShareModal() {
+  const overlay = document.getElementById('invite_share_modal_overlay');
+  if (!overlay) return;
+  overlay.classList.remove('shown');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function onToggleInviteQR() {
+  const qr  = document.getElementById('invite_qr_display');
+  const img = document.getElementById('invite_qr_img');
+  const btn = document.getElementById('invite_qr_btn');
+  if (!qr || !img || !btn) return;
+
+  const isOpen = qr.classList.contains('shown');
+  if (isOpen) {
+    qr.classList.remove('shown');
+    btn.innerHTML = '<span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Show QR Code';
+  } else {
+    if (!img.src && _inviteShareCurrentUrl) {
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=240x240&margin=8&data=' + encodeURIComponent(_inviteShareCurrentUrl);
+    }
+    qr.classList.add('shown');
+    btn.innerHTML = '<span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Hide QR Code';
+  }
+}
+
+function onCopyInviteLink() {
+  const input = document.getElementById('invite_share_link_input');
+  const toast = document.getElementById('invite_share_toast');
+  const url   = (input && input.value) || _inviteShareCurrentUrl;
+
+  function showToast() {
+    if (!toast) return;
+    toast.textContent = '✓ Link copied to clipboard';
+    toast.classList.add('shown');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('shown'), 3000);
+  }
+  function showFail() {
+    if (!toast) return;
+    toast.textContent = '⚠️ Could not copy. Long-press the link to copy manually.';
+    toast.classList.add('shown');
+  }
+
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    navigator.clipboard.writeText(url).then(showToast).catch(function() {
+      try {
+        if (input) { input.select(); document.execCommand('copy'); showToast(); }
+        else { showFail(); }
+      } catch(_) { showFail(); }
+    });
+  } else if (input) {
+    try { input.select(); document.execCommand('copy'); showToast(); }
+    catch(_) { showFail(); }
+  } else {
+    showFail();
+  }
+}
+
+function onShareInviteNative() {
+  if (typeof navigator.share !== 'function') return;
+  if (!_inviteShareCurrentUrl) return;
+
+  const nameSpan = document.getElementById('invite_share_name');
+  const name = (nameSpan && nameSpan.textContent) || 'your player';
+
+  navigator.share({
+    title: 'MyGrind setup',
+    text:  'Hey ' + name + ', tap this to set up your MyGrind:',
+    url:   _inviteShareCurrentUrl,
+  }).catch(function(err) {
+    if (err && err.name === 'AbortError') return;
+    onCopyInviteLink();
+  });
+}
+
+function onOpenInviteHere() {
+  if (!_inviteShareCurrentUrl) return;
+  // Same-tab nav. Parent hands the phone to the kid right after.
+  // Kid completes onboarding, signs in later via signin.html on
+  // their own device using the email they enter during setup.
+  window.location.href = _inviteShareCurrentUrl;
 }
 
 function openSettingsModal() {
