@@ -61,7 +61,7 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="MyGrind · Players Journal App">
 <meta property="og:description" content="The daily training journal for baseball and softball players, parents, and coaches. 14-Day Free Trial. No credit card required.">
-<meta property="og:url" content="https://mygrindapp.com/softball.html">
+<meta property="og:url" content="https://www.mygrindapp.com/softball.html">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://raw.githubusercontent.com/youngsbaseball/mybaseballgrind/main/icon.png">
 <meta property="og:image:width" content="512">
@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v270';
+    const CACHE = 'ybg-mygrind-v271';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -13052,11 +13052,12 @@ if (_sf) _sf.style.display = 'block';
 <!-- QR CODE LIBRARY -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-// ── APP URL — update this once hosted ──────────────────
-// Once you upload to Netlify or your website, replace this
-// Live URL: 'https://youngsbaseball.github.io/mybaseballgrind'
-const APP_URL     = 'https://youngsbaseball.github.io/mybaseballgrind';
-const TRIAL_URL   = APP_URL + '?trial=1';  // QR scan → auto-starts 14-day trial
+// ── APP URLs ─────────────────────────────────────────────
+// All sharing/QR/referral flows route friends through the
+// signup funnel. mg-config.js provides a runtime override
+// fallback if these are ever stale.
+const APP_URL     = 'https://mygrindapp.com';
+const TRIAL_URL   = 'https://mygrindapp.com/signup.html';
 const REFERRAL_URL = TRIAL_URL;
 
 // ── AUTO-START TRIAL IF SCANNED FROM QR ────────────────
@@ -13601,7 +13602,7 @@ function formatTime(t) {
 // ═══════════════════════════════════════════════════════
 
 // ── SHARE MODAL ──────────────────────────────────────
-const SHARE_URL  = 'https://youngsbaseball.github.io/mybaseballgrind/?trial=1';
+const SHARE_URL  = 'https://mygrindapp.com/signup.html';
 
 const SHARE_CAPTIONS = {
   instagram: `Bro this app is different ⚾️
@@ -13611,7 +13612,7 @@ Been using MY GRIND to log my games and track my stats. Not just a notes app. It
 Actually changed how I approach every game. I log everything now.
 
 14 days free, no card. Download and try it 👇
-https://youngsbaseball.github.io/mybaseballgrind/?trial=1
+https://mygrindapp.com/signup.html
 
 Who needs this? Tag 'em 👇
 
@@ -13625,7 +13626,7 @@ The app has everything a serious player needs. A daily journal, automatic stat c
 
 14-day free trial. No credit card. Just let them try it.
 
-👉 https://youngsbaseball.github.io/mybaseballgrind/?trial=1
+👉 https://mygrindapp.com/signup.html
 
 Tag a baseball family who'd use this 👇
 
@@ -13636,7 +13637,7 @@ Tag a baseball family who'd use this 👇
 MY GRIND: auto stats, daily journal, 12-month training plan. Everything a serious player needs in one app.
 
 14 days free 👇
-https://youngsbaseball.github.io/mybaseballgrind/?trial=1
+https://mygrindapp.com/signup.html
 
 #MyGrind #BaseballGrind`,
 
@@ -13645,7 +13646,7 @@ https://youngsbaseball.github.io/mybaseballgrind/?trial=1
 Been logging every game with it. Download it and let's keep each other accountable this season 💯
 
 14 days free 👇
-https://youngsbaseball.github.io/mybaseballgrind/?trial=1`
+https://mygrindapp.com/signup.html`
 };
 
 let currentSharePlatform = null;
