@@ -6,10 +6,36 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Day +2 follow-throughs (added 2026-05-19 PM)
-1. **Send Mailchimp broadcast to launch-day cohort about sign-in spam.** Drafted in conversation, never sent. Audience `73280b4c02e9bc56c7e633892`, segment Date Added = Last 7 days. Subject "Quick note about signing back in." Heads-up about Firebase sign-in emails landing in Gmail spam + offer to email coach@mygrindapp.com for direct rescue. Protects every launch-day customer who might be stuck silently. ~5 min.
-2. **Open the LLC business bank account.** All required docs are filed in `~/Desktop/MyGrind Business/01 Legal/LLC Filings/`: Articles of Organization, Certificate of Status, EIN Letter, Acknowledgment, Receipt. Print 2 copies of each + photo ID, walk into Chase / BofA / credit union. From that point forward all MyGrind expenses run through the LLC account. ~30 min at the branch.
-3. **Update Stripe business profile with LLC + EIN.** Stripe Dashboard → Settings → Business → Legal Entity. Set Legal Name "My Grind Sports LLC", Tax ID 42-2579197, Business Type LLC. Unblocks enterprise invoicing later. ~10 min.
+### P0 — Day +3 queue (added 2026-05-20 PM)
+1. **File Stripe Support ticket to switch 1099-K TIN from SSN to EIN.** Self-serve UI doesn't expose tax classification change for established accounts. Ticket script drafted: quote Account ID `acct_1TOIr4Pm4ermqky4`, request Sole Prop → Single-Member LLC (disregarded entity) with EIN 42-2579197. Attach Articles + Cert + EIN letter if Stripe asks. 24-72h to resolve. NOT URGENT — 1099-K isn't issued until January 2027. ~5 min to file.
+2. **Open the LLC business bank account** (carried from 5-19 queue). All required docs filed in `~/Desktop/MyGrind Business/01 Legal/LLC Filings/`. Print 2 copies of Articles + Cert + EIN + photo ID, walk into Chase / BofA / credit union. ~30 min at the branch. After: update Stripe payout destination in `dashboard.stripe.com/settings/payouts`.
+3. **TikTok film + post** if not done last night. 22-second script + on-screen text overlays in Notion launch page Batch 1. Update @youngsbaseball TikTok bio link to `mygrindapp.com/signup.html?promo=FOUNDERMYGRIND` BEFORE posting.
+4. **Monitor launch performance** (5 min daily):
+   - Mailchimp open/click breakdown (stabilizes ~24h post-send, ~Thu 9am)
+   - Vercel Analytics traffic continuation
+   - Firebase Auth user count — if it ticks from 4 → 10+, the spam-workaround broadcast worked
+   - `coach@mygrindapp.com` for rescue requests + feedback
+
+<!-- SHIPPED 2026-05-20:
+- Launch broadcast email to full waitlist (~56) — "MyGrind is live" sent from coach@mygrindapp.com mid-morning. Done.
+- Stripe business profile update — Public Business Name → My Grind Sports LLC, Customer Support legal name updated, Address Line 2 cleaned, phone verified. 90% done; the remaining 10% (1099-K TIN switch) requires Stripe Support ticket and is moved to today's #1 above.
+- Twilio TFV Round 4 — filed inside 7-day prioritized window after Round 3 rejected for error 30527. Switched Registration Type BRN → EIN, value to 42-2579197.
+- Mailchimp audience consolidation — merged to single audience (`73280b4c02e9bc56c7e633892`) and renamed.
+- softball.html legacy github.io URLs purged (commit `2383fb8`).
+- Profile input auto-format polish on blur (commit `561de18`).
+- 5-channel launch social pack — IG Feed + Story + Facebook + LinkedIn + X posted; TikTok script ready, deferred to evening.
+- Launch social posts Notion page created — https://www.notion.so/366819955e6f81f884b6c9831dcf2b8d (13 posts across 6 channels with checkboxes).
+-->
+
+### P0 — abfrianela email-mismatch bug (added 2026-05-20 PM, backlog)
+**Symptom:** Settings shows different Firebase Auth email than localStorage profile (e.g. Coach's device showed `abfrianela@gmail.com` as Registered Email but his own Michael profile data in Journal). Happens when a different magic link is tapped on a device that already has another user's profile cached.
+
+**Workaround for any affected customer:** Sign Out → Safari Settings → Clear Website Data for mygrindapp.com → sign back in with their actual email.
+
+**Code fix (~30 min):** Detect Firebase Auth `currentUser.email` change vs cached `profile.email` mismatch on softball.html load. Either (a) reset localStorage on identity change, or (b) prompt user "you signed in as X but the journal is for Y — switch or merge?" Files: softball.html, around the cloud-sync prompt area.
+
+### P0 — stale "14 days free, no card" share-caption copy (added 2026-05-20 PM, blocked on offer decision)
+4 instances in `softball.html` SHARE_CAPTIONS + 4 in `mg-config.js`. The offer is now founder-rate (6 months free via FOUNDERMYGRIND) for the first 100, not a 14-day trial. Cannot sweep until Coach decides new copy: Option A "Try MyGrind free" (generic, true for all), Option B "Founder rate is open" (only true while 100-cap holds), or Option C explicit "6 months free for founders, then $99/yr". Decide first, sweep after. ~15 min after decision.
 
 <!-- SHIPPED 2026-05-19 (was P0 above):
 - Real-customer testing pass on launch-day fixes: COMPLETE. All 4 paths verified (FOREVERYOUNG2026, FOUNDERMYGRIND, default 14-day, onboarding-loop fix).
