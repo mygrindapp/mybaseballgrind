@@ -4409,6 +4409,17 @@ function restorePlayerScreen() {
    get a preview bubble; fallback kids get "hand the phone" framing.
    ═══════════════════════════════════════════════════════════ */
 
+// ─── SMS DELIVERY FLAG ─────────────────────────────────────
+// Twilio toll-free verification is in carrier review. Until it's
+// approved, /api/send-invite runs in DRY_RUN and no SMS actually
+// fires. Set this to true ONLY after TFV is approved AND
+// SMS_DRY_RUN=false is set in the Vercel env. Flipping this flag
+// changes the Screen 7 status card and dashboard player card copy
+// from honest "Setup link ready, share it now" framing to the
+// future "Invite sent" claim.
+// Tracked: customer feedback 2026-05-21 (Family plan signup).
+const SMS_LIVE = false;
+
 // Returns the SMS copy that would be sent to a player.
 // Sport-aware: prefers per-player sport (parent picks per-kid for 'both' families),
 // falls back to familySport when no per-player choice was made.
@@ -4490,23 +4501,41 @@ function renderPlayerStatusCard(player, index) {
     // SMS-invited — show preview bubble
     const smsText = buildSmsForPlayer(player);
     const phoneDisplay = formatPhoneForDisplay(player.phone);
-    return (
+
+    // SMS-live path: show "Invite sent ✓" (the real text has fired)
+    // SMS-pending path: be honest. No text actually goes out while Twilio
+    // TFV is in carrier review. Surface the share modal so the parent can
+    // deliver the link by copy/QR/AirDrop right now.
+    const pillText  = SMS_LIVE ? 'Invite sent ✓' : 'Setup link ready';
+    const metaText  = SMS_LIVE
+      ? ('Sent to ' + phoneDisplay)
+      : ('Ready for ' + phoneDisplay + '. SMS goes live once carrier verification clears. Share the link below to get ' + name + ' started today.');
+    const previewLabel = SMS_LIVE ? 'just now' : 'preview';
+
+    let cardHtml =
       '<div class="status-card">' +
         '<div class="status-card-head">' +
           '<span class="status-card-icon">' + sportIcon + '</span>' +
           '<div class="status-card-name">' + name + '</div>' +
-          '<span class="status-pill">Invite sent ✓</span>' +
+          '<span class="status-pill">' + pillText + '</span>' +
         '</div>' +
-        '<div class="status-meta">Sent to ' + phoneDisplay + '</div>' +
+        '<div class="status-meta">' + metaText + '</div>' +
         '<div class="sms-preview">' +
           '<div class="sms-preview-meta">' +
             '<span>From MyGrind</span>' +
-            '<span>just now</span>' +
+            '<span>' + previewLabel + '</span>' +
           '</div>' +
           '<div class="sms-bubble">' + escapeHtml(smsText) + '</div>' +
-        '</div>' +
-      '</div>'
-    );
+        '</div>';
+
+    if (!SMS_LIVE) {
+      cardHtml +=
+        '<button type="button" class="dash-resend" style="margin-top:10px;" ' +
+          'onclick="openInviteShareModal(' + index + ')">Share setup link now</button>';
+    }
+
+    cardHtml += '</div>';
+    return cardHtml;
   }
 }
 
@@ -4633,9 +4662,14 @@ function renderDashPlayerCard(player, index) {
   if (player.fallback) {
     statusText = 'Awaiting setup';
     waitingMsg = 'Hand the phone to <strong>' + escapeHtml(name) + '</strong> when ready. Their PIN gets created during their first login.';
-  } else {
+  } else if (SMS_LIVE) {
     statusText = 'Invite sent';
     waitingMsg = 'Once <strong>' + escapeHtml(name) + '</strong> taps the link in their text and finishes their setup, their progress starts showing here.';
+  } else {
+    // SMS still in carrier review — be honest. Parent has to deliver the
+    // link manually via the share modal (Copy / Messages / QR / Open here).
+    statusText = 'Setup link ready';
+    waitingMsg = 'SMS verification is in final carrier review. Tap <strong>Send setup link</strong> below to share <strong>' + escapeHtml(name) + '</strong>\'s link by text, AirDrop, or QR code. Progress shows here once they finish setup.';
   }
 
   // Build the resend button only for SMS-invited kids (fallback kids don't have one)
