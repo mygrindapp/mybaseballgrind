@@ -313,6 +313,33 @@
   .eyebrow::before { right: 100%; }
   .eyebrow::after  { left: 100%; }
 
+  /* ── HEADER SIGN IN ── small top-right link for returning users.
+     Doesn't compete with the primary CTA; gives existing users a
+     1-tap path to /signin.html without scrolling to the footer. */
+  .header-signin {
+    position: absolute;
+    top: 18px;
+    right: 22px;
+    z-index: 10;
+    color: var(--gold);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-decoration: none;
+    opacity: 0.85;
+    transition: opacity 0.2s ease, color 0.2s ease;
+  }
+  .header-signin:hover,
+  .header-signin:focus {
+    opacity: 1;
+    color: var(--gold-light);
+  }
+  @media (max-width: 480px) {
+    .header-signin { top: 14px; right: 16px; font-size: 12px; }
+  }
+
   /* ── LOGO ── (entrance triggered by JS once everything else is in place) */
   .logo-wrap {
     width: 100%;
@@ -832,6 +859,8 @@
 <div class="bg-streaks"></div>
 <div class="bg-glow"></div>
 <div class="bg-vignette"></div>
+
+<a class="header-signin" href="signin.html">Sign In</a>
 
 <main>
 
