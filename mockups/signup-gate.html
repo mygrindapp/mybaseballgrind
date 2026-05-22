@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>MyGrind — Who's signing up? (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700;800&family=Barlow:wght@400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0A0A;
+    --card: #181818;
+    --card-2: #1E1E1E;
+    --gold: #C9A84C;
+    --gold-light: #E8C766;
+    --text: #F5F0EB;
+    --text-dim: #8A8278;
+    --border: #2D2820;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: 'Barlow', -apple-system, sans-serif; min-height: 100vh; }
+
+  .device {
+    max-width: 430px;
+    margin: 0 auto;
+    padding: 24px 20px 32px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Header */
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .brand {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 22px;
+    letter-spacing: 2px;
+    color: var(--gold);
+  }
+  .step {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  /* Progress */
+  .prog-track {
+    height: 3px;
+    background: #1E1E1E;
+    border-radius: 99px;
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 99px;
+    transition: width 0.4s ease;
+  }
+
+  /* Screen content */
+  .screen { flex: 1; display: none; flex-direction: column; }
+  .screen.active { display: flex; }
+
+  .headline {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 36px;
+    line-height: 1.05;
+    letter-spacing: 1px;
+    margin: 0 0 12px;
+  }
+  .headline em { color: var(--gold); font-style: normal; }
+  .sub {
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--text-dim);
+    margin: 0 0 28px;
+  }
+
+  /* Choice cards */
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+    text-align: left;
+    font-family: inherit;
+    color: var(--text);
+    width: 100%;
+  }
+  .choice:hover, .choice:active {
+    border-color: var(--gold);
+    background: var(--card-2);
+  }
+  .choice.selected {
+    border-color: var(--gold);
+    background: rgba(201,168,76,0.08);
+  }
+  .choice-icon {
+    font-size: 28px;
+    line-height: 1;
+    width: 40px;
+    text-align: center;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .choice-body { flex: 1; }
+  .choice-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .choice-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
+
+  /* Bottom CTA */
+  .bottom-nav {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .cta {
+    width: 100%;
+    background: var(--gold);
+    color: #0A0A0A;
+    border: none;
+    border-radius: 8px;
+    padding: 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: opacity 0.18s;
+  }
+  .cta:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+  .cta:not(:disabled):active { opacity: 0.85; }
+  .back-btn {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 8px;
+    align-self: flex-start;
+  }
+  .back-btn:hover { color: var(--gold); }
+
+  /* Path summary card (final screen) */
+  .path-card {
+    background: linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.02));
+    border: 1.5px solid var(--gold);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 8px;
+  }
+  .path-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .path-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 26px;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .path-body {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .path-body strong { color: var(--gold); }
+  .next-steps {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+  }
+
+  /* No-card-needed trial badge on path cards */
+  .trial-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 14px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, rgba(201,168,76,0.18), rgba(201,168,76,0.08));
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+  }
+  .trial-badge-icon {
+    font-size: 20px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .trial-badge-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+    letter-spacing: 0.3px;
+  }
+  .trial-badge-text strong {
+    color: var(--gold);
+    font-weight: 800;
+  }
+
+  /* Inline "no card" reassurance under Screen 1 sub */
+  .reassure-line {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: -16px;
+    margin-bottom: 24px;
+    padding: 6px 12px;
+    background: rgba(201,168,76,0.10);
+    border-radius: 99px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  /* Payment-responsibility chip on choice cards */
+  .pay-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 8px;
+    padding: 4px 10px;
+    background: rgba(201,168,76,0.10);
+    border: 1px solid rgba(201,168,76,0.35);
+    border-radius: 99px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .pay-chip-icon {
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  /* Annotation bar (yellow legal-pad style, for design reviewer eyes only) */
+  .note {
+    margin-top: 32px;
+    padding: 14px 16px;
+    background: rgba(255, 220, 80, 0.08);
+    border-left: 3px solid #FFDC50;
+    font-size: 12px;
+    color: #C7B870;
+    line-height: 1.5;
+    border-radius: 0 6px 6px 0;
+  }
+  .note strong { color: #FFDC50; }
+
+  /* Footer */
+  .footer {
+    margin-top: 28px;
+    text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+<div class="device">
+
+  <div class="top">
+    <div class="brand">MYGRIND</div>
+    <div class="step" id="step_label">Step 1 of 2</div>
+  </div>
+
+  <div class="prog-track">
+    <div class="prog-fill" id="prog_fill" style="width: 50%;"></div>
+  </div>
+
+  <!-- ─── SCREEN 1: Who's signing up? ─── -->
+  <div class="screen active" id="screen_1">
+    <h1 class="headline">Who's signing <em>up?</em></h1>
+    <p class="sub">One quick question so we set up the right kind of account. You can always add more players later.</p>
+    <div class="reassure-line">🎉 14 days free · No card needed to start</div>
+
+    <div class="choices">
+      <button class="choice" data-path="self" onclick="selectChoice(this, 'self')">
+        <div class="choice-icon">⚾</div>
+        <div class="choice-body">
+          <div class="choice-title">Just me</div>
+          <div class="choice-desc">I'm 18 or older. Signing up to track my own training, games, and goals.</div>
+          <div class="pay-chip"><span class="pay-chip-icon">💳</span> I'll pay with my own card</div>
+        </div>
+      </button>
+
+      <button class="choice" data-path="parent" onclick="selectChoice(this, 'parent')">
+        <div class="choice-icon">👨‍👧</div>
+        <div class="choice-body">
+          <div class="choice-title">I'm a parent</div>
+          <div class="choice-desc">Setting up MyGrind for my child or children. I'll manage the account.</div>
+          <div class="pay-chip"><span class="pay-chip-icon">💳</span> I'll pay with my card</div>
+        </div>
+      </button>
+    </div>
+
+    <div style="margin-top:16px; padding:12px 14px; background:rgba(255,255,255,0.04); border-radius:8px; font-size:12px; color:var(--text-dim); line-height:1.5;">
+      <strong style="color:var(--text);">Under 18?</strong> Tap "I'm a parent" and have your mom, dad, or guardian sign up. They'll handle billing and you can still have your own player profile.
+    </div>
+
+    <div class="bottom-nav">
+      <button class="cta" id="next_1" disabled onclick="goToScreen(2)">Continue →</button>
+    </div>
+  </div>
+
+  <!-- ─── SCREEN 2 (parent path): Device question ─── -->
+  <div class="screen" id="screen_2_parent">
+    <h1 class="headline">Will your kid use <em>their own phone,</em> or <em>yours?</em></h1>
+    <p class="sub">This changes how they log entries and how you'll see their progress. Easy to change later if needed.</p>
+
+    <div class="choices">
+      <button class="choice" data-device="kid" onclick="selectChoice(this, 'kid')">
+        <div class="choice-icon">📱</div>
+        <div class="choice-body">
+          <div class="choice-title">Their own phone</div>
+          <div class="choice-desc">Your player has a phone and will log on their own. We'll send a setup link to text, copy, or scan as a QR code.</div>
+        </div>
+      </button>
+
+      <button class="choice" data-device="parent" onclick="selectChoice(this, 'parent')">
+        <div class="choice-icon">👋</div>
+        <div class="choice-body">
+          <div class="choice-title">My phone (shared)</div>
+          <div class="choice-desc">Your player doesn't have their own phone, or you'd rather log together. You'll set them up on your phone with a PIN and log entries as a team after games.</div>
+        </div>
+      </button>
+
+      <button class="choice" data-device="varies" onclick="selectChoice(this, 'varies')">
+        <div class="choice-icon">🔀</div>
+        <div class="choice-body">
+          <div class="choice-title">It varies (different per kid)</div>
+          <div class="choice-desc">You have more than one kid and they're not the same. One has a phone, another doesn't, or one's older than the other. You'll set this per player.</div>
+        </div>
+      </button>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="cta" id="next_2_parent" disabled onclick="goToSummary()">Continue →</button>
+      <button class="back-btn" onclick="goToScreen(1)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ─── SCREEN 2 (self path): Confirmation ─── -->
+  <div class="screen" id="screen_2_self">
+    <h1 class="headline">Got it. Let's get <em>you set up.</em></h1>
+    <p class="sub">You'll head straight into your account setup next: profile, sport, position, and the goals you're working on.</p>
+
+    <div class="path-card">
+      <div class="trial-badge">
+        <span class="trial-badge-icon">🎉</span>
+        <span class="trial-badge-text"><strong>14 days completely free.</strong> No credit card needed to start. We'll only ask for a card on day 14 if you want to keep going.</span>
+      </div>
+      <div class="path-label">Your path · Self · You pay</div>
+      <div class="path-title">Single player, your account</div>
+      <div class="path-body">
+        You're signing up for yourself, so we'll skip the parent stuff and go right into your training journal. <strong>$99.99/year</strong> or <strong>$9.99/month</strong>, 14-day free trial, no card required to start. Use code <strong>FOUNDERMYGRIND</strong> at checkout for 6 months free. <strong style="color:var(--gold);">You'll add your own credit or debit card when the trial ends.</strong>
+      </div>
+      <div class="next-steps">
+        <strong style="color:var(--gold);">Next:</strong> Profile basics → sport &amp; position → what you're working on → start logging. Card prompt only appears on day 14.
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="cta" onclick="alert('In the real app, this would route to onboarding.html?self=1')">Start my setup →</button>
+      <button class="back-btn" onclick="goToScreen(1)">← Back</button>
+    </div>
+  </div>
+
+  <!-- ─── SCREEN 3 (summary, parent path): Confirmed path ─── -->
+  <div class="screen" id="screen_3_parent_kid">
+    <h1 class="headline">Here's your <em>path.</em></h1>
+    <p class="sub">Confirming what we'll do next. Hit Continue to start setting up your player.</p>
+
+    <div class="path-card">
+      <div class="trial-badge">
+        <span class="trial-badge-icon">🎉</span>
+        <span class="trial-badge-text"><strong>14 days completely free.</strong> No credit card needed to start. We'll only ask for a card on day 14 if you want to keep going.</span>
+      </div>
+      <div class="path-label">Your path · Player's own phone · You (parent) pay</div>
+      <div class="path-title">Parent + Player (own device)</div>
+      <div class="path-body">
+        You'll create your parent account first. Then you'll add your player by name and sport, and we'll generate a setup link that you can text or AirDrop to their phone. They finish onboarding there. <strong style="color:var(--gold);">You (the parent) handle billing.</strong> Your player will never see a payment screen. You'll see their progress on your parent dashboard.
+      </div>
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.2); border-radius:6px; font-size:13px; line-height:1.5;">
+        <strong style="color:var(--gold);">Pricing:</strong> Single plan <strong>$99.99/yr</strong> or <strong>$9.99/mo</strong> · Family plan (2–3 players) <strong>$149.99/yr</strong> or <strong>$14.99/mo</strong> · 14-day free trial, no card to start · Use code <strong>FOUNDERMYGRIND</strong> at checkout for 6 months free.
+      </div>
+      <div class="next-steps">
+        <strong style="color:var(--gold);">Next:</strong> Your name &amp; email → Plan (Single or Family) → Add your player → Send the setup link. Card prompt only appears on day 14.
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="cta" onclick="alert('In the real app, this would route to signup.html starting at Screen 2 (parent info), with state.path=parent-kid-device prefilled.')">Continue →</button>
+      <button class="back-btn" onclick="goToScreen(2)">← Back</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen_3_parent_shared">
+    <h1 class="headline">Here's your <em>path.</em></h1>
+    <p class="sub">Confirming what we'll do next. Hit Continue to start setting up your player.</p>
+
+    <div class="path-card">
+      <div class="trial-badge">
+        <span class="trial-badge-icon">🎉</span>
+        <span class="trial-badge-text"><strong>14 days completely free.</strong> No credit card needed to start. We'll only ask for a card on day 14 if you want to keep going.</span>
+      </div>
+      <div class="path-label">Your path · Shared phone · You (parent) pay</div>
+      <div class="path-title">Parent + Player (your device)</div>
+      <div class="path-body">
+        You'll create your parent account first. Then you'll add your player by name and sport, and you'll set them up on this phone with a 4-digit PIN. After games and practices, you'll log entries together. <strong style="color:var(--gold);">You (the parent) handle billing.</strong> Your player never sees a payment screen. Both accounts live on this phone and you can switch between them anytime.
+      </div>
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.2); border-radius:6px; font-size:13px; line-height:1.5;">
+        <strong style="color:var(--gold);">Pricing:</strong> Single plan <strong>$99.99/yr</strong> or <strong>$9.99/mo</strong> · Family plan (2–3 players) <strong>$149.99/yr</strong> or <strong>$14.99/mo</strong> · 14-day free trial, no card to start · Use code <strong>FOUNDERMYGRIND</strong> at checkout for 6 months free.
+      </div>
+      <div class="next-steps">
+        <strong style="color:var(--gold);">Next:</strong> Your name &amp; email → Plan (Single or Family) → Add your player + PIN → Done. Card prompt only appears on day 14.
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="cta" onclick="alert('In the real app, this would route to signup.html starting at Screen 2 (parent info), with state.path=parent-shared-device prefilled. Player added as fallback=true by default.')">Continue →</button>
+      <button class="back-btn" onclick="goToScreen(2)">← Back</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screen_3_parent_varies">
+    <h1 class="headline">Here's your <em>path.</em></h1>
+    <p class="sub">Confirming what we'll do next. You'll choose the setup type per player as you add them.</p>
+
+    <div class="path-card">
+      <div class="trial-badge">
+        <span class="trial-badge-icon">🎉</span>
+        <span class="trial-badge-text"><strong>14 days completely free.</strong> No credit card needed to start. We'll only ask for a card on day 14 if you want to keep going.</span>
+      </div>
+      <div class="path-label">Your path · Mixed devices · You (parent) pay</div>
+      <div class="path-title">Parent + Multiple players (mixed)</div>
+      <div class="path-body">
+        You'll create your parent account first. As you add each player, you'll pick whether they have their own phone (we send them a setup link) or use yours (you set them up here with a PIN). One player can be on their own phone while another is on yours, and that's fine. <strong style="color:var(--gold);">You (the parent) handle billing for all players</strong> under one Family plan. None of your players see a payment screen.
+      </div>
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.2); border-radius:6px; font-size:13px; line-height:1.5;">
+        <strong style="color:var(--gold);">Pricing:</strong> Family plan (2–3 players) <strong>$149.99/yr</strong> or <strong>$14.99/mo</strong> · 14-day free trial, no card to start · Use code <strong>FOUNDERMYGRIND</strong> at checkout for 6 months free.
+      </div>
+      <div class="next-steps">
+        <strong style="color:var(--gold);">Next:</strong> Your name &amp; email → Family plan → Add players one by one, picking device per player → Done. Card prompt only appears on day 14.
+      </div>
+    </div>
+
+    <div class="bottom-nav">
+      <button class="cta" onclick="alert('In the real app, this would route to signup.html starting at Screen 2 (parent info), with state.path=parent-mixed-devices prefilled. Plan auto-set to Family (multi-player). Per-player device toggle shown on each Screen 6 pass.')">Continue →</button>
+      <button class="back-btn" onclick="goToScreen(2)">← Back</button>
+    </div>
+  </div>
+
+  <div class="note" id="design_note">
+    <strong>Design note:</strong> This 2-screen gate replaces the current implicit-funneling at Screen 5–6. Pre-segments users so the rest of signup can skip irrelevant questions (e.g., self-path doesn't see "no phone" toggle; shared-phone path defaults that toggle to ON without asking). Persistent profile switcher (top-right avatar) is the companion fix for switching between Mia/Emma/Parent once accounts exist.
+  </div>
+
+  <div class="footer">
+    Mockup · MyGrind Signup Gate · 2026-05-21
+  </div>
+
+</div>
+
+<script>
+  let selectedPath = null;
+  let selectedDevice = null;
+
+  function selectChoice(btn, value) {
+    const screen = btn.closest('.screen');
+    screen.querySelectorAll('.choice').forEach(c => c.classList.remove('selected'));
+    btn.classList.add('selected');
+
+    if (screen.id === 'screen_1') {
+      selectedPath = value;
+      document.getElementById('next_1').disabled = false;
+    } else if (screen.id === 'screen_2_parent') {
+      selectedDevice = value;
+      document.getElementById('next_2_parent').disabled = false;
+    }
+  }
+
+  function goToScreen(num) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+    if (num === 1) {
+      document.getElementById('screen_1').classList.add('active');
+      document.getElementById('step_label').textContent = 'Step 1 of 2';
+      document.getElementById('prog_fill').style.width = '50%';
+    } else if (num === 2) {
+      if (selectedPath === 'parent') {
+        document.getElementById('screen_2_parent').classList.add('active');
+      } else {
+        document.getElementById('screen_2_self').classList.add('active');
+      }
+      document.getElementById('step_label').textContent = 'Step 2 of 2';
+      document.getElementById('prog_fill').style.width = '100%';
+    }
+  }
+
+  function goToSummary() {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    if (selectedDevice === 'kid') {
+      document.getElementById('screen_3_parent_kid').classList.add('active');
+    } else if (selectedDevice === 'varies') {
+      document.getElementById('screen_3_parent_varies').classList.add('active');
+    } else {
+      document.getElementById('screen_3_parent_shared').classList.add('active');
+    }
+    document.getElementById('step_label').textContent = 'Ready to start';
+    document.getElementById('prog_fill').style.width = '100%';
+  }
+</script>
+
+</body>
+</html>
