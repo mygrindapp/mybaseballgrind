@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v272';
+    const CACHE = 'ybg-mygrind-v273';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5081,8 +5081,8 @@ input[type="number"] {
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
     <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
     <div class="section-header">
-      <div class="section-title">MY<span>FEEDBACK</span></div>
-      <div class="section-sub">Send a structured note to your coach or instructor</div>
+      <div class="section-title">MY<span>COACH</span></div>
+      <div class="section-sub">Send a question. Get your coach's structured feedback.</div>
       <div class="gold-line"></div>
     </div>
 
@@ -5134,7 +5134,8 @@ input[type="number"] {
           oninput="cfUpdateNoteCount()"></textarea>
       </div>
 
-      <button type="button" class="btn btn-gold" id="cf-submit" onclick="cfSubmit()" style="width:100%; padding:12px 24px;">Send to Coach</button>
+      <button type="button" class="btn btn-gold" id="cf-submit" onclick="cfSubmit()" style="width:100%; padding:12px 24px;">Send Question &rarr;</button>
+      <div style="font-family:'Barlow',sans-serif; font-size:11px; color:var(--grey); text-align:center; margin-top:8px;">Most coaches respond within 24 hours. You'll see their reply on your dashboard.</div>
 
       <div id="cf-error" style="color:var(--red);font-family:'Barlow',sans-serif;font-size:13px;margin-top:10px;display:none;"></div>
       <div id="cf-toast" style="background:rgba(39,174,96,0.12);border:1px solid var(--green);color:#7CDFA0;padding:10px 12px;border-radius:4px;font-family:'Barlow',sans-serif;font-size:13px;margin-top:12px;display:none;"></div>
@@ -5920,6 +5921,97 @@ input[type="number"] {
          than it needed to be. The Subscription card now also stays visible
          for dependents (with its billing controls hidden) so kid-payers
          still see their account info — see updateSubscriptionCard(). -->
+
+    <!-- ── RECRUITING & ACADEMIC RESOURCES ── 2026-05-22.
+         External links to eligibility centers, ranking services, academic
+         prep, and Coach's direct contact paths. Tap-out links open in a
+         new tab. Organized in 4 groups so players (and parents) can scan
+         to what they need without scrolling through everything. -->
+    <div class="card" id="settings-resources-card" style="margin-bottom:16px;">
+      <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;">
+        <span style="font-size:22px;">🎓</span>
+        Recruiting &amp; Academic Resources
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:18px;">
+        The links coaches, players, and families ask about most. Bookmark this. You'll need it as you start thinking about college.
+      </div>
+
+      <!-- Group 1: Eligibility Centers -->
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Eligibility Centers</div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:18px;">
+        <a href="https://web3.ncaa.org/ecwr3/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Eligibility Center &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Required for D1 + D2. Start in your sophomore year.</div>
+        </a>
+        <a href="https://play.mynaia.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NAIA Eligibility Center &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Required for NAIA programs.</div>
+        </a>
+        <a href="https://www.njcaa.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NJCAA (Junior College) &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">For 2-year college programs.</div>
+        </a>
+        <a href="https://www.ncaa.org/sports/recruiting-calendars" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Recruiting Calendar &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">When coaches can contact you, by year.</div>
+        </a>
+      </div>
+
+      <!-- Group 2: Showcases & Rankings -->
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Showcases &amp; Rankings</div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:18px;">
+        <a href="https://www.perfectgame.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Perfect Game &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Baseball showcases and national rankings.</div>
+        </a>
+        <a href="https://www.prepbaseballreport.com/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Prep Baseball Report (PBR) &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Player profiles and state rankings.</div>
+        </a>
+        <a href="https://extrainningsoftball.com/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Extra Inning Softball &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Softball national rankings and events.</div>
+        </a>
+        <a href="https://nfca.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 NFCA (Softball Coaches) &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">National Fastpitch Coaches Association directory.</div>
+        </a>
+      </div>
+
+      <!-- Group 3: Academic & Financial Aid -->
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Academic &amp; Financial Aid</div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:18px;">
+        <a href="https://www.khanacademy.org/test-prep/sat" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📘 Khan Academy SAT Prep &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Free official SAT practice.</div>
+        </a>
+        <a href="https://www.commonapp.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📝 Common App &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Apply to 1000+ colleges with one application.</div>
+        </a>
+        <a href="https://studentaid.gov/h/apply-for-aid/fafsa" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">💰 FAFSA &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Federal student aid application.</div>
+        </a>
+        <a href="https://www.collegeboard.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🎓 College Board &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">SAT registration and college search.</div>
+        </a>
+      </div>
+
+      <!-- Group 4: Talk to Coach -->
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Talk to Coach</div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+        <a href="mailto:coach@mygrindapp.com" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📧 Email Coach &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Questions about your path? I read every email.</div>
+        </a>
+        <a href="https://calendly.com/realmikeyoung" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📅 Schedule a Lesson &rarr;</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">In-person in Encino, CA or virtual review.</div>
+        </a>
+      </div>
+    </div>
 
     <!-- ── HELP & SUPPORT ── 2026-05-18: was a standalone Send Feedback
          card. Reworked into one canonical Help & Support card with three
@@ -18882,15 +18974,36 @@ function cfSubmit() {
     });
     cfUpdateNoteCount();
 
-    // Toast
+    // Toast — honest about whether the SMS auto-fired (Twilio TFV is still
+    // in carrier review). If it didn't, give the player a real share path
+    // (tap-to-text the coach directly with a prefilled message) instead of
+    // a misleading "double-check their phone" message that implies user error.
     var toast = document.getElementById('cf-toast');
     if (toast) {
       var notified = out.body.notify && out.body.notify.sent;
-      toast.textContent = notified
-        ? '✓ Sent. ' + coachName + ' got a text. They will tap the link to respond.'
-        : '✓ Saved. (Coach was not notified. Double-check their phone and try again.)';
-      toast.style.display = 'block';
-      setTimeout(function() { toast.style.display = 'none'; }, 6000);
+      if (notified) {
+        toast.innerHTML = '✓ Sent. ' + cfEsc(coachName) + ' got a text. They will tap the link to respond.';
+        toast.style.display = 'block';
+        setTimeout(function() { toast.style.display = 'none'; }, 6000);
+      } else {
+        // Build a prefilled SMS fallback so the player can text the coach
+        // directly. Works in iOS Safari + Android Chrome.
+        var coachPhoneDigits = String(coachPhone || '').replace(/\D/g, '');
+        var smsBody = encodeURIComponent('Hey ' + coachName + ', I sent you a question on MyGrind. When you have a sec, can you respond? Thanks!');
+        var smsHref = coachPhoneDigits ? ('sms:+1' + coachPhoneDigits + '?body=' + smsBody) : '';
+        toast.innerHTML =
+          '<div style="font-weight:700; margin-bottom:6px;">✓ Saved.</div>' +
+          '<div style="font-size:12px; line-height:1.5; color:var(--light); margin-bottom:10px;">' +
+            'Auto-text isn\'t live yet (carrier verification still pending). ' +
+            'Your question is saved — give ' + cfEsc(coachName) + ' a heads-up so they know to check.' +
+          '</div>' +
+          (smsHref
+            ? '<a href="' + smsHref + '" style="display:inline-block; background:var(--gold); color:#080808; font-family:\'Barlow Condensed\',sans-serif; font-weight:700; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; padding:9px 14px; border-radius:4px; text-decoration:none;">Text ' + cfEsc(coachName) + ' now →</a>'
+            : '<div style="font-size:12px; color:var(--grey);">Add the coach\'s phone above so we can pre-fill a text.</div>');
+        toast.style.display = 'block';
+        // Longer timeout — manual action needed, give the player time to tap.
+        setTimeout(function() { toast.style.display = 'none'; }, 15000);
+      }
     }
 
     cfRenderHistory();
