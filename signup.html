@@ -576,6 +576,61 @@ h1 span {
 .footnote strong { color: #C9A84C; font-weight: 600; }
 
 /* ═══════════════════════════════════════════════════════════
+   SCREEN 0 ENHANCEMENT — payment clarity + no-card promise
+   ───────────────────────────────────────────────────────────
+   Added 2026-05-21 in response to customer feedback that the
+   trial card-requirement was unclear at the top of the funnel.
+   Three new elements: no-card pill below the headline, payment
+   chip on each tap-card, under-18 callout below the cards.
+   ═══════════════════════════════════════════════════════════ */
+.no-card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 14px auto 0 auto;
+  padding: 7px 14px;
+  background: rgba(201,168,76,0.12);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 99px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #C9A84C;
+}
+.pay-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: rgba(201,168,76,0.10);
+  border: 1px solid rgba(201,168,76,0.32);
+  border-radius: 99px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  color: #C9A84C;
+}
+.under18-callout {
+  margin: 18px auto 0 auto;
+  max-width: 380px;
+  padding: 11px 14px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 6px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 12.5px;
+  color: #A89880;
+  line-height: 1.55;
+  text-align: left;
+}
+.under18-callout strong { color: #E8DCC4; font-weight: 600; }
+.under18-callout em { color: #C9A84C; font-style: normal; font-weight: 600; }
+
+/* ═══════════════════════════════════════════════════════════
    SPORT TILES (Screen 3 family-level sport selector)
    ───────────────────────────────────────────────────────────
    Compact 3-up grid that sits ABOVE the player-count tap-cards.
@@ -2059,23 +2114,33 @@ select.field-input {
 
     <div class="gold-bar"></div>
 
+    <div style="text-align:center;">
+      <div class="no-card-pill">🎉 14 days free · No card needed to start</div>
+    </div>
+
     <div style="margin-top: 28px;">
 
       <button type="button" class="tap-card" onclick="selectAudience('kid')">
         <div class="tap-card-emoji"><svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-users"/></svg></div>
         <div class="tap-card-body">
-          <div class="tap-card-title">My athlete</div>
-          <div class="tap-card-desc">I'm signing up my kid (or kids). I'll create the account and they'll get a text invite.</div>
+          <div class="tap-card-title">I'm a parent</div>
+          <div class="tap-card-desc">Setting up MyGrind for my child or children. I'll manage the account.</div>
+          <div class="pay-chip"><span>💳</span> I'll pay with my card</div>
         </div>
       </button>
 
       <button type="button" class="tap-card" onclick="selectAudience('self')">
         <div class="tap-card-emoji"><svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg></div>
         <div class="tap-card-body">
-          <div class="tap-card-title">Myself</div>
-          <div class="tap-card-desc">I'm 18 or older and signing up for my own training journal.</div>
+          <div class="tap-card-title">Just me</div>
+          <div class="tap-card-desc">I'm 18 or older. Signing up to track my own training, games, and goals.</div>
+          <div class="pay-chip"><span>💳</span> I'll pay with my own card</div>
         </div>
       </button>
+
+      <div class="under18-callout">
+        <strong>Under 18?</strong> Tap <em>I'm a parent</em> above and have your mom, dad, or guardian sign up. They'll handle billing and you can still have your own player profile.
+      </div>
 
       <!-- Cross-device guardrail. Coach Young 2026-05-18: signing someone
            else up on your own phone writes their account to your localStorage.
@@ -2936,6 +3001,49 @@ select.field-input {
      to re-confirm. Catches typos that passed Layer 1 format validation.
      "Edit" closes the modal and returns to the matching player slot.
      ═══════════════════════════════════════════════════════════ -->
+<!-- ═══════════════════════════════════════════════════════════
+     DEVICE-PATH MODAL — shown after parent picks "I'm a parent"
+     ───────────────────────────────────────────────────────────
+     Added 2026-05-21. Asks the parent ONCE whether their kid(s)
+     will log on their own phone, the parent's phone, or a mix.
+     Stored in state.devicePath ('kid' / 'parent' / 'varies'),
+     used as the default for state.players[i].fallback on Screen 6.
+     Parents can still toggle per-player on Screen 6 if needed.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="phone-confirm-overlay" id="device_path_overlay" aria-hidden="true">
+  <div class="phone-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="device_path_title" style="max-width: 420px;">
+    <div class="phone-confirm-eyebrow">One quick question</div>
+    <h2 class="phone-confirm-title" id="device_path_title">How will your kid<br>use MyGrind?</h2>
+    <p class="phone-confirm-sub" style="margin-bottom: 18px;">
+      This sets the right setup path. You can change it per kid later.
+    </p>
+    <div style="display:flex; flex-direction:column; gap:10px; margin-bottom: 16px;">
+      <button type="button" class="tap-card" style="padding:14px 14px; text-align:left;" onclick="selectDevicePath('kid')">
+        <div class="tap-card-emoji" style="font-size:24px;">📱</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title" style="font-size:17px;">Their own phone</div>
+          <div class="tap-card-desc" style="font-size:13px;">My player has a phone. We'll send a setup link to text, copy, or scan as a QR code.</div>
+        </div>
+      </button>
+      <button type="button" class="tap-card" style="padding:14px 14px; text-align:left;" onclick="selectDevicePath('parent')">
+        <div class="tap-card-emoji" style="font-size:24px;">👋</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title" style="font-size:17px;">My phone (shared)</div>
+          <div class="tap-card-desc" style="font-size:13px;">No phone yet, or we'd rather log together. I'll set them up here with a 4-digit PIN.</div>
+        </div>
+      </button>
+      <button type="button" class="tap-card" style="padding:14px 14px; text-align:left;" onclick="selectDevicePath('varies')">
+        <div class="tap-card-emoji" style="font-size:24px;">🔀</div>
+        <div class="tap-card-body">
+          <div class="tap-card-title" style="font-size:17px;">It varies (different per kid)</div>
+          <div class="tap-card-desc" style="font-size:13px;">One has a phone, another doesn't. I'll pick per player as I add them.</div>
+        </div>
+      </button>
+    </div>
+    <button type="button" class="modal-close-btn" onclick="closeDevicePathModal()">← Back</button>
+  </div>
+</div>
+
 <div class="phone-confirm-overlay" id="phone_confirm_overlay" aria-hidden="true">
   <div class="phone-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="phone_confirm_title">
     <div class="phone-confirm-eyebrow">One more check</div>
@@ -3088,6 +3196,15 @@ const state = {
   // 'kid' = parent signing up for their athlete (default funnel)
   // 'self' = 18+ adult signing up for themselves (single-tier only, no SMS step)
   signupFor: null,
+  // Screen 0 follow-up (added 2026-05-21) — device path for parent funnel.
+  // Asked once via modal after selectAudience('kid'). Sets the DEFAULT for
+  // state.players[i].fallback on Screen 6, but the per-player toggle still
+  // wins if the parent overrides. Not collected for self path.
+  //   null      = not asked yet (e.g., self path, or before modal answered)
+  //   'kid'     = each player has their own phone → defaults fallback=false
+  //   'parent'  = shared (parent's) phone → defaults fallback=true
+  //   'varies'  = mixed → uses per-player toggle as today (no global default)
+  devicePath: null,
   // Screen 2 — About You
   parent: {
     firstName: '',
@@ -3249,16 +3366,56 @@ function goNext(from, to) {
 // ─── SCREEN 0 — AUDIENCE PICKER ─────────────────────────────
 // Sets state.signupFor and proceeds. Self path also pre-locks
 // playerCount=1 so the rest of the funnel collapses correctly.
+// Parent path opens the device-path modal first to ask once
+// whether kid(s) use their own phone or parent's phone.
 function selectAudience(which) {
   state.signupFor = which;
   if (which === 'self') {
     state.playerCount = 1;          // self path is always single-tier
+    state.devicePath = null;        // not collected for self path
   }
   // Persist to localStorage so onboarding.html and softball.html can read it
   // after navigation. softball.html hides trial banner + Profile-tab pay CTAs
   // when this is not 'self' (kids on a parent-managed plan don't manage billing).
   try { localStorage.setItem('mg_signup_for', which); } catch (e) {}
   saveState();
+  if (which === 'kid') {
+    // Parent path — show the device-path modal before continuing to Screen 1.
+    openDevicePathModal();
+  } else {
+    goNext(0, 1);
+  }
+}
+
+// ─── DEVICE-PATH MODAL ──────────────────────────────────────
+// Shown after parent picks "I'm a parent" on Screen 0. Asks the
+// global device question once so Screen 6 doesn't have to ask it
+// per player (unless they pick 'varies').
+function openDevicePathModal() {
+  const overlay = document.getElementById('device_path_overlay');
+  if (!overlay) { goNext(0, 1); return; } // fail-open if modal missing
+  overlay.classList.add('shown');
+  overlay.setAttribute('aria-hidden', 'false');
+}
+function closeDevicePathModal() {
+  const overlay = document.getElementById('device_path_overlay');
+  if (overlay) {
+    overlay.classList.remove('shown');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  // User backed out — clear signupFor so they re-pick the audience.
+  // Without this, hitting Back from the modal leaves them in a half-state.
+  state.signupFor = null;
+  saveState();
+}
+function selectDevicePath(value) {
+  state.devicePath = value;
+  saveState();
+  const overlay = document.getElementById('device_path_overlay');
+  if (overlay) {
+    overlay.classList.remove('shown');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
   goNext(0, 1);
 }
 
@@ -3875,15 +4032,19 @@ function getPlayerSlotLabel() {
 }
 
 // Sanitize a player object so it has the expected keys (defensive against
-// older localStorage entries that may not have all fields)
+// older localStorage entries that may not have all fields).
+// 2026-05-21: fallback default now reads state.devicePath set on Screen 0
+// modal — 'parent' (shared phone) defaults fallback=true so the per-player
+// toggle starts on the no-phone path. Parent can still override on Screen 6.
 function ensurePlayerSlot(idx) {
   if (!Array.isArray(state.players)) state.players = [];
   if (!state.players[idx]) {
+    const fallbackDefault = state.devicePath === 'parent';
     state.players[idx] = {
       firstName: '',
       relationship: '',
       phone: '',
-      fallback: false,
+      fallback: fallbackDefault,
       sport: ''   // 'baseball' | 'softball' — picked by parent on Screen 6.
                   // For non-'both' families this auto-derives from familySport;
                   // for 'both' families, parent picks per-kid via sport tiles.
