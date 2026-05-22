@@ -6,15 +6,35 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Day +3 queue (added 2026-05-20 PM)
-1. **File Stripe Support ticket to switch 1099-K TIN from SSN to EIN.** Self-serve UI doesn't expose tax classification change for established accounts. Ticket script drafted: quote Account ID `acct_1TOIr4Pm4ermqky4`, request Sole Prop → Single-Member LLC (disregarded entity) with EIN 42-2579197. Attach Articles + Cert + EIN letter if Stripe asks. 24-72h to resolve. NOT URGENT — 1099-K isn't issued until January 2027. ~5 min to file.
-2. **Open the LLC business bank account** (carried from 5-19 queue). All required docs filed in `~/Desktop/MyGrind Business/01 Legal/LLC Filings/`. Print 2 copies of Articles + Cert + EIN + photo ID, walk into Chase / BofA / credit union. ~30 min at the branch. After: update Stripe payout destination in `dashboard.stripe.com/settings/payouts`.
-3. **TikTok film + post** if not done last night. 22-second script + on-screen text overlays in Notion launch page Batch 1. Update @youngsbaseball TikTok bio link to `mygrindapp.com/signup.html?promo=FOUNDERMYGRIND` BEFORE posting.
-4. **Monitor launch performance** (5 min daily):
-   - Mailchimp open/click breakdown (stabilizes ~24h post-send, ~Thu 9am)
+### P0 — Day +4 queue (added 2026-05-21 PM)
+1. **Draft real marketing plan** (Coach's explicit ask 2026-05-21). Foundational chapter: channels, sport launch order, KPIs, founder vs sport-advisor content split. Anchor against Decisions #43/#44/#45 (one brand/site/app, national-from-start, sport advisors per new sport). Baseball/softball domination through Oct 2026, sport #3 launches Nov 2026. ~60-90 min conversational session.
+2. **File Stripe Support ticket to switch 1099-K TIN from SSN to EIN** (carried from 5-20). Self-serve UI doesn't expose tax classification change for established accounts. Ticket script drafted: quote Account ID `acct_1TOIr4Pm4ermqky4`, request Sole Prop → Single-Member LLC (disregarded entity) with EIN 42-2579197. ~5 min to file. NOT URGENT — 1099-K isn't issued until January 2027.
+3. **TikTok film + post** if not done. 22-second script in Notion launch page Batch 1. Update @youngsbaseball TikTok bio link to `mygrindapp.com/signup.html?promo=FOUNDERMYGRIND` BEFORE posting.
+4. **Test live signup gate on phone** (mygrindapp.com/signup.html after Vercel deploys commit `2e59b26`). Walk through self-path + parent-path × 3 device options. Capture any UX issues as backlog items.
+5. **Monitor launch performance** (5 min daily):
+   - Mailchimp open/click breakdown
    - Vercel Analytics traffic continuation
-   - Firebase Auth user count — if it ticks from 4 → 10+, the spam-workaround broadcast worked
+   - Firebase Auth user count
    - `coach@mygrindapp.com` for rescue requests + feedback
+
+<!-- SHIPPED 2026-05-21 (was Day +3 queue):
+- Bank account opened — Chase Business Complete Checking #2909892761, Veterans Advantage tier, $0/mo. Done in-branch 2026-05-21 AM. Stripe payout destination update queued separately.
+- FBN filed with LA County — confirmation #4179056, registers MyGrindApp + My Grind as DBAs. VitalChek email expected within 5 business days. Newspaper publication via Santa Clarita Gazette ($130) queued for after stamping.
+- SMS-pending UX fix shipped (commit `b59dc50`) — Screen 7 + dashboard no longer falsely claim "Invite sent ✓" while Twilio TFV in carrier review. Honest "Setup link ready" copy + Share button. SMS_LIVE flag, flip to true on TFV approval.
+- Signup gate wired into production Screen 0 (commit `2e59b26`) — payment chips, no-card pill, under-18 callout, device-path modal for parent funnel. Mockup design (commit `82da6cf`) preserved at /mockups/signup-gate.html.
+- Multi-sport architecture LOCKED — Decisions #43 (one brand/site/app), #44 (national from day 1), #45 (sport advisor per new sport). Memory `multi_sport_strategy.md`.
+- Stripe coupon state reconciled — FOUNDERMYGRIND verified ACTIVE (cap 100, 0 used). MYGRIND6 already INACTIVE. Memory `stripe_ids.md` updated.
+- First wild customer feedback loop validated (Twin Dad) — bug diagnosed, patched, shipped, email reply sent via coach@mygrindapp.com all in same session.
+- Day-5 VitalChek reminder routine scheduled for 2026-05-26 09:00 PT (trig_01EpYfPUaeTEtBamKHXDNX6s).
+-->
+
+### Multi-sport schema refactor (queued, 2026-05-21)
+Gate work before sport #3 (~Nov 2026 target). Currently several baseball-specific stats / positions / coach-feedback strings are hardcoded in `softball.html` + `signup.html` + `onboarding.html`. Refactor to:
+- Per-sport stat schema config (baseball OBP/AVG/SLG vs basketball FG%/AST/REB vs soccer goals/assists)
+- Per-sport position list
+- Per-sport coach feedback taxonomy
+- Per-sport landing section template
+Estimate: 2-3 focused sessions. Trigger when baseball/softball stabilize + 25+ paid signups land.
 
 <!-- SHIPPED 2026-05-20:
 - Launch broadcast email to full waitlist (~56) — "MyGrind is live" sent from coach@mygrindapp.com mid-morning. Done.
