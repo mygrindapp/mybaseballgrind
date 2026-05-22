@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MyGrind: Sign Up Your Player</title>
+<title>MyGrind: Sign Up</title>
 
 <script>
   // Inline-data logo refs so the preview panel and offline contexts render the
@@ -28,7 +28,7 @@
   })();
 </script>
 
-<meta name="description" content="Set up your player on MyGrind. 14 days free. No credit card. Cancel anytime.">
+<meta name="description" content="Sign up for MyGrind. 14 days free. No credit card. Cancel anytime.">
 <meta name="robots" content="noindex,nofollow">
 <link rel="canonical" href="https://www.mygrindapp.com/signup.html">
 <link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
@@ -2592,7 +2592,7 @@ select.field-input {
 
     </div>
 
-    <div class="switch-hint">
+    <div class="switch-hint" id="s5_switch_hint">
       Most parents pick annual &mdash; you can switch anytime
     </div>
 
@@ -3355,6 +3355,15 @@ function applySelfLabels(n) {
     setText('g_accountable_text', "I want to be more accountable to myself");
     setText('g_roadmap_text',     "I want guidance on my journey");
     // g_explore ("I'm just exploring") already neutral — no swap needed.
+  }
+  if (n === 5) {
+    // Switch hint loses the "parents" framing for self-funnel users.
+    setText('s5_switch_hint', "You can switch between annual and monthly anytime.");
+    // Walkaway promise line — applyPromoMessaging() rewrites this for promo
+    // paths but uses kid-coded "your player's data" copy by default. Override
+    // here for the self funnel; applyPromoMessaging is also self-aware now so
+    // promo paths land on the right framing too.
+    setHTML('s5_promise_walkaway', "If not, you walk away. Your data stays safe for <strong>90 days</strong> in case you change your mind.");
   }
 }
 
@@ -4736,24 +4745,31 @@ function buildScreen7() {
     });
   }
 
-  // Setup-required callout — only shown if any fallback kids
+  // Setup-required callout — only shown if any fallback kids (or self user)
   const fallbackNames = getFallbackPlayerNames();
   const setupCallout = document.getElementById('setup_required');
   const setupText    = document.getElementById('setup_required_text');
   if (fallbackNames.length > 0) {
     if (setupCallout) setupCallout.style.display = '';
     if (setupText) {
-      setupText.textContent = 'we\'ll set up ' + formatNameList(fallbackNames) +
-        ' on this phone with a PIN. Tap below when ready.';
+      // Self-funnel reframes the callout in first-person (no kid to "set up").
+      if (isSelfPath()) {
+        setupText.textContent = "we'll set you up on this phone with a 4-digit PIN. Tap below when ready.";
+      } else {
+        setupText.textContent = 'we\'ll set up ' + formatNameList(fallbackNames) +
+          ' on this phone with a PIN. Tap below when ready.';
+      }
     }
   } else {
     if (setupCallout) setupCallout.style.display = 'none';
   }
 
-  // CTA label depends on whether we have fallback kids
+  // CTA label depends on whether we have fallback kids (or self user)
   const cta = document.getElementById('n7');
   if (cta) {
-    if (fallbackNames.length > 0) {
+    if (isSelfPath()) {
+      cta.innerHTML = 'Pick Your PIN Now &rarr;';
+    } else if (fallbackNames.length > 0) {
       const firstFallback = fallbackNames[0];
       cta.innerHTML = 'Set Up ' + escapeHtml(firstFallback) + ' Now &rarr;';
     } else {
@@ -4813,24 +4829,33 @@ function onScreen7Back() {
 // with greyed-out sections for streak, journal, goals (per Decision lock:
 // "show full placeholder cards all greyed out").
 function renderDashPlayerCard(player, index) {
-  const name = (player.firstName || 'Your player').trim();
+  const rawName  = (player.firstName || 'Your player').trim();
+  const selfPath = isSelfPath();
+  // Self funnel labels the card "Your profile" instead of repeating the
+  // user's own first name in a "waiting on you" context.
+  const name     = selfPath ? 'Your profile' : rawName;
   // Sport icon stays generic per Decision #7 v3 — kid hasn't picked yet
   const sportIcon = '⚾🥎';
 
-  // Status pill differs based on fallback vs SMS-invited
+  // Status pill differs based on fallback vs SMS-invited (and self vs kid)
   let statusText;
   let waitingMsg;
-  if (player.fallback) {
+  if (selfPath) {
+    // Self funnel: the user IS the player. No phone hand-off, no SMS,
+    // no "waiting on them" — they pick their PIN and start logging.
+    statusText = 'Ready to start';
+    waitingMsg = 'Pick your 4-digit PIN and start logging — your progress shows here.';
+  } else if (player.fallback) {
     statusText = 'Awaiting setup';
-    waitingMsg = 'Hand the phone to <strong>' + escapeHtml(name) + '</strong> when ready. Their PIN gets created during their first login.';
+    waitingMsg = 'Hand the phone to <strong>' + escapeHtml(rawName) + '</strong> when ready. Their PIN gets created during their first login.';
   } else if (SMS_LIVE) {
     statusText = 'Invite sent';
-    waitingMsg = 'Once <strong>' + escapeHtml(name) + '</strong> taps the link in their text and finishes their setup, their progress starts showing here.';
+    waitingMsg = 'Once <strong>' + escapeHtml(rawName) + '</strong> taps the link in their text and finishes their setup, their progress starts showing here.';
   } else {
     // SMS still in carrier review — be honest. Parent has to deliver the
     // link manually via the share modal (Copy / Messages / QR / Open here).
     statusText = 'Setup link ready';
-    waitingMsg = 'SMS verification is in final carrier review. Tap <strong>Send setup link</strong> below to share <strong>' + escapeHtml(name) + '</strong>\'s link by text, AirDrop, or QR code. Progress shows here once they finish setup.';
+    waitingMsg = 'SMS verification is in final carrier review. Tap <strong>Send setup link</strong> below to share <strong>' + escapeHtml(rawName) + '</strong>\'s link by text, AirDrop, or QR code. Progress shows here once they finish setup.';
   }
 
   // Build the resend button only for SMS-invited kids (fallback kids don't have one)
@@ -4968,7 +4993,11 @@ function buildScreen8() {
   const sub = document.getElementById('s8_subhead');
   if (sub) {
     const players = visible.filter(p => p && p.firstName);
-    if (players.length === 0) {
+    if (isSelfPath()) {
+      // Self funnel: user IS the player. Frame the dashboard around their
+      // own logging habit, not waiting on someone else.
+      sub.textContent = "Your dashboard is ready. Start logging and your progress will show here.";
+    } else if (players.length === 0) {
       sub.textContent = 'Your dashboard is ready. Once your player gets started, their progress shows here.';
     } else if (players.length === 1) {
       sub.textContent = 'Your dashboard is ready. Once ' + players[0].firstName + ' gets started, their progress shows here.';
@@ -5480,12 +5509,17 @@ function applyPromoMessaging() {
   const s5Skip     = document.getElementById('s5_skip_trial');
   const s7Notify   = document.getElementById('s7_notify_line');
 
+  // Self-funnel uses "your data" instead of "your player's data" for the
+  // walkaway/keep-with-you copy. Resolved once here so each branch reads cleanly.
+  const dataPhraseWalkaway = isSelfPath() ? "Your data" : "Your player's data";
+  const dataPhraseKeep     = isSelfPath() ? "your data stays with you" : "your player's data stays with you";
+
   if (!info) {
     // No (recognized) promo — restore the default 14-day trial copy.
     if (s5Sub)      s5Sub.textContent      = 'Not today. Not for 14 days. But you should know before we start.';
     if (s5Title)    s5Title.textContent    = 'What happens at day 14?';
     if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Twice</strong> &mdash; on day 12, and again on day 14.";
-    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
     if (s5Skip)     s5Skip.style.display   = '';
     if (s7Notify)   s7Notify.innerHTML     = "<strong>Days 12 &amp; 14:</strong> we'll text and email a reminder before your trial ends.";
     return;
@@ -5495,7 +5529,7 @@ function applyPromoMessaging() {
     if (s5Sub)      s5Sub.textContent      = "Not today. Not ever. You're locked in for life.";
     if (s5Title)    s5Title.textContent    = "What happens after sign-up?";
     if (s5Notify)   s5Notify.innerHTML     = "Nothing changes. <strong>No reminders. No charges. Ever.</strong> Your account stays free for life.";
-    if (s5Walkaway) s5Walkaway.innerHTML   = "Use it as long as you want. Your player's data stays with you — there's nothing to cancel.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "Use it as long as you want. " + dataPhraseKeep.charAt(0).toUpperCase() + dataPhraseKeep.slice(1) + " — there's nothing to cancel.";
     if (s5Skip)     s5Skip.style.display   = 'none';   // No trial to skip — there is no payment
     if (s7Notify)   s7Notify.innerHTML     = "<strong>You're locked in for life.</strong> No reminders, no surprise charges &mdash; ever.";
     return;
@@ -5506,7 +5540,7 @@ function applyPromoMessaging() {
     if (s5Sub)      s5Sub.textContent      = "Not today. Not for " + dur + ". But you should know before we start.";
     if (s5Title)    s5Title.textContent    = "What happens after your free " + dur + "?";
     if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Two weeks before</strong> your free " + dur + " ends.";
-    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
     if (s5Skip)     s5Skip.style.display   = '';       // Still relevant — eager parents can pay early
     if (s7Notify)   s7Notify.innerHTML     = "<strong>Two weeks before " + dur + " is up:</strong> we'll text and email a reminder before your free period ends.";
     return;
