@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v276';
+    const CACHE = 'ybg-mygrind-v277';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8875,6 +8875,15 @@ function saveEntry() {
     if (banner)    banner.style.display = 'none';
   } else {
     state.entries.unshift(entry);
+    // cloud_synced lets us segment local-only journals vs signed-in journals
+    // in Firebase Analytics — the funnel gap we couldn't see before.
+    if (typeof mgLog === 'function') {
+      mgLog('journal_entry_created', {
+        cloud_synced: !!(typeof fbUser !== 'undefined' && fbUser),
+        entry_type: (entry && entry.type) || 'unknown',
+        total_entries: state.entries.length
+      });
+    }
   }
 
   // BULLETPROOF entry-list refresh — Coach Young 2026-05-12 (ongoing bug):
@@ -18510,6 +18519,14 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db   = firebase.firestore();
 const auth = firebase.auth();
+
+// Analytics is best-effort: fails silently if blocked by an ad blocker or
+// if the user's browser doesn't support IndexedDB. Never let it throw.
+var fbAnalytics = null;
+try { fbAnalytics = firebase.analytics(); } catch (e) {}
+function mgLog(name, params) {
+  try { if (fbAnalytics) fbAnalytics.logEvent(name, params || {}); } catch (e) {}
+}
 
 // ══ AUTH STATE ════════════════════════════════════════════════════
 var fbUser = null;
