@@ -6,16 +6,37 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Day +4 queue (added 2026-05-21 PM)
-1. **Draft real marketing plan** (Coach's explicit ask 2026-05-21). Foundational chapter: channels, sport launch order, KPIs, founder vs sport-advisor content split. Anchor against Decisions #43/#44/#45 (one brand/site/app, national-from-start, sport advisors per new sport). Baseball/softball domination through Oct 2026, sport #3 launches Nov 2026. ~60-90 min conversational session.
-2. **File Stripe Support ticket to switch 1099-K TIN from SSN to EIN** (carried from 5-20). Self-serve UI doesn't expose tax classification change for established accounts. Ticket script drafted: quote Account ID `acct_1TOIr4Pm4ermqky4`, request Sole Prop → Single-Member LLC (disregarded entity) with EIN 42-2579197. ~5 min to file. NOT URGENT — 1099-K isn't issued until January 2027.
-3. **TikTok film + post** if not done. 22-second script in Notion launch page Batch 1. Update @youngsbaseball TikTok bio link to `mygrindapp.com/signup.html?promo=FOUNDERMYGRIND` BEFORE posting.
-4. **Test live signup gate on phone** (mygrindapp.com/signup.html after Vercel deploys commit `2e59b26`). Walk through self-path + parent-path × 3 device options. Capture any UX issues as backlog items.
-5. **Monitor launch performance** (5 min daily):
-   - Mailchimp open/click breakdown
-   - Vercel Analytics traffic continuation
+### P0 — Day +5 queue (added 2026-05-22 PM)
+1. **Monitor Twilio TFV support ticket inbox** for human-reviewer response (24-48h typical). If approved: flip `SMS_LIVE=true` in signup.html + `SMS_DRY_RUN=false` in Vercel env, send test invite to Coach's own phone before announcing. DO NOT resubmit Round 6 — same automated reviewer would hit the same EIN database lookup and reject identically.
+2. **Monitor Stripe 1099-K support ticket inbox** for response (24-72h typical). Confirmation expected via email to coach@mygrindapp.com.
+3. **Marketing Plan v0 review** at https://www.notion.so/368819955e6f8170a1e8f499c8176e54. Three open questions need Coach's call: (a) sport #3 — soccer vs basketball, (b) advisor comp model — equity vs profits interest vs rev share, (c) Pro version planning Wed 5-27 bandwidth. 30-45 min sit-down. Output: v1 of the plan with redlines applied.
+4. **TikTok film + post** if not done. 22-second script in Notion launch page Batch 1. Update @youngsbaseball TikTok bio link BEFORE posting.
+5. **Test live signup gate on phone** if not done. Walk through self-path + parent-path × 3 device options. Capture any UX issues as backlog items.
+6. **Monitor launch performance** (5 min daily):
+   - Vercel Analytics traffic + top referrers (today's snapshot: 114 visitors / +78%, 967 PV / +118%, 32% bounce / -18%, May 14-21 window)
    - Firebase Auth user count
+   - Mailchimp open/click breakdown
    - `coach@mygrindapp.com` for rescue requests + feedback
+
+### P1 — JSTV partnership follow-up (added 2026-05-22)
+After tonight's lesson with daughter at Encino LL, evaluate the conversation outcome. If partnership intent confirmed: schedule weekend coffee with structured term sheet, draft mutual NDA, call Sam (818-988-8989) about equity vs profits interest vs rev share LLC implications.
+
+<!-- SHIPPED 2026-05-22 (was Day +4 queue):
+- Marketing Plan v0 drafted in Notion (https://www.notion.so/368819955e6f8170a1e8f499c8176e54) — 8 sections, recommended sport #3: soccer, 3 open questions for Coach.
+- Stripe 1099-K TIN switch ticket filed via support.stripe.com.
+- Twilio TFV escalation ticket filed via help.twilio.com with IRS CP 575 + Articles + Cert of Status attached. Root cause confirmed: EIN propagation lag.
+- 7 code commits shipped (all 7 Vercel READY, 0 failures):
+  - `fe37df5` + `c8f05ae` — Sign In header link on landing page (top-right, 15px/700)
+  - `0d5e717` — Self-funnel signup copy gaps closed on Screens 5/7/8 + page title + meta description
+  - `6827f23` — Coach Feedback MYFEEDBACK → MYCOACH reframing + honest SMS dry-run toast + Settings Recruiting & Academic Resources card (NCAA/NAIA/NJCAA/Perfect Game/PBR/Extra Inning Softball/NFCA/Khan/Common App/FAFSA/College Board)
+  - `9aeafc1` — Dropped "Talk to Coach" group from Resources (Calendly was Coach-specific)
+  - `62bb780` — Coach Feedback "didn't make sense" root cause fixed: removed all `data-default` canned phrases in coach-reply.html, added validation (chip detail ≥15 chars OR comment ≥30 chars), player-side dashboard now shows tap-to-text follow-up CTA
+  - `7b9b130` — "Why I Grind" 200-char profile field + age-aware journal prompts (kid-friendly under 13)
+- SW cache v272 → v276.
+- Memory twilio_tfv_state.md rewritten with EIN-lag diagnosis.
+-->
+
+<!-- SHIPPED 2026-05-21 (was Day +3 queue):
 
 <!-- SHIPPED 2026-05-21 (was Day +3 queue):
 - Bank account opened — Chase Business Complete Checking #2909892761, Veterans Advantage tier, $0/mo. Done in-branch 2026-05-21 AM. Stripe payout destination update queued separately.
