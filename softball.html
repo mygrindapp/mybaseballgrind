@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v273';
+    const CACHE = 'ybg-mygrind-v274';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -5999,18 +5999,6 @@ input[type="number"] {
         </a>
       </div>
 
-      <!-- Group 4: Talk to Coach -->
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Talk to Coach</div>
-      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
-        <a href="mailto:coach@mygrindapp.com" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📧 Email Coach &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Questions about your path? I read every email.</div>
-        </a>
-        <a href="https://calendly.com/realmikeyoung" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📅 Schedule a Lesson &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">In-person in Encino, CA or virtual review.</div>
-        </a>
-      </div>
     </div>
 
     <!-- ── HELP & SUPPORT ── 2026-05-18: was a standalone Send Feedback
