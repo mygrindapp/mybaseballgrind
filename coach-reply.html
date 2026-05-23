@@ -234,34 +234,35 @@ button.btn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
 
     <div class="card">
       <div class="card-title">Your Response</div>
-      <p style="font-size:14px;color:var(--light);line-height:1.5;margin-bottom:14px;">Pick one or more of these (optional details on each), then add a short note. Your response goes to <span id="player-name-2" style="color:var(--gold);font-weight:600;">the player</span> and counts toward their parent's weekly review.</p>
+      <p style="font-size:14px;color:var(--light);line-height:1.5;margin-bottom:14px;">Pick a quick option, then <strong style="color:var(--gold);">write a sentence about WHY in your own words</strong>. Generic chip labels alone do not help <span id="player-name-2" style="color:var(--gold);font-weight:600;">the player</span>. Your response also counts toward their parent's weekly review.</p>
 
       <label class="field-label">Quick options</label>
       <div class="chip-grid" id="chip-grid">
-        <button class="chip" data-key="drill" data-default="Work on tee work. 30 reps daily">🎯 Drill recommendation</button>
-        <input class="chip-detail" data-for="drill" placeholder="Drill specifics (3 sessions, 30 reps, etc.)">
+        <button class="chip" data-key="drill">🎯 Drill recommendation</button>
+        <input class="chip-detail" data-for="drill" placeholder="Which drill, how many reps, how often? (specific to this player)">
 
         <button class="chip" data-key="watch">📹 Watch this</button>
         <input class="chip-detail" data-for="watch" placeholder="Paste a video link (YouTube, etc.)">
 
-        <button class="chip" data-key="mindset" data-default="Stay through the ball, trust your prep">🧠 Mindset note</button>
-        <input class="chip-detail" data-for="mindset" placeholder="One mental cue (optional)">
+        <button class="chip" data-key="mindset">🧠 Mindset note</button>
+        <input class="chip-detail" data-for="mindset" placeholder="One mental cue tied to what they asked">
 
-        <button class="chip" data-key="mechanics" data-default="Adjust your timing: slower load, quicker hands">🔧 Mechanical fix</button>
-        <input class="chip-detail" data-for="mechanics" placeholder="What to adjust (optional)">
+        <button class="chip" data-key="mechanics">🔧 Mechanical fix</button>
+        <input class="chip-detail" data-for="mechanics" placeholder="What specifically to adjust (load, hands, hips, etc.)">
 
-        <button class="chip" data-key="talk" data-default="Bring this up at our next session">🗣️ Let's talk in person</button>
-        <input class="chip-detail" data-for="talk" placeholder="When to discuss (optional)">
+        <button class="chip" data-key="talk">🗣️ Let's talk in person</button>
+        <input class="chip-detail" data-for="talk" placeholder="When (next session, after practice, etc.)">
 
-        <button class="chip" data-key="rest" data-default="Take a day. Rest, come back fresh">⏸️ Take a day</button>
+        <button class="chip" data-key="rest">⏸️ Take a day</button>
+        <input class="chip-detail" data-for="rest" placeholder="Why and how long (optional)">
 
-        <button class="chip" data-key="journal" data-default="Log what you ate, slept, and felt before this game">📓 Journal prompt</button>
-        <input class="chip-detail" data-for="journal" placeholder="What to log (optional)">
+        <button class="chip" data-key="journal">📓 Journal prompt</button>
+        <input class="chip-detail" data-for="journal" placeholder="What to log and why">
       </div>
 
       <div style="margin-top:16px;">
-        <label class="field-label">Add a quick note <span id="note-count" style="color:var(--grey);font-weight:400;">(0/280)</span></label>
-        <textarea id="comment" rows="3" maxlength="280" placeholder="Two or three sentences in your own voice. Goes to the player + counts toward parent's weekly review."></textarea>
+        <label class="field-label">Add a personal note <span id="note-count" style="color:var(--grey);font-weight:400;">(0/280)</span></label>
+        <textarea id="comment" rows="3" maxlength="280" placeholder="Two or three sentences in your own voice — what you actually want them to hear. Goes to the player + counts toward parent's weekly review."></textarea>
       </div>
 
       <div style="margin-top:16px;">
@@ -366,11 +367,21 @@ button.btn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
       var detailEl = document.querySelector('.chip-detail[data-for="' + key + '"]');
       var detail = '';
       if (detailEl) detail = (detailEl.value || '').trim();
-      if (!detail && b.getAttribute('data-default')) detail = b.getAttribute('data-default');
       out.push({ key: key, label: label, detail: detail });
     });
     return out;
   }
+
+  // Validation rule: a response is only meaningful if EITHER at least one
+  // selected chip carries personal detail (>= 15 chars) OR the overall
+  // comment carries personal context (>= 30 chars). Prior versions auto-
+  // filled chips with canned defaults like "Stay through the ball, trust
+  // your prep" which landed in the player's dashboard with zero ties to
+  // their actual question. That was the source of "the coach didn't make
+  // sense" feedback. Block the submit until the coach writes something
+  // personal so we never ship a generic, context-free response again.
+  var MIN_CHIP_DETAIL = 15;
+  var MIN_COMMENT     = 30;
 
   window.submitResponse = function() {
     $('err-toast').style.display = 'none';
@@ -379,6 +390,13 @@ button.btn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
     var coachDisplayName = ($('coach-display').value || '').trim();
     if (chips.length === 0 && !comment) {
       $('err-toast').textContent = 'Pick at least one quick option or write a note before sending.';
+      $('err-toast').style.display = 'block';
+      return;
+    }
+    var hasChipDetail = chips.some(function(c) { return c.detail && c.detail.length >= MIN_CHIP_DETAIL; });
+    var hasComment    = comment.length >= MIN_COMMENT;
+    if (!hasChipDetail && !hasComment) {
+      $('err-toast').textContent = 'Add a sentence so the player knows what you mean. Either write a detail under a chip you picked (at least ' + MIN_CHIP_DETAIL + ' characters) or use the personal note below (at least ' + MIN_COMMENT + ' characters).';
       $('err-toast').style.display = 'block';
       return;
     }

@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v274';
+    const CACHE = 'ybg-mygrind-v275';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -19052,6 +19052,36 @@ function dashCoachRender(item) {
   var when = dt.toLocaleDateString() + ' · ' + dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   if (meta) meta.textContent = (r.coachDisplayName || 'Coach') + ' · ' + when;
 
+  // Best-effort coach-phone lookup so we can render a tap-to-text fallback
+  // when the response is light on detail (or when the player just wants
+  // to follow up). Prefer the server-returned coach.phone; otherwise look
+  // up the original outbox entry by request id. Outbox is local-only so
+  // this only works on the same device that submitted the request — fine
+  // for our use case (player checks dashboard on the same phone).
+  var coachPhone = (item.coach && item.coach.phone) || '';
+  var coachName  = (item.coach && item.coach.name)  || r.coachDisplayName || 'Coach';
+  if (!coachPhone) {
+    try {
+      var outbox = JSON.parse(localStorage.getItem('mg_coach_feedback_outbox') || '[]');
+      var match = outbox.find(function(o) { return o.id === item.id; });
+      if (match) {
+        coachPhone = match.coachPhone || '';
+        if (match.coachName) coachName = match.coachName;
+      }
+    } catch (err) {}
+  }
+  var coachPhoneDigits = String(coachPhone || '').replace(/\D/g, '');
+
+  // Detect a response that's likely to be context-free — chip with no detail
+  // or with detail under the personalization threshold. Older responses
+  // submitted before the 2026-05-22 coach-reply validation could be canned
+  // one-liners from the prior data-default behavior, so we always surface
+  // the follow-up CTA as insurance.
+  var MIN_DETAIL = 15;
+  var lightChip = (r.chips || []).some(function(c) { return !c.detail || c.detail.length < MIN_DETAIL; });
+  var thinComment = !r.comment || r.comment.length < 30;
+  var needsFollowup = lightChip && thinComment;
+
   var html = '';
   html += '<div style="font-family:\'Barlow Condensed\',sans-serif;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--grey);margin-bottom:8px;">'
         + 'You asked about ' + cfEsc(item.focus || '') + ' · ' + cfEsc(item.situation || '') + '</div>';
@@ -19070,6 +19100,22 @@ function dashCoachRender(item) {
     html += '<div style="background:#1F0018;border-left:3px solid var(--gold);border-radius:0 4px 4px 0;padding:12px 14px;font-family:Barlow,sans-serif;font-size:14px;color:var(--white);line-height:1.55;">'
           + cfEsc(r.comment) + '</div>';
   }
+
+  // Follow-up tap-to-text. Always shown so the player can ask for more
+  // detail even on responses that aren't obviously light. Prefilled with
+  // the original focus so the coach has context when they get the text.
+  if (coachPhoneDigits) {
+    var nudgeText = needsFollowup
+      ? ('Hey ' + coachName + ', thanks for the reply on MyGrind. Can you say a bit more about ' + (item.focus || 'what you meant') + '? Just want to make sure I get it right. Thanks!')
+      : ('Hey ' + coachName + ', got your MyGrind reply on ' + (item.focus || '') + '. Quick follow-up question if you have a sec?');
+    var smsHref = 'sms:+1' + coachPhoneDigits + '?body=' + encodeURIComponent(nudgeText);
+    var ctaLabel = needsFollowup ? 'Ask ' + cfEsc(coachName) + ' to explain &rarr;' : 'Reply to ' + cfEsc(coachName) + ' &rarr;';
+    var ctaStyle = needsFollowup
+      ? 'background:var(--gold);color:#080808;border:none;'
+      : 'background:transparent;color:var(--gold);border:1px solid var(--gold-dark);';
+    html += '<a href="' + smsHref + '" style="display:inline-block;margin-top:14px;padding:10px 16px;border-radius:4px;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-decoration:none;' + ctaStyle + '">' + ctaLabel + '</a>';
+  }
+
   body.innerHTML = html;
 }
 function dashCoachLoad() {
