@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v275';
+    const CACHE = 'ybg-mygrind-v276';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2683,6 +2683,16 @@ input[type="number"] {
       <div class="section-sub">The Daily Work Starts Here</div>
       <div id="dashboard-player-name" style="font-family:'Bebas Neue'; font-size:22px; letter-spacing:2px; color:var(--gold); margin-top:4px; display:none;"></div>
       <div class="gold-line"></div>
+    </div>
+
+    <!-- ══ WHY I GRIND — top of dashboard ══
+         Coach Young 2026-05-22: small inspiration card showing the
+         player's own "Why I Grind" mission from their profile. Hidden
+         entirely when the profile field is empty. renderDashWhy() fires
+         on dashboard activation, on saveProfile, and on initial load. -->
+    <div class="card" id="dash-why-card" style="display:none; margin-bottom:18px; background:linear-gradient(135deg,#1A0010,#0E000A); border-left:4px solid var(--gold); padding:18px 22px;">
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">Why I Grind</div>
+      <div id="dash-why-text" style="font-family:Georgia,serif; font-size:17px; font-style:italic; color:var(--white); line-height:1.6;"></div>
     </div>
 
     <!-- ══ ACADEMICS SUMMARY — TOP OF DASHBOARD ══
@@ -4360,6 +4370,24 @@ input[type="number"] {
         <label>My Name</label>
         <input type="text" id="pl-name" placeholder="Your name" oninput="saveProfile()" onblur="formatProperNounField(this)">
       </div>
+    </div>
+
+    <!-- ═══ 1.5) WHY I GRIND — 2026-05-22.
+         A short personal mission in the player's own words. Optional, but
+         when filled it surfaces at the top of the dashboard as a daily
+         reminder of why they're doing the work. Sits right after the hero
+         card to signal "your voice matters here" before the form-heavy
+         basics, on-the-field, and academics sections. -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;">
+        <span style="font-size:18px;">🎯</span>
+        Why I Grind
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.55; margin-bottom:12px;">
+        One or two sentences in your own words. Why you play. What you're chasing. Shows at the top of your dashboard so you see it every day.
+      </div>
+      <textarea id="pl-why" rows="3" maxlength="200" placeholder="e.g. I play because I love being in the dirt with my team. I want to make my high school varsity squad next year." oninput="saveProfile(); renderDashWhy();" style="width:100%; min-height:80px;"></textarea>
+      <div style="font-family:'Barlow',sans-serif; font-size:11px; color:var(--grey); margin-top:6px;">200 characters max. Yours alone. Nobody else sees it unless you share your profile.</div>
     </div>
 
     <!-- ═══ 2) BASICS + PHYSICAL DEVELOPMENT — combined card ══════════════
@@ -12794,6 +12822,7 @@ function saveProfile() {
     sixty:  document.getElementById('pl-sixty')?.value  || '',
     velo:   document.getElementById('pl-velo')?.value   || '',
     bio:    document.getElementById('pl-bio')?.value    || '',
+    why:    document.getElementById('pl-why')?.value    || '',
     slapper: document.getElementById('pl-slapper')?.checked || false,
     savedAt: new Date().toISOString()
   };
@@ -12845,7 +12874,7 @@ function loadProfile() {
     const p = JSON.parse(saved);
     // Load simple text/number fields
     // Note: 'gpa' removed — the Academics card's gpa-current field is now the sole GPA source (see loadGradesUI)
-    const fields = ['name','age','grade','school','bats','season','sixty','velo','bio'];
+    const fields = ['name','age','grade','school','bats','season','sixty','velo','bio','why'];
     const slapperEl = document.getElementById('pl-slapper');
     if (slapperEl && p.slapper) slapperEl.checked = p.slapper;
     fields.forEach(f => {
@@ -19138,6 +19167,76 @@ function dashCoachLoad() {
 }
 window.dashCoachRefresh = dashCoachLoad;
 
+// ══ "WHY I GRIND" DASHBOARD RENDER ════════════════════════════════
+// Reads the player's "why" from their saved profile and shows it as
+// a gold-bordered pull-quote at the top of the dashboard. Hides the
+// card entirely when the field is empty so first-run users don't see
+// a "your why goes here..." placeholder eating space.
+function renderDashWhy() {
+  var card = document.getElementById('dash-why-card');
+  var textEl = document.getElementById('dash-why-text');
+  if (!card || !textEl) return;
+  var why = '';
+  try {
+    var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    why = (p.why || '').trim();
+  } catch (e) {}
+  if (why) {
+    textEl.textContent = '"' + why + '"';
+    card.style.display = '';
+  } else {
+    card.style.display = 'none';
+  }
+}
+window.renderDashWhy = renderDashWhy;
+
+// ══ AGE-AWARE JOURNAL PROMPTS ═════════════════════════════════════
+// Coach Young 2026-05-22: under-13 players need shorter, simpler
+// language than HS+ players. Swaps the four reflection prompts on
+// the journal screen based on pl-age. Fires on journal panel open
+// and after every saveProfile (since age might have changed). The
+// 13+ branch restores the original copy so a player who downgrades
+// their age to test never gets stuck in kid mode.
+function applyAgeAwareJournalPrompts() {
+  var age = 0;
+  try {
+    var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    age = parseInt(p.age || '0', 10) || 0;
+  } catch (e) {}
+  var isKid = age > 0 && age < 13;
+
+  var setLabel = function(id, txt) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = txt;
+  };
+  var setPh = function(id, txt) {
+    var el = document.getElementById(id);
+    if (el) el.setAttribute('placeholder', txt);
+  };
+
+  if (isKid) {
+    setLabel('j-what-label',      'What did I work on today?');
+    setPh   ('j-what',            'Did you practice swings, throws, fielding? Write what you did.');
+    setLabel('j-team-role-label', 'How did practice go?');
+    setPh   ('j-team-role-text',  'What did your coach tell you? What was easy or hard?');
+    setLabel('j-tomorrow-label',  'What will I work on next time?');
+    setPh   ('j-tomorrow',        'Pick one thing you want to get better at.');
+    setLabel('j-prepare-label',   'What did you learn?');
+    setPh   ('j-prepare',         'One thing you want to remember. A new skill, a tip from coach, or something that made you happy.');
+  } else {
+    // Default / 13+ — restore the original copy. Match the static HTML.
+    setLabel('j-what-label',      'What did I work on today?');
+    setPh   ('j-what',            'What drills, reps, or skills did I focus on? What felt good?');
+    setLabel('j-team-role-label', 'What was my role? Where did I stand out or struggle?');
+    setPh   ('j-team-role-text',  'The reps you got, what coach pointed out, what felt sharp or sloppy.');
+    setLabel('j-tomorrow-label',  'What am I taking into the next practice or game?');
+    setPh   ('j-tomorrow',        'What is one thing I want to carry forward and keep working on?');
+    setLabel('j-prepare-label',   'What are you carrying forward?');
+    setPh   ('j-prepare',         "Into the next game, next week, the rest of the season. Wherever you're headed. A mindset, an adjustment, a person to thank, a habit to lock in. One thing: make it real.");
+  }
+}
+window.applyAgeAwareJournalPrompts = applyAgeAwareJournalPrompts;
+
 // Hook into the existing showPanel so we refresh contact + history when the tab opens
 (function() {
   var orig = window.showPanel;
@@ -19145,14 +19244,17 @@ window.dashCoachRefresh = dashCoachLoad;
   window.showPanel = function(id) {
     orig.apply(this, arguments);
     if (id === 'coach-feedback') cfLoadContact();
-    if (id === 'dashboard')      dashCoachLoad();
+    if (id === 'dashboard')      { dashCoachLoad(); renderDashWhy(); }
+    if (id === 'journal')        applyAgeAwareJournalPrompts();
   };
 })();
 // Also load once on initial page render (dashboard is the default panel)
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() { setTimeout(dashCoachLoad, 600); });
+  document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(function() { dashCoachLoad(); renderDashWhy(); applyAgeAwareJournalPrompts(); }, 600);
+  });
 } else {
-  setTimeout(dashCoachLoad, 600);
+  setTimeout(function() { dashCoachLoad(); renderDashWhy(); applyAgeAwareJournalPrompts(); }, 600);
 }
 
 /* Pull-to-refresh removed 2026-05-16 — Coach Young. The custom PTR was
