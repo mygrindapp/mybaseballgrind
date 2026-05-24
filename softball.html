@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v277';
+    const CACHE = 'ybg-mygrind-v283';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2501,6 +2501,17 @@ function signOutAndSwitchAccount() {
     <span style="font-size:20px;width:28px;text-align:center;">💬</span> Coach Feedback
   </button> -->
   <!-- Share tab removed 2026-05-08 — milestone share modal still works via shareMilestone(). -->
+
+  <!-- Resources entry added 2026-05-23. Moved Recruiting & Academic
+       Resources card out of Settings into a dedicated panel-resources
+       so parents and players can find important links AND reach Coach
+       in one tap. New link categories drop into panel-resources as
+       needed. Sits above Settings here because Resources is outward
+       facing (links, contact) while Settings is configuration. -->
+  <button onclick="mgTab('resources',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:20px;width:28px;text-align:center;">🎓</span> Resources
+  </button>
+
   <button onclick="mgTab('settings',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-settings"/></svg></span> Settings
   </button>
@@ -5950,84 +5961,12 @@ input[type="number"] {
          for dependents (with its billing controls hidden) so kid-payers
          still see their account info — see updateSubscriptionCard(). -->
 
-    <!-- ── RECRUITING & ACADEMIC RESOURCES ── 2026-05-22.
-         External links to eligibility centers, ranking services, academic
-         prep, and Coach's direct contact paths. Tap-out links open in a
-         new tab. Organized in 4 groups so players (and parents) can scan
-         to what they need without scrolling through everything. -->
-    <div class="card" id="settings-resources-card" style="margin-bottom:16px;">
-      <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;">
-        <span style="font-size:22px;">🎓</span>
-        Recruiting &amp; Academic Resources
-      </div>
-      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:18px;">
-        The links coaches, players, and families ask about most. Bookmark this. You'll need it as you start thinking about college.
-      </div>
-
-      <!-- Group 1: Eligibility Centers -->
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Eligibility Centers</div>
-      <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:18px;">
-        <a href="https://web3.ncaa.org/ecwr3/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Eligibility Center &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Required for D1 + D2. Start in your sophomore year.</div>
-        </a>
-        <a href="https://play.mynaia.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NAIA Eligibility Center &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Required for NAIA programs.</div>
-        </a>
-        <a href="https://www.njcaa.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NJCAA (Junior College) &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">For 2-year college programs.</div>
-        </a>
-        <a href="https://www.ncaa.org/sports/recruiting-calendars" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Recruiting Calendar &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">When coaches can contact you, by year.</div>
-        </a>
-      </div>
-
-      <!-- Group 2: Showcases & Rankings -->
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Showcases &amp; Rankings</div>
-      <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:18px;">
-        <a href="https://www.perfectgame.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Perfect Game &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Baseball showcases and national rankings.</div>
-        </a>
-        <a href="https://www.prepbaseballreport.com/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Prep Baseball Report (PBR) &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Player profiles and state rankings.</div>
-        </a>
-        <a href="https://extrainningsoftball.com/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Extra Inning Softball &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Softball national rankings and events.</div>
-        </a>
-        <a href="https://nfca.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 NFCA (Softball Coaches) &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">National Fastpitch Coaches Association directory.</div>
-        </a>
-      </div>
-
-      <!-- Group 3: Academic & Financial Aid -->
-      <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px;">Academic &amp; Financial Aid</div>
-      <div style="display:grid; grid-template-columns:1fr; gap:8px; margin-bottom:18px;">
-        <a href="https://www.khanacademy.org/test-prep/sat" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📘 Khan Academy SAT Prep &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Free official SAT practice.</div>
-        </a>
-        <a href="https://www.commonapp.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📝 Common App &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Apply to 1000+ colleges with one application.</div>
-        </a>
-        <a href="https://studentaid.gov/h/apply-for-aid/fafsa" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">💰 FAFSA &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">Federal student aid application.</div>
-        </a>
-        <a href="https://www.collegeboard.org/" target="_blank" rel="noopener" style="display:block; padding:10px 12px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
-          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🎓 College Board &rarr;</div>
-          <div style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px; line-height:1.4;">SAT registration and college search.</div>
-        </a>
-      </div>
-
-    </div>
+    <!-- Recruiting & Academic Resources card MOVED 2026-05-23 to its own
+         destination at panel-resources (open via More > Resources). The
+         move keeps Settings focused on account / subscription / sport /
+         backup / feedback, while Resources holds external links plus
+         direct contact paths for parents and players. If you need to
+         edit the link list, search for `id="panel-resources"` below. -->
 
     <!-- ── HELP & SUPPORT ── 2026-05-18: was a standalone Send Feedback
          card. Reworked into one canonical Help & Support card with three
@@ -6128,6 +6067,290 @@ input[type="number"] {
     <!-- Settings version -->
     <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); padding:8px 0 20px;">
       My Grind · Version 2026.1
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       PANEL: RESOURCES  (added 2026-05-23)
+       Moved out of Settings 2026-05-23 to give external links and
+       direct contact paths a dedicated home.
+
+         1. Reach Coach        Email, Send Feedback, Help & FAQ
+         2. Eligibility        NCAA, NAIA, NJCAA, Recruiting Cal
+         3. Showcases          Perfect Game, PBR, EIS, NFCA
+         4. Academic           Khan SAT, Common App, FAFSA, College Board
+
+       New categories drop in as another group block below. Each
+       group follows the same pattern: a uppercase gold label, then
+       a 1-column grid of card-style links / buttons. -->
+  <div class="panel" id="panel-resources">
+
+    <!-- Hero card: warm gold-accent intro. Extra top margin + line-height
+         so the Bebas Neue title doesn't clip under the fixed top bar
+         when the panel scrolls to top. -->
+    <div class="card" style="margin-top:12px; margin-bottom:16px; padding-top:20px; background:linear-gradient(180deg, rgba(232,201,122,0.08) 0%, rgba(184,154,75,0.03) 100%); border-color:var(--gold-dark);">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <span style="font-size:26px;">🎓</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:2px; color:var(--gold); line-height:1.2;">Resources</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:16px; color:var(--light); line-height:1.6;">
+        Bookmark this page. The links college coaches, recruiters, and parents ask about every season, plus the fastest way to get help inside the app.
+      </div>
+    </div>
+
+    <!-- ────────── GROUP 1: GET HELP ──────────
+         Self-serve first (FAQ), structured form second. No direct email
+         option here — doesn't scale at national volume and creates a
+         spam/inbox problem. Email support remains listed in Privacy +
+         Terms for users who genuinely need it. The structured feedback
+         form auto-routes to the right inbox so individual addresses
+         don't have to be promoted. -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Get Help</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Try FAQ First</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        Most answers live below. If the FAQ doesn't cover it, use the feedback form.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <button type="button" onclick="openHelpModal()" style="display:block; width:100%; text-align:left; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; color:var(--white); cursor:pointer; font-family:inherit;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">❓ Help &amp; FAQ &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Self-Serve · Instant</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The questions parents and players ask most. Tap a question, see the answer. No waiting.</div>
+        </button>
+
+        <button type="button" onclick="openSettingsAtFeedback()" style="display:block; width:100%; text-align:left; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; color:var(--white); cursor:pointer; font-family:inherit;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📋 Send Feedback &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Form · 48h Reply</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">For bugs, feature requests, account questions, or anything the FAQ misses. Routed to the right team.</div>
+        </button>
+
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold-dark); font-style:italic; padding:16px 0 0; line-height:1.55; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> 90% of questions are answered in the FAQ. Check there first. The form handles everything else.
+      </div>
+    </div>
+
+    <!-- ────────── GROUP 2: ELIGIBILITY CENTERS ────────── -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Eligibility Centers</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Start Sophomore Year</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        Paperwork that lets you play college ball. Open these the year before you think you need to.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <a href="https://web3.ncaa.org/ecwr3/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Eligibility Center &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Required · D1/D2</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Non-negotiable for D1 + D2. Most players who get burned waited until junior year. Don't.</div>
+        </a>
+
+        <a href="https://play.mynaia.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NAIA Eligibility Center &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Required · NAIA</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Same idea as NCAA but for NAIA programs. Different system, just as required.</div>
+        </a>
+
+        <a href="https://www.njcaa.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NJCAA (Junior College) &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">2-Year Path</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">JuCo is a real path. Plenty of D1 starters spent two years here first.</div>
+        </a>
+
+        <a href="https://www.ncaa.org/sports/recruiting-calendars" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Recruiting Calendar &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Reference</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">When coaches can call, text, or watch you play. Re-read it every August.</div>
+        </a>
+
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold-dark); font-style:italic; padding:16px 0 0; line-height:1.55; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> NCAA and NAIA accounts can be opened the same day. Knock both out sophomore fall and you're done thinking about it.
+      </div>
+    </div>
+
+    <!-- ────────── GROUP 3: SHOWCASES & RANKINGS ────────── -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Showcases &amp; Rankings</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Where Coaches Look</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        Get on the right list early. A profile beats a highlight reel a coach has to hunt for.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <a href="https://www.perfectgame.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Perfect Game &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Baseball · National</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The biggest national platform. Profile, showcases, rankings, and recruit data all live here.</div>
+        </a>
+
+        <a href="https://www.prepbaseballreport.com/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Prep Baseball Report (PBR) &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Baseball · State</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">State-by-state coverage. Strong for in-state coaches and regional showcases.</div>
+        </a>
+
+        <a href="https://extrainningsoftball.com/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Extra Inning Softball &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Softball · National</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">National softball rankings, events, and recruit-board coverage. Bookmark for tournament season.</div>
+        </a>
+
+        <a href="https://nfca.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 NFCA (Softball Coaches) &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Softball · Directory</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Find any college softball coach by school. Searchable, current contacts.</div>
+        </a>
+
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold-dark); font-style:italic; padding:16px 0 0; line-height:1.55; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> Build your profile before your first showcase. Coaches scan profiles in the bleachers. No profile, no callback.
+      </div>
+    </div>
+
+    <!-- ────────── GROUP 4: GIRLS IN BASEBALL ──────────
+         Girls baseball is growing fast but the pathways are different
+         from boys (NCAA-recruiting-centric) and from softball (NFCA +
+         college pipeline). Most resources are nonprofit + USA Baseball
+         + MLB Develops. Sitting between Showcases and Academic so it
+         reads as another pathway category, not an afterthought. -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Girls in Baseball</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Real · Growing</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        The pathway for girls who play baseball is smaller than the boys' side, but real and growing. These are the front doors.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <a href="https://www.baseballforall.com/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Baseball For All &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Community · Tournaments</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The leading nonprofit for girls in baseball. Tournaments, summer camps, and a national community. The front door.</div>
+        </a>
+
+        <a href="https://www.usabaseball.com/teams/women" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ USA Baseball Women's Team &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Elite · International</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">National Team trials, development program, and the Women's Baseball World Cup pipeline.</div>
+        </a>
+
+        <a href="https://www.mlb.com/develops" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ MLB Develops &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Programs · Showcases</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">MLB-sponsored development programs. The Trailblazer Series showcase for girls 11-13 lives here.</div>
+        </a>
+
+        <a href="https://baseballhall.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Women in Baseball (Hall of Fame) &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">History · Inspiration</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The AAGPBL and beyond. Know the women who came before. Tap "Discover" then search Women in Baseball.</div>
+        </a>
+
+        <!-- LA Heat: regional / SoCal partner program added 2026-05-23.
+             Founded by Emma + Mia Sites. Free clinics by women coaches +
+             all-girl tournament teams. Real 501(c)(3). Listed last among
+             girls baseball cards so national orgs lead, regional follows.
+             If we add more regional orgs later, group them under a
+             "Local Programs" subhead. -->
+        <a href="https://laheat.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ LA Heat Girls' Baseball &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">SoCal · Free Clinics</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">LA-based nonprofit. Free skills clinics run by women coaches plus all-girl tournament teams. Founded by players, for players.</div>
+        </a>
+
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold-dark); font-style:italic; padding:16px 0 0; line-height:1.55; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> Baseball For All is the front door nationally. If you're in SoCal, hit LA Heat's free clinics. Real coaches, real work.
+      </div>
+    </div>
+
+    <!-- ────────── GROUP 5: ACADEMIC & FINANCIAL AID ────────── -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Academic &amp; Financial Aid</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Grades + Tests Move the Needle</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        Bat speed gets you a look. GPA and SAT get you the scholarship.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <a href="https://www.khanacademy.org/test-prep/sat" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📘 Khan Academy SAT Prep &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Free · Official</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Free, College Board partnered SAT practice. Hundreds of hours of content, score-personalized.</div>
+        </a>
+
+        <a href="https://www.commonapp.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📝 Common App &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">1,000+ Colleges</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">One application, one essay, sent to up to 20 colleges. Saves weeks every senior year.</div>
+        </a>
+
+        <a href="https://studentaid.gov/h/apply-for-aid/fafsa" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">💰 FAFSA &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Federal Aid</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Federal student aid form. Opens Oct 1 every year. Fill it out fast. Money is first-come, first-served.</div>
+        </a>
+
+        <a href="https://www.collegeboard.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🎓 College Board &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">SAT · College Search</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">SAT registration, score sends, and college search by program, region, or major.</div>
+        </a>
+
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold-dark); font-style:italic; padding:16px 0 0; line-height:1.55; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> A 3.5 GPA plus 1100 SAT opens doors a 4.0 GPA alone won't. Coaches see both numbers.
+      </div>
     </div>
 
   </div>
