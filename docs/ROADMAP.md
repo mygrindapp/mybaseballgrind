@@ -6,17 +6,37 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Day +5 queue (added 2026-05-22 PM)
-1. **Monitor Twilio TFV support ticket inbox** for human-reviewer response (24-48h typical). If approved: flip `SMS_LIVE=true` in signup.html + `SMS_DRY_RUN=false` in Vercel env, send test invite to Coach's own phone before announcing. DO NOT resubmit Round 6 — same automated reviewer would hit the same EIN database lookup and reject identically.
-2. **Monitor Stripe 1099-K support ticket inbox** for response (24-72h typical). Confirmation expected via email to coach@mygrindapp.com.
-3. **Marketing Plan v0 review** at https://www.notion.so/368819955e6f8170a1e8f499c8176e54. Three open questions need Coach's call: (a) sport #3 — soccer vs basketball, (b) advisor comp model — equity vs profits interest vs rev share, (c) Pro version planning Wed 5-27 bandwidth. 30-45 min sit-down. Output: v1 of the plan with redlines applied.
-4. **TikTok film + post** if not done. 22-second script in Notion launch page Batch 1. Update @youngsbaseball TikTok bio link BEFORE posting.
-5. **Test live signup gate on phone** if not done. Walk through self-path + parent-path × 3 device options. Capture any UX issues as backlog items.
-6. **Monitor launch performance** (5 min daily):
-   - Vercel Analytics traffic + top referrers (today's snapshot: 114 visitors / +78%, 967 PV / +118%, 32% bounce / -18%, May 14-21 window)
-   - Firebase Auth user count
-   - Mailchimp open/click breakdown
-   - `coach@mygrindapp.com` for rescue requests + feedback
+### P0 — Day +6 queue (refreshed 2026-05-23 PM)
+1. **Monitor Stripe 1099-K verification email** (24h review window started ~2pm PT 5-23 after CP 575 upload). Expected confirmation by ~2pm PT 5-24. If verified, reply to Ellah's thread with "Verification cleared via document upload. Case closed. Thanks." and update memory `[stripe_ids]`. If rejected, reply with stamped Articles of Organization + Certificate of Status.
+2. **Monitor Twilio TFV support ticket inbox** for human-reviewer response (24-48h typical, slower for doc-verification). Filed 5-22 AM. If approved: flip `SMS_LIVE=true` in signup.html + `SMS_DRY_RUN=false` in Vercel env, send test invite to Coach's own phone before announcing. DO NOT resubmit Round 6.
+3. **Build /app-pulse, /inbox-sweep, /launch-ready skills** (Monday focused work, ~2-3 hr). Approved 5-23. Replaces manual cross-system checks that ate 30+ min per session.
+4. **Schedule 4 auto-fire routines** (Monday ~15 min): morning briefing at 7am PT, ticket-check 2× daily at 10am + 4pm, weekly retro Sunday 5pm, EIN propagation watch Jun 5-15 daily 9am.
+5. **Draft waitlist launch email** in Mailchimp draft state (Monday ~30 min). 56 warm leads waiting. CTA: `https://www.mygrindapp.com/signup.html?promo=FOUNDERMYGRIND`. Send when Stripe verification clears.
+6. **Marketing Plan v0 review** at https://www.notion.so/368819955e6f8170a1e8f499c8176e54. Three open questions: (a) sport #3 — soccer vs basketball, (b) advisor comp model — equity vs profits interest vs rev share, (c) Pro version Wed 5-27 bandwidth. 30-45 min. Hard deadline Wed 5-27.
+7. **Test live signup gate on phone** (carried 3+ days). Walk through self-path + parent-path × 3 device options. Also verify new 🎓 Resources tab renders cleanly + LA Heat link works.
+8. **TikTok film + post** (carried 3+ days). 22-second script in Notion launch page Batch 1.
+9. **Message Mr. Sites about LA Heat being added to Resources panel** — value-first touch. Suggested copy in next_session_start memory.
+10. **Monitor launch performance** (5 min daily):
+    - Vercel Analytics traffic + top referrers (5-23 snapshot: 11 visitors / -48%, 60 PV / -24%, 45% bounce / +7% — quiet Saturday on tournament day, expected)
+    - Firebase Auth user count (4 users as of 5-23, all known internal/family accounts, 0 organic strangers yet)
+    - Mailchimp open/click breakdown
+    - `coach@mygrindapp.com` for rescue requests + feedback
+
+<!-- SHIPPED 2026-05-23 (Day +5 — Resources Panel Refactor + Girls in Baseball + Stripe Tax Upload):
+- Stripe 1099-K TIN switch unblocked via Dashboard → Settings → Tax Details document upload bypass. CP 575 located + uploaded mid-day. 24h review timer started. Means Phase 5 live-mode launch no longer gated on June 16 IRS database propagation.
+- Resources panel rebuilt: moved out of Settings into dedicated `panel-resources` accessed via More → 🎓 Resources. 6 cards total. 19 actionable links + 5 Pro tips from Coach.
+- Girls in Baseball section added — first audience-specific resource section in the app. WPBL launches August 2026, Baseball For All, USA Baseball Women's Team, MLB Develops, Hall of Fame Women in Baseball, LA Heat (SoCal regional partner). Intro reframed to growth narrative (WPBL launch + college club teams at Cal/UC Davis/USC/Washington/Occidental + NCAA Emerging Sport push).
+- LA Heat partnership baked in — reciprocity for the Sites family who is already a MyGrind user since Apr 26.
+- Email Coach option removed from in-app contact paths (Decision #47 — doesn't scale at national volume). Get Help section reframed FAQ-first.
+- Readability bump on Resources panel: 20px Bebas Neue section heads, 11px → 13px badges, pro tip color/size fix.
+- `.gitignore` hardened + `package-lock.json` committed.
+- Firebase Analytics + journal_entry_created event wired in softball.html.
+- Firebase Dynamic Links shutdown verified non-issue.
+- Pronoun audit on user-facing copy: 0 changes needed.
+- EIN propagation pattern documented as new project memory `[ein_propagation_pattern]`. EIN was issued 5-15 not 5-19 (memory previously conflated LLC approval date with EIN issuance date).
+- 3 Decisions locked: #46 paid-trial pricing model holds through launch, #47 no direct email contact promoted in-app at national scale, #48 girls baseball is first-class audience.
+- 6 commits: `8c4751d` `ece5ce8` `5a5a369` `5981a42` `a59dce8` `6feebce`. All Vercel READY. SW cache v277 → v286 across 8 bumps.
+-->
 
 ### P1 — JSTV partnership follow-up (added 2026-05-22)
 After tonight's lesson with daughter at Encino LL, evaluate the conversation outcome. If partnership intent confirmed: schedule weekend coffee with structured term sheet, draft mutual NDA, call Sam (818-988-8989) about equity vs profits interest vs rev share LLC implications.
