@@ -6,7 +6,7 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Day +6 queue (refreshed 2026-05-23 PM)
+### P0 — Day +7 queue (refreshed 2026-05-24 PM — Tournament Sunday closed, Monday focus locked)
 1. **Monitor Stripe 1099-K verification email** (24h review window started ~2pm PT 5-23 after CP 575 upload). Expected confirmation by ~2pm PT 5-24. If verified, reply to Ellah's thread with "Verification cleared via document upload. Case closed. Thanks." and update memory `[stripe_ids]`. If rejected, reply with stamped Articles of Organization + Certificate of Status.
 2. **Monitor Twilio TFV support ticket inbox** for human-reviewer response (24-48h typical, slower for doc-verification). Filed 5-22 AM. If approved: flip `SMS_LIVE=true` in signup.html + `SMS_DRY_RUN=false` in Vercel env, send test invite to Coach's own phone before announcing. DO NOT resubmit Round 6.
 3. **Build /app-pulse, /inbox-sweep, /launch-ready skills** (Monday focused work, ~2-3 hr). Approved 5-23. Replaces manual cross-system checks that ate 30+ min per session.
