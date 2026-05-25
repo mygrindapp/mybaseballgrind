@@ -616,14 +616,30 @@ window.addEventListener('DOMContentLoaded', async () => {
     // ?email=... URL param. Saves the user from retyping their address
     // when they hit the "already used" overlay and tap "Sign In to Your
     // Account →".
+    let prefilled = '';
     try {
       const qsEmail = new URLSearchParams(window.location.search).get('email') || '';
       const trimmed = qsEmail.trim().toLowerCase();
       if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
         const input = document.getElementById('email-input');
         if (input) input.value = trimmed;
+        prefilled = trimmed;
       }
     } catch (e) { /* old browser — leave blank */ }
+
+    // Auto-fire the magic-link send if signup.html (or any other page) passed
+    // ?auto=1 along with a valid email. Saves the user from completing signup
+    // and then having to also tap "Email Me a Sign-In Link" on a second page
+    // they did not know existed. That gap produced 0 conversions on the 5-20
+    // launch broadcast: users finished signup, hit Screen 8, saw no email
+    // arrive, and walked away. sendSignInLink() handles the disabled / spinner
+    // UI and the state swap to state-email-sent on success.
+    try {
+      const qsAuto = new URLSearchParams(window.location.search).get('auto');
+      if (qsAuto === '1' && prefilled) {
+        sendSignInLink();
+      }
+    } catch (e) { /* old browser — user can tap the button manually */ }
   }
 });
 </script>

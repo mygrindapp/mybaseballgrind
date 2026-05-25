@@ -4958,6 +4958,49 @@ function buildScreen8() {
   // CAN-SPAM compliant: every Mailchimp email has standard unsubscribe.
   mailchimpSyncSignup();
 
+  // ─── Auto-send sign-in link so user can come back (2026-05-25) ──
+  // Critical conversion fix. Before today, completing signup wrote
+  // localStorage state but never created a Firebase Auth account and
+  // never sent a sign-in email. Users who closed Safari, switched
+  // phones, or cleared cookies had no way back into the app unless
+  // they remembered to manually navigate to /signin.html and re-enter
+  // their email. The 5-20 launch broadcast hit 56 contacts and
+  // produced 0 Firebase Auth users for exactly this reason.
+  //
+  // Self-path users (Just me): redirect to /signin.html?email=X&auto=1
+  // immediately. The signin page's DOMContentLoaded handler picks up
+  // the auto=1 flag and fires sendSignInLink() automatically. They
+  // never see Screen 8 at all because they have no kid to invite.
+  //
+  // Parent-path users: keep Screen 8 visible (kid invite is the whole
+  // point of this dashboard for parents) but inject a top banner with
+  // a CTA that fires the same redirect when tapped. Parent invites
+  // their kid first, then emails themselves a sign-in link.
+  //
+  // Both paths route through signin.html so we reuse the battle-tested
+  // branded-Resend-first / Firebase-fallback chain instead of duplicating
+  // auth logic across two surfaces.
+  try {
+    var pe = (state.parent && state.parent.email) ? state.parent.email.trim().toLowerCase() : '';
+    var isValidParentEmail = pe && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pe);
+    if (isValidParentEmail) {
+      var signinAutoHref = '/signin.html?email=' + encodeURIComponent(pe) + '&auto=1';
+      if (isSelfPath()) {
+        // Self-path: no kid to invite, redirect immediately. The fire-and-
+        // forget mailchimp + trial-abuse calls above are already in flight;
+        // they will resolve in the background regardless of navigation.
+        window.location.replace(signinAutoHref);
+        return;
+      }
+      // Parent-path: surface the action without forcing them off the page.
+      injectSigninLinkBannerOnScreen8(signinAutoHref, pe);
+    }
+  } catch (_) {
+    // Anything goes wrong → fall through. Screen 8 still renders normally;
+    // user can manually navigate to /signin.html via the existing Sign In
+    // link in the footer. No regression vs. the pre-fix behavior.
+  }
+
   // ─── Hide install prompt card if PWA is already installed ──
   // 2026-05-18 launch polish. If the user is viewing Screen 8 from
   // an installed PWA shortcut (Add to Home Screen already done), the
@@ -5032,6 +5075,33 @@ function buildScreen8() {
   // what Stripe webhooks have synced into our store. If parent is paid,
   // hide trial countdown + swap "Pay early" link for "Manage Subscription".
   loadSubscriptionStatus();
+}
+
+// ─── SIGN-IN LINK BANNER (Screen 8, parent-path only, 2026-05-25) ───
+// Injects a banner at the top of Screen 8 that fires the magic-link send
+// when tapped. Idempotent — checks for the element first so multiple
+// Screen 8 renders (e.g. after refresh) do not stack banners. Self-path
+// users get the immediate redirect from buildScreen8() instead; this
+// helper is only reached for parent-path users so the kid-invite tile
+// stays in their view.
+function injectSigninLinkBannerOnScreen8(href, email) {
+  if (document.getElementById('s8-signin-link-banner')) return;
+  var panel = document.getElementById('panel-8');
+  if (!panel) return;
+  var banner = document.createElement('div');
+  banner.id = 's8-signin-link-banner';
+  banner.style.cssText = [
+    'background:#1a0f08', 'border:1px solid #B89A4B', 'border-radius:10px',
+    'padding:16px 18px', 'margin:0 0 18px',
+    'display:flex', 'flex-direction:column', 'gap:10px',
+    'font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif',
+    'color:#F2EAD9'
+  ].join(';');
+  banner.innerHTML =
+      '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:20px;letter-spacing:1.5px;color:#E8C97A;">ONE LAST STEP</div>'
+    + '<p style="font-size:14px;line-height:1.5;margin:0;color:#F2EAD9;">Email yourself a sign-in link so you can come back from any device. We send it to <strong>' + email + '</strong>.</p>'
+    + '<a href="' + href + '" style="display:inline-block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;text-decoration:none;text-align:center;">Email me the link →</a>';
+  panel.insertBefore(banner, panel.firstChild);
 }
 
 // ─── TRIAL ABUSE PREVENTION (Tier 1, 2026-05-18 Coach Young) ───
