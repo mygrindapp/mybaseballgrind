@@ -6,21 +6,34 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Day +7 queue (refreshed 2026-05-24 PM — Tournament Sunday closed, Monday focus locked)
-1. **Monitor Stripe 1099-K verification email** (24h review window started ~2pm PT 5-23 after CP 575 upload). Expected confirmation by ~2pm PT 5-24. If verified, reply to Ellah's thread with "Verification cleared via document upload. Case closed. Thanks." and update memory `[stripe_ids]`. If rejected, reply with stamped Articles of Organization + Certificate of Status.
-2. **Monitor Twilio TFV support ticket inbox** for human-reviewer response (24-48h typical, slower for doc-verification). Filed 5-22 AM. If approved: flip `SMS_LIVE=true` in signup.html + `SMS_DRY_RUN=false` in Vercel env, send test invite to Coach's own phone before announcing. DO NOT resubmit Round 6.
-3. **Build /app-pulse, /inbox-sweep, /launch-ready skills** (Monday focused work, ~2-3 hr). Approved 5-23. Replaces manual cross-system checks that ate 30+ min per session.
-4. **Schedule 4 auto-fire routines** (Monday ~15 min): morning briefing at 7am PT, ticket-check 2× daily at 10am + 4pm, weekly retro Sunday 5pm, EIN propagation watch Jun 5-15 daily 9am.
-5. **Draft waitlist launch email** in Mailchimp draft state (Monday ~30 min). 56 warm leads waiting. CTA: `https://www.mygrindapp.com/signup.html?promo=FOUNDERMYGRIND`. Send when Stripe verification clears.
-6. **Marketing Plan v0 review** at https://www.notion.so/368819955e6f8170a1e8f499c8176e54. Three open questions: (a) sport #3 — soccer vs basketball, (b) advisor comp model — equity vs profits interest vs rev share, (c) Pro version Wed 5-27 bandwidth. 30-45 min. Hard deadline Wed 5-27.
-7. **Test live signup gate on phone** (carried 3+ days). Walk through self-path + parent-path × 3 device options. Also verify new 🎓 Resources tab renders cleanly + LA Heat link works.
-8. **TikTok film + post** (carried 3+ days). 22-second script in Notion launch page Batch 1.
-9. **Message Mr. Sites about LA Heat being added to Resources panel** — value-first touch. Suggested copy in next_session_start memory.
-10. **Monitor launch performance** (5 min daily):
-    - Vercel Analytics traffic + top referrers (5-23 snapshot: 11 visitors / -48%, 60 PV / -24%, 45% bounce / +7% — quiet Saturday on tournament day, expected)
-    - Firebase Auth user count (4 users as of 5-23, all known internal/family accounts, 0 organic strangers yet)
-    - Mailchimp open/click breakdown
-    - `coach@mygrindapp.com` for rescue requests + feedback
+### P0 — Day +8 queue (refreshed 2026-05-25 PM after Memorial Day session — conversion fix shipped, first real revenue landed, LLC bank live)
+1. **Paste Part 2 newsletter into Mailchimp as draft** (Tuesday 5-26, ~10 min). Full packet drafted in session — subject "Here is what your coach sees. And why they are not saying it.", preheader set, all body content scrubbed for em-dashes, section headers + button URLs called out. Audience: MyGrind survivor (`a7d801599a`). Coach reviews/sends.
+2. **Paste Part 3 newsletter into Mailchimp as draft** (Tuesday 5-26, ~10 min). Same packet format. Subject: "This is the part that tells you what to actually do." Send target: Tue 6-2 9am PT (1-week cadence preserved).
+3. **Build /app-pulse skill** (Tuesday focused, ~60 min). Vercel deploys + Firebase Auth count + Stripe activity + signin attempts into one traffic-light board. Stripe MCP needs reauth first.
+4. **Build /inbox-sweep + /launch-ready skills** (Tuesday afternoon, ~90 min). Reuse search_threads patterns + manual-gates JSON for hand-confirmed phase items.
+5. **Schedule 4 auto-fire routines** (Tuesday ~15 min): morning briefing 7am PT, ticket-check 10am + 4pm, weekly retro Sunday 5pm, EIN propagation watch Jun 5-15 daily 9am.
+6. **Verify Stripe payout routing** (Tuesday ~2 min). Open Stripe Balances → confirm Jun 1 payout shows ••2761 (Chase Business). If still showing ••9395, flag for escalation.
+7. **Customer thank-you DM + Sam text + Notion expense row** for the $149.99 customer. Drafted in 5-25 session, execute when ready.
+8. **Mailchimp `[ARCHIVED]` rename** of My Grind Weekly audience (~60 sec). Decision #51 locked. Just a settings edit.
+9. **Marketing Plan v0 review** at https://www.notion.so/368819955e6f8170a1e8f499c8176e54. Three open questions: (a) sport #3 soccer vs basketball, (b) advisor comp model, (c) Pro version bandwidth. **HARD DEADLINE WED 5-27** — last day before planning session.
+10. **Twilio TFV passive monitoring** — Huvi replied 5-25 + Coach sent 3 LLC docs. Now in actual human review. Check inbox 1-2x/day for response.
+11. **Test signup gate on phone for parent-path** (self-path verified 5-25 morning). Walk through "I'm a parent" → confirm Screen 8 ONE LAST STEP banner appears + tap-to-redirect fires sign-in email.
+12. **Mr. Sites LA Heat outreach** (carried). Suggested copy in next_session_start memory.
+13. **TikTok film + post** (carried 4+ days).
+14. **Monitor launch performance** (5 min daily): Vercel Analytics + Firebase Auth + Mailchimp + coach@ inbox.
+
+<!-- SHIPPED 2026-05-25 (Day +7 — Memorial Day · Conversion Fix + First Real Customer + LLC Bank + Newsletter Voice Locked):
+- Critical signup → magic-link conversion bug fixed end-to-end (commit `12b0f64`). Signup was creating localStorage state but never creating a Firebase Auth user and never sending a sign-in email. Explains the 56-person 5-20 broadcast producing 0 Auth users. Fix wires Screen 8: self-path → redirect to /signin.html?email=X&auto=1, parent-path → injected "ONE LAST STEP" banner. signin.html DOMContentLoaded handles ?auto=1 by auto-calling sendSignInLink(). Reuses existing branded-Resend + Firebase fallback chain. SW cache v287. Verified by Coach's stranger-phone walkthrough.
+- First real revenue: $149.99 Family Annual subscription from inner-circle demo cohort (paid full price, not founder code). Net $144.68. Payout Jun 1.
+- Stripe payout destination swapped: personal Chase ••9395 → Chase Business ••2761 (My Grind Sports LLC). Personal account removed. LLC commingling risk eliminated. Clean 1099-K reconciliation path locked for Sam.
+- Twilio TFV escalation moved forward: Huvi (ticket #27140216) replied requesting docs, Coach sent CP 575 + Articles of Organization + Certificate of Status. Now in actual human review.
+- 3 Decisions locked: #49 newsletter writing approach (hard-edged self-accountability), #50 newsletter must always integrate MyGrind with pain-point-specific scenarios, #51 Mailchimp dead audience stays (archive don't delete — cost-benefit math favors leaving the 18-month YBG-era campaign history intact).
+- 2 new memory files: `newsletter_writing_approach.md` + `newsletter_app_integration.md`. MEMORY.md index updated.
+- Part 2 newsletter rewritten 4x through harder voice + all-age framing + baseball-context-only + app-integration scenarios. Ready to paste tomorrow. Part 3 also prepped same treatment.
+- Doc-sync commit `408ae00` cleared 5-24 STATUS/ROADMAP residual.
+- Reflection: pivoted off the planned skill-building day as soon as the conversion bug was diagnosed. Right call. The fix unblocks every future conversion. Skills re-queued for Tue.
+-->
+
 
 <!-- SHIPPED 2026-05-23 (Day +5 — Resources Panel Refactor + Girls in Baseball + Stripe Tax Upload):
 - Stripe 1099-K TIN switch unblocked via Dashboard → Settings → Tax Details document upload bypass. CP 575 located + uploaded mid-day. 24h review timer started. Means Phase 5 live-mode launch no longer gated on June 16 IRS database propagation.
