@@ -220,6 +220,25 @@ async function sendPostPaymentWelcomeEmail({ email }) {
     return { ok: false, reason: 'no_redis' };
   }
 
+  // Per-email idempotency flag (90-day TTL). Prevents Stripe's automatic
+  // retries from double-sending the welcome email. Separate from
+  // upsertSubscription's per-event guard so an intentional event "Resend"
+  // from the Stripe dashboard (the backfill path for legacy paying
+  // customers like Brandon Sonnier) still triggers the email — only an
+  // actual successful prior send blocks it.
+  const welcomeFlagKey = 'welcome_sent:' + crypto.createHash('sha256').update(normEmail).digest('hex').slice(0, 16);
+  try {
+    const alreadySent = await r.get(welcomeFlagKey);
+    if (alreadySent) {
+      console.log('[stripe-webhook] welcome email skipped: already sent for this email', { emailHash: piiHash(normEmail) });
+      return { ok: true, skipped: 'already_sent' };
+    }
+  } catch (e) {
+    // Read failure is non-fatal — better to risk a duplicate welcome than
+    // to silently skip a real customer. Fall through to send.
+    console.warn('[stripe-webhook] welcome-flag read failed (continuing):', e.message);
+  }
+
   // Generate one-time token + store in Redis with 24-hour TTL. Reuses
   // the magiclink key shape so signin.html?mode=magicLink&token=X
   // works out of the box via the existing magic-link-verify endpoint.
@@ -304,6 +323,15 @@ async function sendPostPaymentWelcomeEmail({ email }) {
       resendId:    result?.data?.id || null,
       tokenPrefix: token.slice(0, 6),
     });
+    // Mark this email as welcomed (90-day TTL). Future Stripe retries of
+    // the same checkout.session.completed will see the flag and skip the
+    // send. After 90 days the flag expires; a re-subscription after long
+    // dormancy would legitimately get a fresh welcome.
+    try {
+      await r.set(welcomeFlagKey, '1', 'EX', 90 * 24 * 60 * 60);
+    } catch (e) {
+      console.warn('[stripe-webhook] welcome-flag write failed (non-fatal):', e.message);
+    }
     return { ok: true, id: result?.data?.id || null };
   } catch (e) {
     console.error('[stripe-webhook] welcome email send failed (non-fatal):', e.message);
@@ -382,7 +410,7 @@ export default async function handler(req, res) {
           console.warn('[stripe-webhook] checkout.session.completed: no email on session', { sessionId: session.id, customerId: session.customer });
           break;
         }
-        const upsertResult = await upsertSubscription({
+        await upsertSubscription({
           email,
           customerId: session.customer,
           subscriptionId: session.subscription,
@@ -393,16 +421,17 @@ export default async function handler(req, res) {
           rawEventId: event.id,
         });
 
-        // Post-payment delivery: only fires on actual paid sessions, and
-        // only when this isn't a Stripe retry of an already-processed event
-        // (duplicate-event guard in upsertSubscription returns skipped).
-        // Both helpers fail soft.
-        const isDuplicate = upsertResult && upsertResult.skipped;
-        if (session.payment_status === 'paid' && !isDuplicate) {
+        // Post-payment delivery: both helpers are self-idempotent so they
+        // can run on every paid checkout.session.completed (including
+        // intentional event resends from the Stripe dashboard, used to
+        // backfill customers paid before the welcome-email code existed).
+        // ensureFirebaseAuthUser checks getUserByEmail first; the welcome
+        // email gates on a per-email Redis flag (welcome_sent:<hash>) set
+        // after a successful send. Stripe retries are blocked by that
+        // flag; subscription-state idempotency lives in upsertSubscription.
+        if (session.payment_status === 'paid') {
           await ensureFirebaseAuthUser(email);
           await sendPostPaymentWelcomeEmail({ email });
-        } else if (isDuplicate) {
-          console.log('[stripe-webhook] welcome email + auth-ensure skipped (duplicate event)', { eventId: event.id });
         }
         break;
       }
