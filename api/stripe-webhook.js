@@ -26,8 +26,25 @@
 import Stripe from 'stripe';
 import { Resend } from 'resend';
 import crypto from 'crypto';
+import Redis from 'ioredis';
 import { upsertSubscription } from '../lib/subscription-store.js';
 import { recordTrialUsed } from '../lib/trial-eligibility-store.js';
+import { getAdminAuth } from '../lib/firebase-admin.js';
+
+// Redis singleton for the post-payment welcome flow. Reuses the same
+// `magiclink:<token>` key shape that api/magic-link-verify.js consumes,
+// so no new verify endpoint is needed. 24-hour TTL (vs. the 15-min TTL on
+// self-initiated magic-link-request) because a paying customer may not
+// open their email immediately.
+let _redis = null;
+function getRedis() {
+  if (_redis) return _redis;
+  const url = process.env.REDIS_URL;
+  if (!url) return null;
+  _redis = new Redis(url, { maxRetriesPerRequest: 2, enableReadyCheck: false });
+  _redis.on('error', (e) => console.error('[stripe-webhook] redis:', e.message));
+  return _redis;
+}
 
 // Short-hash PII for Vercel logs (H3 — security audit 2026-05-18).
 // Email and customer-id stay greppable across log entries (same email
@@ -142,6 +159,158 @@ async function sendCancellationEmail({ email, currentPeriodEndUnix, plan }) {
   }
 }
 
+// ─── POST-PAYMENT DELIVERY ─────────────────────────────────
+// Closes the gap between Stripe checkout and the customer actually getting
+// into the app. Before this, paying customers landed in Redis subscription
+// state but never got a sign-in email and never showed up in Firebase Auth.
+// Lost Brandon Sonnier 2026-05-26 in exactly this hole (paid $149.99
+// Family annual, was locked out, had to be hand-rescued).
+//
+// ensureFirebaseAuthUser: creates the Auth row if not present, so the
+// customer shows up in the Firebase dashboard immediately after payment
+// rather than only after they tap the welcome link.
+//
+// sendPostPaymentWelcomeEmail: branded Resend email with a magiclink
+// token (24h TTL, same `magiclink:<token>` shape as magic-link-request.js
+// so magic-link-verify.js consumes it unchanged).
+//
+// Both helpers fail soft — Stripe's source-of-truth subscription state
+// must succeed regardless of email or Auth-creation outcomes.
+async function ensureFirebaseAuthUser(email) {
+  try {
+    const auth = getAdminAuth();
+    if (!auth) {
+      console.warn('[stripe-webhook] ensureFirebaseAuthUser skipped: admin not configured');
+      return { ok: false, reason: 'admin_not_configured' };
+    }
+    const normEmail = String(email || '').trim().toLowerCase();
+    if (!normEmail) return { ok: false, reason: 'no_email' };
+    try {
+      const existing = await auth.getUserByEmail(normEmail);
+      console.log('[stripe-webhook] auth user already exists', { emailHash: piiHash(normEmail), uid: existing.uid });
+      return { ok: true, created: false, uid: existing.uid };
+    } catch (e) {
+      if (e.code === 'auth/user-not-found') {
+        const user = await auth.createUser({ email: normEmail, emailVerified: true });
+        console.log('[stripe-webhook] auth user created', { emailHash: piiHash(normEmail), uid: user.uid });
+        return { ok: true, created: true, uid: user.uid };
+      }
+      throw e;
+    }
+  } catch (e) {
+    console.error('[stripe-webhook] ensureFirebaseAuthUser failed (non-fatal):', e.message);
+    return { ok: false, reason: 'lookup_or_create_failed', error: e.message };
+  }
+}
+
+async function sendPostPaymentWelcomeEmail({ email }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('[stripe-webhook] welcome email skipped: RESEND_API_KEY not set');
+    return { ok: false, reason: 'no_api_key' };
+  }
+  const normEmail = String(email || '').trim().toLowerCase();
+  if (!normEmail) {
+    console.warn('[stripe-webhook] welcome email skipped: no recipient email');
+    return { ok: false, reason: 'no_email' };
+  }
+  const r = getRedis();
+  if (!r) {
+    console.warn('[stripe-webhook] welcome email skipped: redis unavailable');
+    return { ok: false, reason: 'no_redis' };
+  }
+
+  // Generate one-time token + store in Redis with 24-hour TTL. Reuses
+  // the magiclink key shape so signin.html?mode=magicLink&token=X
+  // works out of the box via the existing magic-link-verify endpoint.
+  const token = crypto.randomBytes(16).toString('hex');
+  try {
+    await r.set('magiclink:' + token, normEmail, 'EX', 24 * 60 * 60);
+  } catch (e) {
+    console.error('[stripe-webhook] welcome email redis SET failed:', e.message);
+    return { ok: false, reason: 'storage_failed' };
+  }
+
+  const signinUrl    = 'https://www.mygrindapp.com/signin.html?mode=magicLink&token=' + token;
+  const from         = process.env.RESEND_FROM || 'MyGrind <coach@mygrindapp.com>';
+  const testRedirect = process.env.WEEKLY_DIGEST_TEST_EMAIL || '';
+  const to           = testRedirect || normEmail;
+
+  const text = [
+    'Welcome to MyGrind.',
+    '',
+    'Payment landed, your account is live. Tap the link below to sign in. It works for 24 hours.',
+    '',
+    signinUrl,
+    '',
+    "Once you're in, head to the players section to add your kid (or kids, if you grabbed a Family plan). Each player gets their own profile, their own journal, their own grind.",
+    '',
+    'Questions? Reply to this email or write coach@mygrindapp.com.',
+    '',
+    'Coach',
+    'The Grind',
+  ].join('\n');
+
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="margin:0; padding:0; background:#0E0006; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; color:#F2EAD9;">
+  <div style="max-width:560px; margin:0 auto; padding:32px 24px;">
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:#E8C97A; margin-bottom:8px;">MY GRIND</div>
+    <div style="height:2px; background:#B89A4B; width:64px; margin-bottom:28px;"></div>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 18px;">Welcome to MyGrind.</p>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 24px;">
+      Payment landed, your account is live. Tap the button below to sign in. <strong style="color:#E8C97A;">This link works for 24 hours.</strong>
+    </p>
+
+    <div style="text-align:center; margin:0 0 28px;">
+      <a href="${signinUrl}" style="display:inline-block; background:#E8C97A; color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:16px 28px; border-radius:8px; text-decoration:none;">Sign In to MyGrind &rarr;</a>
+    </div>
+
+    <p style="font-size:13px; line-height:1.6; color:#9F9486; margin:0 0 22px;">
+      Or copy this link into your browser:<br>
+      <a href="${signinUrl}" style="color:#E8C97A; text-decoration:none; word-break:break-all;">${signinUrl}</a>
+    </p>
+
+    <div style="background:rgba(184,154,75,0.06); border:1px solid #B89A4B; border-radius:6px; padding:14px 16px; margin-bottom:24px;">
+      <p style="font-size:14px; line-height:1.6; color:#F2EAD9; margin:0;">
+        Once you're in, head to the <strong style="color:#E8C97A;">players section</strong> to add your kid (or kids, if you grabbed a Family plan). Each player gets their own profile, their own journal, their own grind.
+      </p>
+    </div>
+
+    <p style="font-size:13px; line-height:1.6; color:#9F9486; margin:0 0 24px;">
+      Questions? Reply to this email or write <a href="mailto:coach@mygrindapp.com" style="color:#E8C97A; text-decoration:none;">coach@mygrindapp.com</a>.
+    </p>
+
+    <p style="font-size:15px; line-height:1.4; color:#F2EAD9; margin:0;">Coach</p>
+    <p style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#B89A4B; margin:4px 0 0;">The Grind</p>
+  </div>
+</body></html>`;
+
+  try {
+    const resend = new Resend(apiKey);
+    const result = await resend.emails.send({
+      from,
+      to,
+      subject: 'Welcome to MyGrind. Your sign-in link is inside.',
+      html,
+      text,
+      replyTo: 'coach@mygrindapp.com',
+    });
+    console.log('[stripe-webhook] welcome email sent', {
+      toHash:      piiHash(to),
+      redirected:  !!testRedirect,
+      resendId:    result?.data?.id || null,
+      tokenPrefix: token.slice(0, 6),
+    });
+    return { ok: true, id: result?.data?.id || null };
+  } catch (e) {
+    console.error('[stripe-webhook] welcome email send failed (non-fatal):', e.message);
+    return { ok: false, reason: 'send_error', error: e.message };
+  }
+}
+
 // Disable Vercel's automatic JSON body parser so we can verify the
 // raw payload signature. Stripe signatures are computed over the
 // EXACT bytes — re-stringified JSON breaks verification.
@@ -213,7 +382,7 @@ export default async function handler(req, res) {
           console.warn('[stripe-webhook] checkout.session.completed: no email on session', { sessionId: session.id, customerId: session.customer });
           break;
         }
-        await upsertSubscription({
+        const upsertResult = await upsertSubscription({
           email,
           customerId: session.customer,
           subscriptionId: session.subscription,
@@ -223,6 +392,18 @@ export default async function handler(req, res) {
           cancelAtPeriodEnd: false,
           rawEventId: event.id,
         });
+
+        // Post-payment delivery: only fires on actual paid sessions, and
+        // only when this isn't a Stripe retry of an already-processed event
+        // (duplicate-event guard in upsertSubscription returns skipped).
+        // Both helpers fail soft.
+        const isDuplicate = upsertResult && upsertResult.skipped;
+        if (session.payment_status === 'paid' && !isDuplicate) {
+          await ensureFirebaseAuthUser(email);
+          await sendPostPaymentWelcomeEmail({ email });
+        } else if (isDuplicate) {
+          console.log('[stripe-webhook] welcome email + auth-ensure skipped (duplicate event)', { eventId: event.id });
+        }
         break;
       }
 
