@@ -226,12 +226,21 @@ async function sendPostPaymentWelcomeEmail({ email }) {
   // from the Stripe dashboard (the backfill path for legacy paying
   // customers like Brandon Sonnier) still triggers the email — only an
   // actual successful prior send blocks it.
+  // Per-email idempotency: only honor the flag if the stored value looks
+  // like a real Resend message ID (starts with "re_"). Older versions of
+  // this function stored "1" even when Resend rejected the send (e.g.
+  // unverified domain), so flag values that don't look like a real ID
+  // are treated as "not yet sent" and we retry. New successful sends
+  // overwrite with the actual Resend ID.
   const welcomeFlagKey = 'welcome_sent:' + crypto.createHash('sha256').update(normEmail).digest('hex').slice(0, 16);
   try {
     const alreadySent = await r.get(welcomeFlagKey);
-    if (alreadySent) {
-      console.log('[stripe-webhook] welcome email skipped: already sent for this email', { emailHash: piiHash(normEmail) });
+    if (typeof alreadySent === 'string' && alreadySent.startsWith('re_')) {
+      console.log('[stripe-webhook] welcome email skipped: already sent for this email', { emailHash: piiHash(normEmail), priorResendId: alreadySent });
       return { ok: true, skipped: 'already_sent' };
+    }
+    if (alreadySent) {
+      console.log('[stripe-webhook] welcome-flag has stale value (likely from a failed send) — retrying', { emailHash: piiHash(normEmail), staleValue: alreadySent });
     }
   } catch (e) {
     // Read failure is non-fatal — better to risk a duplicate welcome than
@@ -317,25 +326,46 @@ async function sendPostPaymentWelcomeEmail({ email }) {
       text,
       replyTo: 'coach@mygrindapp.com',
     });
+
+    // Resend's SDK doesn't throw on API errors (4xx/5xx) — it returns
+    // { data, error }. The original version of this function treated any
+    // non-thrown response as success and set the idempotency flag, which
+    // is what locked Brandon Sonnier out: domain wasn't verified yet,
+    // Resend returned { data: null, error: '...' }, code set the flag to
+    // "1", every subsequent retry was skipped before reaching Resend.
+    // Fix: explicitly inspect result.error and the presence of a real ID.
+    const resendId = result?.data?.id || null;
+    const resendError = result?.error || null;
+    if (resendError || !resendId) {
+      const errMsg = resendError?.message || resendError?.name || 'no_id_returned';
+      console.error('[stripe-webhook] welcome email rejected by Resend (non-fatal):', {
+        emailHash: piiHash(normEmail),
+        toHash:    piiHash(to),
+        error:     errMsg,
+      });
+      return { ok: false, reason: 'resend_rejected', error: errMsg };
+    }
+
     console.log('[stripe-webhook] welcome email sent', {
       toHash:      piiHash(to),
       redirected:  !!testRedirect,
-      resendId:    result?.data?.id || null,
+      resendId,
       tokenPrefix: token.slice(0, 6),
     });
-    // Mark this email as welcomed (90-day TTL). Future Stripe retries of
-    // the same checkout.session.completed will see the flag and skip the
-    // send. After 90 days the flag expires; a re-subscription after long
-    // dormancy would legitimately get a fresh welcome.
+
+    // Mark this email as welcomed (90-day TTL). Store the actual Resend
+    // ID so the read-side check can distinguish a real prior send from
+    // a stale legacy "1" value. Future Stripe retries of the same
+    // checkout.session.completed will see the flag and skip the send.
     try {
-      await r.set(welcomeFlagKey, '1', 'EX', 90 * 24 * 60 * 60);
+      await r.set(welcomeFlagKey, resendId, 'EX', 90 * 24 * 60 * 60);
     } catch (e) {
       console.warn('[stripe-webhook] welcome-flag write failed (non-fatal):', e.message);
     }
-    return { ok: true, id: result?.data?.id || null };
+    return { ok: true, id: resendId };
   } catch (e) {
-    console.error('[stripe-webhook] welcome email send failed (non-fatal):', e.message);
-    return { ok: false, reason: 'send_error', error: e.message };
+    console.error('[stripe-webhook] welcome email send threw (non-fatal):', e.message);
+    return { ok: false, reason: 'send_threw', error: e.message };
   }
 }
 
