@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v292';
+    const CACHE = 'ybg-mygrind-v293';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1442,6 +1442,7 @@ if ('serviceWorker' in navigator) {
     'ybg_softball_state':   1,
     'ybg_profile':          1,
     'ybg_state':            1,
+    'mg_visited_academics': 1,
   };
   var ACTIVE_KEY = 'mg_active_minor_id';
 
@@ -18184,6 +18185,12 @@ function mgTab(panel, tabId) {
       moreTab.style.borderColor = 'var(--gold)';
     }
   }
+  // Mark Academics as visited so the first-signup Profile → Academics →
+  // Journal default routing graduates the user to Journal next time they
+  // open the app (see default-panel logic at the bottom of this file).
+  if (panel === 'academics') {
+    try { localStorage.setItem('mg_visited_academics', '1'); } catch (e) {}
+  }
   if (typeof showPanel === 'function') showPanel(panel);
   // Refresh Journal reminder banners when the player lands on Journal
   // (Coach Young 2026-05-11). Cheap to call; no-op when panel isn't journal.
@@ -18438,7 +18445,15 @@ window.addEventListener('load', function() {
       mgTab(hash, 'tab-' + hash);
       _mgTabSkipHistoryPush = false;
     } else {
-      mgTab('dashboard', 'tab-dashboard');
+      // First-signup routing (Coach Young 2026-05-27): new users land on
+      // Profile (panel-players) so they can identify themselves and tap
+      // "Continue to Academics" at the bottom. Once Academics has been
+      // visited at least once OR the profile is complete, default is
+      // Journal. isProfileComplete + hasVisitedAcademics defined below.
+      var graduated = (typeof isProfileComplete === 'function' && isProfileComplete()) ||
+                      (typeof hasVisitedAcademics === 'function' && hasVisitedAcademics());
+      var defaultTab = graduated ? 'journal' : 'players';
+      mgTab(defaultTab, 'tab-' + defaultTab);
     }
   }, 250);
 });
@@ -18607,39 +18622,21 @@ window.addEventListener('load', function() {
   }, 900);
 });
 
-// Default panel on load — Profile-first for new players, Journal for everyone else.
-// Coach Young 2026-05-08: a freshly-onboarded player should land on Profile so
-// they identify themselves before the daily-action surface. Once name + position
-// + age are filled, every subsequent load defaults to Journal. No flag needed —
-// the existing ybg_softball_profile localStorage record is the source of truth.
+// First-signup default-tab routing helpers. The hash-routing load handler
+// above (mgTab caller) reads these to decide where to land a user with no
+// URL hash. Profile-complete graduates existing users (preserves behavior),
+// hasVisitedAcademics graduates new users who have tapped "Continue to
+// Academics" at least once (so filling out academic fields is optional).
 function isProfileComplete() {
   try {
     var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
     return !!(p.name && p.pos && p.age);
   } catch (e) { return false; }
 }
-window.addEventListener('load', function() {
-  setTimeout(function() {
-    var targetPanel = isProfileComplete() ? 'journal' : 'players';
-    document.querySelectorAll('.panel').forEach(function(p) { p.classList.remove('active'); });
-    var el = document.getElementById('panel-' + targetPanel);
-    if (el) el.classList.add('active');
-    // Sync bottom-nav active state so the highlighted tab matches the visible panel
-    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-    var tabEl = document.getElementById('tab-' + targetPanel);
-    if (tabEl) tabEl.classList.add('active');
-    // Update top nav label
-    var iconEl  = document.getElementById('mg-nav-icon');
-    var labelEl = document.getElementById('mg-nav-label');
-    if (targetPanel === 'players') {
-      if (iconEl)  iconEl.textContent  = '👤';
-      if (labelEl) labelEl.textContent = 'My Profile';
-    } else {
-      if (iconEl)  iconEl.textContent  = '📓';
-      if (labelEl) labelEl.textContent = 'Daily Journal';
-    }
-  }, 200);
-});
+function hasVisitedAcademics() {
+  try { return localStorage.getItem('mg_visited_academics') === '1'; }
+  catch (e) { return false; }
+}
 </script>
 
 
