@@ -76,7 +76,7 @@
 <div class="summary-box">
 <h3>📋 Plain-English Summary</h3>
 <p><strong>Who we are:</strong> MyGrind is a youth baseball and softball training app operated by My Grind Sports LLC.</p>
-<p><strong>Who uses MyGrind:</strong> Parents and legal guardians (18+) create accounts and add player profiles for their children ages 13–17. Players 18+ may create their own accounts.</p>
+<p><strong>Who uses MyGrind:</strong> Parents and legal guardians (18+) create accounts and add player profiles for their children. Family-plan parents may also add child profiles under 13, with the parent's payment serving as verifiable consent under COPPA (see Section 6.5). Players 18+ may create their own accounts.</p>
 <p><strong>What we collect:</strong> Account info (name, email, payment), and player training data (workouts, goals, stats). We never sell your data or your player's data.</p>
 <p><strong>SMS:</strong> Parents send a one-time invite SMS to their player on signup, and may receive transactional notifications. Reply STOP to opt out. Standard message and data rates may apply.</p>
 <p><strong>Your rights:</strong> You can review, edit, or delete your information anytime by emailing <a href="mailto:support@mygrindapp.com">support@mygrindapp.com</a>.</p>
@@ -90,10 +90,11 @@
 <p>MyGrind is designed for use by:</p>
 <ul>
 <li><strong>Parents and legal guardians</strong> who are at least 18 years old, who create and own accounts on behalf of their player(s).</li>
+<li><strong>Players under 13</strong>, who use MyGrind only through a Family-plan profile created and owned by their parent or legal guardian, under the verifiable parental consent process described in Section 6.5.</li>
 <li><strong>Players ages 13 through 17</strong>, who use MyGrind through profiles created and owned by their parent or legal guardian.</li>
 <li><strong>Players age 18 or older</strong>, who may create their own accounts independently.</li>
 </ul>
-<p><strong>MyGrind is not intended for and does not knowingly collect information from children under 13 years of age.</strong> If we discover that we have collected information from a child under 13, we will promptly delete it.</p>
+<p>Children under 13 cannot create their own MyGrind account. A child profile under 13 only exists when a parent on an active Family plan adds it through the parent's account.</p>
 
 <h2>3. Information We Collect</h2>
 
@@ -180,6 +181,47 @@
 </ul>
 <p>To exercise any of these rights, email <a href="mailto:support@mygrindapp.com">support@mygrindapp.com</a>. We will respond within 30 days.</p>
 
+<h2>6.5 Children Under 13 (COPPA)</h2>
+<p>MyGrind supports parent-managed accounts for players under 13 on the Family plan. The Children's Online Privacy Protection Act ("COPPA") sets out specific rules for any service that collects personal information from a child under 13. This section explains exactly how those rules apply to MyGrind.</p>
+
+<h3>6.5.1 Information We Collect from Children Under 13</h3>
+<p>When a parent adds a child profile under 13 to their MyGrind Family account, we collect from or about that child:</p>
+<ul>
+<li>First name (or nickname) entered by the parent</li>
+<li>Age entered by the parent</li>
+<li>Sport (baseball or softball)</li>
+<li>Position (optional, entered by the parent)</li>
+<li>Training journal entries, workout logs, goals, streaks, and stats that the child or parent enters into the child's profile</li>
+</ul>
+<p>We do not collect a separate email address, phone number, or login credential for a child under 13. The child uses the parent's account; there is no independent sign-up path for a child.</p>
+
+<h3>6.5.2 Verifiable Parental Consent</h3>
+<p>We use the parent's payment of an active Family plan subscription as verifiable parental consent. The parent enters card details with Stripe at signup, the charge is processed in the parent's name, and only after that charge succeeds does the parent gain access to add child profiles. The Federal Trade Commission recognizes a verified payment transaction as one of the listed methods for obtaining verifiable parental consent under 16 CFR § 312.5. This is the same approach used by Khan Academy Kids, ClassDojo, and Apple Family Sharing.</p>
+<p>If the Family subscription lapses, no new child profiles can be added. Existing child data remains under the parent's exclusive control and the parent may still review or delete it at any time.</p>
+
+<h3>6.5.3 Parental Rights for Children Under 13</h3>
+<p>The parent or legal guardian who set up the Family account has, at all times, the right to:</p>
+<ul>
+<li>Review every field collected about their child by signing in, opening the profile switcher at the top of the journal, selecting the child's profile, and viewing the profile and entries directly</li>
+<li>Update or correct any field by editing it in the child's profile</li>
+<li>Delete the child's entire profile (and every entry under it) by selecting the child in the switcher and tapping "Delete this profile" in the switcher bar, or by emailing <a href="mailto:support@mygrindapp.com">support@mygrindapp.com</a></li>
+<li>Refuse any further collection of the child's personal information by deleting the child's profile and not adding another</li>
+</ul>
+<p>We will not condition a child's participation in any activity on the child or parent disclosing more personal information than is reasonably necessary to use the Service.</p>
+
+<h3>6.5.4 Data Minimization for Children Under 13</h3>
+<p>We do not send marketing email or marketing SMS to any child under 13. We do not share, sell, or disclose a child's personal information to any third party for advertising or behavioral targeting. The only third parties that process a child's data are the service providers listed in Section 5.1 (Firebase for storage, and the operational vendors that keep the Service running). No child data is provided to Mailchimp.</p>
+<p>A child's profile data is retained only while the parent's account holds the profile. When the parent deletes a child profile, we delete the profile document and every journal entry under it from Firestore.</p>
+
+<h3>6.5.5 Contact for COPPA Inquiries</h3>
+<p>For any COPPA-specific question, request, or complaint, contact:</p>
+<p>
+<strong>MyGrind COPPA Inquiries</strong><br>
+My Grind Sports LLC<br>
+Email: <a href="mailto:support@mygrindapp.com?subject=COPPA%20Inquiry">support@mygrindapp.com</a> (subject: "COPPA Inquiry")<br>
+We respond to COPPA inquiries within 30 days.
+</p>
+
 <h2>7. California Residents: Your CCPA Rights</h2>
 <p>If you are a California resident, the California Consumer Privacy Act (CCPA) and California Privacy Rights Act (CPRA) give you the following rights:</p>
 <ul>
@@ -218,7 +260,7 @@
 <p>MyGrind uses essential cookies to keep you logged in and remember your preferences. We do not use third-party advertising cookies or behavioral tracking. You can control cookies through your browser settings, but disabling them may limit Service functionality.</p>
 
 <h2>12. Children's Privacy (Under 13)</h2>
-<p>MyGrind is not directed to children under 13. We do not knowingly collect personal information from children under 13. If you are a parent or guardian and believe your child under 13 has provided us with personal information, please contact us at <a href="mailto:support@mygrindapp.com">support@mygrindapp.com</a> and we will take steps to delete that information.</p>
+<p>Children under 13 use MyGrind only through a parent-managed profile on a Family plan, with the parent's verifiable consent obtained as described in Section 6.5. We do not allow a child under 13 to create their own account. If you are a parent or guardian and believe a child under 13 has obtained access without your consent, please contact us at <a href="mailto:support@mygrindapp.com">support@mygrindapp.com</a> and we will take steps to remove the access and delete the data.</p>
 
 <h2>13. International Users</h2>
 <p>MyGrind is operated from the United States. If you access the Service from outside the U.S., your information will be transferred to and processed in the United States, where data protection laws may differ from those in your country.</p>
