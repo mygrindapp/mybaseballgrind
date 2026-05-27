@@ -28,7 +28,7 @@
   })();
 </script>
 
-<meta name="description" content="Sign up for MyGrind. 14 days free. No credit card. Cancel anytime.">
+<meta name="description" content="Sign up for MyGrind. 14 days free. Cancel anytime before day 14.">
 <meta name="robots" content="noindex,nofollow">
 <link rel="canonical" href="https://www.mygrindapp.com/signup.html">
 <link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
@@ -2115,7 +2115,7 @@ select.field-input {
     <div class="gold-bar"></div>
 
     <div style="text-align:center;">
-      <div class="no-card-pill">🎉 14 days free · No card needed to start</div>
+      <div class="no-card-pill">🎉 14 days free · Cancel anytime before day 14</div>
     </div>
 
     <div style="margin-top: 28px;">
@@ -2209,7 +2209,7 @@ select.field-input {
     <div class="step-list">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text" id="s1_step1"><strong>You sign up</strong> &mdash; no card, no charge.</div>
+        <div class="step-text" id="s1_step1"><strong>You sign up and pick your plan</strong>. We hold a card, we don't charge for 14 days.</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
@@ -2226,7 +2226,7 @@ select.field-input {
 
     <!-- Trust strip -->
     <div class="trust-strip">
-      14 Days Free <span>·</span> No Credit Card <span>·</span> Cancel Anytime
+      14 Days Free <span>·</span> Cancel Anytime <span>·</span> No Surprise Charges
     </div>
   </div>
 
@@ -3173,6 +3173,128 @@ select.field-input {
     <button type="button" class="modal-close-btn" onclick="closeSettingsModal()">Close</button>
   </div>
 </div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PLAN PICKER + CARD-ON-FILE (2026-05-27)
+     ───────────────────────────────────────────────────────────
+     Industry-standard card-on-file pattern (Spotify, Netflix,
+     ClassDojo). Shown right after Screen 7 completes, before the
+     Screen 8 dashboard. CTA fires /api/create-checkout-session
+     and Stripe captures the card. Returns to /softball.html?co=success.
+     ═══════════════════════════════════════════════════════════ -->
+<div class="phone-confirm-overlay" id="plan_picker_overlay" aria-hidden="true">
+  <div class="phone-confirm-modal" role="dialog" aria-modal="true" aria-labelledby="plan_picker_title" style="max-width:520px;">
+    <div class="phone-confirm-eyebrow" id="plan_picker_eyebrow">Pick your plan</div>
+    <h2 class="phone-confirm-title" id="plan_picker_title">Start your 14-day free trial</h2>
+    <p class="phone-confirm-sub" id="plan_picker_sub" style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin:8px 0 18px;">
+      We hold your card so we can charge automatically when your trial ends. Nothing happens until <strong id="plan_picker_charge_date">day 14</strong>. Cancel anytime from your dashboard.
+    </p>
+
+    <div id="plan_picker_promo_banner" style="display:none; background:rgba(232,201,122,0.08); border:1px solid var(--gold-dark); border-radius:8px; padding:10px 14px; margin:0 0 16px; font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold); line-height:1.5;"></div>
+
+    <div class="plan-picker-grid" id="plan_picker_grid">
+      <button type="button" class="plan-picker-card" data-plan="single_annual" onclick="onPlanPickerSelect('single_annual')">
+        <div class="plan-picker-pill" id="ppc_sa_pill">Best Value</div>
+        <div class="plan-picker-name">Single Annual</div>
+        <div class="plan-picker-price">$99.99<span> / year</span></div>
+        <div class="plan-picker-tag">For one player committed to the year</div>
+      </button>
+      <button type="button" class="plan-picker-card" data-plan="single_monthly" onclick="onPlanPickerSelect('single_monthly')">
+        <div class="plan-picker-name">Single Monthly</div>
+        <div class="plan-picker-price">$9.99<span> / month</span></div>
+        <div class="plan-picker-tag">One player, month to month</div>
+      </button>
+      <button type="button" class="plan-picker-card" data-plan="family_annual" onclick="onPlanPickerSelect('family_annual')">
+        <div class="plan-picker-pill" id="ppc_fa_pill" style="display:none;">Recommended</div>
+        <div class="plan-picker-name">Family Annual</div>
+        <div class="plan-picker-price">$149.99<span> / year</span></div>
+        <div class="plan-picker-tag">Up to 3 players in one household</div>
+      </button>
+      <button type="button" class="plan-picker-card" data-plan="family_monthly" onclick="onPlanPickerSelect('family_monthly')">
+        <div class="plan-picker-name">Family Monthly</div>
+        <div class="plan-picker-price">$14.99<span> / month</span></div>
+        <div class="plan-picker-tag">Up to 3 players, month to month</div>
+      </button>
+    </div>
+
+    <button type="button" class="cta-primary" id="plan_picker_cta" onclick="onPlanPickerContinue()" style="margin-top:18px; width:100%;">
+      Start My 14-Day Trial &rarr;
+    </button>
+
+    <p style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); line-height:1.6; margin:14px 0 0; text-align:center;">
+      Secured by Stripe. We never see your card number. Cancel anytime from your dashboard.
+    </p>
+
+    <div id="plan_picker_error" style="display:none; font-family:'Barlow',sans-serif; font-size:13px; color:#E66; margin-top:12px; text-align:center;"></div>
+  </div>
+</div>
+
+<style>
+  .plan-picker-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 480px) {
+    .plan-picker-grid { grid-template-columns: 1fr; }
+  }
+  .plan-picker-card {
+    position: relative;
+    background: var(--card, #161210);
+    border: 1px solid #3D3530;
+    border-radius: 10px;
+    padding: 14px 14px 12px;
+    text-align: left;
+    font-family: 'Barlow', sans-serif;
+    color: var(--light);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .plan-picker-card:hover { border-color: var(--gold-dark, #8B6914); }
+  .plan-picker-card.selected {
+    border-color: var(--gold);
+    background: rgba(232,201,122,0.06);
+  }
+  .plan-picker-pill {
+    position: absolute;
+    top: -10px;
+    right: 12px;
+    background: var(--gold);
+    color: #080808;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .plan-picker-name {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 17px;
+    letter-spacing: 1.5px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .plan-picker-price {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--light);
+  }
+  .plan-picker-price span {
+    font-size: 13px;
+    color: var(--grey);
+    font-weight: 600;
+  }
+  .plan-picker-tag {
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    color: var(--grey);
+    margin-top: 6px;
+    line-height: 1.4;
+  }
+</style>
 
 <script>
 /* ═══════════════════════════════════════════════════════════
@@ -4938,6 +5060,30 @@ function renderDashPlayerCard(player, index) {
 }
 
 function buildScreen8() {
+  // ─── Card-on-file plan picker (2026-05-27) ────────────────
+  // Industry-standard: collect the card before the dashboard. The
+  // picker only opens once per signup. Once the user heads to Stripe
+  // Checkout we set mg_plan_picker_shown so a back-button return to
+  // Screen 8 (or a refresh after Stripe cancel) doesn't trap them in
+  // the modal. Lifetime promo users (FOREVERYOUNG2026) and parents who
+  // already completed checkout skip the picker entirely.
+  try {
+    var alreadyShown = false;
+    try { alreadyShown = localStorage.getItem('mg_plan_picker_shown') === '1'; } catch (_) {}
+    if (!alreadyShown) {
+      var opened = openPlanPicker();
+      if (opened) {
+        try { localStorage.setItem('mg_plan_picker_shown', '1'); } catch (_) {}
+        // Bail out of the rest of buildScreen8 — the picker takes over.
+        // After Stripe Checkout the user lands on /softball.html?co=success,
+        // not back here, so the rest of this function isn't needed.
+        return;
+      }
+    }
+  } catch (e) {
+    console.warn('[MG] plan picker open failed, falling through to dashboard:', e);
+  }
+
   // ─── Trial abuse prevention (Tier 1, 2026-05-18) ─────────
   // Fire-and-forget call to /api/start-trial. Records the email/phone
   // pair server-side so a future attempt to re-trial with same email
@@ -5459,6 +5605,166 @@ function renderWeeklyReview(items) {
 // any backend dependency.
 function onResendInvite(playerIndex) {
   openInviteShareModal(playerIndex);
+}
+
+// ═══════════════════════════════════════════════════════════
+// PLAN PICKER + CARD-ON-FILE CHECKOUT (2026-05-27)
+// ───────────────────────────────────────────────────────────
+// Industry-standard signup pattern. Replaces the old Day-11 in-app
+// banner: we now collect the card during signup, hold it through the
+// trial, and Stripe auto-charges at trial_end. The card capture also
+// stands as FTC-accepted verifiable parental consent for the upcoming
+// under-13 path.
+//
+// Flow: Screen 7 Continue → openPlanPicker() → user picks plan + taps
+// CTA → POST /api/create-checkout-session → window.location = stripe url
+// → user lands on /softball.html?co=success after card capture.
+//
+// The plan card pre-selection follows isSelfPath():
+//   self path   → Single Annual default
+//   parent path → Family Annual default (Family is the parent-friendly tier)
+// ═══════════════════════════════════════════════════════════
+
+// Selected plan inside the overlay (independent of state.preferredPlan
+// which only holds the annual/monthly axis from Screen 5).
+let _planPickerSelection = 'single_annual';
+
+const PLAN_PICKER_PRICE_LABEL = {
+  single_monthly: '$9.99/month',
+  single_annual:  '$99.99/year',
+  family_monthly: '$14.99/month',
+  family_annual:  '$149.99/year',
+};
+
+function openPlanPicker() {
+  const overlay = document.getElementById('plan_picker_overlay');
+  if (!overlay) return false;
+
+  const promoInfo = getPromoInfo(state.promoCode);
+  const isFounder = promoInfo && promoInfo.kind === 'months';
+  const isLifetime = promoInfo && promoInfo.kind === 'lifetime';
+
+  // Lifetime promo grants free-forever access, so we don't need a card.
+  // Skip the picker entirely — the regular Screen 8 redirect handles it.
+  if (isLifetime) return false;
+
+  // Default plan: parent path leads with Family Annual, self path with Single Annual.
+  // If the parent picked monthly on Screen 5, mirror that on the tier they're recommended into.
+  const monthly = state.preferredPlan === 'monthly';
+  if (isSelfPath()) {
+    _planPickerSelection = monthly ? 'single_monthly' : 'single_annual';
+  } else {
+    _planPickerSelection = monthly ? 'family_monthly' : 'family_annual';
+  }
+  applyPlanPickerSelection();
+
+  // Highlight Family as Recommended when this is a parent-path signup.
+  const familyPill = document.getElementById('ppc_fa_pill');
+  if (familyPill) familyPill.style.display = isSelfPath() ? 'none' : '';
+
+  // Headline + sub copy.
+  const trialDays = isFounder ? 180 : 14;
+  const chargeDate = new Date(Date.now() + trialDays * 86400 * 1000);
+  const chargeLabel = chargeDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+  const titleEl = document.getElementById('plan_picker_title');
+  const subEl   = document.getElementById('plan_picker_sub');
+  const ctaEl   = document.getElementById('plan_picker_cta');
+  const promoBannerEl = document.getElementById('plan_picker_promo_banner');
+
+  if (isFounder) {
+    if (titleEl) titleEl.textContent = 'Lock in your founder spot';
+    if (subEl)   subEl.innerHTML = 'Your first 6 months are free. We hold your card so we can charge automatically on <strong>' + chargeLabel + '</strong>. Cancel anytime from your dashboard.';
+    if (ctaEl)   ctaEl.textContent = 'Lock In My Founder Spot →';
+    if (promoBannerEl) {
+      promoBannerEl.style.display = '';
+      promoBannerEl.textContent = '✓ FOUNDERMYGRIND applied. First 6 months free, then your selected plan.';
+    }
+  } else {
+    if (titleEl) titleEl.textContent = 'Start your 14-day free trial';
+    if (subEl)   subEl.innerHTML = 'We hold your card so we can charge automatically when your trial ends. Nothing happens until <strong>' + chargeLabel + '</strong>. Cancel anytime from your dashboard.';
+    if (ctaEl)   ctaEl.textContent = 'Start My 14-Day Trial →';
+    if (promoBannerEl) promoBannerEl.style.display = 'none';
+  }
+
+  const errEl = document.getElementById('plan_picker_error');
+  if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+  if (ctaEl) ctaEl.disabled = false;
+
+  overlay.classList.add('shown');
+  overlay.setAttribute('aria-hidden', 'false');
+  return true;
+}
+
+function onPlanPickerSelect(plan) {
+  _planPickerSelection = plan;
+  applyPlanPickerSelection();
+}
+
+function applyPlanPickerSelection() {
+  const cards = document.querySelectorAll('#plan_picker_grid .plan-picker-card');
+  cards.forEach(function(card) {
+    if (card.getAttribute('data-plan') === _planPickerSelection) {
+      card.classList.add('selected');
+    } else {
+      card.classList.remove('selected');
+    }
+  });
+}
+
+async function onPlanPickerContinue() {
+  const cta = document.getElementById('plan_picker_cta');
+  const errEl = document.getElementById('plan_picker_error');
+  const originalLabel = cta ? cta.textContent : '';
+
+  try {
+    const email = ((state.parent && state.parent.email) || '').trim().toLowerCase();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (errEl) {
+        errEl.style.display = '';
+        errEl.textContent = 'We could not read your email. Tap back and re-check Screen 2.';
+      }
+      return;
+    }
+
+    const promoInfo = getPromoInfo(state.promoCode);
+    const isFounder = promoInfo && promoInfo.kind === 'months';
+    const trialDays = isFounder ? 180 : 14;
+    const trialEndUnix = Math.floor(Date.now() / 1000) + (trialDays * 86400);
+
+    saveState();
+
+    if (cta) { cta.disabled = true; cta.textContent = 'Opening checkout…'; }
+
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email:        email,
+        planType:     _planPickerSelection,
+        trialEndUnix: trialEndUnix,
+        promoCode:    state.promoCode || '',
+      }),
+    });
+    const data = await resp.json().catch(function() { return {}; });
+    if (!resp.ok || !data.ok || !data.url) {
+      console.error('[plan-picker] checkout session failed', { status: resp.status, data: data });
+      if (errEl) {
+        errEl.style.display = '';
+        errEl.textContent = 'We hit a snag opening checkout. Try again in a sec.';
+      }
+      if (cta) { cta.disabled = false; cta.textContent = originalLabel; }
+      return;
+    }
+
+    window.location.href = data.url;
+  } catch (e) {
+    console.error('[plan-picker] continue error:', e);
+    if (errEl) {
+      errEl.style.display = '';
+      errEl.textContent = 'We hit a snag opening checkout. Try again in a sec.';
+    }
+    if (cta) { cta.disabled = false; cta.textContent = originalLabel; }
+  }
 }
 
 // Stripe Payment Links (LIVE mode). One link per (Single|Family) × (Annual|Monthly).

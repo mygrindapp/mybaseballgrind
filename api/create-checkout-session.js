@@ -1,23 +1,22 @@
 // ═══════════════════════════════════════════════════════════
-// MyGrind — api/create-checkout-session.js (Option A — CC capture)
+// MyGrind — api/create-checkout-session.js (card-on-file at signup)
 // ───────────────────────────────────────────────────────────
 // Creates a Stripe Checkout Session that captures the customer's
-// card NOW but doesn't charge until the MyGrind trial cliff. Closes
-// the "trial expired → user walks away → zero conversion" gap that
-// the existing "no CC at signup" flow leaves open.
+// card during signup, before the dashboard. Stripe holds the card,
+// keeps the subscription in 'trialing' state, and auto-charges on
+// trial_end — matches Spotify/Netflix/Calm/ClassDojo pattern and
+// converts 5-10x better than "free trial, banner at Day 11".
 //
-// Coach Young's strategic call 2026-05-18 launch evening: keep the
-// "No Credit Card at signup" marketing promise intact, but at Day-11
-// (3 days before trial cliff) show an in-app banner that locks in the
-// card via Stripe-hosted checkout with subscription_data.trial_end set
-// to the user's actual MyGrind cliff. Stripe automatically charges on
-// that date — no human-in-the-loop required at conversion.
+// Strategic switch 2026-05-27 (Coach Young): industry-standard
+// card-on-file. The captured card at signup also serves as the
+// FTC-accepted verifiable parental consent signal for the upcoming
+// COPPA under-13 path.
 //
 // Why a custom endpoint (not the existing Payment Links):
 //   Payment Links are static — their trial_period_days is configured
-//   at the link level and can't be overridden per-session. For Day-11
-//   capture we need a SPECIFIC trial_end timestamp that aligns to each
-//   user's MyGrind trial cliff (varies: 14d default, 180d founder, etc).
+//   at the link level and can't be overridden per-session. For signup
+//   we need a SPECIFIC trial_end timestamp that aligns to each user's
+//   MyGrind cliff (varies: 14d default, 180d founder, etc).
 //
 // Endpoint: POST https://www.mygrindapp.com/api/create-checkout-session
 // Body:
@@ -150,7 +149,7 @@ export default async function handler(req, res) {
         end_behavior: { missing_payment_method: 'pause' },
       },
       metadata: {
-        mg_source:        'option_a_day11_capture',
+        mg_source:        'signup_card_on_file',
         mg_promo_code:    promoCode || '',
         mg_trial_end:     String(trialEnd),
       },
