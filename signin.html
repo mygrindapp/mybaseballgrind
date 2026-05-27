@@ -124,7 +124,8 @@ label {
   margin-bottom: 8px;
 }
 
-input[type="email"] {
+input[type="email"],
+input.code-input {
   width: 100%;
   background: var(--card2);
   border: 1px solid var(--border);
@@ -137,7 +138,16 @@ input[type="email"] {
   margin-bottom: 6px;
   transition: border-color 0.15s;
 }
-input[type="email"]:focus { border-color: var(--gold); }
+input[type="email"]:focus,
+input.code-input:focus { border-color: var(--gold); }
+
+input.code-input {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 28px;
+  letter-spacing: 10px;
+  text-align: center;
+  padding: 18px 14px;
+}
 
 .helper {
   font-family: 'Barlow', sans-serif;
@@ -190,6 +200,21 @@ input[type="email"]:focus { border-color: var(--gold); }
 .footnote a { color: var(--gold); text-decoration: none; border-bottom: 1px solid var(--gold-dark); padding-bottom: 1px; }
 .footnote a:hover { color: var(--gold-light); }
 
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--gold);
+  font-family: 'Barlow', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  border-bottom: 1px solid var(--gold-dark);
+  padding-bottom: 1px;
+}
+.link-btn:hover { color: var(--gold-light); }
+.link-btn:disabled { color: var(--grey); border-bottom-color: transparent; cursor: not-allowed; }
+
 .success-card {
   text-align: center;
   padding: 16px 4px;
@@ -233,7 +258,7 @@ input[type="email"]:focus { border-color: var(--gold); }
 <div class="card" id="state-enter-email">
   <h1>Sign <span>In</span></h1>
   <div class="gold-bar"></div>
-  <p class="sub">We'll email you a one-time sign-in link. Tap it from this device to log into your account. No password needed.</p>
+  <p class="sub">We'll email you a 6-digit code. Type it in on the next screen to finish signing in. Works on every device.</p>
 
   <label for="email-input">Your Email</label>
   <input type="email" id="email-input" placeholder="you@email.com" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off">
@@ -241,42 +266,39 @@ input[type="email"]:focus { border-color: var(--gold); }
 
   <div class="error" id="email-error"></div>
 
-  <button class="cta" id="send-link-btn" onclick="sendSignInLink()">Email Me a Sign-In Link →</button>
+  <button class="cta" id="send-code-btn" onclick="requestSignInCode()">Send My Code →</button>
 
   <div class="footnote">
     New to MyGrind? <a href="/signup.html">Start your free trial →</a>
   </div>
 </div>
 
-<!-- ─── STATE: EMAIL SENT ──────────────────────────────────── -->
-<div class="card success-card" id="state-email-sent" style="display:none;">
-  <div class="success-icon">✉️</div>
-  <h2>Check Your Email</h2>
-  <div class="email" id="sent-to-email">—</div>
-  <p class="sub" style="margin-top:14px;">We sent you a sign-in link. Tap it from this device to finish signing in.</p>
-  <p class="helper" style="margin-bottom:18px;">Didn't get it? Check your spam folder. The link expires in 1 hour.</p>
-  <button class="cta" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold);" onclick="goBackToEmailEntry()">Use a Different Email</button>
+<!-- ─── STATE: ENTER CODE ──────────────────────────────────── -->
+<div class="card" id="state-enter-code" style="display:none;">
+  <h1>Enter Your <span>Code</span></h1>
+  <div class="gold-bar"></div>
+  <p class="sub">We sent a 6-digit code to <strong id="code-sent-to-email" style="color:var(--white);">—</strong>. Check your inbox (and spam folder, just in case) and type the code below.</p>
+
+  <label for="code-input">6-Digit Code</label>
+  <input type="text" id="code-input" class="code-input" placeholder="000000" inputmode="numeric" pattern="\d{6}" maxlength="6" autocomplete="one-time-code" autocapitalize="off" autocorrect="off" spellcheck="false">
+  <div class="helper">Code expires in 15 minutes.</div>
+
+  <div class="error" id="code-error"></div>
+
+  <button class="cta" id="verify-code-btn" onclick="verifySignInCode()">Sign In →</button>
+
+  <div class="footnote">
+    Didn't get it? <button class="link-btn" id="resend-code-btn" onclick="resendSignInCode()">Resend code</button>
+    &nbsp;·&nbsp;
+    <button class="link-btn" onclick="goBackToEmailEntry()">Use a different email</button>
+  </div>
 </div>
 
-<!-- ─── STATE: PROCESSING (link clicked) ───────────────────── -->
+<!-- ─── STATE: PROCESSING (admin rescue magic-link callback) ─ -->
 <div class="card success-card" id="state-processing" style="display:none;">
   <div style="margin-bottom:12px;"><span class="spinner"></span></div>
   <h2>Signing You In</h2>
   <p class="sub" style="margin-top:10px;">Restoring your account on this device. One sec.</p>
-</div>
-
-<!-- ─── STATE: NEED EMAIL (clicked from different device) ──── -->
-<div class="card" id="state-need-email" style="display:none;">
-  <h1>One More <span>Step</span></h1>
-  <div class="gold-bar"></div>
-  <p class="sub">Looks like you opened the sign-in link on a different device than you started on. Enter your email again so we can verify it's you.</p>
-
-  <label for="confirm-email-input">Your Email</label>
-  <input type="email" id="confirm-email-input" placeholder="you@email.com" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off">
-
-  <div class="error" id="confirm-error"></div>
-
-  <button class="cta" style="margin-top:14px;" onclick="confirmSignInWithEmail()">Finish Signing In →</button>
 </div>
 
 <!-- ─── STATE: SUCCESS (very brief, before redirect) ───────── -->
@@ -291,10 +313,13 @@ input[type="email"]:focus { border-color: var(--gold); }
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script>
 // Firebase config — MUST match softball.html so the same auth state persists
-// across both surfaces. Coach Young 2026-05-18 v1 build: passwordless email
-// link via Firebase's built-in sendSignInLinkToEmail / signInWithEmailLink.
-// V2 swaps Firebase's default email for a Resend-branded one via Admin SDK
-// custom tokens. For tonight, the Firebase default email is fine.
+// across both surfaces. Coach Young 2026-05-27 v2: passwordless 6-digit code
+// via /api/auth/request-code + /api/auth/verify-code. Replaces magic-link
+// flow which broke for iOS PWA Home Screen users (Apple opens email links
+// in Safari, never the installed PWA — Slack/Notion/Linear all moved off
+// magic-link for this reason). Admin rescue endpoint still mints magic-link
+// URLs; the ?mode=magicLink&token= callback in handleAdminRescueReturn()
+// stays alive to handle those.
 const firebaseConfig = {
   apiKey:            "AIzaSyBEftxaT0v6gHYW1dz_THm-JbLQ4CaOI9c",
   authDomain:        "my-grind-b8486.firebaseapp.com",
@@ -307,13 +332,11 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 // ─── HELPERS ─────────────────────────────────────────────
-const EMAIL_STORAGE_KEY = 'mg_signin_email'; // localStorage key for the email
-                                              // we sent the link to. Read back
-                                              // when the user returns via the
-                                              // emailed link so we can verify.
+
+let pendingEmail = ''; // email the code was sent to, used by verify step
 
 function showState(id) {
-  ['state-enter-email','state-email-sent','state-processing','state-need-email','state-success']
+  ['state-enter-email','state-enter-code','state-processing','state-success']
     .forEach(s => {
       const el = document.getElementById(s);
       if (el) el.style.display = (s === id) ? '' : 'none';
@@ -355,7 +378,7 @@ async function persistLocalAuthState(user) {
     try { acc = JSON.parse(localStorage.getItem('ybg_access') || '{}'); } catch(e) {}
     acc.email          = (user.email || acc.email || '').toLowerCase();
     acc.fbUid          = user.uid;
-    acc.signedInVia    = 'email_link';
+    acc.signedInVia    = 'email_code';
     acc.signedInAt     = new Date().toISOString();
 
     // Server-authoritative paid lookup. If Stripe has a record for this
@@ -375,7 +398,7 @@ async function persistLocalAuthState(user) {
     } catch (e) { /* offline or 4xx — fall through and grant trial */ }
 
     // Not paid + no existing local trial → grant one. The user proved they
-    // own this email by completing the sign-in link round-trip, so handing
+    // own this email by completing the sign-in code round-trip, so handing
     // them access is the right default.
     if (!acc.paid && !acc.trialStart) {
       acc.trialStart = Date.now();
@@ -393,14 +416,8 @@ async function persistLocalAuthState(user) {
   }
 }
 
-// ─── STEP 1: SEND THE LINK ───────────────────────────────
-// Tries the branded Resend flow first (POST /api/magic-link-request).
-// If that endpoint returns server_misconfigured or admin_not_configured
-// (i.e. the FIREBASE_ADMIN_SERVICE_ACCOUNT env var isn't set yet), falls
-// back to Firebase's built-in sendSignInLinkToEmail. So the UI keeps
-// working from day one and gets a brand polish the moment Coach sets
-// up the service account in Vercel env.
-async function sendSignInLink() {
+// ─── STEP 1: REQUEST THE CODE ────────────────────────────
+async function requestSignInCode() {
   clearError('email-error');
   const input = document.getElementById('email-input');
   const email = (input.value || '').trim().toLowerCase();
@@ -410,237 +427,249 @@ async function sendSignInLink() {
     return;
   }
 
-  const btn = document.getElementById('send-link-btn');
+  const btn = document.getElementById('send-code-btn');
   const orig = btn.textContent;
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span> Sending...';
 
-  // 1) Try the Resend-branded path first. Endpoint returns 200 on success
-  //    with no body details (anti-enumeration). Any non-2xx flips us to
-  //    the Firebase fallback path.
-  let brandedSent = false;
   try {
-    const resp = await fetch('/api/magic-link-request', {
+    const resp = await fetch('/api/auth/request-code', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ email }),
     });
-    if (resp.ok) {
-      const data = await resp.json().catch(() => ({}));
-      if (data && data.ok) brandedSent = true;
-    } else if (resp.status === 429) {
+
+    if (resp.status === 429) {
       showError('email-error', 'Too many sign-in attempts. Wait a moment and try again.');
       btn.disabled = false;
       btn.textContent = orig;
       return;
     }
-    // Other non-2xx (e.g. 500 server_misconfigured before Coach sets up
-    // the service account, or send_failed if Resend hiccups) silently
-    // falls through to the Firebase path below.
-  } catch (e) {
-    console.warn('[signin] branded magic-link request failed; falling back:', e && e.message);
-  }
+    if (!resp.ok) {
+      console.error('[signin] request-code non-2xx:', resp.status);
+      showError('email-error', 'Could not send the code. Try again in a moment.');
+      btn.disabled = false;
+      btn.textContent = orig;
+      return;
+    }
 
-  if (brandedSent) {
-    document.getElementById('sent-to-email').textContent = email;
-    showState('state-email-sent');
+    pendingEmail = email;
+    document.getElementById('code-sent-to-email').textContent = email;
+    document.getElementById('code-input').value = '';
+    clearError('code-error');
+    showState('state-enter-code');
+    setTimeout(() => {
+      const ci = document.getElementById('code-input');
+      if (ci) ci.focus();
+    }, 50);
+  } catch (e) {
+    console.error('[signin] requestSignInCode failed:', e);
+    showError('email-error', 'Network hiccup. Try again in a moment.');
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
+
+async function resendSignInCode() {
+  if (!pendingEmail) {
+    goBackToEmailEntry();
+    return;
+  }
+  const btn = document.getElementById('resend-code-btn');
+  btn.disabled = true;
+  const orig = btn.textContent;
+  btn.textContent = 'Sending...';
+  clearError('code-error');
+
+  try {
+    const resp = await fetch('/api/auth/request-code', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email: pendingEmail }),
+    });
+    if (resp.status === 429) {
+      showError('code-error', 'Too many code requests. Wait a moment before requesting another.');
+    } else if (!resp.ok) {
+      showError('code-error', 'Could not resend the code. Try again in a moment.');
+    } else {
+      btn.textContent = 'Sent';
+      setTimeout(() => { btn.textContent = orig; btn.disabled = false; }, 1800);
+      return;
+    }
+  } catch (e) {
+    console.error('[signin] resendSignInCode failed:', e);
+    showError('code-error', 'Network hiccup. Try again in a moment.');
+  }
+  btn.textContent = orig;
+  btn.disabled = false;
+}
+
+// ─── STEP 2: VERIFY THE CODE ─────────────────────────────
+async function verifySignInCode() {
+  clearError('code-error');
+  const codeInput = document.getElementById('code-input');
+  const code = (codeInput.value || '').replace(/\s+/g, '');
+
+  if (!/^\d{6}$/.test(code)) {
+    showError('code-error', 'Enter the 6-digit code from your email.');
+    return;
+  }
+  if (!pendingEmail) {
+    showError('code-error', 'Session expired. Go back and request a fresh code.');
     return;
   }
 
-  // 2) Fallback — Firebase's built-in passwordless email. Generic template
-  //    from noreply@my-grind-b8486.firebaseapp.com, but functional and
-  //    keeps the flow working before service-account setup lands.
-  const actionCodeSettings = {
-    url: 'https://www.mygrindapp.com/signin.html?signedIn=1',
-    handleCodeInApp: true,
-  };
+  const btn = document.getElementById('verify-code-btn');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Verifying...';
 
   try {
-    await auth.sendSignInLinkToEmail(email, actionCodeSettings);
-    try { localStorage.setItem(EMAIL_STORAGE_KEY, email); } catch (e) {}
-    document.getElementById('sent-to-email').textContent = email;
-    showState('state-email-sent');
+    const resp = await fetch('/api/auth/verify-code', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email: pendingEmail, code }),
+    });
+    const data = await resp.json().catch(() => ({}));
+
+    if (resp.status === 429) {
+      showError('code-error', 'Too many sign-in attempts. Wait a moment and try again.');
+      btn.disabled = false;
+      btn.textContent = orig;
+      return;
+    }
+    if (!resp.ok || !data || !data.ok || !data.customToken) {
+      showError('code-error', 'That code is invalid or expired. Try again or request a new code.');
+      btn.disabled = false;
+      btn.textContent = orig;
+      return;
+    }
+
+    const result = await auth.signInWithCustomToken(data.customToken);
+    await persistLocalAuthState(result.user);
+    showState('state-success');
+    setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, 700);
   } catch (e) {
-    console.error('[signin] sendSignInLinkToEmail failed:', e);
-    let msg = 'Could not send the sign-in link. Try again in a moment.';
-    if (e && e.code === 'auth/invalid-email') msg = 'That email doesn\'t look right. Double-check the spelling.';
-    if (e && e.code === 'auth/missing-android-pkg-name') msg = 'Configuration error. Reach out to support@mygrindapp.com.';
-    if (e && e.code === 'auth/unauthorized-continue-uri') msg = 'Configuration error. Reach out to support@mygrindapp.com.';
-    showError('email-error', msg);
+    console.error('[signin] verifySignInCode failed:', e);
+    showError('code-error', 'Sign-in failed. Request a new code and try again.');
     btn.disabled = false;
     btn.textContent = orig;
   }
 }
 
 function goBackToEmailEntry() {
+  pendingEmail = '';
+  clearError('code-error');
+  clearError('email-error');
+  const sendBtn = document.getElementById('send-code-btn');
+  if (sendBtn) {
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send My Code →';
+  }
+  const verifyBtn = document.getElementById('verify-code-btn');
+  if (verifyBtn) {
+    verifyBtn.disabled = false;
+    verifyBtn.textContent = 'Sign In →';
+  }
   showState('state-enter-email');
-  const btn = document.getElementById('send-link-btn');
-  btn.disabled = false;
-  btn.textContent = 'Email Me a Sign-In Link →';
 }
 
-// ─── STEP 2: HANDLE THE RETURN ───────────────────────────
-// Two return-path shapes to handle:
-//   (a) Branded Resend link: /signin.html?mode=magicLink&token=<32hex>
-//       — verifies token via /api/magic-link-verify, gets a Firebase
-//       custom token back, signs in via signInWithCustomToken.
-//   (b) Firebase built-in link: /signin.html?signedIn=1&apiKey=...
-//       &mode=signIn&oobCode=... — handed off to auth.signInWithEmailLink.
-async function handleSignInReturn() {
-  // (a) Branded Resend path — token in URL, server-minted custom token.
-  try {
-    const qs = new URLSearchParams(window.location.search);
-    const mode = qs.get('mode');
-    const token = qs.get('token');
-    if (mode === 'magicLink' && token && /^[a-f0-9]{32}$/.test(token)) {
-      showState('state-processing');
-      const resp = await fetch('/api/magic-link-verify', {
-        method:  'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ token }),
-      });
-      const data = await resp.json().catch(() => ({}));
-      if (!resp.ok || !data || !data.ok || !data.customToken) {
-        let msg = 'Sign-in link is invalid or has expired. Request a new one.';
-        if (resp.status === 429) msg = 'Too many sign-in attempts. Wait a moment and try again.';
-        showState('state-enter-email');
-        showError('email-error', msg);
-        // Strip ?mode=&token= so a refresh doesn't re-fire the failure.
-        try {
-          const url = new URL(window.location.href);
-          url.searchParams.delete('mode');
-          url.searchParams.delete('token');
-          window.history.replaceState(null, '', url.pathname + (url.search || ''));
-        } catch (e) {}
-        return true;
-      }
-      try {
-        const result = await auth.signInWithCustomToken(data.customToken);
-        await persistLocalAuthState(result.user);
-        // Strip the token from URL so a refresh after the redirect doesn't
-        // re-POST a now-consumed token.
-        try {
-          const url = new URL(window.location.href);
-          url.searchParams.delete('mode');
-          url.searchParams.delete('token');
-          window.history.replaceState(null, '', url.pathname + (url.search || ''));
-        } catch (e) {}
-        showState('state-success');
-        setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, 700);
-        return true;
-      } catch (e) {
-        console.error('[signin] signInWithCustomToken failed:', e);
-        showState('state-enter-email');
-        showError('email-error', 'Sign-in failed. Request a new link and try again.');
-        return true;
-      }
-    }
-  } catch (e) {
-    console.warn('[signin] branded return handler:', e && e.message);
-    // Fall through to the Firebase path below.
-  }
-
-  // (b) Firebase built-in link path — same logic as before.
-  if (!auth.isSignInWithEmailLink(window.location.href)) return false;
+// ─── ADMIN RESCUE MAGIC-LINK CALLBACK ────────────────────
+// When Coach uses /api/admin/signin-link to mint a rescue link for a
+// stuck customer, the URL hands them here as
+// /signin.html?mode=magicLink&token=<32hex>. Same flow as before:
+// verify the token via /api/magic-link-verify, sign in with the
+// returned custom token. Kept intentionally so Coach has a working
+// backstop when a customer cannot receive codes for any reason.
+async function handleAdminRescueReturn() {
+  const qs = new URLSearchParams(window.location.search);
+  const mode = qs.get('mode');
+  const token = qs.get('token');
+  if (mode !== 'magicLink' || !token || !/^[a-f0-9]{32}$/.test(token)) return false;
 
   showState('state-processing');
+  try {
+    const resp = await fetch('/api/magic-link-verify', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ token }),
+    });
+    const data = await resp.json().catch(() => ({}));
 
-  let email = '';
-  try { email = localStorage.getItem(EMAIL_STORAGE_KEY) || ''; } catch (e) {}
+    // Strip the token from the URL early so a refresh after either branch
+    // doesn't re-POST a now-consumed token.
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('mode');
+      url.searchParams.delete('token');
+      window.history.replaceState(null, '', url.pathname + (url.search || ''));
+    } catch (e) {}
 
-  if (!email) {
-    showState('state-need-email');
+    if (!resp.ok || !data || !data.ok || !data.customToken) {
+      let msg = 'Rescue link is invalid or has expired. Sign in with a code instead.';
+      if (resp.status === 429) msg = 'Too many sign-in attempts. Wait a moment and try again.';
+      showState('state-enter-email');
+      showError('email-error', msg);
+      return true;
+    }
+
+    const result = await auth.signInWithCustomToken(data.customToken);
+    await persistLocalAuthState(result.user);
+    showState('state-success');
+    setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, 700);
     return true;
-  }
-
-  try {
-    const result = await auth.signInWithEmailLink(email, window.location.href);
-    try { localStorage.removeItem(EMAIL_STORAGE_KEY); } catch (e) {}
-    await persistLocalAuthState(result.user);
-    showState('state-success');
-    setTimeout(() => { window.location.href = '/softball.html'; }, 700);
   } catch (e) {
-    console.error('[signin] signInWithEmailLink failed:', e);
-    showState('state-need-email');
-    showError('confirm-error', 'Sign-in link failed. Confirm your email below to try again.');
-  }
-  return true;
-}
-
-// ─── STEP 3: FALLBACK (link clicked on different device) ───
-async function confirmSignInWithEmail() {
-  clearError('confirm-error');
-  const input = document.getElementById('confirm-email-input');
-  const email = (input.value || '').trim().toLowerCase();
-
-  if (!isValidEmail(email)) {
-    showError('confirm-error', 'Please enter a valid email address.');
-    return;
-  }
-
-  try {
-    const result = await auth.signInWithEmailLink(email, window.location.href);
-    await persistLocalAuthState(result.user);
-    showState('state-success');
-    setTimeout(() => { window.location.href = '/softball.html'; }, 700);
-  } catch (e) {
-    console.error('[signin] confirmSignInWithEmail failed:', e);
-    let msg = 'That email doesn\'t match the link. Double-check and try again.';
-    if (e && e.code === 'auth/invalid-action-code') msg = 'This link has expired or already been used. Request a new one.';
-    if (e && e.code === 'auth/expired-action-code')  msg = 'This link has expired. Request a new one.';
-    showError('confirm-error', msg);
+    console.error('[signin] handleAdminRescueReturn:', e);
+    showState('state-enter-email');
+    showError('email-error', 'Sign-in failed. Try again with a code.');
+    return true;
   }
 }
 
 // ─── INIT ────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', async () => {
   // Already signed in? Skip the form entirely and route to the journal.
-  // onAuthStateChanged is async so we wait one tick before checking.
   auth.onAuthStateChanged(async function(user) {
     if (user) {
       await persistLocalAuthState(user);
-      // If this load was a fresh sign-in link click, handleSignInReturn
-      // shows the success state. Otherwise (already-signed-in revisit),
-      // just redirect to the journal directly.
-      if (!auth.isSignInWithEmailLink(window.location.href)) {
+      // Skip redirect if we're mid-flow from an admin rescue link — that
+      // path handles its own success state + redirect.
+      const qs = new URLSearchParams(window.location.search);
+      if (qs.get('mode') !== 'magicLink') {
         window.location.href = '/softball.html?signed_in=1';
-        return;
       }
     }
   });
 
-  const handled = await handleSignInReturn();
-  if (!handled) {
-    showState('state-enter-email');
-    // Pre-fill the email if signup.html (or any other page) passed it via
-    // ?email=... URL param. Saves the user from retyping their address
-    // when they hit the "already used" overlay and tap "Sign In to Your
-    // Account →".
-    let prefilled = '';
-    try {
-      const qsEmail = new URLSearchParams(window.location.search).get('email') || '';
-      const trimmed = qsEmail.trim().toLowerCase();
-      if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-        const input = document.getElementById('email-input');
-        if (input) input.value = trimmed;
-        prefilled = trimmed;
-      }
-    } catch (e) { /* old browser — leave blank */ }
+  const handled = await handleAdminRescueReturn();
+  if (handled) return;
 
-    // Auto-fire the magic-link send if signup.html (or any other page) passed
-    // ?auto=1 along with a valid email. Saves the user from completing signup
-    // and then having to also tap "Email Me a Sign-In Link" on a second page
-    // they did not know existed. That gap produced 0 conversions on the 5-20
-    // launch broadcast: users finished signup, hit Screen 8, saw no email
-    // arrive, and walked away. sendSignInLink() handles the disabled / spinner
-    // UI and the state swap to state-email-sent on success.
-    try {
-      const qsAuto = new URLSearchParams(window.location.search).get('auto');
-      if (qsAuto === '1' && prefilled) {
-        sendSignInLink();
-      }
-    } catch (e) { /* old browser — user can tap the button manually */ }
-  }
+  showState('state-enter-email');
+
+  // Pre-fill the email if signup.html (or any other page) passed it via
+  // ?email=... URL param. Saves the user from retyping their address when
+  // they hit the "already used" overlay and tap "Sign In to Your Account →".
+  let prefilled = '';
+  try {
+    const qsEmail = new URLSearchParams(window.location.search).get('email') || '';
+    const trimmed = qsEmail.trim().toLowerCase();
+    if (trimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      const input = document.getElementById('email-input');
+      if (input) input.value = trimmed;
+      prefilled = trimmed;
+    }
+  } catch (e) { /* old browser — leave blank */ }
+
+  // Auto-fire the code request if signup.html (or any other page) passed
+  // ?auto=1 along with a valid email. Saves the user from completing
+  // signup and then having to also tap "Send My Code" on a page they did
+  // not know existed. requestSignInCode() handles its own UI transitions.
+  try {
+    const qsAuto = new URLSearchParams(window.location.search).get('auto');
+    if (qsAuto === '1' && prefilled) {
+      requestSignInCode();
+    }
+  } catch (e) { /* old browser — user can tap the button manually */ }
 });
 </script>
 
