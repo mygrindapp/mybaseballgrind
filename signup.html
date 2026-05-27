@@ -2728,6 +2728,27 @@ select.field-input {
         </select>
       </div>
 
+      <!-- Player age. Drives the COPPA under-13 path: if any player is under
+           13, the plan picker hides Single tiers and shows the Family-only
+           consent explainer. Capture as a number; the picker reads it back
+           from state.players[].age. -->
+      <div class="field-block">
+        <label class="field-label" for="player_age">Player's Age<span class="req">*</span></label>
+        <input
+          type="number"
+          class="field-input"
+          id="player_age"
+          placeholder="e.g. 14"
+          inputmode="numeric"
+          min="4"
+          max="22"
+          oninput="onPlayerInput()">
+        <div class="field-helper">Your player's current age in years.</div>
+        <div class="field-helper" id="player_age_under13" style="display:none; color:var(--gold);">
+          Players under 13 are supported on the Family plan. Your card at signup serves as your COPPA consent.
+        </div>
+      </div>
+
       <!-- Per-player sport. Shown when familySport === 'both' (the family-level
            question is essentially "is anyone multi-sport or mixed?"). Each
            player can be Baseball, Softball, or Both (a single multi-sport kid). -->
@@ -3191,6 +3212,13 @@ select.field-input {
     </p>
 
     <div id="plan_picker_promo_banner" style="display:none; background:rgba(232,201,122,0.08); border:1px solid var(--gold-dark); border-radius:8px; padding:10px 14px; margin:0 0 16px; font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold); line-height:1.5;"></div>
+
+    <!-- COPPA notice. Shown only when at least one player on the signup is
+         under 13. Family plans are the only path that legally covers a parent
+         buying for a child under COPPA's verifiable-parental-consent rule. -->
+    <div id="plan_picker_coppa_banner" style="display:none; background:rgba(232,201,122,0.08); border:1px solid var(--gold-dark); border-radius:8px; padding:10px 14px; margin:0 0 16px; font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold); line-height:1.5;">
+      Because your player is under 13, a Family plan is required. The card you provide at signup serves as your consent for us to collect your child's training data, per the Children's Online Privacy Protection Act.
+    </div>
 
     <div class="plan-picker-grid" id="plan_picker_grid">
       <button type="button" class="plan-picker-card" data-plan="single_annual" onclick="onPlanPickerSelect('single_annual')">
@@ -4176,6 +4204,8 @@ function ensurePlayerSlot(idx) {
       relationship: '',
       phone: '',
       fallback: fallbackDefault,
+      age: null,  // number 4-22, captured on Screen 6. Drives COPPA gating
+                  // in openPlanPicker — any player < 13 forces Family-only.
       sport: ''   // 'baseball' | 'softball' — picked by parent on Screen 6.
                   // For non-'both' families this auto-derives from familySport;
                   // for 'both' families, parent picks per-kid via sport tiles.
@@ -4205,15 +4235,24 @@ function loadPlayerSlot() {
   // Populate form fields with saved values (or empty for fresh slot)
   const first = document.getElementById('player_first');
   const rel   = document.getElementById('player_rel');
+  const age   = document.getElementById('player_age');
   const phone = document.getElementById('player_phone');
   if (first) first.value = player.firstName || '';
   if (rel)   rel.value   = player.relationship || '';
+  if (age)   age.value   = (player.age != null ? String(player.age) : '');
   if (phone) phone.value = player.phone || '';
 
   // Reset visual states
   if (first) first.classList.remove('valid', 'invalid');
   if (rel)   rel.classList.remove('valid', 'invalid');
+  if (age)   age.classList.remove('valid', 'invalid');
   if (phone) phone.classList.remove('valid', 'invalid');
+
+  // Show the COPPA explainer if the saved age is < 13.
+  const under13Note = document.getElementById('player_age_under13');
+  if (under13Note) {
+    under13Note.style.display = (typeof player.age === 'number' && player.age > 0 && player.age < 13) ? '' : 'none';
+  }
 
   // Per-player sport: visible only when family picked 'both'.
   // Otherwise auto-derive from familySport so the invite carries the right sport.
@@ -4260,6 +4299,7 @@ function loadPlayerSlot() {
 function applySlotLockUI(locked) {
   const first  = document.getElementById('player_first');
   const rel    = document.getElementById('player_rel');
+  const age    = document.getElementById('player_age');
   const phone  = document.getElementById('player_phone');
   const fbRow  = document.getElementById('fallback_row');
   const banner = document.getElementById('slot_lock_banner');
@@ -4290,6 +4330,7 @@ function applySlotLockUI(locked) {
   if (locked) {
     if (first) first.setAttribute('readonly', 'readonly');
     if (rel)   rel.setAttribute('disabled', 'disabled');
+    if (age)   age.setAttribute('readonly', 'readonly');
     if (phone) phone.setAttribute('readonly', 'readonly');
     if (fbRow) fbRow.style.pointerEvents = 'none';
     const b = ensureBanner();
@@ -4297,6 +4338,7 @@ function applySlotLockUI(locked) {
   } else {
     if (first) first.removeAttribute('readonly');
     if (rel)   rel.removeAttribute('disabled');
+    if (age)   age.removeAttribute('readonly');
     if (phone) phone.removeAttribute('readonly');
     if (fbRow) fbRow.style.pointerEvents = '';
     if (banner) banner.style.display = 'none';
@@ -4403,6 +4445,7 @@ function onPlayerInput() {
 
   const first = document.getElementById('player_first');
   const rel   = document.getElementById('player_rel');
+  const age   = document.getElementById('player_age');
   const phone = document.getElementById('player_phone');
   if (!first || !rel || !phone) return;
 
@@ -4410,11 +4453,22 @@ function onPlayerInput() {
   player.firstName    = first.value.trim();
   player.relationship = rel.value;
   player.phone        = phone.value.trim();
+  if (age) {
+    const ageNum = parseInt(age.value, 10);
+    player.age = (Number.isFinite(ageNum) && ageNum >= 4 && ageNum <= 22) ? ageNum : null;
+  }
   saveState();
+
+  // Reveal the COPPA Family-plan note as soon as a sub-13 age is entered.
+  const under13Note = document.getElementById('player_age_under13');
+  if (under13Note) {
+    under13Note.style.display = (typeof player.age === 'number' && player.age < 13) ? '' : 'none';
+  }
 
   // Validate each field
   const firstOk = first.value.trim().length >= 1;
   const relOk   = rel.value.length > 0;
+  const ageOk   = (typeof player.age === 'number' && player.age >= 4 && player.age <= 22);
   const phoneFormatOk = player.fallback ? true : isValidPhone(phone.value);
   const phoneUnique   = player.fallback ? true : !phoneClashesWithOtherSlot(phone.value, idx);
   const phoneOk = phoneFormatOk && phoneUnique;
@@ -4438,6 +4492,11 @@ function onPlayerInput() {
     rel.classList.add('valid');
   } else {
     rel.classList.remove('valid', 'invalid');
+  }
+  if (age && age.value.length > 0) {
+    validateField(age, ageOk);
+  } else if (age) {
+    age.classList.remove('valid', 'invalid');
   }
   if (!player.fallback) {
     validateField(phone, phoneOk);
@@ -4493,6 +4552,7 @@ function refreshPlayerContinue() {
 
   const firstOk = (player.firstName || '').length >= 1;
   const relOk   = (player.relationship || '').length > 0;
+  const ageOk   = (typeof player.age === 'number' && player.age >= 4 && player.age <= 22);
   const phoneFormatOk = player.fallback ? true : isValidPhone(player.phone || '');
   const phoneUnique   = player.fallback ? true : !phoneClashesWithOtherSlot(player.phone || '', idx);
   const phoneOk = phoneFormatOk && phoneUnique;
@@ -4502,7 +4562,7 @@ function refreshPlayerContinue() {
 
   // Once players are locked, the Continue button just navigates forward —
   // it's effectively a "next" through the locked view rather than a save.
-  next.disabled = !(firstOk && relOk && phoneOk && sportOk);
+  next.disabled = !(firstOk && relOk && ageOk && phoneOk && sportOk);
 
   // Button label changes based on whether this is the last player. Plain
   // "Continue" everywhere matches every other forward button in the flow
@@ -5336,6 +5396,18 @@ function mailchimpSyncSignup() {
     if (!email) return;
     var firstName = ((state.parent && state.parent.firstName) || '').trim();
 
+    // COPPA hard-guard: we only ever sync the PARENT's email here. Children
+    // under 13 never have an independent email in this app (they ride the
+    // parent's account), so the only way a child contact could land on a
+    // marketing list is via this function being repurposed. If a future
+    // edit ever passes a child object in, the email-source check below
+    // ensures it can't slip through: we read EXCLUSIVELY from state.parent.
+    var pickedFrom = (state.parent && state.parent.email === email) ? 'parent' : 'unknown';
+    if (pickedFrom !== 'parent') {
+      console.warn('[mailchimp-sync] suppressed — email did not come from state.parent. COPPA guard active.');
+      return;
+    }
+
     // Same Mailchimp audience + tag as index.html (line 1093) so the
     // existing welcome automation continues to fire untouched.
     var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
@@ -5648,15 +5720,38 @@ function openPlanPicker() {
   // Skip the picker entirely — the regular Screen 8 redirect handles it.
   if (isLifetime) return false;
 
+  // COPPA gate: any player under 13 on this signup forces the Family path,
+  // since Single tiers don't include a parent-buys-for-kid entitlement and
+  // the under-13 collection only stands up under verifiable parental consent
+  // (here, the Family Stripe charge).
+  const hasUnder13 = (state.players || []).some(p => p && typeof p.age === 'number' && p.age < 13);
+  const monthly = state.preferredPlan === 'monthly';
+
   // Default plan: parent path leads with Family Annual, self path with Single Annual.
   // If the parent picked monthly on Screen 5, mirror that on the tier they're recommended into.
-  const monthly = state.preferredPlan === 'monthly';
   if (isSelfPath()) {
     _planPickerSelection = monthly ? 'single_monthly' : 'single_annual';
+  } else if (hasUnder13) {
+    _planPickerSelection = monthly ? 'family_monthly' : 'family_annual';
   } else {
     _planPickerSelection = monthly ? 'family_monthly' : 'family_annual';
   }
   applyPlanPickerSelection();
+
+  // Hide Single tiers entirely when the COPPA gate is on. Parents can still
+  // pick between Family Monthly and Family Annual.
+  const singleAnnualCard  = document.querySelector('#plan_picker_grid .plan-picker-card[data-plan="single_annual"]');
+  const singleMonthlyCard = document.querySelector('#plan_picker_grid .plan-picker-card[data-plan="single_monthly"]');
+  const coppaBanner       = document.getElementById('plan_picker_coppa_banner');
+  if (hasUnder13) {
+    if (singleAnnualCard)  singleAnnualCard.style.display  = 'none';
+    if (singleMonthlyCard) singleMonthlyCard.style.display = 'none';
+    if (coppaBanner)       coppaBanner.style.display       = '';
+  } else {
+    if (singleAnnualCard)  singleAnnualCard.style.display  = '';
+    if (singleMonthlyCard) singleMonthlyCard.style.display = '';
+    if (coppaBanner)       coppaBanner.style.display       = 'none';
+  }
 
   // Highlight Family as Recommended when this is a parent-path signup.
   const familyPill = document.getElementById('ppc_fa_pill');
@@ -5696,6 +5791,12 @@ function openPlanPicker() {
 }
 
 function onPlanPickerSelect(plan) {
+  // COPPA gate: hidden Single cards must not be selectable even via direct
+  // call. If any player is under 13, snap back to Family Annual.
+  const hasUnder13 = (state.players || []).some(p => p && typeof p.age === 'number' && p.age < 13);
+  if (hasUnder13 && (plan === 'single_annual' || plan === 'single_monthly')) {
+    plan = state.preferredPlan === 'monthly' ? 'family_monthly' : 'family_annual';
+  }
   _planPickerSelection = plan;
   applyPlanPickerSelection();
 }
