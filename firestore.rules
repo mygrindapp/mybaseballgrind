@@ -1,0 +1,59 @@
+// ═══════════════════════════════════════════════════════════
+// MyGrind — firestore.rules (production lockdown)
+// ───────────────────────────────────────────────────────────
+// Mirror of the live rules at:
+// https://console.firebase.google.com/project/my-grind-b8486/firestore/rules
+//
+// Version-controlled here so changes get diff'd in PR review,
+// can't drift silently, and can be redeployed via firebase CLI
+// if the Console rules get accidentally weakened.
+//
+// To update the live rules from this file (after editing here):
+//   1. Install: npm install -g firebase-tools
+//   2. Authenticate: firebase login
+//   3. Initialize once: firebase init firestore (use this file)
+//   4. Deploy: firebase deploy --only firestore:rules
+//
+// Until the CLI is wired up, the source of truth is still the
+// Firebase Console — but any change made there should be mirrored
+// back into this file in the same PR.
+//
+// ─── SECURITY REVIEW (2026-05-27) ──────────────────────────
+// Current rules enforce per-user lockdown on /users/{userId}
+// and its /entries subcollection. Auth-required, uid match.
+// This is the right baseline for the current schema.
+//
+// FOLLOW-UP ITEMS (not changes — flags for future work):
+// 1. When Phase 3 (COPPA under-13 parent path) ships, add:
+//      match /users/{parentId}/managedMinors/{minorId} {
+//        allow read, write: if request.auth != null
+//                           && request.auth.uid == parentId;
+//      }
+//    so parent accounts can read+write their child profiles
+//    while no other user can touch them.
+// 2. Consider field-level validation (e.g., size caps on entries,
+//    schema validation on writes) once write abuse becomes a
+//    real risk. Not needed at current scale.
+// 3. If an /admin/ collection is ever added (server-side writes
+//    only), explicitly deny client writes with:
+//      match /admin/{document=**} {
+//        allow read, write: if false;
+//      }
+//    Default-deny covers this implicitly today, but explicit is
+//    safer once the collection name is in play.
+// ═══════════════════════════════════════════════════════════
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /entries/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
