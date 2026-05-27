@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v289';
+    const CACHE = 'ybg-mygrind-v290';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -4415,7 +4415,7 @@ input[type="number"] {
       <div class="form-row">
         <div>
           <label>Age</label>
-          <input type="number" id="pl-age" placeholder="e.g. 15" min="5" max="25" oninput="saveProfile()" style="width:80px;">
+          <input type="number" id="pl-age" placeholder="e.g. 15" min="13" max="25" oninput="saveProfile()" style="width:80px;">
         </div>
         <div>
           <label>Grade</label>
@@ -19491,21 +19491,12 @@ function renderDashWhy() {
 }
 window.renderDashWhy = renderDashWhy;
 
-// ══ AGE-AWARE JOURNAL PROMPTS ═════════════════════════════════════
-// Coach Young 2026-05-22: under-13 players need shorter, simpler
-// language than HS+ players. Swaps the four reflection prompts on
-// the journal screen based on pl-age. Fires on journal panel open
-// and after every saveProfile (since age might have changed). The
-// 13+ branch restores the original copy so a player who downgrades
-// their age to test never gets stuck in kid mode.
+// ══ JOURNAL PROMPTS ═══════════════════════════════════════════════
+// Restores the default 13+ reflection prompts on the journal screen
+// so a player who edits prompts in DevTools or whose static HTML gets
+// out of sync still lands on the canonical copy. Fires on journal
+// panel open and after page load.
 function applyAgeAwareJournalPrompts() {
-  var age = 0;
-  try {
-    var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
-    age = parseInt(p.age || '0', 10) || 0;
-  } catch (e) {}
-  var isKid = age > 0 && age < 13;
-
   var setLabel = function(id, txt) {
     var el = document.getElementById(id);
     if (el) el.textContent = txt;
@@ -19515,26 +19506,14 @@ function applyAgeAwareJournalPrompts() {
     if (el) el.setAttribute('placeholder', txt);
   };
 
-  if (isKid) {
-    setLabel('j-what-label',      'What did I work on today?');
-    setPh   ('j-what',            'Did you practice swings, throws, fielding? Write what you did.');
-    setLabel('j-team-role-label', 'How did practice go?');
-    setPh   ('j-team-role-text',  'What did your coach tell you? What was easy or hard?');
-    setLabel('j-tomorrow-label',  'What will I work on next time?');
-    setPh   ('j-tomorrow',        'Pick one thing you want to get better at.');
-    setLabel('j-prepare-label',   'What did you learn?');
-    setPh   ('j-prepare',         'One thing you want to remember. A new skill, a tip from coach, or something that made you happy.');
-  } else {
-    // Default / 13+ — restore the original copy. Match the static HTML.
-    setLabel('j-what-label',      'What did I work on today?');
-    setPh   ('j-what',            'What drills, reps, or skills did I focus on? What felt good?');
-    setLabel('j-team-role-label', 'What was my role? Where did I stand out or struggle?');
-    setPh   ('j-team-role-text',  'The reps you got, what coach pointed out, what felt sharp or sloppy.');
-    setLabel('j-tomorrow-label',  'What am I taking into the next practice or game?');
-    setPh   ('j-tomorrow',        'What is one thing I want to carry forward and keep working on?');
-    setLabel('j-prepare-label',   'What are you carrying forward?');
-    setPh   ('j-prepare',         "Into the next game, next week, the rest of the season. Wherever you're headed. A mindset, an adjustment, a person to thank, a habit to lock in. One thing: make it real.");
-  }
+  setLabel('j-what-label',      'What did I work on today?');
+  setPh   ('j-what',            'What drills, reps, or skills did I focus on? What felt good?');
+  setLabel('j-team-role-label', 'What was my role? Where did I stand out or struggle?');
+  setPh   ('j-team-role-text',  'The reps you got, what coach pointed out, what felt sharp or sloppy.');
+  setLabel('j-tomorrow-label',  'What am I taking into the next practice or game?');
+  setPh   ('j-tomorrow',        'What is one thing I want to carry forward and keep working on?');
+  setLabel('j-prepare-label',   'What are you carrying forward?');
+  setPh   ('j-prepare',         "Into the next game, next week, the rest of the season. Wherever you're headed. A mindset, an adjustment, a person to thank, a habit to lock in. One thing: make it real.");
 }
 window.applyAgeAwareJournalPrompts = applyAgeAwareJournalPrompts;
 
