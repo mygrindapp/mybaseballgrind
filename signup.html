@@ -64,6 +64,20 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+/* MyGrind brand palette — defined at :root so var(--gold) etc resolve
+   anywhere in the file. Matches the same tokens used in signin.html. */
+:root {
+  --gold:       #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dark:  #8B6914;
+  --white:      #F4F4F4;
+  --light:      #E0D6C2;
+  --grey:       #B8AC9A;
+  --card:       #161210;
+  --card2:      #1F1814;
+  --border:     #3D3530;
+}
+
 /* ═══════════════════════════════════════════════════════════
    RESET + BASE
    ═══════════════════════════════════════════════════════════ */
@@ -3268,59 +3282,60 @@ select.field-input {
   }
   .plan-picker-card {
     position: relative;
-    background: var(--card, #161210);
+    background: #161210;
     border: 1px solid #3D3530;
     border-radius: 10px;
-    padding: 14px 14px 12px;
+    padding: 18px 14px 14px;
     text-align: left;
     font-family: 'Barlow', sans-serif;
-    color: var(--light);
+    color: #E0D6C2;
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
   }
-  .plan-picker-card:hover { border-color: var(--gold-dark, #8B6914); }
+  .plan-picker-card:hover { border-color: #8B6914; }
   .plan-picker-card.selected {
-    border-color: var(--gold);
-    background: rgba(232,201,122,0.06);
+    border-color: #C9A84C;
+    background: rgba(232,201,122,0.08);
   }
   .plan-picker-pill {
     position: absolute;
     top: -10px;
     right: 12px;
-    background: var(--gold);
+    background: #C9A84C;
     color: #080808;
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     font-weight: 800;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    padding: 4px 8px;
+    padding: 5px 10px;
     border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
   }
   .plan-picker-name {
     font-family: 'Bebas Neue', cursive;
-    font-size: 17px;
+    font-size: 18px;
     letter-spacing: 1.5px;
-    color: var(--gold);
+    color: #E8C97A;
     margin-bottom: 4px;
   }
   .plan-picker-price {
     font-family: 'Barlow Condensed', sans-serif;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 800;
-    color: var(--light);
+    color: #F4F4F4;
   }
   .plan-picker-price span {
-    font-size: 13px;
-    color: var(--grey);
+    font-size: 14px;
+    color: #B8AC9A;
     font-weight: 600;
   }
   .plan-picker-tag {
     font-family: 'Barlow', sans-serif;
-    font-size: 12px;
-    color: var(--grey);
+    font-size: 13px;
+    color: #B8AC9A;
     margin-top: 6px;
-    line-height: 1.4;
+    line-height: 1.45;
   }
 </style>
 
