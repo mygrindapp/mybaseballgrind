@@ -3389,11 +3389,11 @@ input[type="number"] {
         <div>
           <label>Entry Type</label>
           <select id="j-type" onchange="toggleGameStats()">
-            <option value="practice">Practice</option>
+            <option value="practice" selected>Practice</option>
             <option value="instructor">Instructor</option>
             <option value="game">Game</option>
             <option value="workout">Gym</option>
-            <option value="reflection" selected>Reflection</option>
+            <option value="reflection">Reflection</option>
             <option value="offday">😴 Off Day (full rest)</option>
           </select>
         </div>
@@ -19704,32 +19704,6 @@ function renderDashWhy() {
 }
 window.renderDashWhy = renderDashWhy;
 
-// ══ JOURNAL PROMPTS ═══════════════════════════════════════════════
-// Restores the default 13+ reflection prompts on the journal screen
-// so a player who edits prompts in DevTools or whose static HTML gets
-// out of sync still lands on the canonical copy. Fires on journal
-// panel open and after page load.
-function applyAgeAwareJournalPrompts() {
-  var setLabel = function(id, txt) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = txt;
-  };
-  var setPh = function(id, txt) {
-    var el = document.getElementById(id);
-    if (el) el.setAttribute('placeholder', txt);
-  };
-
-  setLabel('j-what-label',      'What did I work on today?');
-  setPh   ('j-what',            'What drills, reps, or skills did I focus on? What felt good?');
-  setLabel('j-team-role-label', 'What was my role? Where did I stand out or struggle?');
-  setPh   ('j-team-role-text',  'The reps you got, what coach pointed out, what felt sharp or sloppy.');
-  setLabel('j-tomorrow-label',  'What am I taking into the next practice or game?');
-  setPh   ('j-tomorrow',        'What is one thing I want to carry forward and keep working on?');
-  setLabel('j-prepare-label',   'What are you carrying forward?');
-  setPh   ('j-prepare',         "Into the next game, next week, the rest of the season. Wherever you're headed. A mindset, an adjustment, a person to thank, a habit to lock in. One thing: make it real.");
-}
-window.applyAgeAwareJournalPrompts = applyAgeAwareJournalPrompts;
-
 // Hook into the existing showPanel so we refresh contact + history when the tab opens
 (function() {
   var orig = window.showPanel;
@@ -19738,16 +19712,15 @@ window.applyAgeAwareJournalPrompts = applyAgeAwareJournalPrompts;
     orig.apply(this, arguments);
     if (id === 'coach-feedback') cfLoadContact();
     if (id === 'dashboard')      { dashCoachLoad(); renderDashWhy(); }
-    if (id === 'journal')        applyAgeAwareJournalPrompts();
   };
 })();
 // Also load once on initial page render (dashboard is the default panel)
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() { dashCoachLoad(); renderDashWhy(); applyAgeAwareJournalPrompts(); }, 600);
+    setTimeout(function() { dashCoachLoad(); renderDashWhy(); }, 600);
   });
 } else {
-  setTimeout(function() { dashCoachLoad(); renderDashWhy(); applyAgeAwareJournalPrompts(); }, 600);
+  setTimeout(function() { dashCoachLoad(); renderDashWhy(); }, 600);
 }
 
 /* Pull-to-refresh removed 2026-05-16 — Coach Young. The custom PTR was
