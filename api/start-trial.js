@@ -30,6 +30,7 @@
 
 import crypto from 'crypto';
 import { checkTrialEligibility, recordTrialUsed } from '../lib/trial-eligibility-store.js';
+import { recordFounderSignup } from '../lib/founder-cohort-store.js';
 import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
 
 const ALLOWED_ORIGINS = new Set([
@@ -63,7 +64,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')    return res.status(405).json({ ok: false, error: 'method_not_allowed' });
 
-  const { email, phone } = req.body || {};
+  const { email, phone, promoCode } = req.body || {};
   if (!email && !phone) {
     return res.status(400).json({ ok: false, error: 'missing_fields' });
   }
@@ -145,5 +146,28 @@ export default async function handler(req, res) {
     phoneHash: piiHash(phone),
     recorded: rec.recorded,
   });
+
+  // ─── Founder-cohort tracking ──────────────────────────────
+  // Record founders in a Redis Set keyed by promo code so the
+  // 100-cap on FOUNDERMYGRIND (and 10-cap on FOREVERYOUNG2026)
+  // has a real server-side count. Fire-and-forget — never blocks
+  // or fails the trial start. Idempotent via SADD semantics.
+  if (promoCode && email) {
+    try {
+      const founderRes = await recordFounderSignup({ email, promoCode });
+      if (founderRes.ok && founderRes.tracked) {
+        console.log('[start-trial] founder recorded', {
+          emailHash: piiHash(email),
+          code: founderRes.code,
+          isNew: founderRes.isNew,
+        });
+      } else if (!founderRes.ok) {
+        console.warn('[start-trial] founder record failed', { error: founderRes.error });
+      }
+    } catch (e) {
+      console.warn('[start-trial] founder record threw', { error: e && e.message });
+    }
+  }
+
   return res.status(200).json({ ok: true, started: true });
 }

@@ -5141,7 +5141,7 @@ function recordTrialStartServerSide() {
     fetch('/api/start-trial', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, phone })
+      body: JSON.stringify({ email, phone, promoCode: state.promoCode || '' })
     })
       .then(function (r) { return r.json(); })
       .then(function (data) {
