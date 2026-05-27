@@ -526,7 +526,7 @@ async function handleSignInReturn() {
           window.history.replaceState(null, '', url.pathname + (url.search || ''));
         } catch (e) {}
         showState('state-success');
-        setTimeout(() => { window.location.href = '/softball.html'; }, 700);
+        setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, 700);
         return true;
       } catch (e) {
         console.error('[signin] signInWithCustomToken failed:', e);
@@ -603,7 +603,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       // shows the success state. Otherwise (already-signed-in revisit),
       // just redirect to the journal directly.
       if (!auth.isSignInWithEmailLink(window.location.href)) {
-        window.location.href = '/softball.html';
+        window.location.href = '/softball.html?signed_in=1';
         return;
       }
     }

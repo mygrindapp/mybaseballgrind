@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v287';
+    const CACHE = 'ybg-mygrind-v288';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7175,9 +7175,62 @@ function checkAccess() {
   if (status === 'paid')         { removeBanner(); return; }
   if (status === 'trial')        { showTrialBanner(); return; }
   if (status === 'expired')      { showExpired(); return; }
-  // wrong_device check disabled
-  // No trial found — send to onboarding instead of showing old in-app welcome
-  window.location.href = 'https://mygrindapp.com/signup.html';
+
+  // ─── Auth-aware safety net (Brandon bug, 2026-05-26) ──────
+  // Before bouncing a user back to /signup.html, check if they are
+  // already signed in via Firebase Auth or just arrived from /signin.html.
+  // Cross-device sign-in (magic link clicked in a fresh browser) can land
+  // a real, authenticated user here with empty localStorage. Bouncing
+  // them to signup is the bug Brandon hit — completed signup, signed in
+  // from email, but the journal kicked him out.
+  //
+  // If we detect a signed-in user (or a fresh ?signed_in=1 redirect from
+  // signin.html), grant a trial in localStorage and proceed. The server-
+  // side trial-eligibility store (Redis) is the abuse guard — same email
+  // can't farm trials no matter how often they hit this path. Stripe is
+  // also re-checked async via syncSubscriptionFromServer() above, which
+  // will silently upgrade them to paid if a subscription exists.
+  try {
+    var qs = new URLSearchParams(window.location.search);
+    var justSignedIn = qs.get('signed_in') === '1';
+    var fbCurrent = (typeof firebase !== 'undefined' && firebase.auth)
+      ? firebase.auth().currentUser
+      : null;
+    var hasFbUser = !!(fbCurrent || (typeof fbUser !== 'undefined' && fbUser));
+    if (justSignedIn || hasFbUser) {
+      var acc = (function() {
+        try { return JSON.parse(localStorage.getItem('ybg_access') || '{}'); }
+        catch (_) { return {}; }
+      })();
+      if (!acc.paid && !acc.trialStart) {
+        acc.trialStart = Date.now();
+        acc.mode       = acc.mode || 'signed_in_recovery';
+        acc.grantedAt  = new Date().toISOString();
+        if (fbCurrent) {
+          acc.email = acc.email || (fbCurrent.email || '').toLowerCase();
+          acc.fbUid = fbCurrent.uid;
+        }
+        var ser = JSON.stringify(acc);
+        try { localStorage.setItem('ybg_access', ser); } catch (_) {}
+        try { sessionStorage.setItem('ybg_access', ser); } catch (_) {}
+        try { localStorage.setItem('ybg_softball_access', ser); } catch (_) {}
+      }
+      // Clean the marker from URL and show the trial banner. Skip the
+      // bounce entirely.
+      if (justSignedIn) {
+        try {
+          var url = new URL(window.location.href);
+          url.searchParams.delete('signed_in');
+          window.history.replaceState(null, '', url.pathname + (url.search || '') + url.hash);
+        } catch (_) {}
+      }
+      try { showTrialBanner(); } catch (_) {}
+      return;
+    }
+  } catch (_) { /* fall through to bounce */ }
+
+  // Truly anonymous visitor — send to signup.
+  window.location.href = 'https://www.mygrindapp.com/signup.html';
 }
 
 function hideOverlay() {

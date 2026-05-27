@@ -194,7 +194,7 @@ If beta users aren't logging entries daily:
 
 *When a beta user reports something, jot it here with date and source.*
 
-- (none new yet — start logging when reports come in)
+- **iOS PWA sign-in routing breaks Home Screen handoff** (reported 2026-05-26 by Brandon, beta user). When MyGrind is installed as a PWA on iOS Home Screen, tapping the magic-link from Mail opens Safari (not the PWA). User completes sign-in in Safari but the session lives in Safari's storage, so re-opening the Home Screen PWA shows them still signed out. Known iOS limitation — Apple does not let PWAs receive deep links from other apps. Brandon's workaround: stay on the web-based version. **Not blocking** (web version is primary product). **Defer to ~30+ founder cohort or post-multi-sport milestone.** Fix paths: (a) UX-level "return to Home Screen app" guidance after sign-in, (b) shared storage probe + auto-redirect, (c) native iOS app (months out). See conversation 2026-05-26.
 
 ---
 
