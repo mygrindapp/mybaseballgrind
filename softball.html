@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v293';
+    const CACHE = 'ybg-mygrind-v294';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1719,6 +1719,9 @@ function signOutAndSwitchAccount() {
   </symbol>
   <symbol id="mg-icon-book-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+  </symbol>
+  <symbol id="mg-icon-cloud" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
   </symbol>
   <symbol id="mg-icon-graduation-cap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/>
@@ -2630,7 +2633,7 @@ function signOutAndSwitchAccount() {
        needed. Sits above Settings here because Resources is outward
        facing (links, contact) while Settings is configuration. -->
   <button onclick="mgTab('resources',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center;">🎓</span> Resources
+    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg></span> Resources
   </button>
 
   <button onclick="mgTab('settings',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
@@ -5876,8 +5879,9 @@ input[type="number"] {
 
       <!-- Enable Button -->
       <div style="margin-top:16px;">
-        <button onclick="requestNotifications()" id="notif-enable-btn" class="btn btn-gold" style="width:100%; padding:12px 24px;">
-          🔔 Enable Daily Reminders
+        <button onclick="requestNotifications()" id="notif-enable-btn" class="btn btn-gold" style="width:100%; padding:12px 24px; display:inline-flex; align-items:center; justify-content:center; gap:10px;">
+          <svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bell"/></svg>
+          Enable Daily Reminders
         </button>
         <div id="notif-permission-note" style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-top:8px; text-align:center; line-height:1.6;">
           Tap the button above then tap <strong style="color:var(--light);">"Allow"</strong> when your browser asks.<br>
@@ -5985,8 +5989,9 @@ input[type="number"] {
         <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:8px; text-align:center;">
           Parent Only · Uses billing email on file
         </div>
-        <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" id="stripe-portal-btn" target="_blank" rel="noopener" onclick="return openStripePortal(event)" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 14px; border-radius:8px; text-decoration:none; text-align:center;">
-          💳 &nbsp;Manage Subscription
+        <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" id="stripe-portal-btn" target="_blank" rel="noopener" onclick="return openStripePortal(event)" style="display:flex; align-items:center; justify-content:center; gap:10px; background:var(--gold); color:#080808; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:13px 14px; border-radius:8px; text-decoration:none; text-align:center;">
+          <svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-credit-card"/></svg>
+          Manage Subscription
         </a>
         <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; margin-top:10px; line-height:1.5;">
           Update card, change plan, or cancel anytime in the Stripe portal. Need help? <a href="mailto:support@mygrindapp.com?subject=Subscription%20Help&body=Hi%20MyGrind%2C%0A%0A" style="color:var(--gold); text-decoration:none;">Email support</a>.
@@ -6049,8 +6054,9 @@ input[type="number"] {
            Firebase; the helper text below explains why. The auto-prompt
            banner at the top of the journal calls the same function for
            first-time historical sync. -->
-      <button id="cloud-backup-settings-btn" onclick="bulkBackupToCloud()" disabled style="width:100%; background:#5DCFA0; color:#080808; font-family:'Barlow Condensed'; font-size:14px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:14px 18px; border:none; border-radius:8px; cursor:pointer; margin-bottom:8px; opacity:0.45;">
-        ☁️ &nbsp;Save to Cloud
+      <button id="cloud-backup-settings-btn" onclick="bulkBackupToCloud()" disabled style="width:100%; background:#5DCFA0; color:#080808; font-family:'Barlow Condensed'; font-size:14px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:14px 18px; border:none; border-radius:8px; cursor:pointer; margin-bottom:8px; opacity:0.45; display:inline-flex; align-items:center; justify-content:center; gap:10px;">
+        <svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-cloud"/></svg>
+        Save to Cloud
       </button>
       <div id="cloud-backup-settings-note" style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; line-height:1.5; margin-bottom:14px;">
         Sign in first to enable cloud backup. <a href="/signin.html" style="color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold-dark);">Sign in →</a>
@@ -6141,8 +6147,9 @@ input[type="number"] {
 
         <div id="fb-status" style="display:none; font-family:'Barlow'; font-size:12px; padding:10px 12px; border-radius:3px; margin-bottom:10px; line-height:1.5;"></div>
 
-        <button onclick="sendFeedback()" class="btn btn-gold" style="width:100%; padding:12px 24px;">
-          ✉️ &nbsp;Send Feedback
+        <button onclick="sendFeedback()" class="btn btn-gold" style="width:100%; padding:12px 24px; display:inline-flex; align-items:center; justify-content:center; gap:10px;">
+          <svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-mail"/></svg>
+          Send Feedback
         </button>
 
         <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); margin-top:10px; line-height:1.5;">
@@ -6212,7 +6219,7 @@ input[type="number"] {
          when the panel scrolls to top. -->
     <div class="card" style="margin-top:12px; margin-bottom:16px; padding-top:20px; background:linear-gradient(180deg, rgba(232,201,122,0.08) 0%, rgba(184,154,75,0.03) 100%); border-color:var(--gold-dark);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-        <span style="font-size:26px;">🎓</span>
+        <svg class="mg-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold); flex-shrink:0;"><use href="#mg-icon-graduation-cap"/></svg>
         <div style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:2px; color:var(--gold); line-height:1.2;">Resources</div>
       </div>
       <div style="font-family:'Barlow',sans-serif; font-size:16px; color:var(--light); line-height:1.6;">
@@ -13904,7 +13911,13 @@ async function requestNotifications() {
   const perm = await Notification.requestPermission();
   if (perm === 'granted') {
     try { localStorage.setItem('ybg_notif_granted', '1'); } catch(e) {}
-    if (btn)  { btn.textContent = '✅ Notifications Enabled!'; btn.style.background = '#27AE60'; setTimeout(() => { btn.textContent = '🔔 Enable Daily Reminders'; btn.style.background = ''; }, 3000); }
+    if (btn)  {
+      var _bellSvg = '<svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bell"/></svg>';
+      var _checkSvg = '<svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-check-circle"/></svg>';
+      btn.innerHTML = _checkSvg + ' Notifications Enabled!';
+      btn.style.background = '#27AE60';
+      setTimeout(() => { btn.innerHTML = _bellSvg + ' Enable Daily Reminders'; btn.style.background = ''; }, 3000);
+    }
     if (bar)  { bar.style.background = 'rgba(39,174,96,0.08)'; bar.style.borderColor = '#27AE60'; bar.style.color = '#58D68D'; bar.textContent = '✅ Notifications enabled! You\'ll get a daily reminder at your set time to log your game or practice.'; }
     if (note) note.style.display = 'none';
     const s = loadSettings();
