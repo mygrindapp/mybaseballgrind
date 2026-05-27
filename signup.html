@@ -4969,17 +4969,17 @@ function buildScreen8() {
   //
   // Self-path users (Just me): redirect to /signin.html?email=X&auto=1
   // immediately. The signin page's DOMContentLoaded handler picks up
-  // the auto=1 flag and fires sendSignInLink() automatically. They
+  // the auto=1 flag and fires requestSignInCode() automatically. They
   // never see Screen 8 at all because they have no kid to invite.
   //
   // Parent-path users: keep Screen 8 visible (kid invite is the whole
   // point of this dashboard for parents) but inject a top banner with
   // a CTA that fires the same redirect when tapped. Parent invites
-  // their kid first, then emails themselves a sign-in link.
+  // their kid first, then emails themselves a sign-in code.
   //
-  // Both paths route through signin.html so we reuse the battle-tested
-  // branded-Resend-first / Firebase-fallback chain instead of duplicating
-  // auth logic across two surfaces.
+  // Both paths route through signin.html so the code-based flow stays
+  // the single source of truth for sign-in (no duplicate auth logic
+  // across surfaces).
   try {
     var pe = (state.parent && state.parent.email) ? state.parent.email.trim().toLowerCase() : '';
     var isValidParentEmail = pe && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pe);
@@ -5077,8 +5077,8 @@ function buildScreen8() {
   loadSubscriptionStatus();
 }
 
-// ─── SIGN-IN LINK BANNER (Screen 8, parent-path only, 2026-05-25) ───
-// Injects a banner at the top of Screen 8 that fires the magic-link send
+// ─── SIGN-IN CODE BANNER (Screen 8, parent-path only) ───
+// Injects a banner at the top of Screen 8 that fires the code request
 // when tapped. Idempotent — checks for the element first so multiple
 // Screen 8 renders (e.g. after refresh) do not stack banners. Self-path
 // users get the immediate redirect from buildScreen8() instead; this
@@ -5099,8 +5099,8 @@ function injectSigninLinkBannerOnScreen8(href, email) {
   ].join(';');
   banner.innerHTML =
       '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:20px;letter-spacing:1.5px;color:#E8C97A;">ONE LAST STEP</div>'
-    + '<p style="font-size:14px;line-height:1.5;margin:0;color:#F2EAD9;">Email yourself a sign-in link so you can come back from any device. We send it to <strong>' + email + '</strong>.</p>'
-    + '<a href="' + href + '" style="display:inline-block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;text-decoration:none;text-align:center;">Email me the link →</a>';
+    + '<p style="font-size:14px;line-height:1.5;margin:0;color:#F2EAD9;">Email yourself a 6-digit sign-in code so you can come back from any device. We send it to <strong>' + email + '</strong>.</p>'
+    + '<a href="' + href + '" style="display:inline-block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;text-decoration:none;text-align:center;">Send me a code →</a>';
   panel.insertBefore(banner, panel.firstChild);
 }
 
