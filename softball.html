@@ -1399,7 +1399,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v291';
+    const CACHE = 'ybg-mygrind-v292';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1421,6 +1421,90 @@ if ('serviceWorker' in navigator) {
   const swUrl = URL.createObjectURL(blob);
   navigator.serviceWorker.register(swUrl).catch(() => {});
 }
+
+// ═══════════════════════════════════════════════════════════
+// MANAGED-MINOR PROFILE SCOPE (COPPA Phase 3, 2026-05-27)
+// ───────────────────────────────────────────────────────────
+// Parents who set up child profiles under their account can switch the
+// journal between "My Account" (self) and any child profile. We do this
+// by intercepting localStorage on the canonical journal keys: when an
+// active minor is selected, reads and writes are redirected to a per-
+// minor namespace (mm:<minorId>:<key>) so the child's data never bleeds
+// into the parent's view (and vice versa).
+//
+// This runs BEFORE any other script that touches localStorage. The
+// active minor id is itself stored in localStorage under a meta key
+// that is NEVER namespaced, so the switcher state survives reloads.
+// ═══════════════════════════════════════════════════════════
+(function() {
+  var SCOPED_KEYS = {
+    'ybg_softball_profile': 1,
+    'ybg_softball_state':   1,
+    'ybg_profile':          1,
+    'ybg_state':            1,
+  };
+  var ACTIVE_KEY = 'mg_active_minor_id';
+
+  function scopedKey(key) {
+    if (!SCOPED_KEYS[key]) return key;
+    var minor = null;
+    try { minor = window.localStorage.getItem(ACTIVE_KEY); } catch (e) {}
+    if (!minor) return key;
+    return 'mm:' + minor + ':' + key;
+  }
+
+  var origGet    = Storage.prototype.getItem;
+  var origSet    = Storage.prototype.setItem;
+  var origRemove = Storage.prototype.removeItem;
+
+  Storage.prototype.getItem = function(key) {
+    if (this === window.localStorage) {
+      return origGet.call(this, scopedKey(key));
+    }
+    return origGet.call(this, key);
+  };
+  Storage.prototype.setItem = function(key, value) {
+    if (this === window.localStorage) {
+      return origSet.call(this, scopedKey(key), value);
+    }
+    return origSet.call(this, key, value);
+  };
+  Storage.prototype.removeItem = function(key) {
+    if (this === window.localStorage) {
+      return origRemove.call(this, scopedKey(key));
+    }
+    return origRemove.call(this, key);
+  };
+
+  // Expose the scoping helpers so the switcher UI can read/write the
+  // ACTIVE_KEY directly (bypassing the scope to manipulate it) and so
+  // Firebase save shims can know the active minor without re-reading.
+  window.MgMinorScope = {
+    activeKey: ACTIVE_KEY,
+    getActiveMinorId: function() {
+      try { return origGet.call(window.localStorage, ACTIVE_KEY) || null; }
+      catch (e) { return null; }
+    },
+    setActiveMinorId: function(id) {
+      try {
+        if (id) origSet.call(window.localStorage, ACTIVE_KEY, String(id));
+        else    origRemove.call(window.localStorage, ACTIVE_KEY);
+      } catch (e) {}
+    },
+    purgeMinorScope: function(id) {
+      if (!id) return;
+      var prefix = 'mm:' + id + ':';
+      try {
+        var toRemove = [];
+        for (var i = 0; i < window.localStorage.length; i++) {
+          var k = window.localStorage.key(i);
+          if (k && k.indexOf(prefix) === 0) toRemove.push(k);
+        }
+        toRemove.forEach(function(k) { origRemove.call(window.localStorage, k); });
+      } catch (e) {}
+    },
+  };
+})();
 
 // ── INSTALL PROMPT (Add to Home Screen) ──
 let deferredInstallPrompt = null;
@@ -1925,6 +2009,59 @@ function signOutAndSwitchAccount() {
     <button onclick="goToPurchase('annual')" style="background:var(--gold); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:8px 16px; border:none; border-radius:8px; cursor:pointer; white-space:nowrap;">
       ⚾ &nbsp;$99.99 / yr · Best Value
     </button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════
+     PROFILE SWITCHER (COPPA Phase 3, 2026-05-27)
+     ───────────────────────────────────────────────────────────
+     Visible only for parents who have at least one managed-minor
+     child profile. Built by initMinorSwitcher() after /api/
+     managed-minors-list responds. When no minors exist the entire
+     bar stays display:none and the page looks identical to today.
+     ═══════════════════════════════════════════════════════════ -->
+<div id="mg-minor-switcher" style="display:none; background:#100C0A; border-bottom:1px solid #2A211C; padding:10px 16px; align-items:center; gap:10px; flex-wrap:wrap; position:relative; z-index:80;">
+  <span style="font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:#A89880;">Switch player:</span>
+  <select id="mg-minor-select" onchange="onMinorSwitcherChange(this.value)" style="background:#1A1410; color:var(--gold); border:1px solid #3D3530; border-radius:6px; padding:6px 10px; font-family:'Barlow',sans-serif; font-size:14px; min-width:180px;">
+    <option value="">My Account</option>
+  </select>
+  <button type="button" id="mg-minor-add-btn" onclick="openAddMinorForm()" style="background:transparent; color:var(--gold); border:1px solid var(--gold); border-radius:6px; padding:6px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;">+ Add child</button>
+  <button type="button" id="mg-minor-delete-btn" onclick="onDeleteActiveMinor()" style="display:none; background:transparent; color:#E66; border:1px solid #6A2A2A; border-radius:6px; padding:6px 12px; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;">Delete this profile</button>
+  <span id="mg-minor-active-label" style="margin-left:auto; font-family:'Barlow',sans-serif; font-size:12px; color:#888;"></span>
+</div>
+
+<!-- Add-child form overlay. Calls /api/managed-minors-create. -->
+<div id="mg-minor-add-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:9000; align-items:center; justify-content:center; padding:16px;">
+  <div style="background:#161210; border:2px solid var(--gold); border-radius:6px; max-width:420px; width:100%; padding:24px 20px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+      <div style="font-family:'Bebas Neue',cursive; font-size:22px; letter-spacing:2px; color:var(--gold);">ADD A CHILD</div>
+      <button type="button" onclick="closeAddMinorForm()" style="background:transparent; border:none; color:#666; font-size:24px; cursor:pointer; padding:0; line-height:1;">✕</button>
+    </div>
+    <p style="font-family:'Barlow',sans-serif; font-size:13px; color:#A89880; line-height:1.5; margin-bottom:16px;">
+      Your card on file with MyGrind stands as your COPPA consent to add a child profile under your Family plan. You can review and delete this data anytime.
+    </p>
+    <div style="display:grid; gap:12px;">
+      <label style="font-family:'Barlow',sans-serif; font-size:12px; letter-spacing:1px; color:#A89880;">FIRST NAME
+        <input type="text" id="mg-minor-first" maxlength="60" autocomplete="off" autocapitalize="words" style="width:100%; background:#0A0707; color:var(--gold); border:1px solid #3D3530; border-radius:6px; padding:10px; font-family:'Barlow',sans-serif; font-size:15px; margin-top:4px;">
+      </label>
+      <label style="font-family:'Barlow',sans-serif; font-size:12px; letter-spacing:1px; color:#A89880;">AGE
+        <input type="number" id="mg-minor-age" min="4" max="17" inputmode="numeric" style="width:100%; background:#0A0707; color:var(--gold); border:1px solid #3D3530; border-radius:6px; padding:10px; font-family:'Barlow',sans-serif; font-size:15px; margin-top:4px;">
+      </label>
+      <label style="font-family:'Barlow',sans-serif; font-size:12px; letter-spacing:1px; color:#A89880;">SPORT
+        <select id="mg-minor-sport" style="width:100%; background:#0A0707; color:var(--gold); border:1px solid #3D3530; border-radius:6px; padding:10px; font-family:'Barlow',sans-serif; font-size:15px; margin-top:4px;">
+          <option value="baseball">Baseball</option>
+          <option value="softball">Softball</option>
+        </select>
+      </label>
+      <label style="font-family:'Barlow',sans-serif; font-size:12px; letter-spacing:1px; color:#A89880;">POSITION (OPTIONAL)
+        <input type="text" id="mg-minor-position" maxlength="40" placeholder="e.g. Pitcher" autocomplete="off" style="width:100%; background:#0A0707; color:var(--gold); border:1px solid #3D3530; border-radius:6px; padding:10px; font-family:'Barlow',sans-serif; font-size:15px; margin-top:4px;">
+      </label>
+    </div>
+    <div id="mg-minor-add-error" style="display:none; color:#E66; font-family:'Barlow',sans-serif; font-size:13px; margin-top:12px;"></div>
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button type="button" onclick="closeAddMinorForm()" style="flex:1; background:transparent; color:#888; border:1px solid #444; border-radius:6px; padding:11px; font-family:'Barlow Condensed',sans-serif; font-size:13px; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;">Cancel</button>
+      <button type="button" id="mg-minor-add-submit" onclick="submitAddMinorForm()" style="flex:1; background:var(--gold); color:#080808; border:none; border-radius:6px; padding:11px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; cursor:pointer;">Add Child</button>
+    </div>
   </div>
 </div>
 
@@ -18674,6 +18811,28 @@ auth.onAuthStateChanged(function(user) {
   }
 });
 
+// ── MANAGED-MINOR FIRESTORE ROUTER (COPPA Phase 3) ────────────────
+// When a parent has switched into a child profile via the journal
+// switcher, we route Firestore reads/writes for profile + entries to
+// /users/{parentUid}/managedMinors/{minorId} instead of the parent's
+// own /users/{parentUid} doc. The functions below all consult
+// MgMinorScope.getActiveMinorId() at call time so a switch takes
+// effect on the next save without restart.
+function _mgUserDocRef() {
+  if (!fbUser) return null;
+  var minorId = (window.MgMinorScope && window.MgMinorScope.getActiveMinorId)
+    ? window.MgMinorScope.getActiveMinorId() : null;
+  if (minorId) {
+    return db.collection('users').doc(fbUser.uid)
+             .collection('managedMinors').doc(minorId);
+  }
+  return db.collection('users').doc(fbUser.uid);
+}
+function _mgEntriesColRef() {
+  var ref = _mgUserDocRef();
+  return ref ? ref.collection('entries') : null;
+}
+
 // ══ AUTH FUNCTIONS ════════════════════════════════════════════════
 function fbSignUp(email, password, name) {
   return auth.createUserWithEmailAndPassword(email, password)
@@ -18687,27 +18846,34 @@ function fbSignOut() { return auth.signOut().then(function() { fbUser = null; })
 // ══ FIRESTORE SAVES ═══════════════════════════════════════════════
 function fbSaveProfile(data) {
   if (!fbUser) return;
-  db.collection('users').doc(fbUser.uid)
-    .set({ profile: data, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
-    .catch(function(e) { console.warn('[FB] profile:', e); });
+  var ref = _mgUserDocRef();
+  if (!ref) return;
+  ref.set({ profile: data, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
+     .catch(function(e) { console.warn('[FB] profile:', e); });
 }
 function fbSaveEntry(entry) {
   if (!fbUser || !entry) return;
+  var col = _mgEntriesColRef();
+  if (!col) return;
   var id = String(entry.id || Date.now());
-  db.collection('users').doc(fbUser.uid).collection('entries').doc(id)
-    .set(Object.assign({}, entry, { uid: fbUser.uid, savedAt: firebase.firestore.FieldValue.serverTimestamp() }), { merge: true })
-    .catch(function(e) { console.warn('[FB] entry:', e); });
+  col.doc(id)
+     .set(Object.assign({}, entry, { uid: fbUser.uid, savedAt: firebase.firestore.FieldValue.serverTimestamp() }), { merge: true })
+     .catch(function(e) { console.warn('[FB] entry:', e); });
 }
 function fbSaveState(state) {
   if (!fbUser) return;
-  db.collection('users').doc(fbUser.uid)
-    .set({ goals: state.goals || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
-    .catch(function(e) { console.warn('[FB] state:', e); });
+  var ref = _mgUserDocRef();
+  if (!ref) return;
+  ref.set({ goals: state.goals || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
+     .catch(function(e) { console.warn('[FB] state:', e); });
 }
 
 // ══ SYNC CLOUD → LOCAL ════════════════════════════════════════════
 function syncFromCloud(uid) {
-  db.collection('users').doc(uid).get().then(function(doc) {
+  // Route sync through the active scope so a parent who lands on the
+  // page with a minor selected pulls that minor's data, not the parent's.
+  var docRef = _mgUserDocRef() || db.collection('users').doc(uid);
+  docRef.get().then(function(doc) {
     if (!doc.exists) return;
     var data = doc.data();
     try {
@@ -18726,7 +18892,8 @@ function syncFromCloud(uid) {
     } catch(e) {}
   }).catch(function(e) { console.warn('[FB] sync profile:', e); });
 
-  db.collection('users').doc(uid).collection('entries')
+  var entriesCol = _mgEntriesColRef() || db.collection('users').doc(uid).collection('entries');
+  entriesCol
     .orderBy('savedAt','desc').limit(100).get()
     .then(function(snap) {
       if (snap.empty) return;
@@ -18901,6 +19068,200 @@ function renderCloudBackupBanner() {
 auth.onAuthStateChanged(function(user) {
   setTimeout(renderCloudBackupBanner, 200);
   setTimeout(function() { renderCloudBackupSettingsBtn(user); }, 200);
+});
+
+// ══ MANAGED-MINOR PROFILE SWITCHER (COPPA Phase 3) ═══════════════
+// Loads the parent's child profiles after sign-in. If any exist, the
+// top-of-page switcher bar becomes visible. Switching selects the
+// child's namespace (via MgMinorScope) and reloads the page so every
+// downstream localStorage read in this 19k-line file picks up the new
+// scope without per-call hooks.
+async function fetchMinorsList(user) {
+  if (!user) return [];
+  try {
+    var token = await user.getIdToken();
+    var resp  = await fetch('/api/managed-minors-list', {
+      method: 'GET',
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    if (!resp.ok) return [];
+    var data = await resp.json().catch(function() { return {}; });
+    return Array.isArray(data.minors) ? data.minors : [];
+  } catch (e) {
+    console.warn('[minor-switcher] list failed:', e);
+    return [];
+  }
+}
+
+function renderMinorSwitcher(minors) {
+  var bar    = document.getElementById('mg-minor-switcher');
+  var select = document.getElementById('mg-minor-select');
+  var label  = document.getElementById('mg-minor-active-label');
+  if (!bar || !select) return;
+
+  if (!minors || minors.length === 0) {
+    bar.style.display = 'none';
+    return;
+  }
+
+  var activeId = window.MgMinorScope ? window.MgMinorScope.getActiveMinorId() : null;
+  // Rebuild dropdown so "+ Add child" inserts visibly without reload.
+  select.innerHTML = '';
+  var selfOpt = document.createElement('option');
+  selfOpt.value = '';
+  selfOpt.textContent = 'My Account';
+  select.appendChild(selfOpt);
+  minors.forEach(function(m) {
+    var opt = document.createElement('option');
+    opt.value = m.minorId;
+    var ageBit = (typeof m.age === 'number') ? ' · age ' + m.age : '';
+    opt.textContent = (m.firstName || 'Player') + ageBit;
+    select.appendChild(opt);
+  });
+  select.value = activeId || '';
+
+  var activeName = '';
+  if (activeId) {
+    var match = minors.find(function(m) { return m.minorId === activeId; });
+    if (match) activeName = 'Viewing: ' + (match.firstName || 'Player');
+  } else {
+    activeName = 'Viewing: My Account';
+  }
+  if (label) label.textContent = activeName;
+
+  // Delete button only appears when a child profile is the active scope.
+  // Hidden on "My Account" so the parent never sees a button that would
+  // ask if they want to delete themselves.
+  var delBtn = document.getElementById('mg-minor-delete-btn');
+  if (delBtn) delBtn.style.display = activeId ? 'inline-block' : 'none';
+
+  bar.style.display = 'flex';
+}
+
+async function onDeleteActiveMinor() {
+  var activeId = window.MgMinorScope ? window.MgMinorScope.getActiveMinorId() : null;
+  if (!activeId) return;
+  if (!fbUser) { alert('Please sign in first.'); return; }
+
+  var ok = window.confirm(
+    'Delete this child profile and every journal entry under it? This cannot be undone.'
+  );
+  if (!ok) return;
+
+  try {
+    var token = await fbUser.getIdToken();
+    var resp  = await fetch('/api/managed-minors-delete', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body:    JSON.stringify({ minorId: activeId }),
+    });
+    var data = await resp.json().catch(function() { return {}; });
+    if (!resp.ok || !data.ok) {
+      alert('We hit a snag deleting that profile. Email support@mygrindapp.com and we will handle it.');
+      return;
+    }
+    if (window.MgMinorScope) {
+      window.MgMinorScope.purgeMinorScope(activeId);
+      window.MgMinorScope.setActiveMinorId(null);
+    }
+    window.location.reload();
+  } catch (e) {
+    console.error('[delete-minor] failed:', e);
+    alert('We hit a snag. Email support@mygrindapp.com.');
+  }
+}
+
+function onMinorSwitcherChange(minorId) {
+  var current = window.MgMinorScope ? window.MgMinorScope.getActiveMinorId() : null;
+  var next    = minorId || null;
+  if (current === next) return;
+  if (window.MgMinorScope) window.MgMinorScope.setActiveMinorId(next);
+  // Hard reload so every cached profile/state read picks up the new scope.
+  window.location.reload();
+}
+
+function openAddMinorForm() {
+  var overlay = document.getElementById('mg-minor-add-overlay');
+  if (!overlay) return;
+  var first = document.getElementById('mg-minor-first');
+  var age   = document.getElementById('mg-minor-age');
+  var pos   = document.getElementById('mg-minor-position');
+  var err   = document.getElementById('mg-minor-add-error');
+  if (first) first.value = '';
+  if (age)   age.value   = '';
+  if (pos)   pos.value   = '';
+  if (err)   { err.style.display = 'none'; err.textContent = ''; }
+  overlay.style.display = 'flex';
+}
+function closeAddMinorForm() {
+  var overlay = document.getElementById('mg-minor-add-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+async function submitAddMinorForm() {
+  var first  = document.getElementById('mg-minor-first');
+  var ageEl  = document.getElementById('mg-minor-age');
+  var sport  = document.getElementById('mg-minor-sport');
+  var pos    = document.getElementById('mg-minor-position');
+  var err    = document.getElementById('mg-minor-add-error');
+  var submit = document.getElementById('mg-minor-add-submit');
+
+  function showErr(msg) {
+    if (err) { err.style.display = ''; err.textContent = msg; }
+  }
+
+  var firstVal = first ? first.value.trim() : '';
+  var ageVal   = ageEl ? parseInt(ageEl.value, 10) : NaN;
+  var sportVal = sport ? sport.value : 'baseball';
+  var posVal   = pos ? pos.value.trim() : '';
+
+  if (!firstVal) return showErr('Please enter your child\'s first name.');
+  if (!Number.isFinite(ageVal) || ageVal < 4 || ageVal >= 18) {
+    return showErr('Age must be between 4 and 17. Players 18+ create their own account.');
+  }
+  if (!fbUser) return showErr('You need to be signed in. Try refreshing the page.');
+
+  try {
+    if (submit) { submit.disabled = true; submit.textContent = 'Adding…'; }
+    var token = await fbUser.getIdToken();
+    var resp  = await fetch('/api/managed-minors-create', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body:    JSON.stringify({ firstName: firstVal, age: ageVal, sport: sportVal, position: posVal }),
+    });
+    var data = await resp.json().catch(function() { return {}; });
+    if (resp.status === 402) {
+      var reason = data.error || 'no_subscription';
+      if (reason === 'single_plan_no_children') {
+        return showErr('Single plans don\'t cover child profiles. Upgrade to Family from Settings → Manage Subscription.');
+      }
+      return showErr('Your Family plan isn\'t active. Add or update your card from Settings → Manage Subscription, then try again.');
+    }
+    if (!resp.ok || !data.ok) {
+      return showErr('We hit a snag adding that profile. Try again in a sec.');
+    }
+    closeAddMinorForm();
+    var minors = await fetchMinorsList(fbUser);
+    renderMinorSwitcher(minors);
+    // Auto-switch into the new child profile so the parent can start
+    // setting it up immediately.
+    if (data.minorId) onMinorSwitcherChange(data.minorId);
+  } catch (e) {
+    console.error('[add-minor] failed:', e);
+    showErr('We hit a snag. Try again in a sec.');
+  } finally {
+    if (submit) { submit.disabled = false; submit.textContent = 'Add Child'; }
+  }
+}
+
+auth.onAuthStateChanged(async function(user) {
+  if (!user) {
+    var bar = document.getElementById('mg-minor-switcher');
+    if (bar) bar.style.display = 'none';
+    return;
+  }
+  var minors = await fetchMinorsList(user);
+  renderMinorSwitcher(minors);
 });
 
 // ── STRIPE CUSTOMER PORTAL — one-click manage subscription ─────
