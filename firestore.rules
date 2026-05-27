@@ -19,22 +19,23 @@
 // back into this file in the same PR.
 //
 // ─── SECURITY REVIEW (2026-05-27) ──────────────────────────
-// Current rules enforce per-user lockdown on /users/{userId}
-// and its /entries subcollection. Auth-required, uid match.
-// This is the right baseline for the current schema.
+// Current rules enforce per-user lockdown on /users/{userId},
+// its /entries subcollection, AND the new /managedMinors
+// subcollection used by the Phase 3 COPPA parent-managed path.
+// All require Auth + uid match against the parent doc.
+//
+// IMPORTANT: This file is the SOURCE OF TRUTH version-controlled
+// in the repo, but the live rules still live in the Firebase
+// Console until the firebase CLI is wired up. After committing
+// any change here, mirror the same change in the Console at
+// https://console.firebase.google.com/project/my-grind-b8486/firestore/rules
+// or rules drift will silently re-expose data.
 //
 // FOLLOW-UP ITEMS (not changes — flags for future work):
-// 1. When Phase 3 (COPPA under-13 parent path) ships, add:
-//      match /users/{parentId}/managedMinors/{minorId} {
-//        allow read, write: if request.auth != null
-//                           && request.auth.uid == parentId;
-//      }
-//    so parent accounts can read+write their child profiles
-//    while no other user can touch them.
-// 2. Consider field-level validation (e.g., size caps on entries,
+// 1. Consider field-level validation (e.g., size caps on entries,
 //    schema validation on writes) once write abuse becomes a
 //    real risk. Not needed at current scale.
-// 3. If an /admin/ collection is ever added (server-side writes
+// 2. If an /admin/ collection is ever added (server-side writes
 //    only), explicitly deny client writes with:
 //      match /admin/{document=**} {
 //        allow read, write: if false;
@@ -53,6 +54,17 @@ service cloud.firestore {
 
       match /entries/{entryId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // COPPA managed-minor profiles. Only the parent (whose uid matches
+      // the parent doc) can read or write their child's profile docs and
+      // the child's journal entries. No cross-account read path exists.
+      match /managedMinors/{minorId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+
+        match /entries/{entryId} {
+          allow read, write: if request.auth != null && request.auth.uid == userId;
+        }
       }
     }
   }
