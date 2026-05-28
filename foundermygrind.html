@@ -190,7 +190,7 @@
           "name": "How much does MyGrind cost?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "$9.99 monthly or $99 annually per player. Family plan covers up to 3 players in one household for $149.99 annually. Every plan starts with a 14-day free trial. Your card holds your spot and is not charged until the trial ends. Cancel anytime."
+            "text": "$9.99 monthly or $99 annually per player. Family plan covers up to 3 players in one household for $149.99 annually. Founders who join early get 6 months free with code FOUNDERMYGRIND."
           }
         },
         {
@@ -891,13 +891,15 @@
     </p>
   </section>
 
-  <!-- Public-facing note — rewritten 2026-05-28 to be trial-focused for
-       cold ad traffic. FOUNDERMYGRIND offer + 6-months-free framing
-       preserved at /foundermygrind for handpicked outreach. -->
+  <!-- Founder note — added 2026-05-13 to support the FOUNDERMYGRIND offer
+       (6 months free, capped at 100). Personal letter from Coach Young
+       reframes the form below from "join waitlist" to "reserve your spot."
+       Stripe enforces the 100 cap on actual redemptions; this page just
+       captures the email + tags the contact in Mailchimp. -->
   <aside class="founder-note" id="founder-note">
     <div class="fn-eyebrow">A note from Coach</div>
     <p>I built MyGrind for my own kids, and for the parents I see every weekend trying to do this the right way.</p>
-    <p>Try it free for <strong>14 days</strong>. Your card holds your spot and is not charged until the trial ends. Cancel anytime, no questions asked.</p>
+    <p>The first <strong>100 families</strong> get <strong>6 months free</strong>. Your card holds your spot. Nothing is charged for 180 days, and you can cancel anytime. Code <span class="fn-code">FOUNDERMYGRIND</span> is already loaded on the button below.</p>
     <p>Log every game. Own the grind.</p>
     <div class="fn-signature">Coach</div>
   </aside>
@@ -905,26 +907,27 @@
   <section class="form-section" id="form-section">
 
     <div id="form-wrapper">
-      <div class="form-pre">Start Your 14-Day Free Trial</div>
+      <div class="form-pre">Start Your 6 Months Free</div>
 
       <div class="form-card">
 
-        <!-- PRIMARY CTA — direct link to signup for the public 14-day trial.
-             Updated 2026-05-28: FOUNDERMYGRIND offer moved to /foundermygrind
-             for handpicked outreach so cold ad traffic hits the standard
-             trial funnel and the 100-cap founder slots stay protected. -->
-        <a class="primary-cta" href="/signup.html">
-          Start My 14-Day Free Trial <span class="cta-arrow">&rarr;</span>
+        <!-- PRIMARY CTA — direct link to signup with FOUNDERMYGRIND
+             pre-loaded. Replaces the old Mailchimp "reserve my spot"
+             form as the headline action on 2026-05-18 (launch flip).
+             signup.html's DOMContentLoaded handler reads ?promo=
+             and pre-applies the code to Screen 5. -->
+        <a class="primary-cta" href="/signup.html?promo=FOUNDERMYGRIND">
+          Start My 6 Months Free <span class="cta-arrow">&rarr;</span>
         </a>
 
-        <p class="form-trust">14-day free trial &middot; Card on file &middot; Cancel anytime</p>
+        <p class="form-trust">First 100 only &middot; 6 months free &middot; Cancel anytime</p>
 
         <!-- SECONDARY CTA — quietly demoted Mailchimp form for fence-
              sitters. Same audience + tag as before so the existing
              welcome automation continues to fire. Just reframed: it's
              now "stay informed" not "reserve a spot". -->
         <div class="secondary-cta">
-          <p class="secondary-cta-label">Not ready yet? Get weekly tips for your player from Coach.</p>
+          <p class="secondary-cta-label">Not ready yet? Get launch updates and tips for your player.</p>
           <form
             id="mc-form"
             action="https://youngsbaseball.us8.list-manage.com/subscribe/post?u=73280b4c02e9bc56c7e633892&amp;id=a7d801599a&amp;f_id=0089ace1f0"
@@ -951,8 +954,8 @@
 
     <div id="thank-you" class="thank-you" role="status" aria-live="polite">
       <div class="check">You&rsquo;re on the list.</div>
-      <p>You&rsquo;re in. Weekly tips from Coach are on the way.</p>
-      <p>Ready now? Tap <strong style="color:var(--gold);">Start My 14-Day Free Trial</strong> above to set up your account.</p>
+      <p>I&rsquo;ll send you launch updates, tips for your player, and a note when new sports come online.</p>
+      <p>Ready now? Tap <strong style="color:var(--gold);">Start My 6 Months Free</strong> above. Code <strong>FOUNDERMYGRIND</strong> is already loaded.</p>
       <p>Coach</p>
     </div>
 
