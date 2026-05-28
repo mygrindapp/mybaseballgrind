@@ -857,6 +857,74 @@
     .hero h1 .line.l2::after { content: "The Parent's Journey."; }
     .hero h1 .line.l3::after { content: "One Journal."; }
   }
+
+  /* ── SEE THE APP — Chunk 2 (2026-05-28): product screenshot grid that
+       replaces the "is this still in beta?" first impression with real
+       product proof. Mobile-first single column, desktop 3-col grid
+       (5 items → 3 + 2 layout). */
+  .see-the-app {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 24px 32px 24px;
+    text-align: center;
+  }
+  .see-the-app h2.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+  .see-the-app p.section-sub {
+    color: var(--light);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    margin: 0 auto 36px auto;
+    max-width: 520px;
+    line-height: 1.5;
+  }
+  .app-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px 24px;
+    align-items: start;
+    justify-items: center;
+  }
+  .app-grid figure {
+    margin: 0;
+    text-align: center;
+    width: 100%;
+    max-width: 260px;
+  }
+  .app-grid img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1080 / 2340;
+    background: var(--card);
+    border-radius: 28px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+    display: block;
+  }
+  .app-grid figcaption {
+    margin-top: 14px;
+    font-family: 'Barlow', sans-serif;
+    color: var(--light);
+    font-size: 15px;
+    line-height: 1.4;
+  }
+  @media (max-width: 760px) {
+    .app-grid {
+      grid-template-columns: 1fr;
+      gap: 36px;
+    }
+    .app-grid figure { max-width: 280px; }
+    .see-the-app { padding: 40px 16px 24px 16px; }
+  }
 </style>
 </head>
 
@@ -889,6 +957,38 @@
     <h2 class="subhead" id="subhead">
       The daily baseball and softball training journal for serious players, and the parents walking the road with them.
     </h2>
+  </section>
+
+  <!-- SEE THE APP — Chunk 2 (2026-05-28): product screenshot grid added
+       to give cold visitors real product proof. Replaces the "is this
+       still in beta?" first impression. Placeholder images at
+       /assets/screenshots/*.png get swapped with real screenshots as
+       Coach drops them in. No HTML change needed when files land. -->
+  <section class="see-the-app">
+    <h2 class="section-title">See what your player opens every day</h2>
+    <p class="section-sub">A real product, built by a real coach. Not a Notion template.</p>
+    <div class="app-grid">
+      <figure>
+        <img src="/assets/screenshots/01-dashboard.png" alt="MyGrind dashboard showing GPA standing, college eligibility status, and monthly focus standards" loading="lazy">
+        <figcaption>Open the app, see your standing.</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/screenshots/02-academics.png" alt="MyGrind academics screen with GPA tracker, target setter, and NCAA eligibility indicators" loading="lazy">
+        <figcaption>NCAA-ready academics. Eligibility at a glance.</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/screenshots/03-reflection.png" alt="MyGrind reflection journal entry with six mood buttons from Fired Up to Down" loading="lazy">
+        <figcaption>Six moods. Get honest with yourself.</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/screenshots/04-off-day.png" alt="MyGrind off day journal entry recognizing full rest and family as part of the grind" loading="lazy">
+        <figcaption>Off Day equals full rest. Still counts.</figcaption>
+      </figure>
+      <figure>
+        <img src="/assets/screenshots/05-coach-note.png" alt="MyGrind monthly coach's note explaining the May season-ending throwing program" loading="lazy">
+        <figcaption>A real coach. A real plan. Every month.</figcaption>
+      </figure>
+    </div>
   </section>
 
   <!-- Public-facing note — rewritten 2026-05-28 to be trial-focused for
