@@ -989,6 +989,144 @@
     }
     .how-it-works { padding: 40px 16px 24px 16px; }
   }
+
+  /* ── PRICING — Chunk 4 (2026-05-28): 3-card pricing block.
+       Family Annual featured. All cards CTA into /signup.html for the
+       standard 14-day trial flow. */
+  .pricing {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 24px 40px 24px;
+    text-align: center;
+  }
+  .pricing h2.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    line-height: 1.1;
+  }
+  .pricing p.section-sub {
+    color: var(--light);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    margin: 0 auto 40px auto;
+    max-width: 520px;
+    line-height: 1.5;
+  }
+  .price-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+  .price-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 22px;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    position: relative;
+  }
+  .price-card.featured {
+    border-color: var(--gold);
+    background: linear-gradient(180deg, rgba(201,168,76,0.06) 0%, rgba(201,168,76,0.02) 100%);
+  }
+  .price-card.featured::before {
+    content: "BEST VALUE";
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 12px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    letter-spacing: 1.5px;
+    white-space: nowrap;
+  }
+  .price-card .plan-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .price-card .plan-price {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 44px;
+    color: var(--gold);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .price-card .plan-period {
+    color: var(--grey);
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .price-card ul.plan-features {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 24px 0;
+    flex: 1;
+  }
+  .price-card ul.plan-features li {
+    color: var(--light);
+    font-family: 'Barlow', sans-serif;
+    font-size: 14.5px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .price-card ul.plan-features li:last-child { border-bottom: none; }
+  .price-card .plan-cta {
+    display: block;
+    text-align: center;
+    padding: 12px 20px;
+    background: transparent;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .price-card .plan-cta:hover {
+    background: var(--gold);
+    color: var(--black);
+  }
+  .price-card.featured .plan-cta {
+    background: var(--gold);
+    color: var(--black);
+  }
+  .price-card.featured .plan-cta:hover {
+    background: var(--gold-light);
+    border-color: var(--gold-light);
+  }
+  .pricing .trial-note {
+    margin-top: 24px;
+    color: var(--grey);
+    font-family: 'Barlow', sans-serif;
+    font-size: 13px;
+  }
+  @media (max-width: 760px) {
+    .price-grid { grid-template-columns: 1fr; gap: 32px; }
+    .pricing { padding: 40px 16px 24px 16px; }
+  }
 </style>
 </head>
 
@@ -1076,6 +1214,56 @@
         <p>Streaks build. Stats stack up. By tryouts your player has a real record that coaches and recruiters can actually see.</p>
       </div>
     </div>
+  </section>
+
+  <!-- PRICING — Chunk 4 (2026-05-28): 3-card pricing block. Family
+       Annual featured per Option B (annual-forward) decision. All CTAs
+       route to /signup.html for the standard 14-day trial. -->
+  <section class="pricing" id="pricing">
+    <h2 class="section-title">Pricing</h2>
+    <p class="section-sub">Pick the plan that fits. Every plan starts with a 14-day free trial.</p>
+    <div class="price-grid">
+      <div class="price-card featured">
+        <div class="plan-name">Family Annual</div>
+        <div class="plan-price">$149.99</div>
+        <div class="plan-period">per year &middot; up to 3 players</div>
+        <ul class="plan-features">
+          <li>3 player profiles in one household</li>
+          <li>Baseball and softball</li>
+          <li>Coach feedback by text</li>
+          <li>Cloud sync across devices</li>
+          <li>Save $148 vs monthly</li>
+        </ul>
+        <a class="plan-cta" href="/signup.html">Start your 14-day free trial</a>
+      </div>
+      <div class="price-card">
+        <div class="plan-name">Annual</div>
+        <div class="plan-price">$99</div>
+        <div class="plan-period">per year &middot; single player</div>
+        <ul class="plan-features">
+          <li>1 player profile</li>
+          <li>Baseball and softball</li>
+          <li>Coach feedback by text</li>
+          <li>Cloud sync across devices</li>
+          <li>Save $20 vs monthly</li>
+        </ul>
+        <a class="plan-cta" href="/signup.html">Start your 14-day free trial</a>
+      </div>
+      <div class="price-card">
+        <div class="plan-name">Monthly</div>
+        <div class="plan-price">$9.99</div>
+        <div class="plan-period">per month &middot; single player</div>
+        <ul class="plan-features">
+          <li>1 player profile</li>
+          <li>Baseball and softball</li>
+          <li>Coach feedback by text</li>
+          <li>Cloud sync across devices</li>
+          <li>Maximum flexibility</li>
+        </ul>
+        <a class="plan-cta" href="/signup.html">Start your 14-day free trial</a>
+      </div>
+    </div>
+    <p class="trial-note">No charge until day 15. Cancel anytime, no questions asked.</p>
   </section>
 
   <!-- Public-facing note — rewritten 2026-05-28 to be trial-focused for
