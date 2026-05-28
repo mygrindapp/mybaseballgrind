@@ -925,6 +925,70 @@
     .app-grid figure { max-width: 280px; }
     .see-the-app { padding: 40px 16px 24px 16px; }
   }
+
+  /* ── HOW IT WORKS — Chunk 3 (2026-05-28): 3-step explainer between
+       SEE THE APP and founder note. Industry-standard SaaS structure. */
+  .how-it-works {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 24px 40px 24px;
+    text-align: center;
+  }
+  .how-it-works h2.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 40px;
+    line-height: 1.1;
+  }
+  .how-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 36px;
+    text-align: center;
+  }
+  .how-step { padding: 0 8px; }
+  .how-step .step-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.12);
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    margin: 0 auto 18px auto;
+  }
+  .how-step h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--white);
+    font-size: 22px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .how-step p {
+    font-family: 'Barlow', sans-serif;
+    color: var(--light);
+    font-size: 15.5px;
+    line-height: 1.5;
+    max-width: 280px;
+    margin: 0 auto;
+  }
+  @media (max-width: 760px) {
+    .how-grid {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+    .how-it-works { padding: 40px 16px 24px 16px; }
+  }
 </style>
 </head>
 
@@ -988,6 +1052,29 @@
         <img src="/assets/screenshots/05-coach-note.png" alt="MyGrind monthly coach's note explaining the May season-ending throwing program" loading="lazy">
         <figcaption>A real coach. A real plan. Every month.</figcaption>
       </figure>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS — Chunk 3 (2026-05-28): 3-step explainer answering
+       the cold visitor's "what would I actually do here?" question. -->
+  <section class="how-it-works">
+    <h2 class="section-title">How it works</h2>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <h3>Sign up</h3>
+        <p>Sixty seconds. Pick your sport. Pick your plan. Card on file, no charge for 14 days.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <h3>Log three lines a day</h3>
+        <p>After every practice, every game, every rest day. Takes less time than scrolling Instagram.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <h3>Watch the work compound</h3>
+        <p>Streaks build. Stats stack up. By tryouts your player has a real record that coaches and recruiters can actually see.</p>
+      </div>
     </div>
   </section>
 
