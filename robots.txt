@@ -7,6 +7,8 @@ User-agent: *
 Disallow: /signup.html
 Disallow: /onboarding.html
 Disallow: /softball.html
+Disallow: /foundermygrind
+Disallow: /foundermygrind.html
 Disallow: /api/
 
 Sitemap: https://www.mygrindapp.com/sitemap.xml
