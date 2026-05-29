@@ -6,7 +6,10 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — Day +10 queue (refreshed 2026-05-27 PM after the industry-standard parity ship — code sign-in, COPPA cleanup, card-on-file, under-13 parent path, plan-picker fix, Lucide icons, first-signup routing all live)
+### P0 — queue (refreshed 2026-05-29 after the landing conversion + SEO overhaul + blog launch — see Day +11 in STATUS.md. Landing rebuilt to industry-standard order, 6 real screenshots, hero typewriter removed, FAQ overhauled to 8 real parent questions, single pricing CTA, and /blog with 3 SEO articles all live in production.)
+
+**NEW TOP PRIORITY — Google Search Console reindex (manual, ~5 min):** In GSC for the `mygrindapp.com` Domain property, use URL Inspection on `https://www.mygrindapp.com/` and click "Request indexing" so the new FAQ + content get recrawled, then go to Sitemaps and (re)submit `https://www.mygrindapp.com/sitemap.xml` (now includes /blog + 3 articles). Optionally request indexing on the 3 new /blog article URLs too.
+
 1. **Smoke-walk mygrindapp.com on phone in incognito** (~60 sec). BEFORE launching ads. Land on landing → tap Start Free Trial → run Screens 1-7 → plan picker → tap Start Trial → Stripe Checkout opens → abort. If anything looks visibly wrong, fix first.
 2. **Mirror Firestore rules into Firebase Console** (~3 min). Paste contents of `firestore.rules` at https://console.firebase.google.com/project/my-grind-b8486/firestore/rules → Publish. Until done, client-side child-profile writes fail (Admin SDK still works server-side).
 3. **Launch first ad creative on @youngsbaseball** (Thursday morning, 2026-05-28). Memory `mygrind_launch_funnel` says @mygrindapp has bot followers — paid promo routes through @youngsbaseball.
@@ -22,6 +25,17 @@
 13. **Mr. Sites LA Heat outreach** (carried). Suggested copy in `team_potential_collaborators` memory.
 14. **Em-dash sweep continuation** (~370 instances repo-wide, task #14, deferred polish). Only landing + signup user-visible em-dashes done in pre-ad pass. Future pass must distinguish placeholder em-dashes (e.g. `<span id="x">—</span>`) from sentence em-dashes — file-by-file with quality checks.
 15. **Daily morning affirmation feature** (task #27, ~3-4h, Coach said build later). Curated message library + 7am Resend email + in-app banner.
+
+<!-- SHIPPED 2026-05-29 (Day +11 — Landing Conversion + SEO Overhaul + Blog Launch):
+- 11 commits 5-29 on top of the 5-28 Path B landing rebuild (7 commits). Full detail in STATUS.md Day +11.
+- Landing rebuilt to industry-standard order: hero -> how it works -> see the app -> pricing -> FAQ -> founder note. Public landing split from /foundermygrind (noindexed) so cold ad traffic hits the standard trial funnel.
+- Hero typewriter replaced with a fast staggered fade-in (settles ~1.2s vs ~11s). 6 real in-app screenshots in a uniform 3:4 grid. HOW IT WORKS reframed "more than a tracker" and moved above the screenshots.
+- Bottom form-section + Mailchimp "Get Updates" email capture removed; founder note is now the single closing CTA. Pricing consolidated from 3 per-card buttons to one "Start My Free Trial" CTA.
+- FAQ overhauled to 8 real parent questions (visible accordion + JSON-LD FAQPage kept in sync). Age range + founder personal name removed from all visible copy (name kept only in the hidden Person SEO node).
+- SEO hygiene: sitemap lastmods refreshed, legacy-app + signin + coach-reply noindexed/disallowed. /blog launched: hub + 3 SEO articles (stats to track, NCAA eligibility GPA, training-journal habit) + shared blog.css + BlogPosting/Breadcrumb schema + sitemap entries + homepage footer link.
+- All pushed + verified live. Commits: 34030fd 7f7813d a847a3c d919e90 515c338 5103bd2 0ac384b c0f292b 921007b 472e058 a9cc533.
+- Open follow-ups: GSC reindex (now P0 above), dead form CSS cleanup, above-the-fold hero CTA (Coach deferred), app-wide name sweep of softball.html/signup.html.
+-->
 
 <!-- SHIPPED 2026-05-27 (Day +9 — Industry-Standard Parity Reached + Pre-Ad Polish):
 - 24 commits to `main` — largest single-day ship since LAUNCH.
