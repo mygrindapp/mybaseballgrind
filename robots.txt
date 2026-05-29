@@ -7,6 +7,9 @@ User-agent: *
 Disallow: /signup.html
 Disallow: /onboarding.html
 Disallow: /softball.html
+Disallow: /legacy-app.html
+Disallow: /signin.html
+Disallow: /coach-reply.html
 Disallow: /foundermygrind
 Disallow: /foundermygrind.html
 Disallow: /api/
