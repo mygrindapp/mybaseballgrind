@@ -158,47 +158,63 @@
           "name": "Is MyGrindapp a dating or social app?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "No. MyGrindapp is a daily training journal for baseball and softball players, their parents, and coaches. It is not a dating app, hookup app, social network, or messaging service. MyGrindapp.com is operated by My Grind Sports LLC and exists only to help serious players ages 13 to 22 track practice, games, stats, and progress."
+            "text": "No. MyGrindapp is a daily training journal for baseball and softball players, their parents, and coaches. It is not a dating app, hookup app, social network, or messaging service. MyGrindapp.com is operated by My Grind Sports LLC and exists only to help players track practice, games, stats, and progress."
           }
         },
         {
           "@type": "Question",
-          "name": "What is MyGrind?",
+          "name": "What is MyGrind, exactly?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "MyGrind is a daily training journal app built for serious baseball and softball players, their parents, and coaches. Players log games, practices, reps, goals, and stats. Parents see weekly progress. Coaches send feedback that lands as a text message."
+            "text": "MyGrind is a daily training journal for serious baseball and softball players ages 13 to 22, plus the parents and coaches in their corner. Players log games, practices, lifts, arm care, grades, and rest. It is built to develop the whole athlete, not just track stats, and was created by Coach Mike Young, who has spent 35 years in the game as a coach, trainer, dad, and mentor."
           }
         },
         {
           "@type": "Question",
-          "name": "What sports does MyGrind support?",
+          "name": "Is my player's data secure and private?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Baseball and softball. Every player profile is sport-aware. The journal, stat tracking, and 12-month training calendar adapt to the sport selected."
+            "text": "Yes. All data is encrypted in transit with HTTPS, entries are stored on Google Firebase infrastructure, and account credentials are stored encrypted. A player's journal is private to their account. We never sell personal information and never run third-party advertising inside the app."
           }
         },
         {
           "@type": "Question",
-          "name": "Who is MyGrind for?",
+          "name": "Who can see what my player writes in the journal?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "Serious baseball and softball players ages 13 to 22, plus the parents and coaches in their corner. Built by a high school baseball coach for athletes who want to compete at the next level."
+            "text": "Parents create and own the account, and the daily journal stays the player's own space. Parents stay connected through a weekly progress digest, emailed every Monday, that summarizes activity, streaks, and standing rather than turning the journal into something written for an audience. Coaches only see the specific notes a player chooses to send them."
           }
         },
         {
           "@type": "Question",
-          "name": "How much does MyGrind cost?",
+          "name": "Can my player use MyGrind without their own phone or email?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "$9.99 monthly or $99 annually per player. Family plan covers up to 3 players in one household for $149.99 annually. Every plan starts with a 14-day free trial. Your card holds your spot and is not charged until the trial ends. Cancel anytime."
+            "text": "Yes. A parent or adult creates the account with their own email, then adds the player's profile. Your player does not need their own phone, email, or login. They just open MyGrind on the family device and start logging. For players under 13, this parent-managed setup is required."
           }
         },
         {
           "@type": "Question",
-          "name": "Where can I download MyGrind?",
+          "name": "Do you sell our data or advertise to players?",
           "acceptedAnswer": {
             "@type": "Answer",
-            "text": "MyGrind runs in the browser at mygrindapp.com. Works on iPhone, Android, and desktop. No App Store download required. Players can add it to the home screen for an app-like experience."
+            "text": "Never. We do not sell or rent personal information, and there is no third-party advertising inside the app. We never send marketing to a child under 13, and a child's data is never shared for advertising or behavioral targeting."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How much does MyGrind cost, and is the trial really free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Plans are $9.99 per month or $99 per year for one player, or $149.99 per year for a Family plan covering up to 3 players in one household. Every plan starts with a 14-day free trial. Your card holds your spot but is not charged until day 15, and you can cancel anytime before then at no cost."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Do we need to download anything from the App Store?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. MyGrind runs in any browser at mygrindapp.com and works on iPhone, Android, and desktop. There is no App Store or Google Play download. On a phone you can add it to your home screen for a full app-like experience that opens with one tap."
           }
         }
       ]
@@ -1110,8 +1126,12 @@
     background: var(--gold-light);
     border-color: var(--gold-light);
   }
+  .pricing .pricing-cta {
+    max-width: 340px;
+    margin: 8px auto 0;
+  }
   .pricing .trial-note {
-    margin-top: 24px;
+    margin-top: 16px;
     color: var(--grey);
     font-family: 'Barlow', sans-serif;
     font-size: 13px;
@@ -1281,7 +1301,7 @@
        route to /signup.html for the standard 14-day trial. -->
   <section class="pricing" id="pricing">
     <h2 class="section-title">Pricing</h2>
-    <p class="section-sub">Pick the plan that fits. Every plan starts with a 14-day free trial.</p>
+    <p class="section-sub">Start with a 14-day free trial. Pick the plan that fits, and switch or cancel anytime before day 15.</p>
     <div class="price-grid">
       <div class="price-card featured">
         <div class="plan-name">Family Annual</div>
@@ -1294,7 +1314,6 @@
           <li>Cloud sync across devices</li>
           <li>Save $148 vs monthly</li>
         </ul>
-        <a class="plan-cta" href="/signup.html">Start your 14-day free trial</a>
       </div>
       <div class="price-card">
         <div class="plan-name">Annual</div>
@@ -1307,7 +1326,6 @@
           <li>Cloud sync across devices</li>
           <li>Save $20 vs monthly</li>
         </ul>
-        <a class="plan-cta" href="/signup.html">Start your 14-day free trial</a>
       </div>
       <div class="price-card">
         <div class="plan-name">Monthly</div>
@@ -1320,10 +1338,10 @@
           <li>Cloud sync across devices</li>
           <li>Maximum flexibility</li>
         </ul>
-        <a class="plan-cta" href="/signup.html">Start your 14-day free trial</a>
       </div>
     </div>
-    <p class="trial-note">No charge until day 15. Cancel anytime, no questions asked.</p>
+    <a class="primary-cta pricing-cta" href="/signup.html">Start My 14-Day Free Trial <span class="cta-arrow">&rarr;</span></a>
+    <p class="trial-note">No charge until day 15. Cancel or switch plans anytime, no questions asked.</p>
   </section>
 
   <!-- FAQ — Chunk 5 (2026-05-28): visible accordion FAQ that mirrors
@@ -1332,27 +1350,35 @@
     <h2 class="section-title">Questions parents ask</h2>
     <details class="faq-item">
       <summary>Is MyGrindapp a dating or social app?</summary>
-      <div class="faq-answer">No. MyGrindapp is the daily training journal for serious baseball and softball players, their parents, and coaches. It is not a dating app, hookup app, social network, or messaging service. MyGrindapp.com is operated by My Grind Sports LLC and exists only to help serious players ages 13 to 22 track practice, games, stats, and progress.</div>
+      <div class="faq-answer">No. MyGrindapp is a daily training journal for baseball and softball players, their parents, and coaches. It is not a dating app, hookup app, social network, or messaging service. MyGrindapp.com is operated by My Grind Sports LLC and exists only to help players track practice, games, stats, and progress.</div>
     </details>
     <details class="faq-item">
-      <summary>What is MyGrind?</summary>
-      <div class="faq-answer">MyGrind is a daily training journal app built for serious baseball and softball players, their parents, and coaches. Players log games, practices, reps, goals, and stats. Parents see weekly progress. Coaches send feedback that lands as a text message.</div>
+      <summary>What is MyGrind, exactly?</summary>
+      <div class="faq-answer">MyGrind is a daily training journal for serious baseball and softball players ages 13 to 22, plus the parents and coaches in their corner. Players log games, practices, lifts, arm care, grades, and rest. It is built to develop the whole athlete, not just track stats, and was created by Coach Mike Young, who has spent 35 years in the game as a coach, trainer, dad, and mentor.</div>
     </details>
     <details class="faq-item">
-      <summary>What sports does MyGrind support?</summary>
-      <div class="faq-answer">Baseball and softball today. Every player profile is sport-aware. The journal, stat tracking, and 12-month training calendar adapt to the sport selected. Multi-sport expansion planned through 2026 and beyond.</div>
+      <summary>Is my player's data secure and private?</summary>
+      <div class="faq-answer">Yes. All data is encrypted in transit with HTTPS, entries are stored on Google Firebase infrastructure, and account credentials are stored encrypted. A player's journal is private to their account. We never sell personal information and never run third-party advertising inside the app.</div>
     </details>
     <details class="faq-item">
-      <summary>Who is MyGrind built for?</summary>
-      <div class="faq-answer">Serious baseball and softball players ages 13 to 22, plus the parents and coaches in their corner. Built by Coach Mike Young, a high school baseball coach with 35 years in the sport as coach, trainer, dad, and mentor.</div>
+      <summary>Who can see what my player writes in the journal?</summary>
+      <div class="faq-answer">Parents create and own the account, and the daily journal stays the player's own space. Parents stay connected through a weekly progress digest, emailed every Monday, that summarizes activity, streaks, and standing rather than turning the journal into something written for an audience. Coaches only see the specific notes a player chooses to send them.</div>
     </details>
     <details class="faq-item">
-      <summary>How much does MyGrind cost?</summary>
-      <div class="faq-answer">$9.99 per month or $99 per year for a single player. Family plan covers up to 3 players in one household for $149.99 per year. Every plan starts with a 14-day free trial. Your card holds your spot and is not charged until the trial ends. Cancel anytime, no questions asked.</div>
+      <summary>Can my player use MyGrind without their own phone or email?</summary>
+      <div class="faq-answer">Yes. A parent or adult creates the account with their own email, then adds the player's profile. Your player does not need their own phone, email, or login. They just open MyGrind on the family device and start logging. For players under 13, this parent-managed setup is required.</div>
     </details>
     <details class="faq-item">
-      <summary>Where can I download MyGrind?</summary>
-      <div class="faq-answer">MyGrind runs in the browser at mygrindapp.com. Works on iPhone, Android, and desktop. No App Store download required. Players can add it to the home screen for an app-like experience.</div>
+      <summary>Do you sell our data or advertise to players?</summary>
+      <div class="faq-answer">Never. We do not sell or rent personal information, and there is no third-party advertising inside the app. We never send marketing to a child under 13, and a child's data is never shared for advertising or behavioral targeting.</div>
+    </details>
+    <details class="faq-item">
+      <summary>How much does MyGrind cost, and is the trial really free?</summary>
+      <div class="faq-answer">Plans are $9.99 per month or $99 per year for one player, or $149.99 per year for a Family plan covering up to 3 players in one household. Every plan starts with a 14-day free trial. Your card holds your spot but is not charged until day 15, and you can cancel anytime before then at no cost.</div>
+    </details>
+    <details class="faq-item">
+      <summary>Do we need to download anything from the App Store?</summary>
+      <div class="faq-answer">No. MyGrind runs in any browser at mygrindapp.com and works on iPhone, Android, and desktop. There is no App Store or Google Play download. On a phone you can add it to your home screen for a full app-like experience that opens with one tap.</div>
     </details>
   </section>
 
