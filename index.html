@@ -1126,9 +1126,36 @@
     background: var(--gold-light);
     border-color: var(--gold-light);
   }
+  /* "What's included" card — replaces the price grid on the landing
+     (2026-05-29). No dollar amounts; plans + prices are revealed at the
+     signup plan picker. Price stays findable in the FAQ + JSON-LD. */
+  .pricing .plan-includes {
+    max-width: 460px;
+    margin: 0 auto;
+    background: rgba(20,20,20,0.6);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px 24px;
+    text-align: left;
+  }
+  .pricing .plan-includes-head {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--gold); text-align: center; margin-bottom: 14px;
+  }
+  .pricing .plan-includes ul { list-style: none; margin: 0; padding: 0; }
+  .pricing .plan-includes li {
+    font-family: 'Barlow', sans-serif; font-size: 15px; color: var(--light);
+    padding: 9px 0 9px 28px; position: relative; border-bottom: 1px solid var(--border);
+    line-height: 1.4;
+  }
+  .pricing .plan-includes li:last-child { border-bottom: none; }
+  .pricing .plan-includes li::before {
+    content: "\2713"; position: absolute; left: 2px; top: 9px; color: var(--gold); font-weight: 700;
+  }
   .pricing .pricing-cta {
     max-width: 340px;
-    margin: 8px auto 0;
+    margin: 24px auto 0;
   }
   .pricing .trial-note {
     margin-top: 16px;
@@ -1136,6 +1163,36 @@
     font-family: 'Barlow', sans-serif;
     font-size: 13px;
   }
+
+  /* ── FROM THE PLAYBOOK ── (2026-05-29) a small content band near the bottom
+     that surfaces the blog where a curious parent naturally ends up, and adds
+     internal links into /blog for SEO. */
+  .playbook-band {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 720px; margin: 0 auto;
+    padding: 48px 24px 24px; text-align: center;
+  }
+  .playbook-band h2.section-title {
+    font-family: 'Bebas Neue', sans-serif; font-size: clamp(28px, 5vw, 44px); color: var(--gold);
+    text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; line-height: 1.1;
+  }
+  .playbook-band p.section-sub {
+    color: var(--light); font-family: 'Barlow', sans-serif; font-size: 16px;
+    margin: 0 auto 26px; max-width: 520px; line-height: 1.5;
+  }
+  .playbook-list { list-style: none; margin: 0 auto 22px; padding: 0; max-width: 520px; text-align: left; }
+  .playbook-list li { border-bottom: 1px solid var(--border); }
+  .playbook-list li:last-child { border-bottom: none; }
+  .playbook-list a {
+    display: block; padding: 14px 4px; font-family: 'Barlow', sans-serif; font-size: 16.5px;
+    color: var(--light); text-decoration: none; transition: color 0.15s ease;
+  }
+  .playbook-list a:hover { color: var(--gold); }
+  .playbook-all {
+    display: inline-block; font-family: 'Barlow Condensed', sans-serif; font-size: 14px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); text-decoration: none;
+  }
+  .playbook-all:hover { color: var(--gold-light); }
   @media (max-width: 760px) {
     .price-grid { grid-template-columns: 1fr; gap: 32px; }
     .pricing { padding: 40px 16px 24px 16px; }
@@ -1238,7 +1295,7 @@
        2026-05-29): 3-step explainer that frames the concept ("more than a
        tracker") BEFORE the screenshots, so the product grid below reads as
        proof of the steps the visitor just understood. Explain, then show. -->
-  <section class="how-it-works">
+  <section class="how-it-works" id="how">
     <h2 class="section-title">How it works</h2>
     <p class="section-sub">More than a tracker. It's how serious players see their work, stay eligible, and earn the next level.</p>
     <div class="how-grid">
@@ -1265,7 +1322,7 @@
        Six real in-app captures at /assets/screenshots/0[1-6]-*.jpg. Shown
        in a uniform 3:4 box via object-fit:cover + object-position:top so
        every screen's header shows and the repeated bottom nav is trimmed. -->
-  <section class="see-the-app">
+  <section class="see-the-app" id="see">
     <h2 class="section-title">See what your player opens every day</h2>
     <p class="section-sub">A real product, built by a real coach. Not a Notion template.</p>
     <div class="app-grid">
@@ -1296,52 +1353,26 @@
     </div>
   </section>
 
-  <!-- PRICING — Chunk 4 (2026-05-28): 3-card pricing block. Family
-       Annual featured per Option B (annual-forward) decision. All CTAs
-       route to /signup.html for the standard 14-day trial. -->
+  <!-- PRICING — reworked 2026-05-29: the price grid is hidden on the landing
+       (peak.app-style). Visitors lead with the free trial; the actual plans
+       and amounts are revealed at the signup plan picker (the paywall). Price
+       stays findable in the FAQ and the SoftwareApplication JSON-LD for SEO. -->
   <section class="pricing" id="pricing">
-    <h2 class="section-title">Pricing</h2>
-    <p class="section-sub">Start with a 14-day free trial. Pick the plan that fits, and switch or cancel anytime before day 15.</p>
-    <div class="price-grid">
-      <div class="price-card featured">
-        <div class="plan-name">Family Annual</div>
-        <div class="plan-price">$149.99</div>
-        <div class="plan-period">per year &middot; up to 3 players</div>
-        <ul class="plan-features">
-          <li>3 player profiles in one household</li>
-          <li>Baseball and softball</li>
-          <li>Coach feedback by text</li>
-          <li>Cloud sync across devices</li>
-          <li>Save $148 vs monthly</li>
-        </ul>
-      </div>
-      <div class="price-card">
-        <div class="plan-name">Annual</div>
-        <div class="plan-price">$99</div>
-        <div class="plan-period">per year &middot; single player</div>
-        <ul class="plan-features">
-          <li>1 player profile</li>
-          <li>Baseball and softball</li>
-          <li>Coach feedback by text</li>
-          <li>Cloud sync across devices</li>
-          <li>Save $20 vs monthly</li>
-        </ul>
-      </div>
-      <div class="price-card">
-        <div class="plan-name">Monthly</div>
-        <div class="plan-price">$9.99</div>
-        <div class="plan-period">per month &middot; single player</div>
-        <ul class="plan-features">
-          <li>1 player profile</li>
-          <li>Baseball and softball</li>
-          <li>Coach feedback by text</li>
-          <li>Cloud sync across devices</li>
-          <li>Maximum flexibility</li>
-        </ul>
-      </div>
+    <h2 class="section-title">Start your 14-day free trial</h2>
+    <p class="section-sub">Try everything free for 14 days. Pick the plan that fits when you sign up, and switch or cancel anytime before day 15.</p>
+    <div class="plan-includes">
+      <div class="plan-includes-head">Every plan includes</div>
+      <ul>
+        <li>Baseball and softball in one journal</li>
+        <li>Daily journal with auto stats and streaks</li>
+        <li>Academics and NCAA eligibility GPA tracking</li>
+        <li>Coach feedback by text</li>
+        <li>Cloud sync across devices</li>
+        <li>Single player, or family for up to 3 in one household</li>
+      </ul>
     </div>
     <a class="primary-cta pricing-cta" href="/signup.html">Start My Free Trial <span class="cta-arrow">&rarr;</span></a>
-    <p class="trial-note">No charge until day 15. Cancel or switch plans anytime, no questions asked.</p>
+    <p class="trial-note">No charge until day 15. Pick or change your plan during signup. Cancel anytime, no questions asked.</p>
   </section>
 
   <!-- FAQ — Chunk 5 (2026-05-28): visible accordion FAQ that mirrors
@@ -1380,6 +1411,20 @@
       <summary>Do we need to download anything from the App Store?</summary>
       <div class="faq-answer">No. MyGrind runs in any browser at mygrindapp.com and works on iPhone, Android, and desktop. There is no App Store or Google Play download. On a phone you can add it to your home screen for a full app-like experience that opens with one tap.</div>
     </details>
+  </section>
+
+  <!-- FROM THE PLAYBOOK — surfaces the blog near the bottom of the landing
+       (2026-05-29). A natural spot for a curious parent + internal links to
+       /blog for SEO, instead of a top nav that doesn't fit a short page. -->
+  <section class="playbook-band">
+    <h2 class="section-title">From the Playbook</h2>
+    <p class="section-sub">Straight talk from Coach on stats, eligibility, and building a player.</p>
+    <ul class="playbook-list">
+      <li><a href="/blog/baseball-softball-stats-to-track.html">Baseball and softball stats worth tracking</a></li>
+      <li><a href="/blog/ncaa-eligibility-gpa-guide.html">NCAA eligibility GPA: a parent's guide</a></li>
+      <li><a href="/blog/how-to-keep-a-training-journal.html">How to keep a training journal that sticks</a></li>
+    </ul>
+    <a class="playbook-all" href="/blog/">Read the Playbook &rarr;</a>
   </section>
 
   <!-- Public-facing note — rewritten 2026-05-28 to be trial-focused for
