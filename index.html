@@ -353,7 +353,7 @@
     display: flex; justify-content: center;
     margin-top: 8px; margin-bottom: 36px;
     opacity: 0;
-    transform: scale(0.05);
+    transform: scale(0.92);
     transform-origin: center center;
     position: relative;
     /* GPU compositing hint — keeps motion buttery smooth */
@@ -363,13 +363,13 @@
   }
 
   .logo-wrap.show {
-    /* Single smooth curve — no intermediate stops to cause hitches */
-    animation: logoIn 3.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    /* Quick fade + gentle scale settle. Was a 3.2s zoom from scale(0.05) that
+       landed ~11s after load and read as "slow" (2026-05-29 rework). */
+    animation: logoIn 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
-  /* Smooth, fluid zoom from a tiny dot to full size */
   @keyframes logoIn {
-    0%   { opacity: 0; transform: scale(0.05); }
+    0%   { opacity: 0; transform: scale(0.92); }
     100% { opacity: 1; transform: scale(1.00); }
   }
 
@@ -387,7 +387,9 @@
   }
 
   .logo-wrap.show .logo-burst {
-    animation: logoBurst 1.6s ease-out 2.6s forwards;
+    /* Burst was punctuation for the old slow zoom's "landing" at +2.6s. The
+       gentle fast entrance has no hard impact to flash against, so it's off. */
+    animation: none;
   }
 
   @keyframes logoBurst {
@@ -406,7 +408,7 @@
   /* Glow + breathing pulse layer in AFTER the entrance lands.
      Both filter and pulse-keyframes are gated behind .show so they never run during the scale animation. */
   .logo-wrap.show img {
-    animation: logoGlowOn 0.8s ease-out 3.0s forwards, logoPulse 4.5s ease-in-out infinite 3.8s;
+    animation: logoGlowOn 0.8s ease-out 0.6s forwards, logoPulse 4.5s ease-in-out infinite 1.2s;
   }
 
   @keyframes logoGlowOn {
@@ -442,26 +444,8 @@
     position: relative;
   }
 
-  /* The blinking journal pen / cursor */
-  .cursor {
-    display: inline-block;
-    width: 4px;
-    height: 0.85em;
-    margin-left: 4px;
-    margin-bottom: -2px;
-    vertical-align: text-bottom;
-    background: var(--gold);
-    opacity: 0;
-    box-shadow: 0 0 12px rgba(201,168,76,0.8);
-  }
-
-  .cursor.active { animation: cursorBlink 0.7s steps(1) infinite; }
-  .cursor.solid  { opacity: 1; }
-
-  @keyframes cursorBlink {
-    0%, 50%   { opacity: 1; }
-    51%, 100% { opacity: 0; }
-  }
+  /* Typewriter pen cursors — retired with the typewriter (2026-05-29). */
+  .cursor { display: none; }
 
   /* Gold treatment + shimmer for "ONE JOURNAL." */
   .hero h1 .gold {
@@ -849,13 +833,9 @@
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; }
-    .logo-wrap, .subhead, .founder-note, .form-section, footer { opacity: 1 !important; transform: none !important; }
+    .logo-wrap, .subhead, .founder-note, .form-section, .sport-chip, footer { opacity: 1 !important; transform: none !important; }
     .accent-underline { width: 220px !important; opacity: 1 !important; }
     .cursor { display: none !important; }
-    /* In reduced-motion mode, skip the typewriter — show text immediately */
-    .hero h1 .line.l1::after { content: "The Player's Journey."; }
-    .hero h1 .line.l2::after { content: "The Parent's Journey."; }
-    .hero h1 .line.l3::after { content: "One Journal."; }
   }
 
   /* ── SEE THE APP — Chunk 2 (2026-05-28): product screenshot grid that
@@ -1439,80 +1419,30 @@
 <script>
   (function () {
 
-    // ── Typewriter sequence ───────────────────────────────────────────────
-    var lines = [
-      { text: "The Player's Journey.", textEl: document.querySelector('.line.l1 .text'), cursor: document.querySelector('.cursor.c1') },
-      { text: "The Parent's Journey.", textEl: document.querySelector('.line.l2 .text'), cursor: document.querySelector('.cursor.c2') },
-      { text: "One Journal.",          textEl: document.querySelector('.line.l3 .text'), cursor: document.querySelector('.cursor.c3') }
-    ];
-
-    var charSpeed       = 95;   // ms per character — pecking pace
-    var charJitter      = 50;   // +/- ms random per character (hunt-and-peck rhythm)
-    var pauseBetween    = 380;  // ms between lines (cursor moves down the page)
-    var startDelay      = 500;  // logo now comes LAST — typewriter kicks in early
-    var charSpeedFinale = 135;  // slow down "One Journal." for emphasis
-
-    function jitter(base) {
-      return base + Math.floor((Math.random() * 2 - 1) * charJitter);
-    }
-
-    function typeLine(i) {
-      if (i >= lines.length) {
-        afterTypewriter();
-        return;
-      }
-      var line = lines[i];
-      var baseSpeed = (i === lines.length - 1) ? charSpeedFinale : charSpeed;
-
-      // Activate cursor on this line
-      line.cursor.classList.add('active');
-
-      var pos = 0;
-      function step() {
-        line.textEl.textContent = line.text.slice(0, pos + 1);
-        pos++;
-        if (pos < line.text.length) {
-          setTimeout(step, jitter(baseSpeed));
-        } else {
-          // Finished this line — deactivate cursor and move on
-          line.cursor.classList.remove('active');
-          if (i === lines.length - 1) {
-            // On the final line, leave the cursor blinking briefly then dim it
-            line.cursor.classList.add('active');
-            setTimeout(function () { line.cursor.classList.remove('active'); }, 1800);
-          }
-          setTimeout(function () { typeLine(i + 1); }, pauseBetween);
-        }
-      }
-      step();
-    }
-
-    function afterTypewriter() {
-      document.getElementById('underline').classList.add('draw');
-      setTimeout(function () { document.getElementById('subhead').classList.add('show'); },      350);
-      setTimeout(function () { document.getElementById('founder-note').classList.add('show'); }, 500);
-      setTimeout(function () { document.getElementById('form-section').classList.add('show'); }, 650);
-      setTimeout(function () { document.getElementById('footer').classList.add('show'); },       950);
-      // 🎯 Logo zooms in (3.2s entrance starting at +1550ms after typewriter)
-      setTimeout(function () { document.getElementById('logo').classList.add('show'); },        1550);
-      // 🏷️ Sport chip pops in right as the logo settles — tight punctuation, no dead air
-      // logo show at +1550ms, zoom = 3.2s → logo lands at ~+4750ms; chip snaps in 150ms later
-      setTimeout(function () { document.getElementById('chip').classList.add('show'); },        4900);
-    }
-
-    // Honor reduced-motion: skip typewriter entirely, show everything immediately
+    // ── Hero entrance ─────────────────────────────────────────────────────
+    // Fast staggered fade-in. Replaced the char-by-char typewriter on
+    // 2026-05-29: the old sequence gated the whole hero behind ~6s of typing
+    // plus a 3.2s logo zoom that landed ~11s after load, so cold ad visitors
+    // stared at an empty hero. Now everything settles within ~1s. The H1 ships
+    // with hardcoded text and renders immediately (it's the LCP element), so
+    // no JS is needed to show the headline.
     var prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
-      lines.forEach(function (l) { l.textEl.textContent = l.text; });
-      document.getElementById('logo').classList.add('show');
-      document.getElementById('chip').classList.add('show');
-      afterTypewriter();
-    } else {
-      // H1 ships with hardcoded text (for SEO + no-JS readers). Clear it
-      // before the typewriter starts so JS-enabled users see the animation.
-      lines.forEach(function (l) { l.textEl.textContent = ''; });
-      setTimeout(function () { typeLine(0); }, startDelay);
+
+    function reveal(id, cls, delay) {
+      var el = document.getElementById(id);
+      if (!el) return;
+      if (prefersReduced) { el.classList.add(cls); return; }
+      setTimeout(function () { el.classList.add(cls); }, delay);
     }
+
+    // Logo fades in first; the rest cascade over the next half second.
+    reveal('logo',         'show', 0);
+    reveal('chip',         'show', 80);
+    reveal('underline',    'draw', 80);
+    reveal('subhead',      'show', 160);
+    reveal('founder-note', 'show', 260);
+    reveal('form-section', 'show', 360);
+    reveal('footer',       'show', 460);
 
     // ── Mailchimp form: spam guards + swap to thank-you on submit ─────────
     var form    = document.getElementById('mc-form');
