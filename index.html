@@ -748,6 +748,9 @@
     color: var(--gold);
     font-style: italic;
   }
+  /* Closing CTA on the founder note (replaced the removed bottom form-
+     section on 2026-05-29). Reuses .primary-cta + .form-trust. */
+  .founder-note .fn-cta { margin-top: 22px; }
 
   /* ── THANK YOU ── */
   .thank-you {
@@ -1362,65 +1365,11 @@
     <p>Try it free for <strong>14 days</strong>. Your card holds your spot and is not charged until the trial ends. Cancel anytime, no questions asked.</p>
     <p>Log every game. Own the grind.</p>
     <div class="fn-signature">Coach</div>
+    <a class="primary-cta fn-cta" href="/signup.html">
+      Start My 14-Day Free Trial <span class="cta-arrow">&rarr;</span>
+    </a>
+    <p class="form-trust">14-day free trial &middot; Card on file &middot; Cancel anytime</p>
   </aside>
-
-  <section class="form-section" id="form-section">
-
-    <div id="form-wrapper">
-      <div class="form-pre">Start Your 14-Day Free Trial</div>
-
-      <div class="form-card">
-
-        <!-- PRIMARY CTA — direct link to signup for the public 14-day trial.
-             Updated 2026-05-28: FOUNDERMYGRIND offer moved to /foundermygrind
-             for handpicked outreach so cold ad traffic hits the standard
-             trial funnel and the 100-cap founder slots stay protected. -->
-        <a class="primary-cta" href="/signup.html">
-          Start My 14-Day Free Trial <span class="cta-arrow">&rarr;</span>
-        </a>
-
-        <p class="form-trust">14-day free trial &middot; Card on file &middot; Cancel anytime</p>
-
-        <!-- SECONDARY CTA — quietly demoted Mailchimp form for fence-
-             sitters. Same audience + tag as before so the existing
-             welcome automation continues to fire. Just reframed: it's
-             now "stay informed" not "reserve a spot". -->
-        <div class="secondary-cta">
-          <p class="secondary-cta-label">Not ready yet? Get weekly tips for your player from Coach.</p>
-          <form
-            id="mc-form"
-            action="https://youngsbaseball.us8.list-manage.com/subscribe/post?u=73280b4c02e9bc56c7e633892&amp;id=a7d801599a&amp;f_id=0089ace1f0"
-            method="post"
-            target="mc_iframe"
-            novalidate
-          >
-            <div class="form-row">
-              <input type="email" name="EMAIL" id="EMAIL" placeholder="your@email.com" required autocomplete="email" />
-              <button type="submit" name="subscribe">Get Updates</button>
-            </div>
-
-            <input type="hidden" name="tags" value="2216797">
-
-            <div class="hp" aria-hidden="true">
-              <input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off">
-            </div>
-          </form>
-
-          <p class="form-error" id="form-error" role="alert" aria-live="polite"></p>
-        </div>
-      </div>
-    </div>
-
-    <div id="thank-you" class="thank-you" role="status" aria-live="polite">
-      <div class="check">You&rsquo;re on the list.</div>
-      <p>You&rsquo;re in. Weekly tips from Coach are on the way.</p>
-      <p>Ready now? Tap <strong style="color:var(--gold);">Start My 14-Day Free Trial</strong> above to set up your account.</p>
-      <p>Coach</p>
-    </div>
-
-    <iframe name="mc_iframe" style="display:none;" title="mailchimp"></iframe>
-
-  </section>
 
   <footer id="footer">
     <div class="footer-brand">A Product of My Grind Sports LLC</div>
@@ -1458,136 +1407,7 @@
     reveal('underline',    'draw', 80);
     reveal('subhead',      'show', 160);
     reveal('founder-note', 'show', 260);
-    reveal('form-section', 'show', 360);
-    reveal('footer',       'show', 460);
-
-    // ── Mailchimp form: spam guards + swap to thank-you on submit ─────────
-    var form    = document.getElementById('mc-form');
-    var emailEl = document.getElementById('EMAIL');
-    var wrapper = document.getElementById('form-wrapper');
-    var thanks  = document.getElementById('thank-you');
-    var errorEl = document.getElementById('form-error');
-
-    // Known disposable / temp-mail providers — block at submit time
-    var disposableDomains = [
-      'mailinator.com', 'tempmail.com', 'temp-mail.org', 'guerrillamail.com',
-      '10minutemail.com', 'throwawaymail.com', 'fakeinbox.com', 'yopmail.com',
-      'getairmail.com', 'maildrop.cc', 'mintemail.com', 'mailnesia.com',
-      'sharklasers.com', 'spam4.me', 'trashmail.com', 'getnada.com',
-      'dispostable.com', 'mailcatch.com'
-    ];
-
-    // Submission cooldown — 3 attempts max per 60 seconds (in-memory)
-    var submitTimestamps = [];
-    var COOLDOWN_WINDOW  = 60000;
-    var COOLDOWN_MAX     = 3;
-
-    function showError(msg) {
-      errorEl.textContent = msg;
-      errorEl.classList.add('show');
-    }
-    function clearError() {
-      errorEl.textContent = '';
-      errorEl.classList.remove('show');
-    }
-    emailEl.addEventListener('input', clearError);
-
-    // Stricter than HTML5 — requires a real TLD of 2+ chars
-    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-
-    function showThanks() {
-      wrapper.style.display = 'none';
-      thanks.style.display  = 'block';
-    }
-
-    form.addEventListener('submit', function (e) {
-      e.preventDefault();
-      clearError();
-
-      var email = emailEl.value.trim();
-      var emailLower = email.toLowerCase();
-
-      // 1. Format check
-      if (!EMAIL_RE.test(emailLower)) {
-        showError("Please enter a valid email address.");
-        return;
-      }
-
-      var domain = emailLower.slice(emailLower.lastIndexOf('@') + 1);
-
-      // 2. Block disposable / temp-mail providers
-      if (disposableDomains.indexOf(domain) !== -1) {
-        showError("Please use a permanent email. Disposable inboxes won't get our launch announcement.");
-        return;
-      }
-
-      // 3. Honeypot — silently drop bots
-      var hpField = form.querySelector('.hp input');
-      if (hpField && hpField.value) { showThanks(); return; }
-
-      // 4. Submission cooldown — reject excessive retries
-      var now = Date.now();
-      submitTimestamps = submitTimestamps.filter(function (t) { return now - t < COOLDOWN_WINDOW; });
-      if (submitTimestamps.length >= COOLDOWN_MAX) {
-        showError("You've already submitted. Check your inbox for our confirmation email.");
-        return;
-      }
-      submitTimestamps.push(now);
-
-      // 5. JSONP submit so we can actually read Mailchimp's response
-      var cb = 'mcCb' + Date.now() + Math.floor(Math.random() * 1000);
-      var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json' +
-                '?u=73280b4c02e9bc56c7e633892' +
-                '&id=a7d801599a' +
-                '&f_id=0089ace1f0' +
-                '&EMAIL=' + encodeURIComponent(email) +
-                '&tags=2216797' +
-                '&b_73280b4c02e9bc56c7e633892_a7d801599a=' +
-                '&c=' + cb;
-
-      var script = document.createElement('script');
-      var settled = false;
-      var timeout = setTimeout(function () {
-        if (settled) return;
-        settled = true;
-        try { delete window[cb]; } catch (_) { window[cb] = undefined; }
-        if (script.parentNode) script.parentNode.removeChild(script);
-        showError("Couldn't reach the signup server. Please try again.");
-      }, 10000);
-
-      window[cb] = function (data) {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timeout);
-        try { delete window[cb]; } catch (_) { window[cb] = undefined; }
-        if (script.parentNode) script.parentNode.removeChild(script);
-
-        var msg = (data && data.msg ? String(data.msg) : '').replace(/<[^>]+>/g, '').trim();
-
-        if (data && data.result === 'success') {
-          showThanks();
-          return;
-        }
-
-        // "already subscribed" is a soft-success — Mailchimp returns error result
-        if (/already subscribed/i.test(msg)) {
-          showThanks();
-          return;
-        }
-
-        showError(msg || "We couldn't add that email. Please double-check and try again.");
-      };
-
-      script.onerror = function () {
-        if (settled) return;
-        settled = true;
-        clearTimeout(timeout);
-        try { delete window[cb]; } catch (_) { window[cb] = undefined; }
-        showError("Couldn't reach the signup server. Please try again.");
-      };
-      script.src = url;
-      document.head.appendChild(script);
-    });
+    reveal('footer',       'show', 360);
 
     // iOS Safari preserves zoom level across rotation, leaving the page
     // appearing larger than the viewport until you pinch out. Re-asserting
