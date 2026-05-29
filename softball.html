@@ -2626,6 +2626,13 @@ function signOutAndSwitchAccount() {
   </button> -->
   <!-- Share tab removed 2026-05-08 — milestone share modal still works via shareMilestone(). -->
 
+  <!-- Daily Check-In entry (2026-05-29). Routes to checkin.html — the
+       readiness + workload + ACWR module. localStorage v1; it links back to
+       this journal. Placed first so the daily habit is the top action. -->
+  <a href="checkin.html" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-activity"/></svg></span> Daily Check-In
+  </a>
+
   <!-- Resources entry added 2026-05-23. Moved Recruiting & Academic
        Resources card out of Settings into a dedicated panel-resources
        so parents and players can find important links AND reach Coach
@@ -14535,18 +14542,30 @@ document.addEventListener('pointerdown', function(e) {
 // instead of forcing the player to skip and break the chain. If a
 // future product decision narrows this, change the .filter() below.
 function calculateStreak() {
-  if (!state || !state.entries || state.entries.length === 0) return 0;
-
-  // Get unique log dates (in YYYY-MM-DD format for comparison)
+  // Streak = the UNION of journal-entry dates and the shared cross-feature
+  // activity ledger (mg_activity_days), which the daily check-in stamps when
+  // a player logs a readiness check-in or a workload session. A quick check-in
+  // keeps the streak alive without writing anything into the journal: content
+  // stays separate, only the dates merge. (Shared streak, locked 2026-05-29.)
   const logDates = new Set();
-  state.entries.forEach(function(e) {
-    try {
-      const d = new Date(e.date);
-      if (isNaN(d.getTime())) return;
-      const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-      logDates.add(key);
-    } catch(err) {}
-  });
+
+  // Journal entries (the deep log) contribute their dates directly.
+  if (state && state.entries) {
+    state.entries.forEach(function(e) {
+      try {
+        const d = new Date(e.date);
+        if (isNaN(d.getTime())) return;
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+        logDates.add(key);
+      } catch(err) {}
+    });
+  }
+
+  // Daily check-in (the quick layer) contributes its dates via the ledger.
+  try {
+    const days = JSON.parse(localStorage.getItem('mg_activity_days') || '[]');
+    if (Array.isArray(days)) days.forEach(function(k){ if (k) logDates.add(k); });
+  } catch(e) {}
 
   if (logDates.size === 0) return 0;
 

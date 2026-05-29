@@ -1834,16 +1834,76 @@ select.field-input {
   text-transform: uppercase;
   color: #8A7E70;
 }
+/* Standalone, explicit SMS consent checkbox (Twilio TFV #27140216).
+   Kept visually + structurally separate from the COPPA/card consent and the
+   no-phone fallback toggle. Unchecked by default; gates the "Yes, send" button. */
 .phone-confirm-consent {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  text-align: left;
+  margin: 0 0 18px 0;
+  padding: 13px;
+  background: rgba(201,168,76,0.05);
+  border: 1px solid #2E2E2E;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.phone-confirm-consent input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 2px solid #8B6914;
+  border-radius: 6px;
+  background: #141414;
+  cursor: pointer;
+  position: relative;
+  transition: 0.15s;
+}
+.phone-confirm-consent input[type="checkbox"]:checked {
+  background: #C9A84C;
+  border-color: #C9A84C;
+}
+.phone-confirm-consent input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 6px;
+  height: 11px;
+  border: solid #050505;
+  border-width: 0 2.5px 2.5px 0;
+  transform: rotate(45deg);
+}
+.phone-confirm-consent .pcc-text {
   font-family: 'Barlow', sans-serif;
   font-size: 12px;
   color: #A89880;
   line-height: 1.5;
-  margin: 0 0 18px 0;
-  text-align: left;
 }
-.phone-confirm-consent strong {
+.phone-confirm-consent .pcc-text strong {
   color: #C9A84C;
+}
+.phone-confirm-consent .pcc-text a {
+  color: var(--gold-light, #E8C97A);
+  text-decoration: underline;
+}
+/* Send button stays dimmed until the consent box is ticked. */
+.phone-confirm-send:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  filter: grayscale(0.4) brightness(0.8);
+}
+.phone-confirm-send.pulse {
+  animation: pcsPulse 0.6s ease;
+}
+@keyframes pcsPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(201,168,76,0.0); }
+  45%  { box-shadow: 0 0 0 4px rgba(255,216,116,0.25), 0 0 22px rgba(255,216,116,0.7); }
+  100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.0); }
 }
 .phone-confirm-buttons {
   display: flex;
@@ -3089,12 +3149,19 @@ select.field-input {
     <div class="phone-confirm-list" id="phone_confirm_list">
       <!-- Populated by buildPhoneConfirmList() -->
     </div>
-    <p class="phone-confirm-consent">
-      By tapping <strong>Yes, send</strong>, I authorize MyGrind (operated by My Grind Sports LLC) to send a one-time invite SMS to the player number(s) above with a link to join MyGrind. I have the authority to provide these numbers. <strong>Message frequency:</strong> one per invite (transactional, no marketing). Standard message and data rates may apply. Reply <strong>STOP</strong> to unsubscribe. Reply <strong>HELP</strong> for help. See our <a href="privacy.html" target="_blank" rel="noopener" style="color:var(--gold,#E8C97A); text-decoration:underline;">Privacy Policy</a>.
-    </p>
+    <!-- STANDALONE SMS CONSENT (Twilio TFV #27140216) — explicit, unchecked
+         by default, gates the "Yes, send" button. Kept separate from the
+         COPPA/card consent and the no-phone fallback toggle. Wording covers
+         both the player's mobile and a parent's mobile (shared-phone case). -->
+    <label class="phone-confirm-consent" id="sms_consent_block">
+      <input type="checkbox" id="sms_consent_check" onchange="onSmsConsentToggle()">
+      <span class="pcc-text" id="sms_consent_text" data-consent-version="2026-05-29-v1">
+        I agree to receive account and service text messages from <strong>MyGrind (My Grind Sports LLC)</strong> at the number(s) shown above. These go to the player's mobile, or to a parent's mobile when the player will use a shared phone. They include a one-time invite or verification code, a secure setup link, and account notifications. <strong>Message frequency varies</strong> (one per invite, transactional, no marketing). Message and data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help. I have the authority to provide these numbers. See our <a href="privacy.html" target="_blank" rel="noopener">Privacy Policy</a> and <a href="terms.html" target="_blank" rel="noopener">Terms</a>.
+      </span>
+    </label>
     <div class="phone-confirm-buttons">
       <button type="button" class="phone-confirm-edit"   onclick="onPhoneConfirmEdit()">Edit</button>
-      <button type="button" class="phone-confirm-send"   onclick="onPhoneConfirmSend()">Yes, send</button>
+      <button type="button" class="phone-confirm-send"   id="phone_confirm_send_btn" onclick="onPhoneConfirmSend()" disabled>Yes, send</button>
     </div>
   </div>
 </div>
@@ -4626,8 +4693,70 @@ function showPhoneConfirmModal() {
   buildPhoneConfirmList();
   const overlay = document.getElementById('phone_confirm_overlay');
   if (!overlay) return;
+  // Reset the standalone SMS consent every time the modal opens: box
+  // unchecked, send button disabled. The parent must actively re-consent.
+  const box = document.getElementById('sms_consent_check');
+  const sendBtn = document.getElementById('phone_confirm_send_btn');
+  if (box) box.checked = false;
+  if (sendBtn) { sendBtn.disabled = true; sendBtn.classList.remove('pulse'); }
   overlay.classList.add('shown');
   overlay.setAttribute('aria-hidden', 'false');
+}
+
+// Standalone SMS consent gate: the "Yes, send" button stays disabled until
+// the parent ticks the consent box, with a one-time glow pulse the moment it
+// enables. Matches the consent-screen reference behavior.
+function onSmsConsentToggle() {
+  const box = document.getElementById('sms_consent_check');
+  const sendBtn = document.getElementById('phone_confirm_send_btn');
+  if (!box || !sendBtn) return;
+  const wasDisabled = sendBtn.disabled;
+  sendBtn.disabled = !box.checked;
+  if (wasDisabled && box.checked) {
+    sendBtn.classList.remove('pulse');
+    void sendBtn.offsetWidth; // restart the animation
+    sendBtn.classList.add('pulse');
+  }
+}
+
+// Persist proof of SMS opt-in for every number we are about to text. Writes
+// to localStorage (mg_sms_consent) as a guaranteed fallback, and POSTs each
+// record to /api/sms-consent for a durable, server-side record (Firestore
+// collection smsConsents) that a carrier or Twilio can request. Fire-and-forget:
+// a failed POST never blocks the send because localStorage holds the fallback.
+function recordSmsConsent() {
+  const textEl = document.getElementById('sms_consent_text');
+  const version = textEl ? textEl.getAttribute('data-consent-version') : 'unknown';
+  const consentText = textEl ? textEl.textContent.replace(/\s+/g, ' ').trim() : '';
+  const total = state.playerCount || 1;
+  const players = (state.players || []).slice(0, total);
+  const nowISO = new Date().toISOString();
+  const records = [];
+  players.forEach(function (p) {
+    if (!p || p.fallback || !p.phone) return; // only numbers we actually text
+    const num = '+1' + String(p.phone).replace(/\D/g, '').slice(-10);
+    records.push({
+      recipientNumber: num,
+      consented: true,
+      consentVersion: version,
+      consentText: consentText,
+      method: 'web_form_checkbox',
+      page: location.href,
+      timestampISO: nowISO
+    });
+  });
+  if (!records.length) return;
+  try { localStorage.setItem('mg_sms_consent', JSON.stringify(records)); } catch (e) {}
+  records.forEach(function (rec) {
+    try {
+      fetch('/api/sms-consent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(rec),
+        keepalive: true
+      }).catch(function () { /* fail-open: localStorage holds the fallback record */ });
+    } catch (e) { /* ignore */ }
+  });
 }
 
 function hidePhoneConfirmModal() {
@@ -4710,6 +4839,12 @@ function onPhoneConfirmEdit() {
 
 // "Yes, send" button in the modal — proceed to Screen 7 as normal.
 function onPhoneConfirmSend() {
+  // Hard gate: never proceed unless the standalone SMS consent box is ticked.
+  const sendBtn = document.getElementById('phone_confirm_send_btn');
+  if (sendBtn && sendBtn.disabled) return;
+  // Record explicit consent (localStorage + Firestore via /api/sms-consent)
+  // before we advance toward the send.
+  recordSmsConsent();
   hidePhoneConfirmModal();
   // Slot-lock fires the moment "send" is confirmed. From here on, navigating
   // back to Screen 6 shows a read-only view — players cannot be silently

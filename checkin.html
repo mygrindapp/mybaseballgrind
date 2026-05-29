@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<!--
+  MyGrind - Player Health & Load module
+  =====================================
+  Three connected features, built to match the MyGrind Warm Dark theme:
+    1. Daily Readiness Check-In  (Today tab)
+    2. Total Workload Tracking   (Workload tab)  - includes outside activities + throwing volume
+    3. ACWR Insights             (Insights tab)  - acute:chronic workload ratio + rest guidance
+
+  STORAGE (localStorage, mg_ prefix to match your app):
+    mg_readiness_log : { "YYYY-MM-DD": {sleep,energy,soreness,arm,calm,note,score,ts} }
+    mg_workload_log  : [ {id,date,type,durationMin,rpe,throws,load,ts}, ... ]
+
+  PRIVACY: per your architecture, the reflective journal note is private to the
+  player; the numeric readiness score and workload stats are the kind of thing a
+  parent can see. Wire these to Firestore the same way (player-owned docs).
+
+  This is a self-contained reference build. Open it, tap "Load demo data" to see
+  the charts and ACWR populate, then lift the pieces you want into the player app.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MyGrind — Daily Check-In</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#050505">
+<link rel="canonical" href="https://www.mygrindapp.com/checkin.html">
+<link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --white:#F5F5F5; --light:#CCCCCC; --grey:#888;
+    --gold:#C9A84C; --gold-light:#E8C96A; --gold-dark:#9A7A30; --gold-bright:#FFD874;
+    --dark:#141414; --card:#1A1A1A; --border:#2E2E2E; --black:#050505;
+    --ok:#6FCF7F; --warn:#E0B257; --bad:#E57373; --cool:#6FA8DC;
+  }
+  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+  body{font-family:'Barlow',sans-serif; background:var(--black); color:var(--white); min-height:100vh;
+    background-image:radial-gradient(1200px 600px at 50% -10%, rgba(201,168,76,.08), transparent 60%);}
+  .app{max-width:460px; margin:0 auto; padding:18px 16px 110px;}
+  header{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:6px;}
+  .mark{font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:1px;
+    background:linear-gradient(180deg,var(--gold-bright),var(--gold-dark)); -webkit-background-clip:text;
+    background-clip:text; -webkit-text-fill-color:transparent;}
+  .who{font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; letter-spacing:1.5px;
+    font-size:12px; color:var(--grey);}
+  .datestrip{color:var(--grey); font-size:13px; margin-bottom:16px;}
+
+  /* tabs */
+  .tabs{position:fixed; left:0; right:0; bottom:0; display:flex; background:rgba(10,10,10,.92);
+    backdrop-filter:blur(8px); border-top:1px solid var(--border); z-index:20;}
+  .tabs button{flex:1; background:none; border:0; color:var(--grey); padding:12px 6px 16px; cursor:pointer;
+    font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; letter-spacing:1.5px; font-size:13px;
+    font-weight:600; border-top:2px solid transparent;}
+  .tabs button.on{color:var(--gold); border-top-color:var(--gold);}
+  .tabs .ic{display:block; font-size:18px; margin-bottom:3px;}
+
+  .view{display:none;} .view.on{display:block; animation:fade .25s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+  .card{background:var(--card); border:1px solid var(--border); border-radius:16px; padding:18px; margin-bottom:14px;}
+  .card h2{font-family:'Bebas Neue',sans-serif; font-size:23px; letter-spacing:.5px;}
+  .card .hint{color:var(--grey); font-size:13px; margin-top:3px; line-height:1.45;}
+  .lbl{font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; letter-spacing:1.5px;
+    font-size:12px; color:var(--gold); font-weight:600;}
+
+  /* rating rows */
+  .rate{margin-top:16px;}
+  .rate .rtop{display:flex; justify-content:space-between; align-items:center;}
+  .rate .rname{font-size:15px; font-weight:600;}
+  .rate .rval{font-size:13px; color:var(--grey);}
+  .dots{display:flex; gap:8px; margin-top:9px;}
+  .dots button{flex:1; height:38px; border-radius:9px; border:1px solid var(--border); background:var(--dark);
+    color:var(--grey); font-weight:700; font-size:15px; cursor:pointer; transition:.12s;}
+  .dots button.sel{background:linear-gradient(180deg,var(--gold-light),var(--gold-dark)); color:var(--black);
+    border-color:var(--gold);}
+  textarea{width:100%; margin-top:8px; background:var(--dark); border:1px solid var(--border); border-radius:10px;
+    color:var(--white); font-family:'Barlow',sans-serif; font-size:14px; padding:11px; resize:vertical; min-height:70px;}
+  textarea::placeholder{color:#5a5a5a;}
+  .privacy-tag{display:inline-block; margin-top:8px; font-size:11px; color:var(--cool);
+    border:1px solid rgba(111,168,220,.4); border-radius:20px; padding:2px 9px;}
+
+  .btn{width:100%; margin-top:18px; padding:15px; border:0; border-radius:12px; cursor:pointer;
+    font-family:'Barlow Condensed',sans-serif; text-transform:uppercase; letter-spacing:2px; font-size:17px;
+    font-weight:600; color:var(--black); background:linear-gradient(180deg,var(--gold-light),var(--gold-dark));}
+  .btn:active{transform:translateY(1px);}
+  .btn.ghost{background:transparent; color:var(--light); border:1px solid var(--border);}
+
+  /* status banner */
+  .status{display:flex; align-items:center; gap:14px; border-radius:14px; padding:16px; margin-bottom:14px;
+    border:1px solid var(--border);}
+  .status .score{font-family:'Bebas Neue',sans-serif; font-size:42px; line-height:.9; min-width:62px; text-align:center;}
+  .status .stxt .big{font-family:'Bebas Neue',sans-serif; font-size:22px;}
+  .status .stxt .small{font-size:13px; color:var(--light); margin-top:2px; line-height:1.4;}
+  .s-ok{background:rgba(111,207,127,.10);} .s-ok .score{color:var(--ok);}
+  .s-warn{background:rgba(224,178,87,.10);} .s-warn .score{color:var(--warn);}
+  .s-bad{background:rgba(229,115,115,.10);} .s-bad .score{color:var(--bad);}
+  .s-none{background:var(--card);} .s-none .score{color:var(--grey); font-size:30px;}
+
+  /* 14-day readiness strip */
+  .strip{display:flex; gap:5px; margin-top:14px;}
+  .strip .d{flex:1; height:30px; border-radius:6px; background:var(--dark); border:1px solid var(--border);}
+  .strip .d.ok{background:var(--ok);} .strip .d.warn{background:var(--warn);} .strip .d.bad{background:var(--bad);}
+  .striplbl{display:flex; justify-content:space-between; color:var(--grey); font-size:11px; margin-top:6px;}
+
+  /* workload form */
+  .row{display:flex; gap:10px; margin-top:14px;}
+  .row .col{flex:1;}
+  select, input[type=number], input[type=date]{width:100%; background:var(--dark); border:1px solid var(--border);
+    border-radius:10px; color:var(--white); font-family:'Barlow',sans-serif; font-size:15px; padding:12px;}
+  input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none;}
+  .mini{font-size:11px; color:var(--grey); margin-top:5px;}
+
+  /* load bars */
+  .bars{display:flex; align-items:flex-end; gap:4px; height:120px; margin-top:14px;}
+  .bars .bar{flex:1; background:linear-gradient(180deg,var(--gold),var(--gold-dark)); border-radius:4px 4px 0 0;
+    min-height:2px; position:relative;}
+  .bars .bar.today{background:linear-gradient(180deg,var(--gold-bright),var(--gold));}
+  .barlbl{display:flex; justify-content:space-between; color:var(--grey); font-size:11px; margin-top:6px;}
+
+  .sess{display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-top:1px solid var(--border);}
+  .sess:first-child{border-top:0;}
+  .sess .l .t{font-weight:600; font-size:14.5px;} .sess .l .m{color:var(--grey); font-size:12px; margin-top:2px;}
+  .sess .r{text-align:right;} .sess .r .ld{color:var(--gold-light); font-weight:700;} .sess .r .x{color:var(--grey);
+    font-size:11px; cursor:pointer; margin-top:3px;}
+  .empty{color:var(--grey); font-size:13.5px; text-align:center; padding:18px 6px; line-height:1.5;}
+
+  /* ACWR gauge */
+  .acwr-num{font-family:'Bebas Neue',sans-serif; font-size:58px; line-height:.9; text-align:center;}
+  .acwr-zone{text-align:center; font-family:'Barlow Condensed',sans-serif; text-transform:uppercase;
+    letter-spacing:2px; font-size:15px; margin-top:2px;}
+  .gauge{height:12px; border-radius:8px; margin:16px 0 6px; position:relative;
+    background:linear-gradient(90deg, var(--cool) 0%, var(--cool) 28%, var(--ok) 28%, var(--ok) 60%,
+      var(--warn) 60%, var(--warn) 75%, var(--bad) 75%, var(--bad) 100%);}
+  .gauge .pin{position:absolute; top:-5px; width:4px; height:22px; background:var(--white); border-radius:2px;
+    transform:translateX(-50%); box-shadow:0 0 0 2px var(--black);}
+  .gscale{display:flex; justify-content:space-between; color:var(--grey); font-size:10.5px;}
+  .reco{margin-top:14px; padding:13px; border-radius:11px; border:1px solid var(--border); font-size:14px; line-height:1.5;}
+  .reco.ok{background:rgba(111,207,127,.08);} .reco.warn{background:rgba(224,178,87,.08);}
+  .reco.bad{background:rgba(229,115,115,.08);} .reco.cool{background:rgba(111,168,220,.08);}
+  .reco.none{background:var(--dark);}
+  .twocol{display:flex; gap:12px; margin-top:12px;}
+  .stat{flex:1; background:var(--dark); border:1px solid var(--border); border-radius:11px; padding:12px; text-align:center;}
+  .stat .n{font-family:'Bebas Neue',sans-serif; font-size:26px;} .stat .k{color:var(--grey); font-size:11px;
+    text-transform:uppercase; letter-spacing:1px; margin-top:2px;}
+  .armcare{margin-top:14px; padding:13px; border-radius:11px; border:1px solid var(--border); font-size:13.5px; line-height:1.5;}
+  .disclaimer{color:var(--grey); font-size:11.5px; line-height:1.55; margin-top:6px;}
+  .toolbar{display:flex; gap:10px; margin-top:6px;}
+  .toolbar .btn{margin-top:0; font-size:13px; padding:11px;}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <a class="mark" href="softball.html" style="text-decoration:none;">MYGRIND</a>
+    <a class="who" href="softball.html" style="text-decoration:none;">&larr; Back to journal</a>
+  </header>
+  <div class="datestrip" id="datestrip"></div>
+
+  <!-- ===== TODAY / READINESS ===== -->
+  <section class="view on" id="v-today">
+    <div id="statusHost"></div>
+    <div class="card">
+      <h2>Daily readiness check-in</h2>
+      <p class="hint">Takes 20 seconds. Tap how you feel today, 1 is rough and 5 is great. This builds the habit and tells you when to push and when to back off.</p>
+      <div id="rates"></div>
+      <div class="rate">
+        <span class="lbl">How's the grind today? (optional)</span>
+        <textarea id="note" placeholder="One line on how you feel, what's nagging, what you want to work on..."></textarea>
+        <span class="privacy-tag">Private to you</span>
+      </div>
+      <button class="btn" id="saveReadiness">Save today's check-in</button>
+    </div>
+    <div class="card">
+      <h2>Last 14 days</h2>
+      <div class="strip" id="strip"></div>
+      <div class="striplbl"><span>14 days ago</span><span>Today</span></div>
+    </div>
+  </section>
+
+  <!-- ===== WORKLOAD ===== -->
+  <section class="view" id="v-load">
+    <div class="card">
+      <h2>Log a session</h2>
+      <p class="hint">Log everything that loads the body, including school sports and lessons. Load is duration times how hard it felt (RPE), the standard way to measure training stress.</p>
+      <div class="row">
+        <div class="col"><span class="lbl">Date</span><input type="date" id="wDate"></div>
+        <div class="col"><span class="lbl">Type</span>
+          <select id="wType">
+            <option>Game</option><option>Practice</option><option>Hitting</option>
+            <option>Bullpen / Throwing</option><option>Lesson</option><option>Lift / Strength</option>
+            <option>Conditioning</option><option>School sport / PE</option><option>Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col"><span class="lbl">Minutes</span><input type="number" id="wMin" min="0" placeholder="60"></div>
+        <div class="col"><span class="lbl">RPE 1-10</span><input type="number" id="wRpe" min="1" max="10" placeholder="6">
+          <div class="mini">1 easy, 10 max effort</div></div>
+      </div>
+      <div class="row">
+        <div class="col"><span class="lbl">Throws / pitches (if any)</span><input type="number" id="wThrows" min="0" placeholder="0">
+          <div class="mini">Leave at 0 if no throwing</div></div>
+      </div>
+      <button class="btn" id="addSession">Add session</button>
+    </div>
+    <div class="card">
+      <h2>Daily load — last 14 days</h2>
+      <div class="bars" id="bars"></div>
+      <div class="barlbl"><span>14d ago</span><span>Today</span></div>
+    </div>
+    <div class="card">
+      <h2>Recent sessions</h2>
+      <div id="sessList"></div>
+    </div>
+  </section>
+
+  <!-- ===== INSIGHTS / ACWR ===== -->
+  <section class="view" id="v-insight">
+    <div class="card">
+      <h2>Workload ratio (ACWR)</h2>
+      <p class="hint">Compares this week's load (acute) to your 4-week average (chronic). Big jumps are the biggest predictor of overuse injury. The aim is to build gradually.</p>
+      <div class="acwr-num" id="acwrNum">--</div>
+      <div class="acwr-zone" id="acwrZone">Keep logging</div>
+      <div class="gauge"><div class="pin" id="acwrPin" style="left:50%"></div></div>
+      <div class="gscale"><span>0.5</span><span>0.8</span><span>1.3</span><span>1.5</span><span>2.0+</span></div>
+      <div class="reco none" id="acwrReco">Log about 4 weeks of sessions and this becomes reliable.</div>
+      <div class="twocol">
+        <div class="stat"><div class="n" id="acuteN">0</div><div class="k">Acute (7d)</div></div>
+        <div class="stat"><div class="n" id="chronicN">0</div><div class="k">Chronic (wkly)</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Arm care</h2>
+      <div class="armcare" id="armCare">No throwing logged yet.</div>
+      <p class="disclaimer">For pitch and throw limits, follow MLB Pitch Smart guidelines for the player's age. This tracker shows volume and rest, it does not set medical limits.</p>
+    </div>
+    <div class="card">
+      <h2>Readiness trend</h2>
+      <div class="armcare" id="readTrend">No check-ins yet.</div>
+    </div>
+    <div class="card">
+      <p class="disclaimer">These are training-guidance tools, not medical advice. Soreness is normal, but sharp pain, swelling, or pain that lingers means stop and talk to your coach, athletic trainer, or doctor. Rest days are part of getting better, not a step back.</p>
+      <div class="toolbar">
+        <button class="btn ghost" id="resetBtn">Reset all</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabs">
+  <button class="on" data-v="today"><span class="ic">&#9728;</span>Today</button>
+  <button data-v="load"><span class="ic">&#9878;</span>Workload</button>
+  <button data-v="insight"><span class="ic">&#9650;</span>Insights</button>
+</nav>
+
+<script>
+/* ---------- helpers ---------- */
+var RKEY='mg_readiness_log', WKEY='mg_workload_log';
+function loadJSON(k,f){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):f; }catch(e){ return f; } }
+function saveJSON(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+function pad(n){ return (n<10?'0':'')+n; }
+function ymd(d){ return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate()); }
+function today(){ return ymd(new Date()); }
+function daysAgo(n){ var d=new Date(); d.setDate(d.getDate()-n); return ymd(d); }
+function fmtDate(s){ var p=s.split('-'); return p[1]+'/'+p[2]; }
+
+// Shared "showed up today" ledger. The journal streak in softball.html reads
+// the UNION of journal-entry dates and these dates, so a quick daily check-in
+// (readiness or a workload session) keeps the 🔥 streak alive without writing
+// anything into the journal. Dates only, no content — the two stay separate.
+function mgStampActivityDay(dateKey){
+  try{
+    var days=JSON.parse(localStorage.getItem('mg_activity_days')||'[]');
+    if(!Array.isArray(days)) days=[];
+    if(days.indexOf(dateKey)===-1){ days.push(dateKey); localStorage.setItem('mg_activity_days', JSON.stringify(days)); }
+  }catch(e){}
+}
+
+var readiness = loadJSON(RKEY,{});
+var sessions  = loadJSON(WKEY,[]);
+
+document.getElementById('datestrip').textContent =
+  new Date().toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'});
+
+/* ---------- tabs ---------- */
+document.querySelectorAll('.tabs button').forEach(function(b){
+  b.addEventListener('click', function(){
+    document.querySelectorAll('.tabs button').forEach(function(x){x.classList.remove('on');});
+    b.classList.add('on');
+    document.querySelectorAll('.view').forEach(function(v){v.classList.remove('on');});
+    document.getElementById('v-'+b.dataset.v).classList.add('on');
+    if(b.dataset.v==='insight') renderInsights();
+    if(b.dataset.v==='load') renderLoad();
+  });
+});
+
+/* ---------- READINESS ---------- */
+var METRICS=[
+  {key:'sleep', name:'Sleep', lo:'Poor', hi:'Great'},
+  {key:'energy',name:'Energy', lo:'Drained', hi:'Fired up'},
+  {key:'soreness',name:'Body feel', lo:'Sore', hi:'Fresh'},
+  {key:'arm', name:'Arm feel', lo:'Achy', hi:'Loose'},
+  {key:'calm', name:'Head / stress', lo:'Stressed', hi:'Locked in'}
+];
+var draft={};
+function renderRates(){
+  var t=readiness[today()];
+  METRICS.forEach(function(m){ draft[m.key] = t? t[m.key] : (draft[m.key]||0); });
+  var html='';
+  METRICS.forEach(function(m){
+    html+='<div class="rate"><div class="rtop"><span class="rname">'+m.name+'</span>'+
+      '<span class="rval">'+m.lo+' &rarr; '+m.hi+'</span></div><div class="dots" data-k="'+m.key+'">';
+    for(var i=1;i<=5;i++) html+='<button data-v="'+i+'"'+(draft[m.key]===i?' class="sel"':'')+'>'+i+'</button>';
+    html+='</div></div>';
+  });
+  document.getElementById('rates').innerHTML=html;
+  document.querySelectorAll('#rates .dots').forEach(function(row){
+    row.querySelectorAll('button').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        draft[row.dataset.k]=parseInt(btn.dataset.v,10);
+        row.querySelectorAll('button').forEach(function(x){x.classList.remove('sel');});
+        btn.classList.add('sel');
+      });
+    });
+  });
+  if(t && t.note) document.getElementById('note').value=t.note;
+}
+function readinessScore(r){
+  var s=0,n=0; METRICS.forEach(function(m){ if(r[m.key]){ s+=r[m.key]; n++; } });
+  return n? s/n : 0;
+}
+function statusOf(avg){
+  if(!avg) return {cls:'none', big:'No check-in yet', small:'Tap below to log how you feel today.', score:'--'};
+  if(avg>=4) return {cls:'ok', big:'Fresh — go compete', small:'Body and mind are good. Attack today.', score:avg.toFixed(1)};
+  if(avg>=3) return {cls:'warn', big:'Manage it', small:'Decent, but listen to your body. Quality over volume today.', score:avg.toFixed(1)};
+  return {cls:'bad', big:'Back off', small:'Low readiness. Prioritize recovery, sleep, and arm care today.', score:avg.toFixed(1)};
+}
+function renderStatus(){
+  var t=readiness[today()];
+  var st=statusOf(t?readinessScore(t):0);
+  document.getElementById('statusHost').innerHTML=
+    '<div class="status s-'+st.cls+'"><div class="score">'+st.score+'</div>'+
+    '<div class="stxt"><div class="big">'+st.big+'</div><div class="small">'+st.small+'</div></div></div>';
+}
+function renderStrip(){
+  var html='';
+  for(var i=13;i>=0;i--){
+    var r=readiness[daysAgo(i)]; var cls='';
+    if(r){ var a=readinessScore(r); cls=a>=4?'ok':a>=3?'warn':'bad'; }
+    html+='<div class="d '+cls+'"></div>';
+  }
+  document.getElementById('strip').innerHTML=html;
+}
+document.getElementById('saveReadiness').addEventListener('click', function(){
+  var rec={}; var any=false;
+  METRICS.forEach(function(m){ if(draft[m.key]){ rec[m.key]=draft[m.key]; any=true; } });
+  if(!any){ alert('Tap a rating for at least one item first.'); return; }
+  rec.note=document.getElementById('note').value.trim();
+  rec.score=readinessScore(rec); rec.ts=new Date().toISOString();
+  readiness[today()]=rec; saveJSON(RKEY,readiness);
+  mgStampActivityDay(today()); // keeps the journal streak alive (union)
+  // TODO Firestore: players/{uid}/readiness/{today()} = rec  (note kept private to player)
+  renderStatus(); renderStrip();
+  var b=this; b.textContent='Saved \u2713'; setTimeout(function(){b.textContent="Save today's check-in";},1200);
+});
+
+/* ---------- WORKLOAD ---------- */
+document.getElementById('wDate').value=today();
+document.getElementById('addSession').addEventListener('click', function(){
+  var date=document.getElementById('wDate').value||today();
+  var type=document.getElementById('wType').value;
+  var min=parseInt(document.getElementById('wMin').value,10)||0;
+  var rpe=parseInt(document.getElementById('wRpe').value,10)||0;
+  var throws=parseInt(document.getElementById('wThrows').value,10)||0;
+  if(min<=0||rpe<=0){ alert('Add minutes and an RPE (1-10) so we can calculate load.'); return; }
+  var s={id:Date.now(), date:date, type:type, durationMin:min, rpe:rpe, throws:throws, load:min*rpe, ts:new Date().toISOString()};
+  sessions.push(s); saveJSON(WKEY,sessions);
+  mgStampActivityDay(today()); // logging a session counts as showing up today (union streak)
+  // TODO Firestore: players/{uid}/sessions push s
+  document.getElementById('wMin').value=''; document.getElementById('wRpe').value=''; document.getElementById('wThrows').value='';
+  renderLoad();
+  var b=this; b.textContent='Added \u2713'; setTimeout(function(){b.textContent='Add session';},1000);
+});
+function dayLoad(d){ return sessions.filter(function(s){return s.date===d;}).reduce(function(a,s){return a+s.load;},0); }
+function renderLoad(){
+  // bars
+  var loads=[]; for(var i=13;i>=0;i--) loads.push(dayLoad(daysAgo(i)));
+  var max=Math.max(60, Math.max.apply(null,loads));
+  var bh=''; loads.forEach(function(v,idx){
+    bh+='<div class="bar'+(idx===13?' today':'')+'" style="height:'+(v/max*100)+'%" title="'+v+'"></div>';
+  });
+  document.getElementById('bars').innerHTML=bh;
+  // recent list
+  var recent=sessions.slice().sort(function(a,b){return b.id-a.id;}).slice(0,12);
+  if(!recent.length){ document.getElementById('sessList').innerHTML='<div class="empty">No sessions yet. Log a game, practice, lesson, or lift above.</div>'; return; }
+  var lh=''; recent.forEach(function(s){
+    lh+='<div class="sess"><div class="l"><div class="t">'+s.type+'</div>'+
+      '<div class="m">'+fmtDate(s.date)+' &middot; '+s.durationMin+' min &middot; RPE '+s.rpe+
+      (s.throws?(' &middot; '+s.throws+' throws'):'')+'</div></div>'+
+      '<div class="r"><div class="ld">'+s.load+'</div><div class="x" data-id="'+s.id+'">remove</div></div></div>';
+  });
+  document.getElementById('sessList').innerHTML=lh;
+  document.querySelectorAll('#sessList .x').forEach(function(x){
+    x.addEventListener('click', function(){
+      sessions=sessions.filter(function(s){return s.id!=x.dataset.id;}); saveJSON(WKEY,sessions); renderLoad();
+    });
+  });
+}
+
+/* ---------- INSIGHTS / ACWR ---------- */
+function sumRange(days){ var t=0; for(var i=0;i<days;i++) t+=dayLoad(daysAgo(i)); return t; }
+function distinctDaysLogged(){ var set={}; sessions.forEach(function(s){set[s.date]=1;}); return Object.keys(set).length; }
+function renderInsights(){
+  var acute=sumRange(7);
+  var chronic=sumRange(28)/4;
+  document.getElementById('acuteN').textContent=Math.round(acute);
+  document.getElementById('chronicN').textContent=Math.round(chronic);
+  var numEl=document.getElementById('acwrNum'), zoneEl=document.getElementById('acwrZone'),
+      pin=document.getElementById('acwrPin'), reco=document.getElementById('acwrReco');
+
+  if(chronic<=0 || distinctDaysLogged()<7){
+    numEl.textContent='--'; numEl.style.color='var(--grey)';
+    zoneEl.textContent='Keep logging'; zoneEl.style.color='var(--grey)';
+    pin.style.left='50%';
+    reco.className='reco none';
+    reco.textContent='Log about 4 weeks of sessions and this becomes reliable. So far '+distinctDaysLogged()+' day(s) logged.';
+  } else {
+    var acwr=acute/chronic;
+    numEl.textContent=acwr.toFixed(2);
+    // map 0.5..2.0 to 0..100% on the gauge
+    var pct=Math.max(0,Math.min(100,(acwr-0.5)/(2.0-0.5)*100));
+    pin.style.left=pct+'%';
+    var z,col,rc;
+    if(acwr<0.8){ z='Ramping down'; col='var(--cool)'; rc='cool';
+      reco.textContent='Your load dropped below your recent average. That is fine for a planned rest or off week. When you ramp back up, build gradually rather than jumping straight back to full volume.'; }
+    else if(acwr<=1.3){ z='Sweet spot'; col='var(--ok)'; rc='ok';
+      reco.textContent='Your load is in the safe build zone. Keep stacking consistent work and recovery. This is where you get better with the lowest injury risk.'; }
+    else if(acwr<=1.5){ z='Watch it'; col='var(--warn)'; rc='warn';
+      reco.textContent='Load is climbing faster than your body has adapted to. Hold volume steady for a few days, sharpen quality, and make sure you are sleeping and eating enough.'; }
+    else { z='Spike — add rest'; col='var(--bad)'; rc='bad';
+      reco.textContent='This is a sharp spike above your recent average, the highest-risk pattern for overuse injury. Add a rest or light day, cut throwing volume, and bring the load down before pushing again.'; }
+    numEl.style.color=col; zoneEl.textContent=z; zoneEl.style.color=col; reco.className='reco '+rc;
+  }
+
+  // arm care
+  var throws7=0, throwDays=0, restDays=0;
+  for(var i=0;i<7;i++){ var d=daysAgo(i); var tt=sessions.filter(function(s){return s.date===d;})
+      .reduce(function(a,s){return a+(s.throws||0);},0); throws7+=tt; if(tt>0) throwDays++; else restDays++; }
+  var ac=document.getElementById('armCare');
+  if(throws7===0){ ac.style.borderColor='var(--border)';
+    ac.innerHTML='No throwing logged in the last 7 days.'; }
+  else {
+    var warn = restDays===0;
+    ac.style.borderColor = warn?'var(--bad)':'var(--border)';
+    ac.innerHTML='<strong>'+throws7+'</strong> throws over the last 7 days across '+throwDays+' day(s). '+
+      (warn ? '<span style="color:var(--bad)">You have not logged a single throwing rest day this week. The arm needs at least one or two full rest days a week.</span>'
+            : restDays+' rest day(s) this week. Keep protecting recovery days.');
+  }
+
+  // readiness trend
+  var vals=[]; for(var j=0;j<7;j++){ var r=readiness[daysAgo(j)]; if(r) vals.push(readinessScore(r)); }
+  var rt=document.getElementById('readTrend');
+  if(!vals.length){ rt.textContent='No check-ins in the last 7 days. The daily check-in is what powers all of this.'; }
+  else {
+    var avg=vals.reduce(function(a,b){return a+b;},0)/vals.length;
+    var word = avg>=4?'strong':avg>=3?'okay':'low';
+    rt.innerHTML='7-day average readiness is <strong>'+avg.toFixed(1)+'/5</strong> ('+word+') from '+vals.length+' check-in(s). '+
+      (avg<3?'Low readiness plus rising load is the combination to respect. Favor recovery.':'Pair this with your workload ratio above to decide how hard to go.');
+  }
+}
+
+/* ---------- reset ----------
+   (The reference build also had a "Load demo data" button. It was removed
+   for the shipped page because it overwrites a real player's data. Reset
+   stays, behind a confirm.) */
+document.getElementById('resetBtn').addEventListener('click', function(){
+  if(!confirm('Clear all readiness and workload data?')) return;
+  localStorage.removeItem(RKEY); localStorage.removeItem(WKEY);
+  readiness={}; sessions=[]; draft={};
+  renderStatus(); renderStrip(); renderRates(); renderLoad(); renderInsights();
+});
+
+/* ---------- init ---------- */
+renderStatus(); renderStrip(); renderRates(); renderLoad();
+</script>
+</body>
+</html>
