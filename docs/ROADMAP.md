@@ -10,6 +10,8 @@
 
 **NEW TOP PRIORITY — Google Search Console reindex (manual, ~5 min):** In GSC for the `mygrindapp.com` Domain property, use URL Inspection on `https://www.mygrindapp.com/` and click "Request indexing" so the new FAQ + content get recrawled, then go to Sitemaps and (re)submit `https://www.mygrindapp.com/sitemap.xml` (now includes /blog + 3 articles). Optionally request indexing on the 3 new /blog article URLs too.
 
+**ALSO P0 — Twilio TFV #27140216 monitoring (5-29 PM):** The explicit, standalone SMS consent checkbox shipped + is live at the signup phone step; the Huvi reply was resubmitted with the live consent screenshot + the Drive docs PDF. Watch the inbox for Huvi's response. SMS stays `SMS_DRY_RUN=true` until approval. *(5-29 PM also shipped: the athlete daily check-in at `/checkin.html`, a shared journal+check-in streak, and hidden landing pricing + a "From the Playbook" blog band — see Day +11 in STATUS.md and the 2026-05-29 session log. New code option: wire the check-in to Firestore using the TODO hooks.)*
+
 1. **Smoke-walk mygrindapp.com on phone in incognito** (~60 sec). BEFORE launching ads. Land on landing → tap Start Free Trial → run Screens 1-7 → plan picker → tap Start Trial → Stripe Checkout opens → abort. If anything looks visibly wrong, fix first.
 2. **Mirror Firestore rules into Firebase Console** (~3 min). Paste contents of `firestore.rules` at https://console.firebase.google.com/project/my-grind-b8486/firestore/rules → Publish. Until done, client-side child-profile writes fail (Admin SDK still works server-side).
 3. **Launch first ad creative on @youngsbaseball** (Thursday morning, 2026-05-28). Memory `mygrind_launch_funnel` says @mygrindapp has bot followers — paid promo routes through @youngsbaseball.
