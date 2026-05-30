@@ -16,6 +16,7 @@
 import crypto from 'crypto';
 import { listForPlayer, listForParent } from '../lib/feedback-store.js';
 import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
+import { authorizeEmailOwner } from '../lib/access.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -29,7 +30,7 @@ function setCors(req, res) {
     res.setHeader('Vary', 'Origin');
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 function getClientIp(req) {
@@ -54,6 +55,18 @@ export default async function handler(req, res) {
 
   if (!playerPhone && !parentEmail) {
     return res.status(400).json({ ok: false, error: 'missing_filter', items: [] });
+  }
+
+  // ─── Owner check on the PARENT (email) path (Firebase ID token, staged) ──
+  // The parent query returns a household's coaching history, so we scope it to
+  // the email's owner (token email must match). See lib/access.js. The PLAYER
+  // (phone) path is NOT gated here: feedback is keyed by phone with no link to
+  // a Firebase uid/email, and phone ownership can't be proven until SMS
+  // verification (Twilio TFV) is live. That path relies on the PII-stripped
+  // response below (no names/parent-email/phone returned) as its V1 posture.
+  if (parentEmail) {
+    const access = await authorizeEmailOwner(req, parentEmail);
+    if (!access.ok) return res.status(access.status).json({ ok: false, error: access.error, items: [] });
   }
 
   // ─── Rate limit (H1 partial — security audit 2026-05-18) ──

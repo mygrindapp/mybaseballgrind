@@ -38,6 +38,7 @@ import Stripe from 'stripe';
 import crypto from 'crypto';
 import { getSubscription } from '../lib/subscription-store.js';
 import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
+import { authorizeEmailOwner } from '../lib/access.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -51,7 +52,7 @@ function setCors(req, res) {
     res.setHeader('Vary', 'Origin');
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 function getClientIp(req) {
@@ -93,6 +94,13 @@ export default async function handler(req, res) {
   if (!email) return res.status(400).json({ ok: false, error: 'missing_email' });
   if (!isValidEmail(email)) return res.status(400).json({ ok: false, error: 'invalid_email' });
   const normEmail = email.trim().toLowerCase();
+
+  // ─── Owner check (Firebase ID token, staged) ─────────────────
+  // Opening a billing portal is the most sensitive of the by-email endpoints
+  // (it exposes invoices, card last-4, and lets the caller cancel the plan),
+  // so the token's email must match the requested customer. See lib/access.js.
+  const access = await authorizeEmailOwner(req, normEmail);
+  if (!access.ok) return res.status(access.status).json({ ok: false, error: access.error });
 
   // Resolve Stripe customerId from our Redis sub:<email> record. Set by
   // stripe-webhook.js on checkout.session.completed and customer.subscription.*

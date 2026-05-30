@@ -7161,12 +7161,25 @@ function closeEditPinOverlay() {
 // keeps working offline and validateSession() can read state.paid synchronously.
 // Runs async on app start; updates UI silently if the server promotes the
 // user from trial → paid (or demotes back to no-paid on cancellation).
+// Returns an { Authorization: 'Bearer <id-token>' } header when a Firebase
+// user is signed in on this device, else {}. Lets the server scope by-email
+// reads to the owner (lib/access.js). Reads firebase.auth() directly so it
+// works regardless of script-block ordering; never throws (degrades to {}).
+async function mgIdTokenHeader() {
+  try {
+    var u = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    if (u && u.getIdToken) return { 'Authorization': 'Bearer ' + (await u.getIdToken()) };
+  } catch (e) {}
+  return {};
+}
 async function syncSubscriptionFromServer() {
   try {
     const acc = getAccessState();
     const email = (acc.email || '').trim();
     if (!email) return;
-    const r = await fetch('/api/get-subscription?email=' + encodeURIComponent(email));
+    const r = await fetch('/api/get-subscription?email=' + encodeURIComponent(email), {
+      headers: await mgIdTokenHeader(),
+    });
     if (!r.ok) return;
     const data = await r.json();
     if (!data.ok) return;
@@ -19319,7 +19332,7 @@ async function openStripePortal(event) {
 
     const resp = await fetch('/api/stripe-portal-session', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: Object.assign({ 'Content-Type': 'application/json' }, await mgIdTokenHeader()),
       body:    JSON.stringify({ email }),
     });
     const data = await resp.json().catch(() => ({}));

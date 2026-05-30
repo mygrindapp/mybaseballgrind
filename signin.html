@@ -386,7 +386,12 @@ async function persistLocalAuthState(user) {
     // shows the right state on first load (no flicker through trial UI
     // before syncSubscriptionFromServer fires).
     try {
-      const resp = await fetch('/api/get-subscription?email=' + encodeURIComponent(acc.email));
+      // Send the Firebase ID token so the server can scope this read to the
+      // signed-in owner (lib/access.js). `user` is the just-authenticated
+      // Firebase user, so a token is always available here.
+      let _authHdr = {};
+      try { _authHdr = { 'Authorization': 'Bearer ' + (await user.getIdToken()) }; } catch (e) {}
+      const resp = await fetch('/api/get-subscription?email=' + encodeURIComponent(acc.email), { headers: _authHdr });
       if (resp.ok) {
         const data = await resp.json();
         if (data && data.ok && data.isPaid) {

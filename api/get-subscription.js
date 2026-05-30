@@ -5,16 +5,18 @@
 // surfaces (softball.html paywall, signup.html dashboard) can decide
 // whether to gate paid features.
 //
-// Security note (V1): anyone who knows the customer's email can
-// query this endpoint. The data returned is only THEIR own
-// subscription state — not other customers'. CORS allowlist limits
-// to mygrindapp.com origins. V2 (full account auth) will scope this
-// to the signed-in user's claim.
+// Auth (2026-05-29): scoped to the email's owner via a Firebase ID token
+// (Authorization: Bearer <id-token>) — the token's email must match the
+// requested email. Staged behind ACCESS_TOKEN_ENFORCE (see lib/access.js):
+// Phase 1 accepts token-less callers (but rejects mismatched tokens); Phase 2
+// requires a matching token. The PII-stripped read + per-IP cap below remain
+// as defense-in-depth.
 // ═══════════════════════════════════════════════════════════
 
 import crypto from 'crypto';
 import { getSubscription } from '../lib/subscription-store.js';
 import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
+import { authorizeEmailOwner } from '../lib/access.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -39,7 +41,7 @@ function setCors(req, res) {
     res.setHeader('Vary', 'Origin');
   }
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 }
 
 export default async function handler(req, res) {
@@ -49,6 +51,10 @@ export default async function handler(req, res) {
 
   const email = (req.query.email || '').toString();
   if (!email) return res.status(400).json({ ok: false, error: 'missing_email' });
+
+  // ─── Owner check (Firebase ID token, staged) ─────────────────
+  const access = await authorizeEmailOwner(req, email);
+  if (!access.ok) return res.status(access.status).json({ ok: false, error: access.error });
 
   // ─── Rate limit (interim hardening 2026-05-29) ───────────────
   // This endpoint is not yet auth-scoped, so an unauthenticated caller can
