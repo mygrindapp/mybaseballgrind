@@ -78,5 +78,33 @@ export default async function handler(req, res) {
     : await listForParent(parentEmail, { sinceTs });
 
   if (!result.ok) return res.status(500).json(result);
-  return res.status(200).json({ ok: true, items: result.items });
+
+  // ─── PII minimization (interim hardening 2026-05-29) ──────────
+  // This V1 endpoint is not yet auth-scoped (see the file header), so we
+  // return only the fields the dashboard cards actually render and drop the
+  // identifiers no client reads. Removes a minor's parent email + parent/
+  // player names + player phone from the response, so even an unauthorized
+  // caller who knows a phone/email gets coaching content, not a contact graph.
+  //   - parent {name,email}: rendered by no client → dropped entirely.
+  //   - coach.email:         not rendered → dropped (coach name/phone kept for
+  //                          the player's tap-to-text follow-up).
+  //   - player.phone:        never rendered (player path already knows it) →
+  //                          dropped. player.name kept only on the parent
+  //                          query, where the weekly card groups by it.
+  const isParentQuery = !!parentEmail;
+  const items = (result.items || []).map((it) => {
+    const safe = { ...it };
+    delete safe.parent;
+    if (safe.coach) {
+      const { email, ...coachRest } = safe.coach;
+      safe.coach = coachRest;
+    }
+    if (safe.player) {
+      const { phone, ...playerRest } = safe.player;
+      safe.player = isParentQuery ? playerRest : undefined;
+    }
+    return safe;
+  });
+
+  return res.status(200).json({ ok: true, items });
 }
