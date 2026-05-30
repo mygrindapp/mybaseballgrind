@@ -593,10 +593,15 @@ export default async function handler(req, res) {
     }
   } catch (e) {
     console.error('[stripe-webhook] handler error:', e.message);
-    // Return 200 anyway — Stripe retries 4xx/5xx, and we don't want to
-    // spam our logs with retries on transient handler errors. Failure
-    // is recorded in console.
-    return res.status(200).json({ ok: false, error: 'handler_error', message: e.message });
+    // Return 500 so Stripe RETRIES the event (it retries 4xx/5xx with
+    // backoff for ~3 days). A transient failure here — e.g. a Redis blip
+    // during checkout.session.completed — must NOT be acknowledged as
+    // success, or the paying customer's auth user + welcome email are
+    // silently dropped with no retry. Safe to retry: the welcome email
+    // gates on a per-email Redis flag, auth-user creation checks
+    // getUserByEmail first, and subscription upsert is keyed by email —
+    // all idempotent. Don't echo e.message back to the caller.
+    return res.status(500).json({ ok: false, error: 'handler_error' });
   }
 
   return res.status(200).json({ ok: true, received: event.type });

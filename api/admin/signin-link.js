@@ -7,8 +7,9 @@
 // school-domain blocks, typo at signup, lost email access).
 //
 // Flow:
-//   1. Coach opens in a browser:
-//      /api/admin/signin-link?email=X&token=ADMIN_RESCUE_TOKEN
+//   1. Coach calls it with the admin token in a HEADER (not the URL):
+//      curl "https://www.mygrindapp.com/api/admin/signin-link?email=X" \
+//           -H "Authorization: Bearer $ADMIN_RESCUE_TOKEN"
 //   2. Endpoint validates the admin token (constant-time compare).
 //   3. Endpoint generates a single-use sign-in token, stores in
 //      Redis under the same `magiclink:<token>` key the normal
@@ -56,6 +57,14 @@ function constantTimeEqual(a, b) {
   return crypto.timingSafeEqual(ab, bb);
 }
 
+// Read the admin token from headers only (never query/body — see handler).
+function getAdminToken(req) {
+  const auth = req.headers['authorization'] || '';
+  if (auth.toLowerCase().startsWith('bearer ')) return auth.slice(7).trim();
+  const x = req.headers['x-admin-token'];
+  return (Array.isArray(x) ? x[0] : x) || '';
+}
+
 function piiHash(s) {
   return crypto.createHash('sha256').update(String(s || '')).digest('hex').slice(0, 12);
 }
@@ -74,7 +83,11 @@ export default async function handler(req, res) {
     console.error('[admin/signin-link] ADMIN_RESCUE_TOKEN missing or too short');
     return res.status(500).json({ ok: false, error: 'server_misconfigured' });
   }
-  const provided = String(req.query.token || '');
+  // Admin token comes from a request HEADER only — never the query string.
+  // A query-string token leaks into access/proxy logs, browser history, and
+  // Referer headers, and this token can mint a sign-in link for ANY account.
+  // Accept `Authorization: Bearer <token>` or `X-Admin-Token: <token>`.
+  const provided = getAdminToken(req);
   if (!constantTimeEqual(provided, expected)) {
     console.warn('[admin/signin-link] auth failed', {
       ip:       req.headers['x-forwarded-for'] || 'unknown',
