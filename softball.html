@@ -856,6 +856,10 @@
      this is pure CSS — no JS sync needed. Reusable for any future
      softball-specific UI (slapper checkbox is the first user). */
   html[data-sport="baseball"] [data-softball-only] { display: none !important; }
+  /* Mirror rule (Coach Young 2026-05-30): [data-baseball-only] hides in
+     softball mode. Lets the 5 Tools benchmark tables show only the active
+     sport's column instead of both side by side, so the panel reads clean. */
+  html[data-sport="softball"] [data-baseball-only] { display: none !important; }
 
   /* ── MOBILE TAP-TARGET FLOOR ── Coach Young 2026-05-11.
      Players use this app one-handed on a phone. Every interactive
@@ -1399,7 +1403,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v295';
+    const CACHE = 'ybg-mygrind-v296';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2632,6 +2636,14 @@ function signOutAndSwitchAccount() {
   <a href="checkin.html" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
     <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-activity"/></svg></span> Daily Check-In
   </a>
+
+  <!-- The 5 Tools reference (added 2026-05-30). In-depth education panel:
+       the five tools of baseball + softball with benchmark averages by
+       level (HS Varsity / JuCo / College), boys + girls. Sits above
+       Resources because it is the deepest reference surface in the app. -->
+  <button onclick="mgTab('tools',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
+    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;">🎯</span> The 5 Tools
+  </button>
 
   <!-- Resources entry added 2026-05-23. Moved Recruiting & Academic
        Resources card out of Settings into a dedicated panel-resources
@@ -4606,8 +4618,8 @@ input[type="number"] {
       <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Speed &amp; Arm Strength <span style="text-transform:none; letter-spacing:0.5px; font-weight:500; font-size:12px;">· updates automatically</span></div>
       <div class="form-row" style="margin-bottom:8px;">
         <div>
-          <label>60-Yard Dash (sec)</label>
-          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" style="max-width:100px; margin-bottom:0;">
+          <label><span data-baseball-only>60-Yard Dash (sec)</span><span data-softball-only>Home-to-First (sec)</span></label>
+          <input type="text" id="pl-sixty" placeholder="e.g. 6.8" oninput="saveProfile()" onblur="logSixtyTime()" inputmode="decimal" style="max-width:100px; margin-bottom:0;">
         </div>
         <div>
           <label>Arm Strength</label>
@@ -4620,6 +4632,14 @@ input[type="number"] {
           </select>
         </div>
       </div>
+      <!-- Tiny helper so the player knows the field keeps history now. -->
+      <div style="font-family:'Barlow'; font-size:11.5px; color:var(--grey); line-height:1.4; margin:-2px 0 10px;"><span data-baseball-only>Type your latest 60 time and tap out.</span><span data-softball-only>Type your latest home-to-first time and tap out.</span> Each time is saved with the date so you can see the progression below.</div>
+
+      <!-- 60-Yard Progress: dated history of every logged 60 time with a
+           faster/slower delta. Coach Young 2026-05-30. Populated by
+           renderSixtyProgress(); hidden until at least one time is logged. -->
+      <div id="sixty-progress" style="display:none; margin-bottom:18px;"></div>
+
       <!-- Per-tier recommendation. Updates from updateArmStrengthTip()
            when the player picks a tier. Hidden until something is chosen. -->
       <div id="pl-arm-tip" style="display:none; margin-bottom:18px; padding:10px 12px; background:rgba(39,174,96,0.06); border-left:2px solid #5A8A3A; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.5;"></div>
@@ -5601,7 +5621,7 @@ input[type="number"] {
         <div><label>Assists (A)</label><input type="number" id="st-a" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <div><label>Errors (E)</label><input type="number" id="st-e" placeholder="0" min="0" oninput="calcStats()" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <div><label>Pop Time (Catchers)</label><input type="text" id="st-pop" placeholder="e.g. 1.95s" style="cursor:not-allowed; opacity:0.85;" readonly></div>
-        <div><label>60-Yard Dash</label><input type="text" id="st-sixty" placeholder="e.g. 6.8 sec" style="cursor:not-allowed; opacity:0.85;" readonly></div>
+        <div><label><span data-baseball-only>60-Yard Dash</span><span data-softball-only>Home-to-First</span></label><input type="text" id="st-sixty" placeholder="e.g. 6.8 sec" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <div><label>Velocity (MPH)</label><input type="text" id="st-velo" placeholder="e.g. 78 mph" style="cursor:not-allowed; opacity:0.85;" readonly></div>
         <!-- GameChanger Team input removed 2026-05-08 — Coach: stats can be wrong via GC. -->
       </div>
@@ -6219,12 +6239,221 @@ input[type="number"] {
        New categories drop in as another group block below. Each
        group follows the same pattern: a uppercase gold label, then
        a 1-column grid of card-style links / buttons. -->
+  <!-- ══════════════════════════════════════════ THE 5 TOOLS ══
+       Coach Young 2026-05-30. In-depth reference: the five scouting
+       tools of baseball + softball, explained for boys and girls, with
+       benchmark averages by level. Benchmarks are RECRUITING-GUIDE
+       numbers (Perfect Game, PBR, NCSA, CommitBound, NFCA-adjacent),
+       measured with modern tech (TrackMan / Rapsodo / Blast) so they
+       read hotter than old radar-gun numbers. Levels start at HS Varsity
+       on purpose, tied to the growth-plate card in Resources. Ranges,
+       not gospel. Baseball + softball shown side by side per tool. -->
+  <div class="panel" id="panel-tools">
+
+    <!-- Hero. margin-top:48px clears the 64px fixed top bar so the Bebas
+         title isn't cut off when the panel opens at scroll-top (Coach Young
+         2026-05-30). Copy is joy/dream-first on purpose: the tools are the
+         language of the game, and the numbers are a map for the dream, not
+         a cutoff that ends a career. -->
+    <div class="card" style="margin-top:48px; margin-bottom:16px; padding-top:20px; background:linear-gradient(180deg, rgba(232,201,122,0.08) 0%, rgba(184,154,75,0.03) 100%); border-color:var(--gold-dark);">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <span style="font-size:26px; line-height:1;">🎯</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:2px; color:var(--gold); line-height:1.2;">The 5 Tools</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:16px; color:var(--light); line-height:1.6;">
+        This game gives you a lifetime to chase something, and that is the whole joy of it. The five tools, <strong style="color:var(--gold-light);">hit, power, run, arm, and field,</strong> are simply how the game describes a complete player. Same five for baseball and softball, boys and girls. Pitchers get their own scale further down. Learn them, fall in love with the work, and chase your own ceiling. The numbers on these pages are a map for the dream, never a fence around it.
+      </div>
+    </div>
+
+    <!-- How to read the numbers -->
+    <div class="card" style="margin-bottom:16px; border-left:3px solid #E0A030;">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1; margin-bottom:8px;">How to read these numbers</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6;">
+        These are recruiting benchmarks, measured with today's tech (TrackMan, Rapsodo, Blast). They run a little hotter than the radar-gun numbers from 10 or 20 years ago, so read them as modern targets, not as a ceiling. They are <strong style="color:var(--gold-light);">ranges, not a single grade</strong>. Position changes everything: a catcher with a cannon gets a pass on speed, a center fielder does not. And every level starts at high school varsity here on purpose. Chasing radar-gun velo before then is how young arms get hurt (see <strong style="color:var(--gold-light);">Arm Health &amp; Growth Plates</strong> in Resources).
+      </div>
+    </div>
+
+    <!-- ── TOOL 1 · HIT ── -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--gold-dark); line-height:1;">1</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Hit · For Average</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:12px;">
+        The most important tool, and the hardest to fake. Hitting for average means squaring up good pitching and getting on base, at-bat after at-bat. This one is about <strong style="color:var(--gold-light);">production, not a lab number.</strong> A radar gun cannot tell you who comes through with two strikes and the game on the line.
+      </div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-dark); margin-bottom:6px;">What coaches actually watch</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--light); line-height:1.8;">
+        <strong style="color:var(--gold-light);">Quality at-bats.</strong> Works the count, controls the strike zone, does not chase.<br>
+        <strong style="color:var(--gold-light);">Hard contact in games,</strong> not just in the cage.<br>
+        <strong style="color:var(--gold-light);">A two-strike approach.</strong> Shortens up, battles, puts it in play.<br>
+        <strong style="color:var(--gold-light);">Production against good pitching,</strong> not just weak arms.
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:11.5px; color:var(--grey); line-height:1.5; margin-top:10px;">In a box score it shows up as batting average and on-base percentage. Read those in context: a .320 in a tough league beats a .480 against weak pitching. Coaches watch the at-bat, not just the line.</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); font-style:italic; padding:14px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:14px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Coach read:</strong> Don't chase a batting average and don't chase a bat-speed number. Chase quality at-bats. Control the zone, hit it hard, and the production follows. Log every at-bat honest. The hitter who battles beats the hitter who just swings hard.
+      </div>
+    </div>
+
+    <!-- ── TOOL 2 · POWER ── -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--gold-dark); line-height:1;">2</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Power</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:12px;">
+        What you do with contact in a game: driving balls into the gaps and over the fence, changing the score with one swing. The production is <strong style="color:var(--gold-light);">extra-base hits, home runs, and slugging,</strong> not a cage number. A big exit velocity says the power could be there. Doing it in games is what counts.
+      </div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-dark); margin-bottom:6px;">What coaches actually watch</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--light); line-height:1.8;">
+        <strong style="color:var(--gold-light);">Extra-base hits and home runs</strong> in real games.<br>
+        <strong style="color:var(--gold-light);">Slugging and driving in runs,</strong> not empty solo shots.<br>
+        <strong style="color:var(--gold-light);">Power to all fields,</strong> not only pull-side.<br>
+        <strong style="color:var(--gold-light);">Damage against good pitching.</strong>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:11.5px; color:var(--grey); line-height:1.5; margin-top:10px;">The raw tool underneath is exit velocity, measured at showcases off a tee. For reference, college bats often show <span data-baseball-only>tee numbers in the 90s and up.</span><span data-softball-only>tee numbers around 65 to 75 mph and up.</span> Treat it as the floor of your potential, not your production.</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); font-style:italic; padding:14px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:14px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Coach read:</strong> Exit velo gets you measured. Slugging gets you remembered. Build the strength for raw power, then take it into the game. Production over the radar gun, every time.
+      </div>
+    </div>
+
+    <!-- ── TOOL 3 · RUN ── (different metric per sport) -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--gold-dark); line-height:1;">3</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Run · Speed</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:12px;">
+        Speed shows up on defense, on the bases, and in your range. Baseball clocks it with the <strong style="color:var(--gold-light);">60-yard dash</strong>. Softball uses <strong style="color:var(--gold-light);">home-to-first</strong> time off a swing, because the bases are closer and the first step matters more. Lower is faster in both.
+      </div>
+      <table style="width:100%; border-collapse:collapse; font-family:'Barlow',sans-serif; font-size:13.5px;">
+        <thead><tr style="border-bottom:1px solid var(--gold-dark);">
+          <th style="padding:7px 8px; text-align:left; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">Level</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">⚾ 60-Yd Dash</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">🥎 Home-to-1B</th>
+        </tr></thead>
+        <tbody style="color:var(--light);">
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">HS Varsity</td><td style="padding:8px; text-align:center;">7.0–7.5 s<br><span style="font-size:11px; color:var(--grey);">under 6.9 = above avg</span></td><td style="padding:8px; text-align:center;">2.8–2.9 s</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">Junior College</td><td style="padding:8px; text-align:center;">~7.0 s</td><td style="padding:8px; text-align:center;">3.0–3.2 s</td></tr>
+          <tr><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">4-Yr College</td><td style="padding:8px; text-align:center;">6.5–6.8 s<br><span style="font-size:11px; color:var(--grey);">D1</span></td><td style="padding:8px; text-align:center;">2.7–3.0 s<br><span style="font-size:11px; color:var(--grey);">D1 elite 2.7–2.8</span></td></tr>
+        </tbody>
+      </table>
+      <div style="font-family:'Barlow',sans-serif; font-size:11.5px; color:var(--grey); line-height:1.5; margin-top:8px;"><span data-baseball-only>Log your 60 on your Profile and watch it trend over time.</span><span data-softball-only>Slappers run faster off a left-side running start: under 2.9 is competitive, under 2.7 is elite. Log your home-to-first on your Profile and watch it trend.</span></div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); font-style:italic; padding:14px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:14px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Coach read:</strong> Speed is the one tool you can improve with no risk to your arm. Sprint mechanics, first-step quickness, and lower-body strength all stack. Track it.
+      </div>
+    </div>
+
+    <!-- ── TOOL 4 · ARM ── -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--gold-dark); line-height:1;">4</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Arm · Throwing</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:12px;">
+        Arm strength is throwing velocity for position players, and for catchers it is also <strong style="color:var(--gold-light);">pop time</strong>, the seconds from the catch to the ball reaching second base. Softball arm velos run lower than baseball, that is normal and expected. Build the arm with daily care and long toss, never by maxing out.
+      </div>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-dark); margin-bottom:4px;">Throwing velocity (OF / IF)</div>
+      <table style="width:100%; border-collapse:collapse; font-family:'Barlow',sans-serif; font-size:13.5px; margin-bottom:14px;">
+        <thead><tr style="border-bottom:1px solid var(--gold-dark);">
+          <th style="padding:7px 8px; text-align:left; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">Level</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">⚾ Baseball</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">🥎 Softball</th>
+        </tr></thead>
+        <tbody style="color:var(--light);">
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">HS Varsity</td><td style="padding:8px; text-align:center;">70–80 mph</td><td style="padding:8px; text-align:center;">50–60 mph</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">Junior College</td><td style="padding:8px; text-align:center;">~78+ mph</td><td style="padding:8px; text-align:center;">52–61 mph</td></tr>
+          <tr><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">4-Yr College</td><td style="padding:8px; text-align:center;">85–95+ mph<br><span style="font-size:11px; color:var(--grey);">D1 OF 87+</span></td><td style="padding:8px; text-align:center;">55–64 mph<br><span style="font-size:11px; color:var(--grey);">D1</span></td></tr>
+        </tbody>
+      </table>
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold-dark); margin-bottom:4px;">Catcher pop time to 2B (lower = better)</div>
+      <table style="width:100%; border-collapse:collapse; font-family:'Barlow',sans-serif; font-size:13.5px;">
+        <thead><tr style="border-bottom:1px solid var(--gold-dark);">
+          <th style="padding:7px 8px; text-align:left; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">Level</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">⚾ Baseball</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">🥎 Softball</th>
+        </tr></thead>
+        <tbody style="color:var(--light);">
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">HS Varsity</td><td style="padding:8px; text-align:center;">2.1–2.25 s</td><td style="padding:8px; text-align:center;">2.1–2.2 s</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">Junior College</td><td style="padding:8px; text-align:center;">~2.0–2.1 s</td><td style="padding:8px; text-align:center;">~1.85–2.1 s</td></tr>
+          <tr><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">4-Yr College</td><td style="padding:8px; text-align:center;">1.95 s or faster<br><span style="font-size:11px; color:var(--grey);">D1</span></td><td style="padding:8px; text-align:center;">1.8–2.0 s<br><span style="font-size:11px; color:var(--grey);">D1</span></td></tr>
+        </tbody>
+      </table>
+      <div style="font-family:'Barlow',sans-serif; font-size:11.5px; color:var(--grey); line-height:1.5; margin-top:8px;">Softball's second base sits closer than baseball's, so the pop times look similar even though the throw is shorter.</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); font-style:italic; padding:14px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:14px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Coach read:</strong> A strong arm is built, not born, and it is also the easiest tool to ruin. J-Bands every day, long toss with a plan, and rest. Read the Growth Plates card before you ever chase a velo number.
+      </div>
+    </div>
+
+    <!-- ── TOOL 5 · FIELD ── (qualitative, no single number) -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <span style="font-family:'Bebas Neue',sans-serif; font-size:26px; color:var(--gold-dark); line-height:1;">5</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Field · Defense</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:10px;">
+        This is the tool with no clean number. Fielding percentage barely moves at the top because everyone makes the routine play. What coaches actually grade is what a stat line never shows: <strong style="color:var(--gold-light);">first-step reads, footwork, hands, range, and the transfer</strong> from glove to throwing hand. The eye test wins here.
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.6;">
+        What scouts look for at every level: gets to balls others can't (range), clean exchange and quick release, soft and quiet hands, and reliability on the routine play under pressure. The same standard applies in baseball and softball. Track your putouts, assists, and errors in your Journal so the trend is honest, but know the glove is judged with the eyes.
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); font-style:italic; padding:14px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:14px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Coach read:</strong> Defense is the tool that keeps you on the field while your bat catches up. It is all reps and footwork. No radar gun needed, and no excuse not to work it.
+      </div>
+    </div>
+
+    <!-- ── BONUS · PITCHING ── (separate from the 5 position tools) -->
+    <div class="card" style="margin-bottom:16px; border-left:3px solid var(--gold-dark);">
+      <div style="display:flex; align-items:baseline; gap:10px; margin-bottom:6px;">
+        <span style="font-size:22px; line-height:1;">⚾</span>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Pitching · Its Own Tool</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:12px;">
+        Pitchers are graded on their own scale, not the five position tools. Velocity gets the first look, but command and a second pitch keep you on the mound. Baseball measures the <strong style="color:var(--gold-light);">overhand fastball</strong>. Softball measures the <strong style="color:var(--gold-light);">windmill</strong>, which tops out lower because the motion is different, not weaker.
+      </div>
+      <table style="width:100%; border-collapse:collapse; font-family:'Barlow',sans-serif; font-size:13.5px;">
+        <thead><tr style="border-bottom:1px solid var(--gold-dark);">
+          <th style="padding:7px 8px; text-align:left; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">Level</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">⚾ Fastball</th>
+          <th style="padding:7px 8px; text-align:center; font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">🥎 Windmill</th>
+        </tr></thead>
+        <tbody style="color:var(--light);">
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">HS Varsity</td><td style="padding:8px; text-align:center;">75–83 mph</td><td style="padding:8px; text-align:center;">52–58 mph</td></tr>
+          <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">Junior College</td><td style="padding:8px; text-align:center;">~80–88 mph</td><td style="padding:8px; text-align:center;">55–62 mph</td></tr>
+          <tr><td style="padding:8px; color:var(--gold-light); font-family:'Barlow Condensed'; letter-spacing:0.5px;">4-Yr College</td><td style="padding:8px; text-align:center;">87–95 mph<br><span style="font-size:11px; color:var(--grey);">D1</span></td><td style="padding:8px; text-align:center;">57–64 mph<br><span style="font-size:11px; color:var(--grey);">D1 · Power-5 starters 66–70</span></td></tr>
+        </tbody>
+      </table>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); font-style:italic; padding:14px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:14px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Coach read:</strong> Velo opens the door. Command and a real second pitch keep you in the room. And no pitcher ever regretted respecting their pitch count. Protect the arm first, always.
+      </div>
+    </div>
+
+    <!-- ── WHICH TOOLS MATTER FOR MY POSITION ── -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1; margin-bottom:10px;">Which tools matter for your spot</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--light); line-height:1.7;">
+        No one is elite at all five. Coaches recruit the tools your position needs most.<br><br>
+        <strong style="color:var(--gold-light);">Catcher:</strong> arm and pop time first, then hit. Speed gets a pass.<br>
+        <strong style="color:var(--gold-light);">Middle infield (SS / 2B):</strong> field and arm, with speed close behind.<br>
+        <strong style="color:var(--gold-light);">Center field:</strong> run and arm. You cover the most ground on the field.<br>
+        <strong style="color:var(--gold-light);">Corner outfield / 1B / 3B:</strong> hit and power carry the load.<br>
+        <strong style="color:var(--gold-light);">Pitcher:</strong> its own scale. Velo, command, second pitch.<br><br>
+        Find the two tools your position lives on, then make them undeniable.
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); font-style:italic; padding:14px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:14px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> These numbers are a map, not a verdict. Late bloomers pass early risers every single year. Log the work, chase the next number, and let the body grow on its own clock.
+      </div>
+    </div>
+
+  </div>
+
   <div class="panel" id="panel-resources">
 
-    <!-- Hero card: warm gold-accent intro. Extra top margin + line-height
-         so the Bebas Neue title doesn't clip under the fixed top bar
-         when the panel scrolls to top. -->
-    <div class="card" style="margin-top:12px; margin-bottom:16px; padding-top:20px; background:linear-gradient(180deg, rgba(232,201,122,0.08) 0%, rgba(184,154,75,0.03) 100%); border-color:var(--gold-dark);">
+    <!-- Hero card: warm gold-accent intro. margin-top:48px clears the 64px
+         fixed top bar so the Bebas Neue title isn't clipped when the panel
+         opens at scroll-top (Coach Young 2026-05-30, matching the 5 Tools
+         hero fix). -->
+    <div class="card" style="margin-top:48px; margin-bottom:16px; padding-top:20px; background:linear-gradient(180deg, rgba(232,201,122,0.08) 0%, rgba(184,154,75,0.03) 100%); border-color:var(--gold-dark);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
         <svg class="mg-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold); flex-shrink:0;"><use href="#mg-icon-graduation-cap"/></svg>
         <div style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:2px; color:var(--gold); line-height:1.2;">Resources</div>
@@ -6234,46 +6463,10 @@ input[type="number"] {
       </div>
     </div>
 
-    <!-- ────────── GROUP 1: GET HELP ──────────
-         Self-serve first (FAQ), structured form second. No direct email
-         option here — doesn't scale at national volume and creates a
-         spam/inbox problem. Email support remains listed in Privacy +
-         Terms for users who genuinely need it. The structured feedback
-         form auto-routes to the right inbox so individual addresses
-         don't have to be promoted. -->
-    <div class="card" style="margin-bottom:16px;">
-      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
-        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Get Help</div>
-        <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Try FAQ First</div>
-      </div>
-      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
-        Most answers live below. If the FAQ doesn't cover it, use the feedback form.
-      </div>
-      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
-
-        <button type="button" onclick="openHelpModal()" style="display:block; width:100%; text-align:left; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; color:var(--white); cursor:pointer; font-family:inherit;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
-            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">❓ Help &amp; FAQ &rarr;</div>
-            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Self-Serve · Instant</div>
-          </div>
-          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The questions parents and players ask most. Tap a question, see the answer. No waiting.</div>
-        </button>
-
-        <button type="button" onclick="openSettingsAtFeedback()" style="display:block; width:100%; text-align:left; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; color:var(--white); cursor:pointer; font-family:inherit;">
-          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
-            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📋 Send Feedback &rarr;</div>
-            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Form · 48h Reply</div>
-          </div>
-          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">For bugs, feature requests, account questions, or anything the FAQ misses. Routed to the right team.</div>
-        </button>
-
-      </div>
-      <div style="font-family:'Barlow',sans-serif; font-size:14.5px; color:var(--light); font-style:italic; padding:16px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:16px;">
-        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> 90% of questions are answered in the FAQ. Check there first. The form handles everything else.
-      </div>
-    </div>
-
-    <!-- ────────── GROUP 2: ELIGIBILITY CENTERS ────────── -->
+    <!-- ────────── GROUP 1: ELIGIBILITY CENTERS ──────────
+         Get Help moved to the bottom of this panel 2026-05-30 (Coach Young)
+         so the recruiting resources lead the page. -->
+    <!-- ────────── ELIGIBILITY CENTERS ────────── -->
     <div class="card" style="margin-bottom:16px;">
       <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
         <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Eligibility Centers</div>
@@ -6333,7 +6526,7 @@ input[type="number"] {
       </div>
       <div style="display:grid; grid-template-columns:1fr; gap:8px;">
 
-        <a href="https://www.perfectgame.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+        <a href="https://www.perfectgame.org/" target="_blank" rel="noopener" data-baseball-only style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Perfect Game &rarr;</div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Baseball · National</div>
@@ -6341,7 +6534,7 @@ input[type="number"] {
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The biggest national platform. Profile, showcases, rankings, and recruit data all live here.</div>
         </a>
 
-        <a href="https://www.prepbaseballreport.com/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+        <a href="https://www.prepbaseballreport.com/" target="_blank" rel="noopener" data-baseball-only style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ Prep Baseball Report (PBR) &rarr;</div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Baseball · State</div>
@@ -6349,7 +6542,7 @@ input[type="number"] {
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">State-by-state coverage. Strong for in-state coaches and regional showcases.</div>
         </a>
 
-        <a href="https://extrainningsoftball.com/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+        <a href="https://extrainningsoftball.com/" target="_blank" rel="noopener" data-softball-only style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Extra Inning Softball &rarr;</div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Softball · National</div>
@@ -6357,12 +6550,30 @@ input[type="number"] {
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">National softball rankings, events, and recruit-board coverage. Bookmark for tournament season.</div>
         </a>
 
-        <a href="https://nfca.org/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+        <a href="https://nfca.org/" target="_blank" rel="noopener" data-softball-only style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 NFCA (Softball Coaches) &rarr;</div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Softball · Directory</div>
           </div>
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Find any college softball coach by school. Searchable, current contacts.</div>
+        </a>
+
+        <!-- Softball showcase circuits added 2026-05-30. PGF + Alliance are
+             the two biggest national college-exposure platforms for fastpitch. -->
+        <a href="https://pgfevents.com/" target="_blank" rel="noopener" data-softball-only style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Premier Girls Fastpitch (PGF) &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Softball · Showcases</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The premier national showcase circuit. Camps and events put you in front of the top college coaches.</div>
+        </a>
+
+        <a href="https://thealliancefastpitch.com/" target="_blank" rel="noopener" data-softball-only style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 The Alliance Fastpitch &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Softball · Rankings</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">National league with team rankings across nine regions. Tournaments from 10U to 18U.</div>
         </a>
 
       </div>
@@ -6376,8 +6587,10 @@ input[type="number"] {
          from boys (NCAA-recruiting-centric) and from softball (NFCA +
          college pipeline). Most resources are nonprofit + USA Baseball
          + MLB Develops. Sitting between Showcases and Academic so it
-         reads as another pathway category, not an afterthought. -->
-    <div class="card" style="margin-bottom:16px;">
+         reads as another pathway category, not an afterthought. Whole card
+         is data-baseball-only: it's girls playing baseball, not softball, so
+         it hides in softball mode (Coach Young 2026-05-30). -->
+    <div class="card" data-baseball-only style="margin-bottom:16px;">
       <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
         <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Girls in Baseball</div>
         <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Big Year · Growing Fast</div>
@@ -6493,6 +6706,113 @@ input[type="number"] {
       </div>
       <div style="font-family:'Barlow',sans-serif; font-size:14.5px; color:var(--light); font-style:italic; padding:16px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:16px;">
         💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> A 3.5 GPA plus 1100 SAT opens doors a 4.0 GPA alone won't. Coaches see both numbers.
+      </div>
+    </div>
+
+    <!-- ────────── GROUP 6: ARM HEALTH & GROWTH PLATES ──────────
+         Coach Young 2026-05-30: education on growth-plate (physeal)
+         injuries, the most common and most preventable serious injury
+         in youth baseball and softball. This is also the reason the
+         5 Tools benchmark tables start at HS Varsity and do not list
+         youth velo targets. Cross-sport (overhand throwing + windmill).
+         Educational only, with an explicit "see a doctor" disclaimer.
+         Pairs with the daily Arm Care checklist in the Journal. -->
+    <div class="card" style="margin-bottom:16px; border-left:3px solid #E0A030;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">🦴 Arm Health &amp; Growth Plates</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Read This Young</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        The most common serious injuries in youth baseball and softball are also the most preventable. Almost all of them trace back to the growth plate. Know what it is before you chase a number.
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <div style="padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light); margin-bottom:4px;">What a growth plate is</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.55;">A growth plate is a soft layer of cartilage near the ends of a young athlete's bones, where the bone is still growing. It stays open until the late teens. Here is the part that matters: while it is open, it is the weakest link in the joint, weaker than the ligaments and tendons around it. A force that would only strain a grown adult can crack or slip a kid's growth plate instead.</div>
+        </div>
+
+        <div style="padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light); margin-bottom:4px;">The injuries you actually see</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.55;">
+            <strong style="color:var(--light);">Little League elbow</strong> and <strong style="color:var(--light);">Little League shoulder</strong> are growth-plate overuse injuries from too much throwing. <strong style="color:var(--light);">Osgood-Schlatter</strong> (knee) and <strong style="color:var(--light);">Sever's</strong> (heel) come from running and jumping. Softball windmill pitching is easier on the elbow than overhand, but high pitch counts still load the shoulder, back, and hip the same way. Different sport, same rule.
+          </div>
+        </div>
+
+        <div style="padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light); margin-bottom:4px;">What causes it</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.55;">Overuse. Throwing year round with no off-season. Chasing radar-gun velocity before the body is built for it. Pitching through arm pain. None of these show up as one big moment. They build up quietly, then the growth plate gives.</div>
+        </div>
+
+        <div style="padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light); margin-bottom:4px;">How you protect it</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.55;">Respect pitch counts and rest days, scaled to your age. Take two to four months off from throwing every year. Do your daily arm care (the checklist lives in your Journal). And treat arm pain as information, not weakness. Sharp or lasting pain in a young elbow or shoulder is never something to push through.</div>
+        </div>
+
+        <!-- Pitch Smart is USA Baseball only; baseball mode shows the link.
+             Softball has no official pitch-count standard yet, so softball
+             mode shows a sports-medicine workload note instead of a link
+             (Coach Young 2026-05-30). -->
+        <a href="https://www.mlb.com/pitch-smart/pitching-guidelines" target="_blank" rel="noopener" data-baseball-only style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">⚾ USA Baseball Pitch Smart &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Pitch Counts · By Age</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The official pitch-count and rest-day guidelines by age. The single best free resource for keeping a young arm healthy.</div>
+        </a>
+
+        <div data-softball-only style="padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Windmill Pitch Counts</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Sports-Med Guidance</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Softball has no single official standard like baseball's, but sports-medicine groups recommend roughly 50 to 100 pitches per game depending on age, with rest days between starts. The windmill is easier on the elbow than overhand, but it still loads the shoulder, back, and hip. Manage the innings, watch for pain, and rest the arm.</div>
+        </div>
+
+      </div>
+
+      <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.55; padding:14px 14px 0; margin-top:4px;">
+        <strong style="color:#E0A030;">This is education, not medical advice.</strong> If a young player has arm, elbow, shoulder, knee, or heel pain that is sharp, swelling, or lasts more than a few days, stop and see a doctor or athletic trainer. Growth-plate injuries caught early almost always heal. Ignored, some do not.
+      </div>
+
+      <div style="font-family:'Barlow',sans-serif; font-size:14.5px; color:var(--light); font-style:italic; padding:16px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> This is why our benchmark numbers start at high school varsity. Before that, the goal is not velo. It is staying healthy long enough to be great when it counts.
+      </div>
+    </div>
+
+    <!-- ────────── GET HELP (moved here from the top of the panel
+         2026-05-30 so recruiting resources lead). Self-serve FAQ first,
+         structured feedback form second. No direct email by design. -->
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">Get Help</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Try FAQ First</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        Most answers are in the FAQ. If it doesn't cover what you need, use the feedback form.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <button type="button" onclick="openHelpModal()" style="display:block; width:100%; text-align:left; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; color:var(--white); cursor:pointer; font-family:inherit;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">❓ Help &amp; FAQ &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Self-Serve · Instant</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The questions parents and players ask most. Tap a question, see the answer. No waiting.</div>
+        </button>
+
+        <button type="button" onclick="openSettingsAtFeedback()" style="display:block; width:100%; text-align:left; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; color:var(--white); cursor:pointer; font-family:inherit;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">📋 Send Feedback &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Form · 48h Reply</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">For bugs, feature requests, account questions, or anything the FAQ misses. Routed to the right team.</div>
+        </button>
+
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14.5px; color:var(--light); font-style:italic; padding:16px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> 90% of questions are answered in the FAQ. Check there first. The form handles everything else.
       </div>
     </div>
 
@@ -13480,6 +13800,211 @@ function renderHWTracker() {
   try { updateProfileHWDisplay(); } catch(e) {}
 }
 
+// ── 60-YARD DASH PROGRESS LOG ────────────────────────
+// Coach Young 2026-05-30: the 60 time used to overwrite itself on every
+// edit, so a player never saw whether they were getting faster. Now each
+// new time is snapshotted with a date (mirrors the H/W log pattern). The
+// live pl-sixty field still feeds profile.sixty for cloud sync, unchanged;
+// this layer just keeps the dated history and the faster/slower trend.
+// Speed is measured differently by sport: baseball uses the 60-yard dash,
+// softball uses home-to-first off a swing (faster numbers, ~2.3-4.0s). So
+// the field label, placeholder, validation range, and progress heading all
+// adapt to the active sport, and each sport keeps its OWN log so a 'both'
+// family never mixes a 6.8 (60-yd) with a 2.9 (home-to-1B). Coach Young
+// 2026-05-30.
+function _mgSportNow() {
+  try { return window.mgSport || localStorage.getItem('mg_sport') || 'baseball'; } catch(e) { return 'baseball'; }
+}
+function getSpeedMetric() {
+  if (_mgSportNow() === 'softball') {
+    return { sport:'softball', short:'Home-to-First', placeholder:'e.g. 2.9', min:2.0, max:5.0 };
+  }
+  return { sport:'baseball', short:'60-Yard', placeholder:'e.g. 6.8', min:4.0, max:12.0 };
+}
+function speedLogKey() {
+  return _mgSportNow() === 'softball' ? 'ybg_h1_log' : 'ybg_sixty_log';
+}
+function getSixtyLog() {
+  try { return JSON.parse(localStorage.getItem(speedLogKey()) || '[]'); } catch(e) { return []; }
+}
+function saveSixtyLog(log) {
+  try { localStorage.setItem(speedLogKey(), JSON.stringify(log)); } catch(e) {}
+}
+
+// Commit a finished 60 time to the dated log. Fired on blur of #pl-sixty
+// (not oninput) so partial keystrokes like "6." never get logged. Validates
+// a plausible 60-yard range (4.0-12.0s). A same-day re-edit updates today's
+// row instead of stacking duplicates, and an unchanged value is a no-op.
+function logSixtyTime() {
+  var el = document.getElementById('pl-sixty');
+  if (!el) return;
+  var raw = (el.value || '').trim();
+  if (!raw) { renderSixtyProgress(); return; }
+  var val = parseFloat(raw);
+  var metric = getSpeedMetric();
+  if (isNaN(val) || val < metric.min || val > metric.max) { renderSixtyProgress(); return; }
+  var rounded = Math.round(val * 100) / 100;
+  var log = getSixtyLog();
+  var today = new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' });
+  var last = log[log.length - 1];
+  if (last && last.value === rounded) { renderSixtyProgress(); return; }
+  if (last && last.date === today) {
+    last.value = rounded; last.dateTs = Date.now();
+  } else {
+    log.push({ id: Date.now(), value: rounded, date: today, dateTs: Date.now() });
+  }
+  saveSixtyLog(log);
+  renderSixtyProgress();
+  try { if (typeof showShareToast === 'function') showShareToast('✅ ' + metric.short + ' time logged · ' + rounded.toFixed(2) + 's'); } catch(e) {}
+}
+
+function deleteSixtyEntry(id) {
+  if (!confirm('Delete this 60 time?')) return;
+  saveSixtyLog(getSixtyLog().filter(function(e){ return e.id !== id; }));
+  renderSixtyProgress();
+}
+
+// One-time migration: existing players already had a single profile.sixty
+// value. Seed it as the first log entry so they don't lose their current
+// time when the history UI goes live.
+function migrateSixtyLog() {
+  try {
+    if (getSixtyLog().length) return;
+    var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    var val = parseFloat(p.sixty);
+    var m = getSpeedMetric();
+    if (isNaN(val) || val < m.min || val > m.max) return;
+    var when = p.savedAt ? new Date(p.savedAt) : new Date();
+    saveSixtyLog([{
+      id: when.getTime(),
+      value: Math.round(val * 100) / 100,
+      date: when.toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric' }),
+      dateTs: when.getTime()
+    }]);
+  } catch(e) {}
+}
+
+// Render the progress block under the 60 field and mirror the latest time
+// into the read-only Stats panel field (#st-sixty), which until now only
+// ever showed placeholder text. Lower time = faster = green.
+function renderSixtyProgress() {
+  var wrap = document.getElementById('sixty-progress');
+  var stEl = document.getElementById('st-sixty');
+  var log  = getSixtyLog();
+  var metric = getSpeedMetric();
+
+  if (!log.length) {
+    if (wrap) { wrap.style.display = 'none'; wrap.innerHTML = ''; }
+    if (stEl) stEl.value = '';
+    return;
+  }
+
+  var latest = log[log.length - 1];
+  var best   = log.reduce(function(a, b){ return b.value < a.value ? b : a; }, log[0]);
+
+  if (stEl) {
+    stEl.value = latest.value.toFixed(2) + ' sec' + (best.value < latest.value ? ' (PR ' + best.value.toFixed(2) + ')' : ' · PR');
+  }
+  if (!wrap) return;
+
+  var rowsHtml = log.slice().reverse().map(function(e, i, arr){
+    var prev = arr[i + 1]; // the older time
+    var deltaStr = '<span style="color:var(--grey);">—</span>';
+    if (prev) {
+      var d = Math.round((e.value - prev.value) * 100) / 100; // negative = faster
+      if (d === 0) {
+        deltaStr = '<span style="color:var(--grey);">±0.00</span>';
+      } else {
+        var faster = d < 0;
+        deltaStr = '<span style="color:' + (faster ? '#27AE60' : '#E57373') + ';">' + (faster ? '▼ ' : '▲ +') + Math.abs(d).toFixed(2) + 's</span>';
+      }
+    }
+    var isBest = e.value === best.value;
+    return '<tr style="border-bottom:1px solid var(--border);">' +
+      '<td style="padding:8px 10px; color:var(--gold); font-family:\'Barlow Condensed\'; letter-spacing:1px;">' + e.date + '</td>' +
+      '<td style="padding:8px 10px; text-align:center; color:var(--light); font-family:\'Bebas Neue\'; font-size:18px; letter-spacing:1px;">' + e.value.toFixed(2) + 's' + (isBest ? ' <span style="font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1px; color:var(--gold); vertical-align:middle;">PR</span>' : '') + '</td>' +
+      '<td style="padding:8px 10px; text-align:center;">' + deltaStr + '</td>' +
+      '<td style="padding:8px 10px; text-align:right;"><button onclick="deleteSixtyEntry(' + e.id + ')" style="background:none; border:none; color:var(--grey); cursor:pointer; font-size:12px;">✕</button></td>' +
+      '</tr>';
+  }).join('');
+
+  var sinceFirst = (log.length > 1) ? Math.round((latest.value - log[0].value) * 100) / 100 : 0;
+  var footer;
+  if (log.length <= 1) {
+    footer = 'First time logged. Add another after your next test to see the trend.';
+  } else if (sinceFirst < 0) {
+    footer = '🔥 Down ' + Math.abs(sinceFirst).toFixed(2) + 's since your first logged time. That is the work showing up.';
+  } else if (sinceFirst > 0) {
+    footer = 'Up ' + sinceFirst.toFixed(2) + 's from your first time. Speed moves with strength and rest. Keep logging.';
+  } else {
+    footer = 'Holding steady. Log it again after your next speed session.';
+  }
+
+  wrap.style.display = 'block';
+  wrap.innerHTML =
+    '<div style="background:rgba(232,201,122,0.05); border:1px solid var(--gold-dark); border-radius:4px; padding:12px 14px;">' +
+      '<div style="display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:10px;">' +
+        '<div style="font-family:\'Barlow Condensed\'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold);">' + metric.short + ' Progress</div>' +
+        '<div style="font-family:\'Barlow Condensed\'; font-size:12px; font-weight:700; letter-spacing:1px; color:var(--grey);">Best ' + best.value.toFixed(2) + 's</div>' +
+      '</div>' +
+      '<table style="width:100%; border-collapse:collapse; font-family:\'Barlow\'; font-size:13px;">' +
+        '<thead><tr style="border-bottom:1px solid var(--gold-dark);">' +
+          '<th style="padding:6px 10px; text-align:left; font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">Date</th>' +
+          '<th style="padding:6px 10px; text-align:center; font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">Time</th>' +
+          '<th style="padding:6px 10px; text-align:center; font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); font-weight:700;">Change</th>' +
+          '<th></th>' +
+        '</tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody>' +
+      '</table>' +
+      '<div style="font-family:\'Barlow\'; font-size:12px; color:var(--grey); line-height:1.5; padding-top:10px; margin-top:8px; border-top:1px solid #2A2520;">' + footer + '</div>' +
+    '</div>';
+}
+
+// Keep the Profile speed field's placeholder in sync with the active sport.
+// (The label, helper line, and Stats label swap via the data-sport CSS.)
+function updateSpeedFieldUI() {
+  try {
+    var inp = document.getElementById('pl-sixty');
+    if (inp) inp.placeholder = getSpeedMetric().placeholder;
+  } catch(e) {}
+}
+
+// When the player flips the Baseball/Softball toggle, re-point the speed
+// field + progress block at the new sport (different metric, different log).
+(function hookSportToggleForSpeed(){
+  try {
+    if (typeof window.setActiveSport !== 'function' || window.__mgSpeedHooked) return;
+    var orig = window.setActiveSport;
+    window.setActiveSport = function() {
+      var r = orig.apply(this, arguments);
+      try { updateSpeedFieldUI(); renderSixtyProgress(); } catch(e) {}
+      return r;
+    };
+    window.__mgSpeedHooked = true;
+  } catch(e) {}
+})();
+
+// ── 5 TOOLS · SPORT-AWARE COLUMNS ────────────────────
+// Coach Young 2026-05-30: the benchmark tables hold a Baseball column and
+// a Softball column. Showing both at once felt busy, so we tag the
+// baseball cells [data-baseball-only] and the softball cells
+// [data-softball-only] and let the global data-sport CSS hide whichever
+// sport isn't active. Column order is fixed: Level | Baseball | Softball.
+// Pure attribute tagging, no re-render needed when the sport toggles.
+function tagFiveToolsColumns() {
+  try {
+    var panel = document.getElementById('panel-tools');
+    if (!panel) return;
+    panel.querySelectorAll('table').forEach(function(tbl){
+      tbl.querySelectorAll('tr').forEach(function(tr){
+        var cells = tr.children;
+        if (cells[1]) cells[1].setAttribute('data-baseball-only', '');
+        if (cells[2]) cells[2].setAttribute('data-softball-only', '');
+      });
+    });
+  } catch(e) {}
+}
+
 // ─── START ────────────────────────────────────────────────
 // Option A — handle Stripe Checkout return BEFORE init() runs so the
 // cardCaptured flag is set before checkAccess() reads it on the same tick.
@@ -13492,6 +14017,8 @@ loadProfilePic();
 loadGradesUI();
 loadGrades();
 renderHWTracker();
+try { migrateSixtyLog(); renderSixtyProgress(); updateSpeedFieldUI(); } catch (e) { console.warn('[MG] sixty log init:', e); }
+try { tagFiveToolsColumns(); } catch (e) { console.warn('[MG] 5 tools columns:', e); }
 updateSubscriptionCard();
 try { renderInstallCard(); } catch (e) { console.warn('[MG] renderInstallCard:', e); }
 // Journal page is the default active panel — paint reminder banners on
