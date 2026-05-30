@@ -7165,9 +7165,34 @@ function closeEditPinOverlay() {
 // user is signed in on this device, else {}. Lets the server scope by-email
 // reads to the owner (lib/access.js). Reads firebase.auth() directly so it
 // works regardless of script-block ordering; never throws (degrades to {}).
+//
+// On a cold start the persisted session is still restoring, so currentUser
+// can be momentarily null for a user who IS signed in. We wait for auth state
+// to settle (authStateReady, or a one-shot onAuthStateChanged with a short
+// timeout) before concluding there's no token — otherwise a signed-in user
+// would false-negative into a token-less call and 401 under enforcement.
+// For local-only users this resolves to null quickly.
 async function mgIdTokenHeader() {
   try {
-    var u = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    if (typeof firebase === 'undefined' || !firebase.auth) return {};
+    var a = firebase.auth();
+    var u = a.currentUser;
+    if (!u) {
+      if (typeof a.authStateReady === 'function') {
+        await a.authStateReady();
+        u = a.currentUser;
+      } else {
+        u = await new Promise(function (resolve) {
+          var done = false;
+          var unsub = a.onAuthStateChanged(function (usr) {
+            if (done) return; done = true; try { unsub(); } catch (e) {} resolve(usr || null);
+          });
+          setTimeout(function () {
+            if (done) return; done = true; try { unsub(); } catch (e) {} resolve(a.currentUser || null);
+          }, 2500);
+        });
+      }
+    }
     if (u && u.getIdToken) return { 'Authorization': 'Bearer ' + (await u.getIdToken()) };
   } catch (e) {}
   return {};
