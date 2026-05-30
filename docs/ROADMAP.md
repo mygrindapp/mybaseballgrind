@@ -15,7 +15,7 @@
 1. **Smoke-walk mygrindapp.com on phone in incognito** (~60 sec). BEFORE launching ads. Land on landing → tap Start Free Trial → run Screens 1-7 → plan picker → tap Start Trial → Stripe Checkout opens → abort. If anything looks visibly wrong, fix first.
 2. **Mirror Firestore rules into Firebase Console** (~3 min). Paste contents of `firestore.rules` at https://console.firebase.google.com/project/my-grind-b8486/firestore/rules → Publish. Until done, client-side child-profile writes fail (Admin SDK still works server-side).
 3. **Launch first ad creative on @youngsbaseball** (Thursday morning, 2026-05-28). Memory `mygrind_launch_funnel` says @mygrindapp has bot followers — paid promo routes through @youngsbaseball.
-4. **Watch FOUNDERMYGRIND counter** as ads run. `https://www.mygrindapp.com/api/admin/founder-count?token=85f2503218729913e164a7d1beea5c0fd5c1240808bb2e9a` — currently 0/100. Alert in next_session_start when approaching 100 so Coach can flip to 3-month or 1-month promo per his locked plan.
+4. **Watch FOUNDERMYGRIND counter** as ads run. Token is now HEADER-only (not in the URL): `curl https://www.mygrindapp.com/api/admin/founder-count -H "Authorization: Bearer $ADMIN_RESCUE_TOKEN"` (token in Vercel env + Coach's Notes app). ⚠️ The old token was committed in this file's git history as a query param — ROTATE `ADMIN_RESCUE_TOKEN`. Currently 0/100. Alert in next_session_start when approaching 100 so Coach can flip to 3-month or 1-month promo per his locked plan.
 5. **Monitor Vercel Analytics + Stripe Dashboard + Resend Dashboard** during first hour of impressions. Conversion math now has card-on-file at signup — expect 30-60% lower top-of-funnel but 5-10x higher trial-to-paid.
 6. **Paste Part 2 newsletter into Mailchimp as draft** (~10 min, carried from Day +8). Full packet drafted 5-25. Subject "Here is what your coach sees. And why they are not saying it." Audience: MyGrind (`a7d801599a`).
 7. **Paste Part 3 newsletter into Mailchimp as draft** (~10 min, carried). Subject "This is the part that tells you what to actually do." Send target Tue 6-2 9am PT.
@@ -27,6 +27,18 @@
 13. **Mr. Sites LA Heat outreach** (carried). Suggested copy in `team_potential_collaborators` memory.
 14. **Em-dash sweep continuation** (~370 instances repo-wide, task #14, deferred polish). Only landing + signup user-visible em-dashes done in pre-ad pass. Future pass must distinguish placeholder em-dashes (e.g. `<span id="x">—</span>`) from sentence em-dashes — file-by-file with quality checks.
 15. **Daily morning affirmation feature** (task #27, ~3-4h, Coach said build later). Curated message library + 7am Resend email + in-app banner.
+
+<!-- SHIPPED 2026-05-29 (PM — Security Audit + Auth Enforcement):
+- Front-to-back security/perf audit on Opus 4.8. 5 commits to `main`, all deployed + verified live: 1995d10 6dca7f4 8ab3551 77944ce 57f8f94.
+- Stripe webhook now returns 500 (not 200) on handler error so Stripe retries — was silently dropping a paying customer's onboarding; handler idempotency confirmed safe to retry.
+- Admin rescue token (founder-count + signin-link) moved out of the URL query string into an Authorization / X-Admin-Token HEADER. Browser-URL workflow retired — use curl with the header.
+- Security headers added in vercel.json: nosniff, X-Frame-Options SAMEORIGIN, Referrer-Policy, HSTS, Permissions-Policy + a Report-Only CSP (kept report-only by recommendation; nonce-based CSP is the future XSS win).
+- CRITICAL closed: get-subscription / stripe-portal-session / feedback-list?parent= were unauth — anyone who knew an email could read billing state + a minor's coaching history, or open a billing portal. New lib/access.js requires a Firebase ID token whose email matches the requested email. Enforced by default (ACCESS_TOKEN_ENFORCE, kill switch=false). Verified live: anonymous -> 401, signed-in happy path confirmed by Coach.
+- Perf: ~633 KB of base64 images externalized to content-hashed /assets/img/ + immutable cache (softball.html 1.5MB->1.17MB).
+- Residual: feedback-list?player=<phone> stays open-but-PII-stripped until SMS verification (Twilio TFV) gives a phone<->identity link.
+- ROTATE ADMIN_RESCUE_TOKEN — the old value was committed in this file's git history as a query param.
+- New memory: security_audit_2026-05-29.md.
+-->
 
 <!-- SHIPPED 2026-05-29 (Day +11 — Landing Conversion + SEO Overhaul + Blog Launch):
 - 11 commits 5-29 on top of the 5-28 Path B landing rebuild (7 commits). Full detail in STATUS.md Day +11.
@@ -157,7 +169,7 @@ Estimate: 2-3 focused sessions. Trigger when baseball/softball stabilize + 25+ p
 -->
 
 ### P0 — Cross-cohort safety (added 2026-05-19 PM)
-4. **`/api/admin/signin-link` admin rescue endpoint.** SHIPPED in commit `694e18c`. Coach hits `https://www.mygrindapp.com/api/admin/signin-link?email=X&token=ADMIN_RESCUE_TOKEN` in browser, gets a working magic-link URL via Firebase Admin SDK, pastes into iMessage to any stuck customer. Token in 1Password. Use whenever a customer can't sign back in regardless of cause.
+4. **`/api/admin/signin-link` admin rescue endpoint.** SHIPPED in commit `694e18c`; token transport hardened 2026-05-29 (header-only). Run: `curl "https://www.mygrindapp.com/api/admin/signin-link?email=CUSTOMER@EMAIL" -H "Authorization: Bearer $ADMIN_RESCUE_TOKEN"` → returns a working magic-link URL via Firebase Admin SDK; paste into iMessage to any stuck customer. Token in Vercel env + Coach's Notes app (browser-URL method no longer works). Use whenever a customer can't sign back in regardless of cause.
 5. **Send Setup Link modal on signup.html Screen 8.** SHIPPED in commit `aeb4038`. Replaces dead Phase 3 placeholder alert with 4-path share modal (Copy Link, Send via Messages, Open on this device, QR Code). No backend dependency, no phone-number ask.
 6. **SMS opt-in consent strengthened.** SHIPPED in commit `d0e1df1`. Added HELP keyword, message frequency disclosure, inline Privacy Policy link. Clears Twilio TFV Errors 30506/30513.
 
