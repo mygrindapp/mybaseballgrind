@@ -215,8 +215,19 @@ Move nameservers from Namecheap Web Hosting DNS to Cloudflare → verify `mygrin
 ### P5 — Phase 7 (Player dashboard)
 `onboarding.html` S14 currently shows a holding-screen overlay. Phase 7 is the real player dashboard — likely a stripped-down `softball.html` for the kid side or a new `player-dashboard.html`.
 
-### P6 — Real-time Cloud Sync (Phase B v3)
+### P6 — Real-time Cloud Sync (Phase B v3) — DIAGNOSED 2026-05-31
 Third attempt at auto-sync. The first two attempts caused full UI breakage in `softball.html`. **Do this only after P1 done AND with a clear test plan.** Key lesson: don't add a full-screen overlay that can become unclickable. Use a non-blocking pattern.
+
+**2026-05-31 diagnosis (investigation done — next session can go straight to the fix):**
+- **Push UP works for entries + profile.** `saveEntry()` (line ~9200) auto-calls `fbSaveEntry(latest)` reading the canonical `ybg_softball_state`; `saveProfile()` (line ~13466) auto-calls `fbSaveProfile` reading canonical `ybg_softball_profile`. Both push correctly to Firestore for signed-in users.
+- **🐞 ROOT BUG — restore writes to the WRONG keys.** `syncFromCloud()` (line ~19467) writes restored profile to `ybg_profile` (line 19477) and restored entries to `ybg_state` (line 19503) — the **OLD** keys. The live app reads the **canonical** `ybg_softball_profile` / `ybg_softball_state`. There is NO migration bridging them (only `migrateSixtyLog`, unrelated). So cloud data restores into keys the app doesn't read → on a fresh device or after iOS storage eviction, the backup may not actually repopulate the app. Strong candidate for the prior "sync seemed broken" history.
+- **Coverage gaps (push UP):** goals only push during the manual `bulkBackupToCloud()` (`fbSaveState` called only at ~19520 / ~19568, not on the goals-edit path); academics grades (`ybg_subject_grades`), settings (`ybg_settings`), homework log (`ybg_hw_log`) are never pushed. So even a signed-in user losing localStorage loses goals/academics/settings.
+- **Biggest exposure: local-only (not-signed-in) users sync NOTHING** — all `fbSave*` are guarded by `if (!fbUser) return`. Their data is localStorage-only → fully exposed to iOS Safari's ~7-day storage eviction.
+- **Safe fix plan (incremental, testable, do NOT rewrite restore-merge blind):**
+  1. **Push-UP coverage (LOW risk, additive, fire-and-forget):** wire `fbSaveState`/new `fbSaveMisc` into the goals + academics + settings save paths, guarded by `if (!fbUser) return`. Can't corrupt local data or break UI — only writes more to cloud.
+  2. **Fix the restore key mismatch (MEDIUM risk — needs device test):** point `syncFromCloud` at the canonical keys, preserving the existing local-wins merge (`Object.assign({}, cloud, local)`) so we never clobber fresher local data. Test two-device: sign in on A, create data, sign in on B, confirm it appears; then clear A's storage, re-sign-in, confirm restore.
+  3. **Reduce local-only exposure:** make the cloud-backup nudge harder to ignore / encourage sign-in (don't force — COPPA local-only paths exist).
+  - **Verify on a real device before shipping** (per CLAUDE.md). This is a source-of-truth change; rushing it is how the UI broke twice.
 
 ### P7 — Discoverability ("Why isn't anyone using this?")
 If beta users aren't logging entries daily:
