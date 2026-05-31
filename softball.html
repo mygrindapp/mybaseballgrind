@@ -610,6 +610,35 @@
     padding: 24px 24px calc(220px + env(safe-area-inset-bottom, 0px));
   }
 
+  /* ── DESKTOP (≥768px) — phone-first app, but no broken desktop ──
+     The iOS scroll-lock (html/body height:100svh + overflow:hidden + an
+     inner-scrolling <main> + a fixed bottom nav) is what makes desktop
+     "float" and cuts off the bottom. On desktop we return to normal
+     full-page scrolling and center the app as an intentional phone-width
+     column. Scoped to min-width:768px so the mobile layout is provably
+     untouched. Added 2026-05-31. */
+  @media (min-width: 768px) {
+    html, body { height: auto; min-height: 100vh; overflow: visible; }
+    body::before { display: none; }            /* kill the floating fixed pattern */
+    main {
+      max-width: 600px;
+      height: auto;
+      min-height: 100vh;
+      overflow: visible;                        /* page scrolls, not inner-scroll */
+      border-left: 1px solid #1A1510;
+      border-right: 1px solid #1A1510;
+      padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+    }
+    /* Center the fixed bottom nav to the column (inline styles → !important) */
+    #mg-bottom-nav {
+      left: 50% !important;
+      right: auto !important;
+      width: 100% !important;
+      max-width: 600px !important;
+      transform: translateX(-50%) !important;
+    }
+  }
+
   /* ── PANEL ── */
   .panel { display: none; }
   .panel.active { display: block; animation: fadeIn 0.3s ease; }
@@ -1404,7 +1433,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v303';
+    const CACHE = 'ybg-mygrind-v304';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1999,10 +2028,9 @@ function signOutAndSwitchAccount() {
 </header>
 
 <!-- ── ACCOUNT INDICATOR — always visible when signed in (2026-05-31) ── -->
-<div id="mg-account-bar" style="display:none; background:#0C0A08; border-bottom:1px solid #221C18; padding:7px 14px; align-items:center; justify-content:center; gap:7px; flex-wrap:wrap; position:relative; z-index:81;">
-  <span style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#6F655A;">Signed in</span>
-  <span id="mg-account-email" style="font-family:'Barlow',sans-serif; font-size:12.5px; font-weight:600; color:var(--gold); word-break:break-all;"></span>
-  <span id="mg-account-viewing" style="display:none; font-family:'Barlow',sans-serif; font-size:12.5px; color:#9A8E80;"></span>
+<div id="mg-account-bar" style="display:none; background:#0C0A08; border-bottom:1px solid #221C18; padding:7px 14px; align-items:center; justify-content:center; gap:9px; flex-wrap:wrap; position:relative; z-index:81;">
+  <span id="mg-account-name" style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--gold);"></span>
+  <span id="mg-account-email" style="font-family:'Barlow',sans-serif; font-size:11px; color:#6F655A; word-break:break-all;"></span>
 </div>
 
 <!-- ── TRIAL COUNTDOWN BANNER ── -->
@@ -19436,18 +19464,20 @@ function updateAccountIndicator() {
     if (!bar) return;
     var email = (typeof fbUser !== 'undefined' && fbUser && fbUser.email) ? fbUser.email : '';
     if (!email) { bar.style.display = 'none'; return; }
+    var name = '';
+    try {
+      var prof = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+      name = (prof.firstName || prof.name || '').toString().trim();
+    } catch(e) {}
+    var nameEl  = document.getElementById('mg-account-name');
     var emailEl = document.getElementById('mg-account-email');
-    if (emailEl) emailEl.textContent = email;
-    var viewingEl = document.getElementById('mg-account-viewing');
-    if (viewingEl) {
-      var name = '';
-      try {
-        var prof = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
-        name = (prof.firstName || prof.name || '').toString().trim();
-      } catch(e) {}
-      if (name) { viewingEl.textContent = '· Viewing ' + name; viewingEl.style.display = ''; }
-      else { viewingEl.style.display = 'none'; }
+    // Lead with the player's name; keep the email small + muted so the
+    // account is still identifiable (esp. for parents switching kids).
+    if (nameEl) {
+      if (name) { nameEl.textContent = name; nameEl.style.display = ''; }
+      else { nameEl.style.display = 'none'; }
     }
+    if (emailEl) emailEl.textContent = email;
     bar.style.display = 'flex';
   } catch(e) {}
 }
