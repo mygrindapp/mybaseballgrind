@@ -1404,7 +1404,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v302';
+    const CACHE = 'ybg-mygrind-v303';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1997,6 +1997,13 @@ function signOutAndSwitchAccount() {
   </div>
   <div class="header-date" id="headerDate"></div>
 </header>
+
+<!-- ── ACCOUNT INDICATOR — always visible when signed in (2026-05-31) ── -->
+<div id="mg-account-bar" style="display:none; background:#0C0A08; border-bottom:1px solid #221C18; padding:7px 14px; align-items:center; justify-content:center; gap:7px; flex-wrap:wrap; position:relative; z-index:81;">
+  <span style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#6F655A;">Signed in</span>
+  <span id="mg-account-email" style="font-family:'Barlow',sans-serif; font-size:12.5px; font-weight:600; color:var(--gold); word-break:break-all;"></span>
+  <span id="mg-account-viewing" style="display:none; font-family:'Barlow',sans-serif; font-size:12.5px; color:#9A8E80;"></span>
+</div>
 
 <!-- ── TRIAL COUNTDOWN BANNER ── -->
 <div id="trial-banner" style="display:none; background:linear-gradient(90deg,#1A0010,#1E0018,#1A0010); border-bottom:1px solid #3A0020; padding:10px 24px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; z-index:99; position:relative;">
@@ -19416,7 +19423,34 @@ auth.onAuthStateChanged(function(user) {
     console.log('[Firebase] Signed in:', user.email);
     syncFromCloud(user.uid);
   }
+  updateAccountIndicator();
 });
+
+// ── ACCOUNT INDICATOR (2026-05-31) — always show who is signed in and which
+// player profile is being viewed, so the active account is never a mystery.
+// Email comes from fbUser; the player name is read from the (minor-scoped)
+// profile in localStorage so it reflects the active managed-minor on switch.
+function updateAccountIndicator() {
+  try {
+    var bar = document.getElementById('mg-account-bar');
+    if (!bar) return;
+    var email = (typeof fbUser !== 'undefined' && fbUser && fbUser.email) ? fbUser.email : '';
+    if (!email) { bar.style.display = 'none'; return; }
+    var emailEl = document.getElementById('mg-account-email');
+    if (emailEl) emailEl.textContent = email;
+    var viewingEl = document.getElementById('mg-account-viewing');
+    if (viewingEl) {
+      var name = '';
+      try {
+        var prof = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+        name = (prof.firstName || prof.name || '').toString().trim();
+      } catch(e) {}
+      if (name) { viewingEl.textContent = '· Viewing ' + name; viewingEl.style.display = ''; }
+      else { viewingEl.style.display = 'none'; }
+    }
+    bar.style.display = 'flex';
+  } catch(e) {}
+}
 
 // ── MANAGED-MINOR FIRESTORE ROUTER (COPPA Phase 3) ────────────────
 // When a parent has switched into a child profile via the journal
@@ -19557,6 +19591,7 @@ function syncFromCloud(uid) {
       if (typeof loadProfile === 'function') loadProfile();
       if (typeof renderEntries === 'function') renderEntries();
       if (typeof renderGoalPresetChips === 'function') renderGoalPresetChips();
+      if (typeof updateAccountIndicator === 'function') updateAccountIndicator();
       console.log('[Firebase] Cloud sync complete' + (snap && !snap.empty ? ' (' + snap.size + ' entries)' : ''));
     } catch(e) { console.warn('[FB] syncFromCloud apply:', e); }
   });
