@@ -1433,7 +1433,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v304';
+    const CACHE = 'ybg-mygrind-v305';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2031,6 +2031,7 @@ function signOutAndSwitchAccount() {
 <div id="mg-account-bar" style="display:none; background:#0C0A08; border-bottom:1px solid #221C18; padding:7px 14px; align-items:center; justify-content:center; gap:9px; flex-wrap:wrap; position:relative; z-index:81;">
   <span id="mg-account-name" style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--gold);"></span>
   <span id="mg-account-email" style="font-family:'Barlow',sans-serif; font-size:11px; color:#6F655A; word-break:break-all;"></span>
+  <a onclick="signOutAndSwitchAccount()" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#B07A5A; text-decoration:underline; cursor:pointer; white-space:nowrap;">Sign out</a>
 </div>
 
 <!-- ── TRIAL COUNTDOWN BANNER ── -->
@@ -13968,7 +13969,7 @@ function renderSixtyProgress() {
     var isBest = e.value === best.value;
     return '<tr style="border-bottom:1px solid var(--border);">' +
       '<td style="padding:8px 10px; color:var(--gold); font-family:\'Barlow Condensed\'; letter-spacing:1px;">' + e.date + '</td>' +
-      '<td style="padding:8px 10px; text-align:center; color:var(--light); font-family:\'Bebas Neue\'; font-size:18px; letter-spacing:1px;">' + e.value.toFixed(2) + 's' + (isBest ? ' <span style="font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1px; color:var(--gold); vertical-align:middle;">PR</span>' : '') + '</td>' +
+      '<td style="padding:8px 10px; text-align:center; color:var(--light); font-family:\'Bebas Neue\'; font-size:18px; letter-spacing:1px;">' + e.value.toFixed(2) + '<span style="font-family:\'Barlow\',sans-serif; font-size:10px; font-weight:600; letter-spacing:0; color:var(--grey); margin-left:2px;">sec</span>' + (isBest ? ' <span style="font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1px; color:var(--gold); vertical-align:middle;">PR</span>' : '') + '</td>' +
       '<td style="padding:8px 10px; text-align:center;">' + deltaStr + '</td>' +
       '<td style="padding:8px 10px; text-align:right;"><button onclick="deleteSixtyEntry(' + e.id + ')" style="background:none; border:none; color:var(--grey); cursor:pointer; font-size:12px;">✕</button></td>' +
       '</tr>';
