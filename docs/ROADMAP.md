@@ -6,9 +6,9 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — queue (refreshed 2026-05-29 after the landing conversion + SEO overhaul + blog launch — see Day +11 in STATUS.md. Landing rebuilt to industry-standard order, 6 real screenshots, hero typewriter removed, FAQ overhauled to 8 real parent questions, single pricing CTA, and /blog with 3 SEO articles all live in production.)
+### P0 — queue (refreshed 2026-05-30 — The 5 Tools education layer shipped (`8f9bf95`), GSC fixed to the www property + 4 blog URLs request-indexed, CA FTB 2023 notice handled (30-day extension). Earlier 2026-05-29: landing conversion + SEO overhaul + blog launch — see Day +11 in STATUS.md. Landing rebuilt to industry-standard order, 6 real screenshots, hero typewriter removed, FAQ overhauled to 8 real parent questions, single pricing CTA, and /blog with 3 SEO articles all live in production.)
 
-**NEW TOP PRIORITY — Google Search Console reindex (manual, ~5 min):** In GSC for the `mygrindapp.com` Domain property, use URL Inspection on `https://www.mygrindapp.com/` and click "Request indexing" so the new FAQ + content get recrawled, then go to Sitemaps and (re)submit `https://www.mygrindapp.com/sitemap.xml` (now includes /blog + 3 articles). Optionally request indexing on the 3 new /blog article URLs too.
+**DONE 2026-05-30 — Google Search Console:** Confirmed the real data lives in the **www property** (the non-www property shows empty/redirects — apex 308s to www; see memory `gsc_use_www_property`). Sitemap submitted + read (7 discovered); homepage/privacy/terms indexed; the **4 blog URLs were request-indexed**. **NEW TOP PRIORITY: draft the next blog post** ("When Should You Switch Travel Teams?", already in the newsletter pipeline; also queued: youth pitch counts by age, what college coaches actually look at) to feed non-branded search now that the blog is indexing.
 
 **ALSO P0 — Twilio TFV #27140216 monitoring (5-29 PM):** The explicit, standalone SMS consent checkbox shipped + is live at the signup phone step; the Huvi reply was resubmitted with the live consent screenshot + the Drive docs PDF. Watch the inbox for Huvi's response. SMS stays `SMS_DRY_RUN=true` until approval. *(5-29 PM also shipped: the athlete daily check-in at `/checkin.html`, a shared journal+check-in streak, and hidden landing pricing + a "From the Playbook" blog band — see Day +11 in STATUS.md and the 2026-05-29 session log. New code option: wire the check-in to Firestore using the TODO hooks.)*
 
@@ -27,6 +27,15 @@
 13. **Mr. Sites LA Heat outreach** (carried). Suggested copy in `team_potential_collaborators` memory.
 14. **Em-dash sweep continuation** (~370 instances repo-wide, task #14, deferred polish). Only landing + signup user-visible em-dashes done in pre-ad pass. Future pass must distinguish placeholder em-dashes (e.g. `<span id="x">—</span>`) from sentence em-dashes — file-by-file with quality checks.
 15. **Daily morning affirmation feature** (task #27, ~3-4h, Coach said build later). Curated message library + 7am Resend email + in-app banner.
+
+<!-- SHIPPED 2026-05-30 (The 5 Tools education layer + SEO/FTB cleanup):
+- 1 commit 8f9bf95, live in prod, SW v296. New "The 5 Tools" panel under More (hit/power/run/arm/field + Pitching + position guide), joy/dream-first, sport-aware benchmark tables (HS Varsity/JuCo/College) shown per the Baseball/Softball toggle.
+- Hit & Power reframed production-first (velocity tables removed). Run/Arm/Pitching keep numeric tables.
+- 60-yard dash keeps a dated history with PR + faster/slower trend, sport-aware (softball = home-to-first), separate logs + per-metric validation; fills the Stats 60 field.
+- Arm Health & Growth Plates card added to Resources (Pitch Smart for baseball, windmill note for softball). Resources split by sport (+PGF, +Alliance Fastpitch; Girls-in-Baseball baseball-only). Get Help moved to bottom. Hero clipping fixed.
+- Decision #60 locked: 5 Tools = production-first + joy-first.
+- Non-code: GSC www-property fix + 4 blog URLs request-indexed; morning-sync GSC link fixed; CA FTB 2023 Request-for-Tax-Return handled (30-day extension ~6-29 + weekly reminder ftb-2023-weekly-reminder); memories five_tools_benchmarks, gsc_use_www_property, irs_2023_taxes_june1.
+-->
 
 <!-- SHIPPED 2026-05-29 (PM — Security Audit + Auth Enforcement):
 - Front-to-back security/perf audit on Opus 4.8. 5 commits to `main`, all deployed + verified live: 1995d10 6dca7f4 8ab3551 77944ce 57f8f94.
