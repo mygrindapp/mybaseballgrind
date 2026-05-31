@@ -235,6 +235,24 @@ If beta users aren't logging entries daily:
 - Simpler dashboard for new users ("start here" card)
 - Clearer call-to-action on the trial signup
 
+### 🎯 Navigation redesign — Option A (DECIDED 2026-05-31, recommended next build)
+Coach reviewed the flow and picked Option A: the nav had **6 bottom tabs + a "More" drawer = 13 destinations**, tuned by feel with real churn (Stats moved in/out, Academics promoted, Calendar cut). Consolidate to **5 clean tabs, no More menu.**
+
+**Target structure:**
+1. **🏠 Home** (Dashboard) — also surface **Daily Check-In** (`checkin.html`) as a card here (daily habit, currently buried in More).
+2. **📓 Journal** — log + history (the core daily action).
+3. **📊 Stats** — performance numbers.
+4. **🎯 Develop** (NEW hub panel) — a card menu linking to **The 5 Tools** (`panel-tools`), **Resources** (`panel-resources`), **12-Month Calendar**, **Goals** (`panel-goals`), and **Academics** (`panel-academics`, folded in from its standalone tab). Doubles as the **MyGrind Pro upsell anchor** (free = reference layer, Pro = prescriptive academics + AI coach).
+5. **👤 Profile** (`panel-players`) — player profile + Subscription + **Settings** (`panel-settings`) + Help/FAQ + Send Feedback. (Sign Out is already surfaced in the account bar as of v305.)
+
+**Build increments (syntax-gate + deploy each, verify on a real phone):**
+1. Build `panel-develop` (new hub with nav cards → tools / resources / calendar / goals / academics).
+2. Rewire `#mg-bottom-nav` 6→5: Dashboard(→Home), Journal, Stats, Develop, Profile. Remove the Academics + More buttons; update `mgTab()` ids + active-state highlight.
+3. Move More-menu utility (Settings, Help/FAQ, Send Feedback, Suggest a Feature) into Profile; retire `#mg-more-menu` + `toggleMoreMenu()`.
+4. Surface the Daily Check-In card on Dashboard.
+
+⚠️ Nav is central (many `mgTab()` callsites + the More menu). Test every tab + every Develop card on a phone before calling it done. Also dedupe the pre-existing **duplicate `id="panel-resources"`** (lines ~6124 + ~6451) during this work. This change supersedes Decision #(Academics-own-tab); Academics now lives inside Develop.
+
 ---
 
 ## 🌅 Future / Maybe
