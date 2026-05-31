@@ -63,15 +63,16 @@
 <meta property="og:description" content="The daily training journal for baseball and softball players, parents, and coaches. 14-Day Free Trial. No credit card required.">
 <meta property="og:url" content="https://www.mygrindapp.com/softball.html">
 <meta property="og:type" content="website">
-<meta property="og:image" content="https://raw.githubusercontent.com/youngsbaseball/mybaseballgrind/main/icon.png">
-<meta property="og:image:width" content="512">
-<meta property="og:image:height" content="512">
-<meta property="og:image:alt" content="MyGrind Players Journal App Icon">
+<meta property="og:image" content="https://www.mygrindapp.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="MyGrind: Daily Training Journal for Baseball &amp; Softball Players">
 <meta property="og:site_name" content="My Grind">
-<meta name="twitter:card" content="summary">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MyGrind · Players Journal App">
 <meta name="twitter:description" content="The daily training journal for baseball and softball families. 14-Day Free Trial.">
-<meta name="twitter:image" content="https://raw.githubusercontent.com/youngsbaseball/mybaseballgrind/main/icon.png">
+<meta name="twitter:image" content="https://www.mygrindapp.com/assets/og-card.png">
 <meta name="twitter:image:alt" content="MyGrind Players Journal App">
 <!-- ── COPYRIGHT & OWNERSHIP ── -->
 <meta name="copyright" content="© 2026 My Grind · All Rights Reserved">
@@ -1403,7 +1404,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v296';
+    const CACHE = 'ybg-mygrind-v297';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
