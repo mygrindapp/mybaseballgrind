@@ -1404,7 +1404,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v301';
+    const CACHE = 'ybg-mygrind-v302';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -19208,7 +19208,7 @@ function closeQotd() {
   var overlay = document.getElementById('qotd-overlay');
   if (overlay) overlay.style.display = 'none';
   // Land on Daily Journal
-  navTo('journal', '📓', 'Daily Journal');
+  showPanel('journal');
 }
 
 // Show quote on every app open — after access check clears (800ms delay)
