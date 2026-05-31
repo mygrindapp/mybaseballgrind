@@ -1404,7 +1404,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v299';
+    const CACHE = 'ybg-mygrind-v300';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -6865,6 +6865,14 @@ function saveState() {
       gpa:     state.gpa     || { current: null, target: null }
     };
     localStorage.setItem('ybg_softball_state', JSON.stringify(toSave));
+    // Auto-backup goals to cloud (signed-in only; only when goals actually
+    // change, to avoid a redundant write on every entry save).
+    try {
+      if (typeof fbSaveState === 'function') {
+        var _gj = JSON.stringify(toSave.goals || []);
+        if (_gj !== window.__mgLastGoalsJSON) { window.__mgLastGoalsJSON = _gj; fbSaveState(toSave); }
+      }
+    } catch(e) {}
     return true;
   } catch(e) {
     // Save failed (likely quota exceeded). DO NOT write a fallback with
@@ -11525,6 +11533,8 @@ function renderGrades() {
   const names  = [...document.querySelectorAll('.subject-name')].map(s => s.value);
   try { localStorage.setItem('ybg_subject_grades', JSON.stringify(grades)); } catch(e) {}
   try { localStorage.setItem('ybg_subject_names',  JSON.stringify(names)); } catch(e) {}
+  // Auto-backup academics to cloud (signed-in only; additive merge).
+  try { if (typeof fbSaveMisc === 'function') fbSaveMisc({ academics: { grades: grades, names: names } }); } catch(e) {}
 
   // Auto-compute Current GPA from the subject grades (Coach Young
   // 2026-05-11 iteration 3: "The GPA shouldn't be editable. It should
@@ -14264,6 +14274,8 @@ function saveSettings() {
     prefScroll:    document.getElementById('pref-scroll')?.checked ?? true,
   };
   try { localStorage.setItem('ybg_settings', JSON.stringify(s)); } catch(e) {}
+  // Auto-backup settings to cloud (signed-in only; additive merge).
+  try { if (typeof fbSaveMisc === 'function') fbSaveMisc({ settings: s }); } catch(e) {}
   applySettings(s);
   scheduleNotification(s);
 }
@@ -19461,6 +19473,15 @@ function fbSaveState(state) {
   if (!ref) return;
   ref.set({ goals: state.goals || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
      .catch(function(e) { console.warn('[FB] state:', e); });
+}
+// Generic additive cloud write for misc namespaced data (academics, settings).
+// Fire-and-forget, signed-in only, merge:true so it never clobbers other fields.
+function fbSaveMisc(partial) {
+  if (!fbUser || !partial) return;
+  var ref = _mgUserDocRef();
+  if (!ref) return;
+  ref.set(Object.assign({}, partial, { updatedAt: firebase.firestore.FieldValue.serverTimestamp() }), { merge: true })
+     .catch(function(e) { console.warn('[FB] misc:', e); });
 }
 
 // ══ SYNC CLOUD → LOCAL ════════════════════════════════════════════
