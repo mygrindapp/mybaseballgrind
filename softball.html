@@ -37,7 +37,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="My Grind">
+<meta name="apple-mobile-web-app-title" content="MyGrind">
 <meta name="robots" content="noindex,nofollow">
 <link rel="canonical" href="https://www.mygrindapp.com/softball.html">
 <meta name="msapplication-TileColor" content="#161210">
@@ -68,19 +68,19 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:type" content="image/png">
 <meta property="og:image:alt" content="MyGrind: Daily Training Journal for Baseball &amp; Softball Players">
-<meta property="og:site_name" content="My Grind">
+<meta property="og:site_name" content="MyGrind">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="MyGrind · Players Journal App">
 <meta name="twitter:description" content="The daily training journal for baseball and softball families. 14-Day Free Trial.">
 <meta name="twitter:image" content="https://www.mygrindapp.com/assets/og-card.png">
 <meta name="twitter:image:alt" content="MyGrind Players Journal App">
 <!-- ── COPYRIGHT & OWNERSHIP ── -->
-<meta name="copyright" content="© 2026 My Grind · All Rights Reserved">
+<meta name="copyright" content="© 2026 MyGrind · All Rights Reserved">
 <meta name="reply-to" content="support@mygrindapp.com">
 <meta name="robots" content="noindex, nofollow, noarchive, noimageindex">
 <meta name="googlebot" content="noindex, nofollow, noarchive">
 <meta name="rating" content="general">
-<meta property="og:site_name" content="My Grind">
+<meta property="og:site_name" content="MyGrind">
 
 <!-- ── FONTS ── -->
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
@@ -142,11 +142,11 @@
     function applyTitleAndMeta(s) {
       var Sport = sportName(s);
       var sport = sportLower(s);
-      document.title = 'My Grind: ' + Sport + ' Journal';
-      setMeta('meta[name="application-name"]',     'My Grind ' + Sport);
-      setMeta('meta[name="description"]',          'My Grind: The ' + sport + ' journal app for player development, stats, and daily accountability.');
+      document.title = 'MyGrind: ' + Sport + ' Journal';
+      setMeta('meta[name="application-name"]',     'MyGrind ' + Sport);
+      setMeta('meta[name="description"]',          'MyGrind: The ' + sport + ' journal app for player development, stats, and daily accountability.');
       setMeta('meta[name="theme-color"]',          getSportConfig(s).accent);
-      setMeta('meta[name="apple-mobile-web-app-title"]', 'My Grind');
+      setMeta('meta[name="apple-mobile-web-app-title"]', 'MyGrind');
       setMeta('meta[property="og:title"]',         'MY GRIND: ' + Sport + ' Journal App');
       setMeta('meta[property="og:image:alt"]',     'MY GRIND ' + Sport + ' Journal App Icon');
       setMeta('meta[name="twitter:title"]',        'MY GRIND: ' + Sport + ' Journal App');
@@ -1404,7 +1404,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v298';
+    const CACHE = 'ybg-mygrind-v299';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1914,7 +1914,7 @@ function signOutAndSwitchAccount() {
 <!-- ── ANDROID / CHROME INSTALL BANNER ── -->
 <div id="install-banner" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:9998; background:linear-gradient(135deg,#1A0010,#161210); border-top:1px solid var(--gold-dark, #8B6914); padding:14px 20px; align-items:center; gap:14px; flex-wrap:wrap;">
   <div style="flex:1; min-width:0;">
-    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:2px;">⚾ Install My Grind</div>
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:2px;">⚾ Install MyGrind</div>
     <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#AAAAAA; line-height:1.4;">Add to your home screen for the full app experience. Works offline too.</div>
   </div>
   <div style="display:flex; gap:8px; flex-shrink:0;">
@@ -2232,7 +2232,7 @@ function signOutAndSwitchAccount() {
 
     <div style="padding:22px 24px;">
       <div style="background:rgba(230,126,34,0.06); border-left:3px solid #E67E22; padding:12px 14px; margin-bottom:18px; font-family:'Barlow'; font-size:13px; color:#BBBBBB; line-height:1.7;">
-        Your coach's team sponsorship no longer covers your seat. <strong style="color:#F4F4F4;">All your journal entries, stats, goals, and profile are safe.</strong> Just pick a plan below to keep using My Grind.
+        Your coach's team sponsorship no longer covers your seat. <strong style="color:#F4F4F4;">All your journal entries, stats, goals, and profile are safe.</strong> Just pick a plan below to keep using MyGrind.
       </div>
 
       <!-- Payer CTA — pricing cards. Hidden for dependents (kids); shown to
@@ -2409,7 +2409,7 @@ function signOutAndSwitchAccount() {
       <!-- Payer CTA — pricing cards. Hidden for dependents. -->
       <div id="expired-payer-cta">
         <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid #2A0018; border-radius:2px; padding:14px 16px; margin-bottom:20px; font-size:13px; color:#BBBBBB; line-height:1.7; text-align:center;">
-          You've experienced My Grind. Choose the plan that works for you and keep all your progress going.
+          You've experienced MyGrind. Choose the plan that works for you and keep all your progress going.
         </div>
 
         <!-- PLAN CARDS -->
@@ -5691,7 +5691,7 @@ input[type="number"] {
     <div style="text-align:center; padding:28px 20px; background:linear-gradient(135deg,#1A0010,#0E000A); border:1px solid var(--gold-dark); border-radius:6px; margin-bottom:20px;">
       <div style="font-family:'Bebas Neue',cursive; font-size:42px; letter-spacing:3px; color:var(--white); line-height:1; margin-bottom:6px;">KNOW A <span style="color:var(--gold);">PLAYER?</span></div>
       <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); line-height:1.7; margin-bottom:20px; max-width:340px; margin-left:auto; margin-right:auto;">
-        Every player deserves a real plan. Share My Grind and give them a <strong style="color:var(--gold);">14-day free trial</strong> — no credit card, no commitment.
+        Every player deserves a real plan. Share MyGrind and give them a <strong style="color:var(--gold);">14-day free trial</strong> — no credit card, no commitment.
       </div>
 
       <!-- QR Code — center stage -->
@@ -6222,7 +6222,7 @@ input[type="number"] {
 
     <!-- Settings version -->
     <div style="text-align:center; font-family:'Barlow'; font-size:11px; color:var(--border); padding:8px 0 20px;">
-      My Grind · Version 2026.1
+      MyGrind · Version 2026.1
     </div>
 
   </div>
@@ -6824,7 +6824,7 @@ input[type="number"] {
 <!-- ── FOOTER ── -->
 <div id="social-share-footer" style="background:#080804; border-top:1px solid #1A1800; padding:24px; text-align:center; position:relative; z-index:1;">
   <div style="max-width:480px; margin:0 auto;">
-    <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#333; margin-bottom:10px;">© 2026 My Grind · All Rights Reserved</div>
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#333; margin-bottom:10px;">© 2026 MyGrind · All Rights Reserved</div>
     <div style="font-family:'Barlow',sans-serif; font-size:11px; color:#2A2800;">support@mygrindapp.com</div>
   </div>
 </div>
@@ -8472,8 +8472,8 @@ function showJoinTeamFromSignup() {
 }
 
 // ── COPYRIGHT NOTICE (embedded in code) ──────────────
-// © 2026 My Grind
-// My Grind — 2026 Annual Baseball Journal App
+// © 2026 MyGrind
+// MyGrind — 2026 Annual Baseball Journal App
 // All Rights Reserved · Unauthorized use, reproduction,
 // distribution, or resale is strictly prohibited.
 // contact: support@mygrindapp.com
@@ -8496,7 +8496,7 @@ document.addEventListener('keydown',     e => {
 // ── SCREENSHOT / PRINT PROTECTION ──────────────────────
 window.addEventListener('beforeprint', () => {
   if (!isCreator()) {
-    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;"><div><h2>© 2026 My Grind</h2><p>Printing is not permitted.<br>Contact support@mygrindapp.com</p></div></div>';
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;text-align:center;"><div><h2>© 2026 MyGrind</h2><p>Printing is not permitted.<br>Contact support@mygrindapp.com</p></div></div>';
   }
 });
 
@@ -8511,7 +8511,7 @@ try {
 
 // ── CONSOLE WARNING ─────────────────────────────────────
 console.log('%c⛔ STOP', 'color:red; font-size:48px; font-weight:bold;');
-console.log('%c© 2026 My Grind · All Rights Reserved\nThis app is proprietary software. Unauthorized copying, reproduction, or distribution is strictly prohibited.\nsupport@mygrindapp.com', 'color:var(--gold); font-size:14px;');
+console.log('%c© 2026 MyGrind · All Rights Reserved\nThis app is proprietary software. Unauthorized copying, reproduction, or distribution is strictly prohibited.\nsupport@mygrindapp.com', 'color:var(--gold); font-size:14px;');
 document.addEventListener('keydown', e => {
   if (isCreator()) return;
   if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && ['I','J','C','U'].includes(e.key.toUpperCase())) || (e.ctrlKey && ['U','S'].includes(e.key.toUpperCase()))) {
@@ -12134,7 +12134,7 @@ function updateSubscriptionCard() {
       if (trialDaysEl) trialDaysEl.textContent =
         daysLeft > 0
           ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining on your free trial. Subscribe now to keep all your progress.`
-          : 'Your trial has ended. Subscribe to continue using My Grind.';
+          : 'Your trial has ended. Subscribe to continue using MyGrind.';
     } else {
       if (planEl)    planEl.textContent = 'No active subscription';
       if (trialInfo) trialInfo.style.display = 'none';
@@ -14132,7 +14132,7 @@ function shareNative() {
   const sportName = window.mgSportName || 'Baseball';
   const sportLower = window.mgSportLower || 'baseball';
   const shareData = {
-    title: 'My Grind: ' + sportName + ' Journal App',
+    title: 'MyGrind: ' + sportName + ' Journal App',
     text: '14-Day Free Trial. ' + sportName + ' journal app for player development. Track stats, log games, and hold yourself accountable every day.',
     url: TRIAL_URL
   };
@@ -14229,14 +14229,14 @@ function sendFeedback() {
   if (message.length < 10) { showStatus('Tell me a little more. At least 10 characters.', 'error'); messageEl?.focus(); return; }
 
   // Build mailto link with pre-filled subject and body
-  const subject = 'My Grind App. Feedback';
+  const subject = 'MyGrind App. Feedback';
   const body =
     'From: ' + email + '\n' +
     'Sent: ' + new Date().toLocaleString() + '\n' +
     '------------------------------------\n\n' +
     message + '\n\n' +
     '------------------------------------\n' +
-    'Sent from My Grind app · v2026.1';
+    'Sent from MyGrind app · v2026.1';
   const mailto = 'mailto:support@mygrindapp.com' +
                  '?subject=' + encodeURIComponent(subject) +
                  '&body=' + encodeURIComponent(body);
@@ -14431,7 +14431,7 @@ function tellATeammate() {
     // Fallback if shareToSocial isn't loaded yet for some reason.
     if (navigator.share) {
       navigator.share({
-        title: 'My Grind: ' + (window.mgSportName || 'Baseball') + ' Journal App',
+        title: 'MyGrind: ' + (window.mgSportName || 'Baseball') + ' Journal App',
         text:  'Yo you gotta get this. MY GRIND: journal + stats + training plan in one app.',
         url:   'https://mygrindapp.com'
       });
@@ -14502,7 +14502,7 @@ async function requestNotifications() {
       // their own. window.mgSportConfig is set by the SPORTS init IIFE at
       // page load (line ~86).
       const _ball = (window.mgSportConfig && window.mgSportConfig.emoji) || '⚾';
-      new Notification(_ball + ' My Grind', {
+      new Notification(_ball + ' MyGrind', {
         body: 'Notifications are on! You\'ll be reminded to log your game or practice every day.',
         icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">' + _ball + '</text></svg>'
       });
@@ -14546,7 +14546,7 @@ function sendDailyNotification() {
   try {
     // Sport-aware notification: pull active sport's emoji from SPORTS config.
     const _ball = (window.mgSportConfig && window.mgSportConfig.emoji) || '⚾';
-    const n = new Notification(_ball + ' My Grind: Daily Journal', {
+    const n = new Notification(_ball + ' MyGrind: Daily Journal', {
       body: msg,
       icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">' + _ball + '</text></svg>',
       badge:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">' + _ball + '</text></svg>',
@@ -14666,7 +14666,7 @@ function shareToSocial(platform) {
 
   if (platform === 'native') {
     if (navigator.share) {
-      navigator.share({ title: 'My Grind: ' + (window.mgSportName || 'Baseball') + ' Journal App', text: SHARE_CAPTIONS.sms, url: SHARE_URL });
+      navigator.share({ title: 'MyGrind: ' + (window.mgSportName || 'Baseball') + ' Journal App', text: SHARE_CAPTIONS.sms, url: SHARE_URL });
     } else {
       shareToSocial('copy');
     }
@@ -15318,7 +15318,7 @@ function showMilestone(streak) {
   if (streak === 7)   { e = '🔥'; t = 'ONE WEEK STRONG';   s = '7 days locked in. You are building something real.'; }
   if (streak === 14)  { e = '💪'; t = '2 WEEKS DEEP';      s = 'Two weeks. This is no longer a phase. This is who you are.'; }
   if (streak === 30)  { e = '⚾'; t = '30-DAY GRINDER';    s = 'A full month. Most players never make it here. You did.'; }
-  if (streak === 50)  { e = '🏆'; t = '50-DAY BEAST';      s = 'You are in the top 1% of players on My Grind.'; }
+  if (streak === 50)  { e = '🏆'; t = '50-DAY BEAST';      s = 'You are in the top 1% of players on MyGrind.'; }
   if (streak === 100) { e = '💎'; t = 'CENTURY CLUB';      s = '100 days. This is what separates the great from the good.'; }
   if (streak === 200) { e = '👑'; t = 'ELITE GRINDER';     s = '200 days. Legendary. Share The Grind with a teammate.'; }
   if (streak === 365) { e = '⭐'; t = 'FULL YEAR GRIND';   s = 'A year straight. You are in a league of your own.'; }
@@ -15357,7 +15357,7 @@ function shareMilestone() {
     'https://www.mygrindapp.com/signup.html?trial=1';
 
   if (navigator.share) {
-    navigator.share({ title: 'My Grind Streak', text: msg })
+    navigator.share({ title: 'MyGrind Streak', text: msg })
       .catch(function() { fallbackShare(msg); });
   } else {
     fallbackShare(msg);
@@ -15615,7 +15615,7 @@ function shareWeeklyRecap() {
   }
   // Desktop / other — Web Share API if available, otherwise copy-to-clipboard.
   if (navigator.share) {
-    navigator.share({ title: 'My Grind: This Week', text: recap.plain })
+    navigator.share({ title: 'MyGrind: This Week', text: recap.plain })
       .catch(function() { fallbackShare(recap.plain); });
   } else {
     fallbackShare(recap.plain);
@@ -15667,7 +15667,7 @@ function exportJournalPDF() {
   const now = new Date();
 
   // Build HTML doc (user prints to PDF from browser)
-  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + name + ': My Grind Journal</title>';
+  let html = '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + name + ': MyGrind Journal</title>';
   html += '<style>';
   html += '@page { margin: 0.5in; }';
   html += 'body { font-family: Georgia, serif; color:#222; line-height:1.6; max-width:760px; margin:30px auto; padding:20px; }';
@@ -17588,7 +17588,7 @@ function sendJournalToCoach() {
   const name = profile.firstName || profile.name || 'Player';
   const subject = name + ': Weekly Journal Update · ' + (t.name || '');
   let body = 'Hi Coach ' + (t.coachName ? t.coachName.split(' ')[0] : '') + ',\n\n';
-  body += "Here's my week on My Grind ⚾\n\n";
+  body += "Here's my week on MyGrind ⚾\n\n";
   body += recap.plain;
   body += '\n\nThanks,\n' + name;
   try {
@@ -18734,7 +18734,7 @@ setTimeout(function() {
 
     <!-- CTA -->
     <button onclick="closeQotd()" style="background:var(--gold);color:#080808;border:none;border-radius:8px;padding:14px 40px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;width:100%;max-width:280px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
-      ⚾ &nbsp;Start My Grind →
+      ⚾ &nbsp;Start MyGrind →
     </button>
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:#444;margin-top:14px;text-transform:uppercase;">Opening Daily Journal...</div>
   </div>
