@@ -1404,7 +1404,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v297';
+    const CACHE = 'ybg-mygrind-v298';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -14065,7 +14065,7 @@ const REFERRAL_URL = TRIAL_URL;
     try {
       const existing = JSON.parse(localStorage.getItem('ybg_softball_access') || '{}');
       const isActive = existing.paid || existing.trialStart;
-      const isCreatorEmail = ['support@mygrindapp.com','papamike@youngsbaseball.com','michael@youngsbaseball.com']
+      const isCreatorEmail = ['coach@mygrindapp.com','support@mygrindapp.com','papamike@youngsbaseball.com','michael@youngsbaseball.com','youngsbaseball@gmail.com']
                              .includes((existing.email || '').toLowerCase());
       // Only clear if not an active paid/trial user and not creator
       if (!isActive && !isCreatorEmail) {

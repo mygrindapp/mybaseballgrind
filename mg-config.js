@@ -12,13 +12,17 @@
   'use strict';
 
   // ── URLS ─────────────────────────────────────────────────────────
-  // APP_URL = legacy github.io copy of the journal app (kept for fallback)
+  // APP_URL = the live journal app on the production domain (Vercel).
+  //   Repointed 2026-05-31 off the legacy youngsbaseball.github.io GitHub
+  //   Pages copy when the repo moved to the mygrindapp org. window.APP_URL
+  //   is currently unused (softball.html defines its own APP_URL const),
+  //   kept correct in case anything reads it later.
   // ONBOARD_URL = parent signup funnel on the production domain.
   // 2026-05-02: was 'https://mygrindapp.com' but that's now the waitlist
   // landing — sharing the app from there dumped friends on a "be first
   // to know" page instead of letting them actually start. Pointing at
   // /signup.html so warm referrals enter the real funnel.
-  var APP_URL     = 'https://youngsbaseball.github.io/mybaseballgrind';
+  var APP_URL     = 'https://mygrindapp.com/softball.html';
   var ONBOARD_URL = 'https://mygrindapp.com/signup.html';
 
   // Override the global constants the app uses for QR + sharing
@@ -171,6 +175,9 @@
     panels.forEach(function(panel) {
       var spans = panel.querySelectorAll('div[style*="Bebas Neue"]');
       spans.forEach(function(s) {
+        // Legacy scrubber (keep matching the OLD url): rewrites any stale
+        // youngsbaseball.github.io string surviving in cached share panels
+        // to the production domain. Do not "modernize" this match string.
         if (s.textContent && s.textContent.includes('youngsbaseball.github.io')) {
           s.textContent = 'mygrindapp.com';
         }
@@ -212,7 +219,9 @@
   // ── MILESTONE SHARE OVERRIDE ──────────────────────────────────────
   var _origFallbackShare = window.fallbackShare;
   window.fallbackShare = function(msg) {
-    // Replace any old app URL in the message with the onboarding URL
+    // Legacy scrubber (keep matching the OLD url): rewrite any stale
+    // youngsbaseball.github.io app URL left in old cached share messages
+    // to the onboarding URL. Do not "modernize" this match string.
     var updatedMsg = msg.replace(/https:\/\/youngsbaseball\.github\.io\/mybaseballgrind(?!\/onboarding)/g, ONBOARD_URL);
     if (typeof _origFallbackShare === 'function') {
       _origFallbackShare(updatedMsg);
