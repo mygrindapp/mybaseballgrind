@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>MyGrind: Sign Up</title>
+<!-- Google Analytics GA4 (G-5HLS0F06CQ): added 2026-06-01 for funnel + conversion tracking. Same property as softball.html so the landing-to-app funnel is unified. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5HLS0F06CQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5HLS0F06CQ');
+</script>
 
 <script>
   // Inline-data logo refs so the preview panel and offline contexts render the
@@ -5508,6 +5516,19 @@ function recordTrialStartServerSide() {
           // the client side too).
           state.startedAt = new Date().toISOString();
           saveState();
+          // GA4 conversion event: a genuine, brand-new signup just completed
+          // (server confirmed started:true; the state.startedAt stamp above
+          // means this block runs exactly once per signup, so no double-count).
+          // Mark "sign_up" as a Key Event in GA4 to see it in the funnel.
+          try {
+            if (typeof gtag === 'function') {
+              gtag('event', 'sign_up', {
+                method: 'signup_flow',
+                plan:   state.preferredPlan || 'unknown',
+                sport:  state.familySport  || 'unknown'
+              });
+            }
+          } catch (_) {}
           return;
         }
         // Server says "already used" AND we have no state.startedAt
