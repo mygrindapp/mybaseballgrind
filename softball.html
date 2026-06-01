@@ -1433,7 +1433,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v305';
+    const CACHE = 'ybg-mygrind-v306';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -8244,18 +8244,66 @@ function openNextGiftCheckout(idx, playerEmails, purchaserEmail, base) {
 }
 
 // ── PAYMENT ──────────────────────────────────────────
-function goToPurchase(plan) {
+// Route an already-registered user to the Stripe Customer Portal instead of a
+// fresh Payment Link. This is the guard against parallel/duplicate subscriptions:
+// since card-on-file is captured at signup, any in-app user already has a Stripe
+// customer, so a second Payment-Link checkout would create a NEW customer and a
+// NEW subscription on the same person. The portal lets them switch plan, update
+// their card, or cancel on the subscription they already have.
+//
+// Returns:
+//   'opened'       — portal session created; the browser is being redirected.
+//   'new_customer' — no Stripe customer on file (404); the caller SHOULD open the
+//                    Payment Link to start a genuine first subscription.
+//   'error'        — portal failed for another reason; the caller must NOT open a
+//                    Payment Link (opening one risks a duplicate subscription).
+async function routeExistingCustomerToPortal(email) {
+  email = (email || '').trim();
+  // No email to check against — preserve legacy behavior (welcome flow validates
+  // email itself; in-app users always have one). Treat as a new customer.
+  if (!email) return 'new_customer';
+  try {
+    const resp = await fetch('/api/stripe-portal-session', {
+      method:  'POST',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, await mgIdTokenHeader()),
+      body:    JSON.stringify({ email }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (resp.ok && data && data.ok && data.url) {
+      window.location.href = data.url;
+      return 'opened';
+    }
+    // 404 no_customer = genuinely no subscription yet → safe to start one.
+    if (resp.status === 404 && data && data.error === 'no_customer') {
+      return 'new_customer';
+    }
+    console.warn('[purchase] portal check failed; not opening Payment Link', { status: resp.status, data });
+    alert('We could not open your billing page just now. Please try again in a moment, or email coach@mygrindapp.com and we will sort it out.\n\n(This check protects you from accidentally being charged for a second subscription.)');
+    return 'error';
+  } catch (e) {
+    console.warn('[purchase] portal check error:', e && e.message);
+    alert('We could not reach billing just now. Please check your connection and try again.\n\n(This check protects you from accidentally being charged for a second subscription.)');
+    return 'error';
+  }
+}
+
+async function goToPurchase(plan) {
   const base = plan === 'annual' ? STRIPE_ANNUAL_URL : STRIPE_MONTHLY_URL;
 
   // Check if we're on the welcome/registration screen by checking the overlay
   const overlay = document.getElementById('trial-overlay');
   const welcomeVisible = overlay && overlay.style.display === 'flex';
 
-  // If NOT on welcome screen — go straight to Stripe using saved email if available
+  // If NOT on welcome screen — the user is already registered (trial or paid),
+  // so they have a Stripe customer on file. Send them to the Customer Portal to
+  // change/upgrade plan rather than minting a parallel subscription. Only fall
+  // through to the Payment Link when there's genuinely no customer yet.
   if (!welcomeVisible) {
     const saved = getAccessState();
     const email = saved.purchaserEmail || saved.email || '';
-    const url   = email ? base + '?prefilled_email=' + encodeURIComponent(email) : base;
+    const routed = await routeExistingCustomerToPortal(email);
+    if (routed !== 'new_customer') return; // 'opened' (redirecting) or 'error' (don't risk a dup)
+    const url = email ? base + '?prefilled_email=' + encodeURIComponent(email) : base;
     window.open(url, '_blank');
     return;
   }
@@ -8355,19 +8403,23 @@ function goToPurchase(plan) {
 // Coach buys the $99.99/yr annual plan (same Stripe product as individual annual),
 // but we tag their access state with pendingCoachSetup so after payment
 // activation, they're auto-prompted to create their team.
-function goToCoachPurchase() {
+async function goToCoachPurchase() {
   const base = STRIPE_ANNUAL_URL;
   const overlay = document.getElementById('trial-overlay');
   const welcomeVisible = overlay && overlay.style.display === 'flex';
 
-  // If not on welcome screen (e.g., user already has an account), route
-  // through normal annual purchase with the coach flag set.
+  // If not on welcome screen (e.g., user already has an account), they have a
+  // Stripe customer on file — route to the Customer Portal to change plan rather
+  // than create a parallel subscription. Only open a Payment Link when there's
+  // genuinely no customer yet (new coach starting their first plan).
   if (!welcomeVisible) {
     const saved = getAccessState();
     const email = saved.purchaserEmail || saved.email || '';
     try {
       saveAccessState(Object.assign({}, saved, { pendingCoachSetup: true }));
     } catch(e) {}
+    const routed = await routeExistingCustomerToPortal(email);
+    if (routed !== 'new_customer') return; // 'opened' (redirecting) or 'error' (don't risk a dup)
     const url = email ? base + '?prefilled_email=' + encodeURIComponent(email) : base;
     window.open(url, '_blank');
     return;
@@ -8430,7 +8482,7 @@ function goToCoachPurchase() {
 // Coach buys the annual team sponsorship. Same activation hook as goToCoachPurchase,
 // but tags the access state with pendingTeamSponsor so we open team create modal
 // AFTER payment with seat tracking enabled (15 sponsored seats available).
-function goToTeamSponsorPurchase() {
+async function goToTeamSponsorPurchase() {
   // Require policy acknowledgment checkbox on the signup page
   const ack = document.getElementById('team-policy-ack');
   if (ack && !ack.checked) {
@@ -8443,6 +8495,9 @@ function goToTeamSponsorPurchase() {
   const overlay = document.getElementById('trial-overlay');
   const welcomeVisible = overlay && overlay.style.display === 'flex';
 
+  // Already registered → existing Stripe customer → manage via Customer Portal
+  // instead of minting a parallel subscription. Fall through to the Payment Link
+  // only when there's genuinely no customer yet.
   if (!welcomeVisible) {
     const saved = getAccessState();
     const email = saved.purchaserEmail || saved.email || '';
@@ -8452,6 +8507,8 @@ function goToTeamSponsorPurchase() {
         pendingTeamSponsor: true
       }));
     } catch(e) {}
+    const routed = await routeExistingCustomerToPortal(email);
+    if (routed !== 'new_customer') return; // 'opened' (redirecting) or 'error' (don't risk a dup)
     const url = email ? base + '?prefilled_email=' + encodeURIComponent(email) : base;
     window.open(url, '_blank');
     return;
