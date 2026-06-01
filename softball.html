@@ -1433,7 +1433,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v306';
+    const CACHE = 'ybg-mygrind-v307';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -19606,83 +19606,112 @@ function fbSaveMisc(partial) {
      .catch(function(e) { console.warn('[FB] misc:', e); });
 }
 
+// Fetch EVERY cloud entry, paginated by document id. We deliberately do NOT
+// use `.orderBy('savedAt','desc').limit(100)` here, for two reasons:
+//   1. limit(100) silently dropped older history on a fresh-device restore —
+//      a daily journal passes 100 entries in a few months, so anything older
+//      never repopulated (the bug this fix closes).
+//   2. orderBy('savedAt') would EXCLUDE any entry doc missing that field;
+//      paginating by documentId() (always present) guarantees completeness.
+// Fetch order is irrelevant — syncFromCloud re-sorts entries by `date` in
+// memory after merging. Batching keeps each individual read bounded.
+async function _mgFetchAllEntries(entriesCol) {
+  var FieldPath = firebase.firestore.FieldPath;
+  var BATCH = 400;
+  var docs = [];
+  var cursor = null;
+  // Guard against an unbounded loop if a page somehow never shrinks.
+  for (var page = 0; page < 1000; page++) {
+    var q = entriesCol.orderBy(FieldPath.documentId()).limit(BATCH);
+    if (cursor) q = q.startAfter(cursor);
+    var snap = await q.get();
+    if (snap.empty) break;
+    snap.forEach(function(d) { docs.push(d); });
+    if (snap.size < BATCH) break;                 // short page → end reached
+    cursor = snap.docs[snap.docs.length - 1];      // resume after the last doc
+  }
+  return docs;
+}
+
 // ══ SYNC CLOUD → LOCAL ════════════════════════════════════════════
 // 2026-05-31 (B2): FIXED the key mismatch. Restore now writes the CANONICAL
 // keys the app actually reads (ybg_softball_state / ybg_softball_profile /
 // ybg_subject_grades / ybg_settings) — previously it wrote the dead legacy
-// ybg_state / ybg_profile keys, so backups never repopulated the app. Both
-// Firestore reads are awaited together and the single ybg_softball_state
-// read-modify-write happens once (no race). In-memory `state` is mirrored so
-// the running UI reflects the restore without a reload.
+// ybg_state / ybg_profile keys, so backups never repopulated the app.
+// 2026-06-01: restore now pulls the FULL entry history via _mgFetchAllEntries
+// (paginated) instead of only the 100 most recent, so a fresh-device restore
+// no longer silently drops older entries. The doc read + the paginated entries
+// read complete before the single ybg_softball_state read-modify-write (no
+// race). In-memory `state` is mirrored so the running UI reflects the restore
+// without a reload.
 // Merge rules: profile = local-wins (never lose local edits); entries + goals
 // = union by id, cloud-wins on conflict; academics + settings = restore only
 // when absent locally (don't clobber a device's own settings).
-function syncFromCloud(uid) {
+async function syncFromCloud(uid) {
   // Route sync through the active scope so a parent who lands on the page with
   // a minor selected pulls that minor's data, not the parent's.
   var docRef     = _mgUserDocRef() || db.collection('users').doc(uid);
   var entriesCol = _mgEntriesColRef() || db.collection('users').doc(uid).collection('entries');
 
-  Promise.all([
-    docRef.get().catch(function(e) { console.warn('[FB] sync doc:', e); return null; }),
-    entriesCol.orderBy('savedAt','desc').limit(100).get()
-              .catch(function(e) { console.warn('[FB] sync entries:', e); return null; })
-  ]).then(function(res) {
-    var data = (res[0] && res[0].exists) ? res[0].data() : {};
-    var snap = res[1];
-    try {
-      // ── Profile (canonical key; local-wins) ──
-      if (data.profile) {
-        var lp = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
-        localStorage.setItem('ybg_softball_profile', JSON.stringify(Object.assign({}, data.profile, lp)));
+  var docSnap = null, entryDocs = [];
+  try { docSnap = await docRef.get(); }
+  catch (e) { console.warn('[FB] sync doc:', e); }
+  try { entryDocs = await _mgFetchAllEntries(entriesCol); }
+  catch (e) { console.warn('[FB] sync entries:', e); entryDocs = []; }
+
+  var data = (docSnap && docSnap.exists) ? docSnap.data() : {};
+  try {
+    // ── Profile (canonical key; local-wins) ──
+    if (data.profile) {
+      var lp = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+      localStorage.setItem('ybg_softball_profile', JSON.stringify(Object.assign({}, data.profile, lp)));
+    }
+    // ── Academics + Settings (restore only if absent locally) ──
+    if (data.academics) {
+      if (!localStorage.getItem('ybg_subject_grades') && Array.isArray(data.academics.grades)) {
+        localStorage.setItem('ybg_subject_grades', JSON.stringify(data.academics.grades));
       }
-      // ── Academics + Settings (restore only if absent locally) ──
-      if (data.academics) {
-        if (!localStorage.getItem('ybg_subject_grades') && Array.isArray(data.academics.grades)) {
-          localStorage.setItem('ybg_subject_grades', JSON.stringify(data.academics.grades));
+      if (!localStorage.getItem('ybg_subject_names') && Array.isArray(data.academics.names)) {
+        localStorage.setItem('ybg_subject_names', JSON.stringify(data.academics.names));
+      }
+    }
+    if (data.settings && !localStorage.getItem('ybg_settings')) {
+      localStorage.setItem('ybg_settings', JSON.stringify(data.settings));
+    }
+    // ── Goals + Entries → ONE read-modify-write of the canonical state ──
+    var ls = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
+    var changed = false;
+    if (Array.isArray(data.goals) && data.goals.length) {
+      var gmap = {};
+      (ls.goals || []).forEach(function(g) { if (g && g.id != null) gmap[g.id] = g; });
+      data.goals.forEach(function(g) { if (g && g.id != null) gmap[g.id] = g; });
+      ls.goals = Object.values(gmap);
+      changed = true;
+    }
+    if (entryDocs && entryDocs.length) {
+      var emap = {};
+      (ls.entries || []).forEach(function(e) { if (e && e.id) emap[e.id] = e; });
+      entryDocs.forEach(function(d) { var e = d.data(); if (e && e.id) emap[e.id] = e; });
+      ls.entries = Object.values(emap).sort(function(a,b) { return b.date > a.date ? 1 : -1; });
+      changed = true;
+    }
+    if (changed) {
+      localStorage.setItem('ybg_softball_state', JSON.stringify(ls));
+      // Mirror into in-memory state so the live UI updates without a reload.
+      try {
+        if (typeof state === 'object' && state) {
+          if (ls.entries) state.entries = ls.entries;
+          if (ls.goals)   state.goals   = ls.goals;
         }
-        if (!localStorage.getItem('ybg_subject_names') && Array.isArray(data.academics.names)) {
-          localStorage.setItem('ybg_subject_names', JSON.stringify(data.academics.names));
-        }
-      }
-      if (data.settings && !localStorage.getItem('ybg_settings')) {
-        localStorage.setItem('ybg_settings', JSON.stringify(data.settings));
-      }
-      // ── Goals + Entries → ONE read-modify-write of the canonical state ──
-      var ls = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
-      var changed = false;
-      if (Array.isArray(data.goals) && data.goals.length) {
-        var gmap = {};
-        (ls.goals || []).forEach(function(g) { if (g && g.id != null) gmap[g.id] = g; });
-        data.goals.forEach(function(g) { if (g && g.id != null) gmap[g.id] = g; });
-        ls.goals = Object.values(gmap);
-        changed = true;
-      }
-      if (snap && !snap.empty) {
-        var emap = {};
-        (ls.entries || []).forEach(function(e) { if (e && e.id) emap[e.id] = e; });
-        snap.forEach(function(d) { var e = d.data(); if (e && e.id) emap[e.id] = e; });
-        ls.entries = Object.values(emap).sort(function(a,b) { return b.date > a.date ? 1 : -1; });
-        changed = true;
-      }
-      if (changed) {
-        localStorage.setItem('ybg_softball_state', JSON.stringify(ls));
-        // Mirror into in-memory state so the live UI updates without a reload.
-        try {
-          if (typeof state === 'object' && state) {
-            if (ls.entries) state.entries = ls.entries;
-            if (ls.goals)   state.goals   = ls.goals;
-          }
-        } catch(e) {}
-      }
-      // ── Re-render (all guarded) ──
-      if (typeof loadProfile === 'function') loadProfile();
-      if (typeof renderEntries === 'function') renderEntries();
-      if (typeof renderGoalPresetChips === 'function') renderGoalPresetChips();
-      if (typeof updateAccountIndicator === 'function') updateAccountIndicator();
-      console.log('[Firebase] Cloud sync complete' + (snap && !snap.empty ? ' (' + snap.size + ' entries)' : ''));
-    } catch(e) { console.warn('[FB] syncFromCloud apply:', e); }
-  });
+      } catch(e) {}
+    }
+    // ── Re-render (all guarded) ──
+    if (typeof loadProfile === 'function') loadProfile();
+    if (typeof renderEntries === 'function') renderEntries();
+    if (typeof renderGoalPresetChips === 'function') renderGoalPresetChips();
+    if (typeof updateAccountIndicator === 'function') updateAccountIndicator();
+    console.log('[Firebase] Cloud sync complete' + (entryDocs && entryDocs.length ? ' (' + entryDocs.length + ' entries)' : ''));
+  } catch(e) { console.warn('[FB] syncFromCloud apply:', e); }
 }
 
 // ══ SYNC LOCAL → CLOUD ════════════════════════════════════════════
