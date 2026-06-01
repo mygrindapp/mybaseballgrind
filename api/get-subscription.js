@@ -56,11 +56,11 @@ export default async function handler(req, res) {
   const access = await authorizeEmailOwner(req, email);
   if (!access.ok) return res.status(access.status).json({ ok: false, error: access.error });
 
-  // ─── Rate limit (interim hardening 2026-05-29) ───────────────
-  // This endpoint is not yet auth-scoped, so an unauthenticated caller can
-  // probe "is <email> a paying customer?". The other read endpoints already
-  // cap per-IP; this one was missing it. Adding the same read-tier cap blunts
-  // bulk enumeration. Fail-open on Redis outage, matching the rest of the infra.
+  // ─── Rate limit (defense-in-depth) ───────────────────────────
+  // The owner check above already gates this endpoint to the email's owner.
+  // The per-IP read cap stays as a second layer — it blunts bulk-enumeration
+  // probes and matches the other read endpoints. Fail-open on Redis outage,
+  // matching the rest of the infra.
   const clientIp = getClientIp(req);
   const ipCheck = await checkIpReadLimit(clientIp);
   if (!ipCheck.ok) {

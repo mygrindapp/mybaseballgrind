@@ -1433,7 +1433,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v307';
+    const CACHE = 'ybg-mygrind-v308';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -19712,21 +19712,6 @@ async function syncFromCloud(uid) {
     if (typeof updateAccountIndicator === 'function') updateAccountIndicator();
     console.log('[Firebase] Cloud sync complete' + (entryDocs && entryDocs.length ? ' (' + entryDocs.length + ' entries)' : ''));
   } catch(e) { console.warn('[FB] syncFromCloud apply:', e); }
-}
-
-// ══ SYNC LOCAL → CLOUD ════════════════════════════════════════════
-// Legacy partial sync — no current callers; superseded by bulkBackupToCloud()
-// (the real backup). 2026-05-31: repointed off the dead ybg_state/ybg_profile
-// keys to the CANONICAL ybg_softball_state / ybg_softball_profile so it pushes
-// real data (not empty {}) if ever revived. Caps at 10 entries.
-function syncToCloud() {
-  if (!fbUser) return;
-  try {
-    fbSaveProfile(JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'));
-    var s = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
-    fbSaveState(s);
-    (s.entries || []).slice(0,10).forEach(function(e) { fbSaveEntry(e); });
-  } catch(e) { console.warn('[FB] syncToCloud:', e); }
 }
 
 // ══ FULL BACKUP — local → Firestore ═══════════════════════════════
