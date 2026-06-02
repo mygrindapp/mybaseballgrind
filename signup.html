@@ -5681,6 +5681,7 @@ function onDashboardPayClicked() {
     return;
   }
   saveState();
+  fireBeginCheckout(tier + '_' + plan);
   window.location.href = buildCheckoutUrl(baseUrl);
 }
 
@@ -6015,6 +6016,7 @@ async function onPlanPickerContinue() {
         planType:     _planPickerSelection,
         trialEndUnix: trialEndUnix,
         promoCode:    state.promoCode || '',
+        gaClientId:   ga4ClientId(),
       }),
     });
     const data = await resp.json().catch(function() { return {}; });
@@ -6028,6 +6030,7 @@ async function onPlanPickerContinue() {
       return;
     }
 
+    fireBeginCheckout(_planPickerSelection);
     window.location.href = data.url;
   } catch (e) {
     console.error('[plan-picker] continue error:', e);
@@ -6252,6 +6255,39 @@ function buildCheckoutUrl(baseUrl) {
   return baseUrl + sep + params.join('&');
 }
 
+// ─── GA4 begin_checkout (2026-06-02) ───────────────────────
+// Fires when the parent leaves for Stripe at any of the three checkout
+// entry points (plan-picker Continue, Screen 5 skip-trial, Screen 8
+// "pay early"), so GA4 can measure signup → checkout in the funnel —
+// the second half of the funnel work started 2026-06-01 (sign_up event).
+//
+// No value/currency on purpose: with card-on-file the real charge happens
+// at trial end and is confirmed server-side by the Stripe webhook, which
+// stays the single source of truth for paid revenue. A client-side value
+// here would pollute GA4 revenue reports and risk double-counting.
+function fireBeginCheckout(plan) {
+  try {
+    if (typeof gtag === 'function') {
+      gtag('event', 'begin_checkout', {
+        plan:  plan || state.preferredPlan || 'unknown',
+        sport: state.familySport || 'unknown'
+      });
+    }
+  } catch (_) {}
+}
+
+// Pull the GA4 client_id out of the _ga cookie (format: GA1.1.<id>.<ts>).
+// Handed to /api/create-checkout-session so Stripe stores it in session
+// metadata, letting the webhook attribute the server-side `purchase` event
+// back to THIS GA4 session instead of opening an unattributed new one.
+// Returns '' if GA4 hasn't set the cookie yet — never throws.
+function ga4ClientId() {
+  try {
+    const m = document.cookie.match(/_ga=GA\d+\.\d+\.(\d+\.\d+)/);
+    return m ? m[1] : '';
+  } catch (_) { return ''; }
+}
+
 // Skip-trial / pay-now handler for the eager parent on Screen 5.
 // Per Coach Young April 27 PM: parent picks this when they're already
 // convinced and want to start their subscription immediately rather than
@@ -6276,6 +6312,7 @@ function onSkipTrialClicked() {
   // buildCheckoutUrl handles prefilled_email + prefilled_promo_code so
   // both checkout entry points (here + dashboard "Pay early →") share the
   // same URL-construction logic.
+  fireBeginCheckout(tier + '_' + plan);
   window.location.href = buildCheckoutUrl(baseUrl);
 }
 

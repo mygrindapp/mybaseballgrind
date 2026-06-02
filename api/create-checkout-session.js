@@ -106,7 +106,13 @@ export default async function handler(req, res) {
   await recordRead(clientIp);
 
   // ─── Validate input ───────────────────────────────────────
-  const { email, planType, trialEndUnix, promoCode } = req.body || {};
+  const { email, planType, trialEndUnix, promoCode, gaClientId } = req.body || {};
+  // GA4 client_id from the browser's _ga cookie (optional). Stored in session
+  // metadata so the Stripe webhook can attribute the server-side `purchase`
+  // event back to the same GA4 session. Bounded + sanitized — never trusted.
+  const gaCid = (typeof gaClientId === 'string')
+    ? gaClientId.replace(/[^\d.]/g, '').slice(0, 40)
+    : '';
 
   if (!isValidEmail(email)) {
     return res.status(400).json({ ok: false, error: 'missing_email' });
@@ -132,9 +138,10 @@ export default async function handler(req, res) {
   // ─── Create Checkout Session ──────────────────────────────
   // Stripe creates a subscription in 'trialing' status. No charge today.
   // On trial_end, Stripe automatically charges the captured card. Our
-  // stripe-webhook.js already handles customer.subscription.created (sets
-  // status=trialing in Redis) and invoice.paid (flips to active) — no
-  // additional webhook work needed.
+  // stripe-webhook.js handles customer.subscription.created (sets
+  // status=trialing in Redis), customer.subscription.updated (flips to
+  // active at trial end), and invoice.payment_succeeded (the trial→paid
+  // conversion: GA4 purchase + converted email).
   const stripe = new Stripe(stripeKey, { apiVersion: '2024-06-20' });
 
   const sessionParams = {
@@ -152,15 +159,17 @@ export default async function handler(req, res) {
         mg_source:        'signup_card_on_file',
         mg_promo_code:    promoCode || '',
         mg_trial_end:     String(trialEnd),
+        mg_ga_client_id:  gaCid,
       },
     },
     payment_method_collection: 'always',
     success_url: 'https://www.mygrindapp.com/softball.html?co=success',
     cancel_url:  'https://www.mygrindapp.com/softball.html?co=cancel',
     metadata: {
-      mg_email:      normEmail,
-      mg_plan_type:  plan,
-      mg_promo_code: promoCode || '',
+      mg_email:        normEmail,
+      mg_plan_type:    plan,
+      mg_promo_code:   promoCode || '',
+      mg_ga_client_id: gaCid,
     },
   };
 
