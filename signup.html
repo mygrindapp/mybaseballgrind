@@ -2404,7 +2404,7 @@ select.field-input {
 
       <!-- Phone (with live formatting) -->
       <div class="field-block">
-        <label class="field-label" for="p_phone">Phone Number<span class="req">*</span></label>
+        <label class="field-label" for="p_phone">Phone Number <span style="color:var(--grey); font-weight:400; font-size:0.85em;">(optional)</span></label>
         <input
           type="tel"
           class="field-input"
@@ -2414,7 +2414,7 @@ select.field-input {
           inputmode="tel"
           maxlength="14"
           oninput="onPhoneInput(this); onParentInput();">
-        <div class="field-helper">For trial reminders and account texts. We don't market to you.</div>
+        <div class="field-helper">Optional. Add it for text reminders before your trial ends. Email covers everything without it.</div>
         <div class="field-helper error">Please enter a 10-digit US phone number.</div>
       </div>
 
@@ -3880,7 +3880,7 @@ function onParentInput() {
   const firstOk = first.value.trim().length >= 1;
   const lastOk  = last.value.trim().length >= 1;
   const emailOk = isValidEmail(email.value);
-  const phoneOk = isValidPhone(phone.value);
+  const phoneOk = phone.value.trim() === '' || isValidPhone(phone.value);  // phone optional: only validate if one was entered
 
   validateField(first, firstOk);
   validateField(last,  lastOk);
