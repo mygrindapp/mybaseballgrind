@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<!-- Google Analytics GA4 (G-5HLS0F06CQ): same property as index.html/softball.html so the newsletter funnel rolls up with the landing-to-app funnel. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5HLS0F06CQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5HLS0F06CQ');
+</script>
+
+<title>MyGrind Weekly: Free Newsletter for Baseball &amp; Softball Families</title>
+<meta name="description" content="One email every Tuesday for baseball and softball families. Practical player development advice, what actually moves the needle, and how to support your player without the pressure. Free to join.">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="MyGrind Weekly: Free Newsletter for Baseball &amp; Softball Families">
+<meta property="og:description" content="One email every Tuesday. Practical development advice for baseball and softball families. Free to join.">
+<meta property="og:url" content="https://www.mygrindapp.com/newsletter">
+<meta property="og:site_name" content="MyGrind">
+<meta property="og:image" content="https://www.mygrindapp.com/assets/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:alt" content="MyGrind Weekly: Free Newsletter for Baseball and Softball Families">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MyGrind Weekly: Free Newsletter for Baseball &amp; Softball Families">
+<meta name="twitter:description" content="One email every Tuesday. Practical development advice for baseball and softball families. Free to join.">
+<meta name="twitter:image" content="https://www.mygrindapp.com/assets/og-card.png">
+
+<link rel="canonical" href="https://www.mygrindapp.com/newsletter">
+<link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
+<link rel="apple-touch-icon" href="https://www.mygrindapp.com/assets/apple-touch-icon.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C96A;
+    --gold-dark: #9A7A30;
+    --black: #050505;
+    --dark: #141414;
+    --border: #2E2E2E;
+    --grey: #888;
+    --light: #CCCCCC;
+    --white: #F5F5F5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body { background: var(--black); }
+
+  body {
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-weight: 300;
+    line-height: 1.55;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 22px;
+    position: relative;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Atmospheric background stack (per BRAND_SYSTEM.md) ── */
+  .bg-diamond, .bg-glow, .bg-vignette {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .bg-diamond {
+    background-image: repeating-linear-gradient(45deg,
+      rgba(201,168,76,0.04) 0, rgba(201,168,76,0.04) 1px,
+      transparent 1px, transparent 32px);
+  }
+  .bg-glow {
+    background: radial-gradient(1100px circle at 50% 28%,
+      rgba(201,168,76,0.10), transparent 60%);
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .bg-vignette {
+    background: radial-gradient(ellipse at center,
+      transparent 45%, rgba(0,0,0,0.7) 100%);
+  }
+  @keyframes breathe {
+    0%, 100% { opacity: 0.7; }
+    50%      { opacity: 1; }
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 540px;
+    text-align: center;
+  }
+
+  .logo {
+    width: 92px;
+    height: auto;
+    margin: 0 auto 26px;
+    display: block;
+    filter: drop-shadow(0 6px 24px rgba(201,168,76,0.25));
+  }
+
+  /* Eyebrow with hairline rules */
+  .eyebrow {
+    position: relative;
+    display: inline-block;
+    padding: 0 18px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 12px;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    width: 26px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+  .eyebrow::before { right: 100%; }
+  .eyebrow::after  { left: 100%; }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-weight: 400;
+    font-size: clamp(52px, 13vw, 96px);
+    line-height: 0.98;
+    letter-spacing: 1px;
+    color: var(--white);
+    margin-bottom: 18px;
+  }
+
+  .subhead {
+    font-size: clamp(15px, 1.7vw, 18px);
+    color: var(--light);
+    max-width: 460px;
+    margin: 0 auto 30px;
+  }
+
+  /* Form card (dark glass) */
+  .card {
+    background: rgba(20, 20, 20, 0.65);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 24px 22px 20px;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 12px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(201,168,76,0.05) inset;
+  }
+
+  .form-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+  }
+
+  .form-row { display: flex; gap: 10px; }
+  .form-row input[type="email"] {
+    flex: 1;
+    min-width: 0;
+    background: #0E0E0E;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--white);
+    font-family: 'Barlow', sans-serif;
+    font-size: 16px;
+    padding: 13px 14px;
+    outline: none;
+    transition: border-color 0.2s ease;
+  }
+  .form-row input[type="email"]::placeholder { color: #555; }
+  .form-row input[type="email"]:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  .form-row button {
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 13px 22px;
+    border: 1px solid var(--gold);
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+  }
+  .form-row button:hover {
+    background: var(--gold-light);
+    box-shadow: 0 0 20px rgba(201,168,76,0.35);
+  }
+
+  .microcopy {
+    font-size: 13px;
+    color: var(--grey);
+    margin-top: 14px;
+  }
+
+  .form-error {
+    display: none;
+    color: #E57373;
+    font-size: 14px;
+    margin-top: 12px;
+  }
+  .form-error.show { display: block; }
+
+  /* Honeypot — hidden from humans, catches bots */
+  .hp {
+    position: absolute;
+    left: -5000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .thank-you { display: none; }
+  .thank-you .check {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 34px;
+    letter-spacing: 1px;
+    color: var(--gold);
+    margin-bottom: 12px;
+  }
+  .thank-you p { color: var(--light); font-size: 15px; margin-bottom: 10px; }
+  .thank-you p:last-child {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 4px;
+  }
+
+  /* Secondary CTA — for the ones ready to go deeper */
+  .secondary {
+    margin-top: 26px;
+    padding-top: 22px;
+    border-top: 1px solid rgba(46,46,46,0.7);
+  }
+  .secondary p { font-size: 14px; color: var(--grey); margin-bottom: 12px; }
+  .secondary a {
+    display: inline-block;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    text-decoration: none;
+    border: 1px solid rgba(201,168,76,0.55);
+    border-radius: 3px;
+    padding: 11px 20px;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+  .secondary a:hover { background: var(--gold); color: var(--black); }
+
+  footer {
+    position: relative;
+    z-index: 1;
+    margin-top: 40px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--grey);
+    text-align: center;
+    line-height: 1.9;
+  }
+  footer a { color: var(--grey); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bg-glow { animation: none; }
+  }
+  @media (max-width: 460px) {
+    .form-row { flex-direction: column; }
+    .form-row button { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-diamond"></div>
+<div class="bg-glow"></div>
+<div class="bg-vignette"></div>
+
+<main class="wrap">
+  <img class="logo" src="/assets/img/mg-f153679d.png" alt="MyGrind">
+
+  <span class="eyebrow">Free Weekly Newsletter</span>
+  <h1>MyGrind Weekly</h1>
+  <p class="subhead">One email every Tuesday for baseball and softball families. Practical development advice, what actually moves the needle, and how to support your player without the pressure.</p>
+
+  <div class="card">
+    <div id="form-wrapper">
+      <div class="form-label">Get it free every Tuesday</div>
+      <!-- Posts to the same Mailchimp audience as the rest of the site, so the
+           welcome automation fires. JS does a JSONP submit (below) and reads the
+           result; the action + hidden iframe are a graceful no-JS fallback. -->
+      <form
+        id="mc-form"
+        action="https://youngsbaseball.us8.list-manage.com/subscribe/post?u=73280b4c02e9bc56c7e633892&amp;id=a7d801599a&amp;f_id=0089ace1f0"
+        method="post"
+        target="mc_iframe"
+        novalidate
+      >
+        <div class="form-row">
+          <input type="email" name="EMAIL" id="EMAIL" placeholder="your@email.com" required autocomplete="email" />
+          <button type="submit" name="subscribe">Subscribe</button>
+        </div>
+
+        <input type="hidden" name="tags" value="2216797">
+
+        <div class="hp" aria-hidden="true">
+          <input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off">
+        </div>
+      </form>
+
+      <p class="microcopy">No spam. Unsubscribe anytime. We never sell your information.</p>
+      <p class="form-error" id="form-error" role="alert" aria-live="polite"></p>
+    </div>
+
+    <div id="thank-you" class="thank-you" role="status" aria-live="polite">
+      <div class="check">You're on the list.</div>
+      <p>Every Tuesday I'll send one email with something you can actually use for your player. Talk soon.</p>
+      <p>Coach</p>
+    </div>
+  </div>
+
+  <div class="secondary">
+    <p>Ready for the full training journal your player writes in every day?</p>
+    <a href="/signup.html">Start a free trial of the app</a>
+  </div>
+
+  <iframe name="mc_iframe" style="display:none;" title="mailchimp"></iframe>
+</main>
+
+<footer>
+  MyGrind Weekly &middot; A Product of My Grind Sports LLC<br>
+  <a href="https://www.mygrindapp.com/">mygrindapp.com</a> &middot;
+  <a href="/privacy.html">Privacy</a> &middot;
+  <a href="/terms.html">Terms</a>
+</footer>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var form    = document.getElementById('mc-form');
+    var emailEl = document.getElementById('EMAIL');
+    var wrapper = document.getElementById('form-wrapper');
+    var thanks  = document.getElementById('thank-you');
+    var errorEl = document.getElementById('form-error');
+
+    // Known disposable / temp-mail providers — block at submit time
+    var disposableDomains = [
+      'mailinator.com', 'tempmail.com', 'temp-mail.org', 'guerrillamail.com',
+      '10minutemail.com', 'throwawaymail.com', 'fakeinbox.com', 'yopmail.com',
+      'getairmail.com', 'maildrop.cc', 'mintemail.com', 'mailnesia.com',
+      'sharklasers.com', 'spam4.me', 'trashmail.com', 'getnada.com',
+      'dispostable.com', 'mailcatch.com'
+    ];
+
+    // Submission cooldown — 3 attempts max per 60 seconds (in-memory)
+    var submitTimestamps = [];
+    var COOLDOWN_WINDOW  = 60000;
+    var COOLDOWN_MAX     = 3;
+
+    function showError(msg) {
+      errorEl.textContent = msg;
+      errorEl.classList.add('show');
+    }
+    function clearError() {
+      errorEl.textContent = '';
+      errorEl.classList.remove('show');
+    }
+    emailEl.addEventListener('input', clearError);
+
+    // Stricter than HTML5 — requires a real TLD of 2+ chars
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    function showThanks() {
+      wrapper.style.display = 'none';
+      thanks.style.display  = 'block';
+      try { gtag('event', 'newsletter_signup', { method: 'newsletter_page' }); } catch (_) {}
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      clearError();
+
+      var email = emailEl.value.trim();
+      var emailLower = email.toLowerCase();
+
+      // 1. Format check
+      if (!EMAIL_RE.test(emailLower)) {
+        showError("Please enter a valid email address.");
+        return;
+      }
+
+      var domain = emailLower.slice(emailLower.lastIndexOf('@') + 1);
+
+      // 2. Block disposable / temp-mail providers
+      if (disposableDomains.indexOf(domain) !== -1) {
+        showError("Please use a permanent email so the newsletter reaches you.");
+        return;
+      }
+
+      // 3. Honeypot — silently drop bots
+      var hpField = form.querySelector('.hp input');
+      if (hpField && hpField.value) { showThanks(); return; }
+
+      // 4. Submission cooldown — reject excessive retries
+      var now = Date.now();
+      submitTimestamps = submitTimestamps.filter(function (t) { return now - t < COOLDOWN_WINDOW; });
+      if (submitTimestamps.length >= COOLDOWN_MAX) {
+        showError("You've already submitted. Check your inbox for the confirmation email.");
+        return;
+      }
+      submitTimestamps.push(now);
+
+      // 5. JSONP submit so we can read Mailchimp's response
+      var cb = 'mcCb' + Date.now() + Math.floor(Math.random() * 1000);
+      var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json' +
+                '?u=73280b4c02e9bc56c7e633892' +
+                '&id=a7d801599a' +
+                '&f_id=0089ace1f0' +
+                '&EMAIL=' + encodeURIComponent(email) +
+                '&tags=2216797' +
+                '&b_73280b4c02e9bc56c7e633892_a7d801599a=' +
+                '&c=' + cb;
+
+      var script = document.createElement('script');
+      var settled = false;
+      var timeout = setTimeout(function () {
+        if (settled) return;
+        settled = true;
+        try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+        if (script.parentNode) script.parentNode.removeChild(script);
+        showError("Couldn't reach the signup server. Please try again.");
+      }, 10000);
+
+      window[cb] = function (data) {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+        if (script.parentNode) script.parentNode.removeChild(script);
+
+        var msg = (data && data.msg ? String(data.msg) : '').replace(/<[^>]+>/g, '').trim();
+
+        if (data && data.result === 'success') {
+          showThanks();
+          return;
+        }
+
+        // "already subscribed" is a soft-success — Mailchimp returns error result
+        if (/already subscribed/i.test(msg)) {
+          showThanks();
+          return;
+        }
+
+        showError(msg || "We couldn't add that email. Please double-check and try again.");
+      };
+
+      script.onerror = function () {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timeout);
+        try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+        showError("Couldn't reach the signup server. Please try again.");
+      };
+      script.src = url;
+      document.head.appendChild(script);
+    });
+  });
+</script>
+
+</body>
+</html>

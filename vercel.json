@@ -6,7 +6,8 @@
     }
   ],
   "rewrites": [
-    { "source": "/foundermygrind", "destination": "/foundermygrind.html" }
+    { "source": "/foundermygrind", "destination": "/foundermygrind.html" },
+    { "source": "/newsletter", "destination": "/newsletter.html" }
   ],
   "headers": [
     {
