@@ -1433,7 +1433,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v308';
+    const CACHE = 'ybg-mygrind-v309';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2601,118 +2601,33 @@ function signOutAndSwitchAccount() {
        MyFitnessPal, Whoop, Apple Fitness+, Hudl). Same IDs preserved where
        reused so existing mgTab() calls keep working. -->
   <button class="tab-btn mg-tab" id="tab-dashboard" onclick="mgTab('dashboard','tab-dashboard')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid var(--gold);color:var(--gold);cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-home"/></svg>Dashboard
+    <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-home"/></svg>Home
   </button>
   <button class="tab-btn mg-tab" id="tab-journal"  onclick="mgTab('journal','tab-journal')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-book-open"/></svg>Journal
   </button>
-  <button class="tab-btn mg-tab" id="tab-academics" onclick="mgTab('academics','tab-academics')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg>Academics
+  <button class="tab-btn mg-tab" id="tab-stats"    onclick="mgTab('stats','tab-stats')"    style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+    <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg>Stats
+  </button>
+  <!-- Develop hub (NEW 2026-06-02, ROADMAP Option A): single home for The 5
+       Tools, Resources, the 12-Month Calendar, and Academics — replaces the
+       standalone Academics tab AND the More drawer. Doubles as the MyGrind
+       Pro upsell anchor (free = reference layer, Pro = prescriptive layer). -->
+  <button class="tab-btn mg-tab" id="tab-develop"  onclick="mgTab('develop','tab-develop')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+    <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-target"/></svg>Develop
   </button>
   <button class="tab-btn mg-tab" id="tab-players"  onclick="mgTab('players','tab-players')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg>Profile
   </button>
-  <!-- Stats restored to the bottom nav 2026-05-17 (Coach Young). Lived
-       in the More menu briefly today but felt buried; back in the nav
-       as the last content tab before More. Bumps the nav to 6 tabs
-       (tighter than the 5-tab convention but readable on iPhone 375px). -->
-  <button class="tab-btn mg-tab" id="tab-stats"    onclick="mgTab('stats','tab-stats')"    style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg>Stats
-  </button>
-  <button class="tab-btn mg-tab" id="tab-more"     onclick="toggleMoreMenu()"               style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#555;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
-    <!-- Baseball emoji at 16px to match the visual weight of the 22x22
-         Lucide stroke icons on the other 5 tabs. Emojis carry built-in
-         glyph padding so a 20px ⚾ visually dominates a 22x22 SVG; 16px
-         lands proportional. Coach Young 2026-05-17. -->
-    <span style="font-size:16px;line-height:1;height:22px;display:flex;align-items:center;justify-content:center;">⚾</span>More
-  </button>
 </nav>
 
-<!-- ── MORE MENU (slides up from bottom tab) ── -->
-<div id="mg-more-menu" style="
-  display:none;
-  position:fixed;
-  bottom:62px;
-  left:0;right:0;
-  z-index:499;
-  background:rgba(10,10,10,0.98);
-  backdrop-filter:blur(12px);
-  border-top:1px solid #2A2A2A;
-  padding:8px 0 4px;
-  animation:slideUpMenu 0.2s ease;
-">
-  <div style="font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#444;padding:6px 20px 10px;">More</div>
-  <!-- Stats button + Stats|Settings divider REMOVED from More menu 2026-05-17
-       (Coach Young, second pass today). Stats was briefly moved here when
-       Academics took its bottom-nav slot, but felt buried. Restored to
-       the bottom nav as the last content tab before More — no longer
-       needs a More-menu entry. The nav grew from 5 to 6 tabs in trade.
-       Training Calendar removed earlier 2026-05-16 — redundant with the
-       12-Month Training Calendar tile on the Dashboard. -->
+<!-- More drawer RETIRED 2026-06-02 (nav redesign, ROADMAP Option A). The
+     6-tab + More-drawer nav was consolidated to 5 tabs. Its destinations moved:
+     Daily Check-In → Dashboard + Develop hub; The 5 Tools + Resources →
+     Develop hub; Settings + Help/FAQ + Send Feedback + Suggest a Feature →
+     Profile ("Settings & Support" block). toggleMoreMenu()/closeMoreMenu()
+     are kept as null-safe no-ops since older call sites reference them. -->
 
-  <!-- My Team button hidden 2026-05-16: team management not ready for launch.
-       Panel still wired in the DOM at #panel-team so re-enabling is a one-line
-       uncomment. Coach is launching first, building out team + coach-facing
-       section in August when school season starts. -->
-  <!-- <button onclick="mgTab('team',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center;">👥</span> My Team
-  </button> -->
-  <!-- Coach Feedback button hidden 2026-05-16: coach-facing section deferred
-       to August 2026 post-launch sprint. Phase 7b V1 (player → coach SMS via
-       coach-reply.html) still works end-to-end, but the in-app entry point is
-       hidden so players do not initiate flows the coach side cannot fully
-       receive yet at scale. Panel at #panel-coach-feedback remains in DOM. -->
-  <!-- <button onclick="mgTab('coach-feedback',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center;">💬</span> Coach Feedback
-  </button> -->
-  <!-- Share tab removed 2026-05-08 — milestone share modal still works via shareMilestone(). -->
-
-  <!-- Daily Check-In entry (2026-05-29). Routes to checkin.html — the
-       readiness + workload + ACWR module. localStorage v1; it links back to
-       this journal. Placed first so the daily habit is the top action. -->
-  <a href="checkin.html" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-activity"/></svg></span> Daily Check-In
-  </a>
-
-  <!-- The 5 Tools reference (added 2026-05-30). In-depth education panel:
-       the five tools of baseball + softball with benchmark averages by
-       level (HS Varsity / JuCo / College), boys + girls. Sits above
-       Resources because it is the deepest reference surface in the app. -->
-  <button onclick="mgTab('tools',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;">🎯</span> The 5 Tools
-  </button>
-
-  <!-- Resources entry added 2026-05-23. Moved Recruiting & Academic
-       Resources card out of Settings into a dedicated panel-resources
-       so parents and players can find important links AND reach Coach
-       in one tap. New link categories drop into panel-resources as
-       needed. Sits above Settings here because Resources is outward
-       facing (links, contact) while Settings is configuration. -->
-  <button onclick="mgTab('resources',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg></span> Resources
-  </button>
-
-  <button onclick="mgTab('settings',null);closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-settings"/></svg></span> Settings
-  </button>
-
-  <!-- ── HELP & SUPPORT (added 2026-05-16) ── -->
-  <div style="height:1px; background:#2A2A2A; margin:8px 16px;"></div>
-  <button onclick="openHelpModal();closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-help-circle"/></svg></span> Help &amp; FAQ
-  </button>
-  <!-- Send Feedback — Coach Young 2026-05-17. Was a plain mailto link to
-       support@mygrindapp.com; now routes into the Settings feedback card
-       which has a structured form (email + textarea + sendFeedback() that
-       actually posts to the backend). One canonical feedback surface
-       instead of a mailto competing with a real form. -->
-  <button onclick="openSettingsAtFeedback()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-mail"/></svg></span> Send Feedback
-  </button>
-  <a href="mailto:hello@mygrindapp.com?subject=MyGrind%20Feature%20Request&body=Hi%20MyGrind%20Team%2C%0A%0AI%27d%20love%20to%20see%20this%20in%20the%20app%3A%0A%0A%0A%0AWhy%20it%20matters%20to%20me%3A%0A%0A%0A%0A--%0AApp%3A%20MyGrind%202026.1" onclick="closeMoreMenu()" style="display:flex;align-items:center;gap:14px;width:100%;padding:14px 20px;background:transparent;border:none;color:#D4C8BC;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-align:left;text-decoration:none;" onmouseover="this.style.background='rgba(var(--accent-rgb), 0.06)'" onmouseout="this.style.background='transparent'">
-    <span style="font-size:20px;width:28px;text-align:center; display:inline-flex; align-items:center; justify-content:center;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-lightbulb"/></svg></span> Suggest a Feature
-  </a>
-</div>
 
 <!-- ── HELP & FAQ MODAL (added 2026-05-16) ──
      Accordion-style FAQ using native <details>. No JS framework, no extra
@@ -2876,6 +2791,22 @@ input[type="number"] {
       <div class="gold-line"></div>
     </div>
 
+    <!-- ══ DAILY CHECK-IN — top-of-dashboard daily action ══
+         Surfaced here 2026-06-02 (nav redesign, ROADMAP increment 4): the
+         readiness + workload check is a daily habit, so it earns prime
+         Dashboard real estate instead of living only in the Develop hub.
+         Links straight to checkin.html (also reachable from Develop). -->
+    <a href="checkin.html" class="card" id="dash-checkin-card" style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:linear-gradient(135deg,#1A1410,#100C08); border-left:3px solid var(--gold); cursor:pointer; text-decoration:none;">
+      <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:rgba(232,201,122,0.10); border:1px solid var(--gold-dark);">
+        <svg class="mg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-activity"/></svg>
+      </span>
+      <span style="flex:1; min-width:0;">
+        <span style="display:block; font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--white,#F2EAD9);">Daily Check-In</span>
+        <span style="display:block; font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.4; margin-top:2px;">Log readiness and workload. Two taps, keeps your streak alive.</span>
+      </span>
+      <span style="font-size:22px; color:var(--gold-dark,#B89A4B); flex-shrink:0;">&rsaquo;</span>
+    </a>
+
     <!-- ══ WHY I GRIND — top of dashboard ══
          Coach Young 2026-05-22: small inspiration card showing the
          player's own "Why I Grind" mission from their profile. Hidden
@@ -2897,7 +2828,7 @@ input[type="number"] {
          lives in the dedicated tab now; repeating it here is noise.
          Source of truth lives in #panel-academics; this remains a
          read-only render via renderDashAcademics(). -->
-    <div class="card" id="dash-academics-card" style="margin-bottom:18px; background:linear-gradient(135deg,#141A14,#101410); border-left:3px solid #5A8A3A; cursor:pointer;" onclick="mgTab('academics','tab-academics')">
+    <div class="card" id="dash-academics-card" style="margin-bottom:18px; background:linear-gradient(135deg,#141A14,#101410); border-left:3px solid #5A8A3A; cursor:pointer;" onclick="mgTab('academics','tab-develop')">
       <!-- Summer-mode eyebrow (hidden by default, revealed by renderDashAcademics
            when isAcademicsSummerMode() returns true). Phase 2A spec, Coach Young
            2026-05-16: when school is out (June-August), card flips to "Spring
@@ -4466,10 +4397,9 @@ input[type="number"] {
 
   <!-- ══════════════════════════════════════════ CALENDAR ══ -->
   <div class="panel" id="panel-calendar">
-    <!-- Back-to-dashboard affordance added 2026-05-14 walkthrough.
-         Calendar opens from the More menu, so the bottom-nav tabs are the
-         only way back. This explicit back pill removes the guesswork. -->
-    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
+    <!-- Back-to-Develop affordance. Calendar is reached from the Develop hub
+         (2026-06-02 nav redesign), so the back pill returns there. -->
+    <button onclick="mgTab('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Develop</button>
     <div class="section-header">
       <div class="section-title">MY<span>CALENDAR</span></div>
       <div class="section-sub">Training Prescriptions · Built from 20+ Years of Player Development</div>
@@ -4862,14 +4792,43 @@ input[type="number"] {
          Player profile stays focused on identity and player data;
          academics now lives in its own tab; billing lives with Settings. -->
 
+    <!-- ═══ SETTINGS & SUPPORT ═══════════════════════════════════
+         Relocated here 2026-06-02 from the retired More drawer (nav
+         redesign, ROADMAP Option A). Profile is now the home for
+         configuration + help. Uses the shared .develop-card style. -->
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin:22px 0 10px;">Settings &amp; Support</div>
+
+    <button onclick="mgTab('settings','tab-players')" class="develop-card">
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-settings"/></svg></span>
+      <span class="develop-card-text"><span class="develop-card-title">Settings</span><span class="develop-card-sub">Sport, reminders, backup, subscription.</span></span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </button>
+
+    <button onclick="openHelpModal()" class="develop-card">
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-help-circle"/></svg></span>
+      <span class="develop-card-text"><span class="develop-card-title">Help &amp; FAQ</span><span class="develop-card-sub">Quick answers to common questions.</span></span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </button>
+
+    <button onclick="openSettingsAtFeedback()" class="develop-card">
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-mail"/></svg></span>
+      <span class="develop-card-text"><span class="develop-card-title">Send Feedback</span><span class="develop-card-sub">Tell us what is working and what is not.</span></span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </button>
+
+    <a href="mailto:hello@mygrindapp.com?subject=MyGrind%20Feature%20Request&body=Hi%20MyGrind%20Team%2C%0A%0AI%27d%20love%20to%20see%20this%20in%20the%20app%3A%0A%0A" class="develop-card" style="text-decoration:none;">
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-lightbulb"/></svg></span>
+      <span class="develop-card-text"><span class="develop-card-title">Suggest a Feature</span><span class="develop-card-sub">Got an idea? We read every one.</span></span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </a>
+
     <!-- Bottom-of-page "Done" pill — Coach Young 2026-05-17. Autosave
          handles persistence, but long-form forms still need a closure
          gesture or players are unsure if they "finished." Profile's
-         pill specifically routes to Academics (not Dashboard) because
-         the natural onboarding flow is identity → academics → daily
-         use. Label is explicit so the player knows where they're being
-         taken next. -->
-    <button onclick="mgTab('academics', 'tab-academics')" style="
+         pill routes to Academics because the natural onboarding flow is
+         identity → academics → daily use. Highlights the Develop tab
+         (academics lives under Develop as of the 2026-06-02 nav redesign). -->
+    <button onclick="mgTab('academics', 'tab-develop')" style="
       display:block;
       width:100%;
       margin:8px 0 14px;
@@ -4901,9 +4860,9 @@ input[type="number"] {
        Pro tier (MG_PRO flag) unlocks per-slot keyword warnings and
        core-aligned summary. Decision #40 unchanged. -->
   <div class="panel" id="panel-academics">
-    <!-- Back-to-dashboard pill matches the panel-team / panel-settings
-         convention from the 2026-05-16 walkthrough. -->
-    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
+    <!-- Back-to-Develop pill. Academics is reached from the Develop hub
+         (2026-06-02 nav redesign), so the back pill returns there. -->
+    <button onclick="mgTab('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Develop</button>
     <div class="section-header">
       <div class="section-title">MY<span>ACADEMICS</span></div>
       <div class="section-sub" id="acad-page-sub">No Grades · No Game</div>
@@ -6285,6 +6244,94 @@ input[type="number"] {
        read hotter than old radar-gun numbers. Levels start at HS Varsity
        on purpose, tied to the growth-plate card in Resources. Ranges,
        not gospel. Baseball + softball shown side by side per tool. -->
+  <!-- ══════════════════════════════════════════ DEVELOP HUB ══ -->
+  <!-- NEW 2026-06-02 (ROADMAP Option A). One home for the reference + growth
+       surfaces that were scattered across the old Academics tab and the More
+       drawer. Each card routes to an existing panel via mgTab(..., 'tab-develop')
+       so the Develop tab stays highlighted while the player is in a sub-panel.
+       Tapping the Develop tab again returns here. Anchors the Pro upsell. -->
+  <style>
+    .develop-card {
+      display:flex; align-items:center; gap:14px; width:100%;
+      background:var(--card2, #1A1410); border:1px solid var(--border, #2A2A2A);
+      border-radius:10px; padding:16px; margin-bottom:10px; cursor:pointer;
+      text-align:left; transition:border-color 0.15s, background 0.15s;
+    }
+    .develop-card:hover, .develop-card:active { border-color:var(--gold); background:rgba(232,201,122,0.06); }
+    .develop-card-icon { font-size:22px; width:30px; flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; }
+    .develop-card-text { display:flex; flex-direction:column; gap:3px; flex:1; min-width:0; }
+    .develop-card-title { font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--light); }
+    .develop-card-sub { font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.4; }
+    .develop-card-chev { font-size:22px; color:var(--gold-dark, #B89A4B); flex-shrink:0; }
+  </style>
+  <div class="panel" id="panel-develop">
+    <div class="card" style="margin-top:48px; margin-bottom:16px; padding-top:20px; background:linear-gradient(180deg, rgba(232,201,122,0.08) 0%, rgba(184,154,75,0.03) 100%); border-color:var(--gold-dark);">
+      <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+        <svg class="mg-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold); flex-shrink:0;"><use href="#mg-icon-target"/></svg>
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:2px; color:var(--gold); line-height:1.2;">Develop</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:16px; color:var(--light); line-height:1.6;">
+        Everything that turns daily reps into a plan. The tools of the game, the resources coaches ask about, your training calendar, and academics, all in one place.
+      </div>
+    </div>
+
+    <a href="checkin.html" class="develop-card" style="text-decoration:none;">
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-activity"/></svg></span>
+      <span class="develop-card-text">
+        <span class="develop-card-title">Daily Check-In</span>
+        <span class="develop-card-sub">Readiness and workload. Keep your streak alive.</span>
+      </span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </a>
+
+    <button onclick="mgTab('tools','tab-develop')" class="develop-card">
+      <span class="develop-card-icon">🎯</span>
+      <span class="develop-card-text">
+        <span class="develop-card-title">The 5 Tools</span>
+        <span class="develop-card-sub">Hit, power, run, arm, field. Benchmarks by level.</span>
+      </span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </button>
+
+    <button onclick="mgTab('resources','tab-develop')" class="develop-card">
+      <span class="develop-card-icon">📚</span>
+      <span class="develop-card-text">
+        <span class="develop-card-title">Resources</span>
+        <span class="develop-card-sub">Recruiting, eligibility, and the links coaches ask about.</span>
+      </span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </button>
+
+    <button onclick="mgTab('calendar','tab-develop')" class="develop-card">
+      <span class="develop-card-icon">📅</span>
+      <span class="develop-card-text">
+        <span class="develop-card-title">12-Month Calendar</span>
+        <span class="develop-card-sub">What to work on, month by month, all year.</span>
+      </span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </button>
+
+    <button onclick="mgTab('academics','tab-develop')" class="develop-card">
+      <span class="develop-card-icon">🎓</span>
+      <span class="develop-card-text">
+        <span class="develop-card-title">Academics</span>
+        <span class="develop-card-sub">Grades and eligibility. The other half of the recruit.</span>
+      </span>
+      <span class="develop-card-chev">&rsaquo;</span>
+    </button>
+
+    <!-- MyGrind Pro upsell anchor. Free = the reference layer above.
+         Pro = the prescriptive layer (AI coach + prescriptive academics).
+         Placeholder until Pro ships; honest "coming soon" copy per the
+         no-aspirational-UI rule's launch exception for the upsell anchor. -->
+    <div class="card" style="margin-top:6px; border-color:var(--gold-dark); background:rgba(232,201,122,0.05);">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">MyGrind Pro</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--grey); line-height:1.6;">
+        Everything here is the map. Pro turns it into the plan: prescriptive academics and an AI coach that reads your grind and tells you what to work on next. Coming soon.
+      </div>
+    </div>
+  </div>
+
   <div class="panel" id="panel-tools">
 
     <!-- Hero. margin-top:48px clears the 64px fixed top bar so the Bebas
@@ -19017,7 +19064,7 @@ function renderJournalReminders() {
         title: 'Time to update your grades',
         body: 'Around now is when ' + labels[win] + ' come out. Pull every grade in your 6 classes and update them in Academics so your GPA and eligibility stay accurate.',
         cta: 'Open Academics →',
-        action: "mgTab('academics','tab-academics')"
+        action: "mgTab('academics','tab-develop')"
       });
     }
   }
