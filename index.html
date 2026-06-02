@@ -560,6 +560,17 @@
   }
   .subhead.show { animation: fadeUp 0.8s ease-out forwards; }
 
+  /* Hero CTA — above-the-fold button so sold visitors can act immediately
+     instead of scrolling past how-it-works + screenshots to find one.
+     Constrains the full-width .primary-cta to button width, centered. */
+  .hero-cta {
+    max-width: 380px;
+    margin: 30px auto 0;
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  .hero-cta.show { animation: fadeUp 0.8s ease-out forwards; }
+
   /* ── FORM ── */
   .form-section {
     width: 100%; max-width: 520px;
@@ -1297,6 +1308,10 @@
     <h2 class="subhead" id="subhead">
       The daily baseball and softball training journal for serious players, and the parents walking the road with them.
     </h2>
+    <div class="hero-cta" id="hero-cta">
+      <a class="primary-cta" href="/signup.html">Start My Free Trial <span class="cta-arrow">&rarr;</span></a>
+      <p class="form-trust">14-day free trial &middot; No charge until day 15 &middot; Cancel anytime</p>
+    </div>
   </section>
 
   <!-- HOW IT WORKS — Chunk 3 (2026-05-28; moved ahead of SEE THE APP on
@@ -1486,6 +1501,7 @@
     reveal('chip',         'show', 80);
     reveal('underline',    'draw', 80);
     reveal('subhead',      'show', 160);
+    reveal('hero-cta',     'show', 240);
     reveal('founder-note', 'show', 260);
     reveal('footer',       'show', 360);
 
