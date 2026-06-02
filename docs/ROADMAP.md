@@ -28,6 +28,21 @@
 14. **Em-dash sweep continuation** (~370 instances repo-wide, task #14, deferred polish). Only landing + signup user-visible em-dashes done in pre-ad pass. Future pass must distinguish placeholder em-dashes (e.g. `<span id="x">—</span>`) from sentence em-dashes — file-by-file with quality checks.
 15. **Daily morning affirmation feature** (task #27, ~3-4h, Coach said build later). Curated message library + 7am Resend email + in-app banner.
 
+<!-- SHIPPED 2026-06-02 (Newsletter Funnel + Social Rebrand + Conversion + Blog Engine):
+- 9 commits to main (7 session + 2 pre-session morning), all verified live in production.
+- Newsletter funnel: new /newsletter signup page (email-only, no app account), GA4 newsletter_signup event, self-propagating subscribe links in the Card Stack footer (c69d327); single-annual copy fixed $99 -> $99.99 to match Stripe.
+- Check-in cloud sync (75883c0): checkin.html readiness + workload write to Firestore users/{uid} (managed-minor routing; doc-field storage so no rules change). Closes the 5-29 Firestore TODO. localStorage stays offline cache.
+- Above-the-fold hero CTA (6c1d29c) on the landing -- closes the Day +11 "no hero CTA" follow-up.
+- Phone optional at signup Screen 2 (7a9e30a) -- email alone creates the account; phone validated only if entered.
+- SEO (528ed78): /newsletter added to sitemap + homepage footer link + lastmod bump.
+- Blog +2: baseball-training-journal pillar (768a95e) + softball-training-journal (9f7437e). Both core keywords covered. Added to blog index + sitemap. Blog 4 -> 6 posts.
+- Morning pre-session: GA4 checkout funnel begin_checkout + purchase + trial-conversion delivery (aa07315); nav redesign Option A 5-tab + Develop hub (16b30c9). These were the two queued "next code options" from the 6-01 ROADMAP -- now DONE.
+- Non-code: all 4 social profiles rebranded to point at /newsletter (X = @MyGrindapp, kept 2022 age); Drive content bank (4 LinkedIn posts, 3 reel scripts, 2 outreach messages, 20 X posts + 10 reply-starters); Baseball Moms Uncensored comment; Metricool set up then shelved (manual posting); 2026-06-07 X-batch reminder set.
+- Decision #61 locked: FOUNDERMYGRIND distributed case-by-case, not public. New memories: foundermygrind_case_by_case, mygrind_x_handle (@MyGrindapp), blog_content_roadmap.
+- NEXT / DEFERRED: send the 2 drafted outreach messages (warm-client testimonial ask + coach "free for your team" pitch); blog post #3 (hitting slump, repurpose 6-02 newsletter); signup screen cuts (remove Screen 1 re-explainer + move Screen 4 goals survey to post-signup, renumbers flow, test in preview); landing testimonial block (needs warm-client quote).
+- Smoke tests pending (need Coach login): check-in 2-device sync, signup with no phone.
+-->
+
 <!-- SHIPPED 2026-05-30 (The 5 Tools education layer + SEO/FTB cleanup):
 - 1 commit 8f9bf95, live in prod, SW v296. New "The 5 Tools" panel under More (hit/power/run/arm/field + Pitching + position guide), joy/dream-first, sport-aware benchmark tables (HS Varsity/JuCo/College) shown per the Baseball/Softball toggle.
 - Hit & Power reframed production-first (velocity tables removed). Run/Arm/Pitching keep numeric tables.
