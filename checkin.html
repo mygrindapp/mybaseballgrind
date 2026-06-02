@@ -257,6 +257,13 @@
   <button data-v="insight"><span class="ic">&#9650;</span>Insights</button>
 </nav>
 
+<!-- Firebase (compat) — same SDK version + project as softball.html, so the
+     auth session set in the app carries over here and check-ins sync to the
+     same player doc. -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+
 <script>
 /* ---------- helpers ---------- */
 var RKEY='mg_readiness_log', WKEY='mg_workload_log';
@@ -282,6 +289,71 @@ function mgStampActivityDay(dateKey){
 
 var readiness = loadJSON(RKEY,{});
 var sessions  = loadJSON(WKEY,[]);
+
+/* ---------- CLOUD SYNC (Firestore) ----------
+   Mirrors softball.html: same Firebase project, same users/{uid} doc, and the
+   same managed-minor routing (users/{uid}/managedMinors/{minorId}) so a parent
+   viewing a child's journal saves that child's check-ins under the child.
+   Readiness + workload are stored as ARRAY fields on that doc (like goals),
+   so the existing per-user Firestore rules already cover them — no rules change.
+   localStorage stays the offline cache; cloud is the cross-device source. */
+var _fbUser = null, _db = null;
+(function initCloud(){
+  try {
+    if (typeof firebase === 'undefined') return;           // SDK blocked -> local-only
+    firebase.initializeApp({
+      apiKey:            "AIzaSyBEftxaT0v6gHYW1dz_THm-JbLQ4CaOI9c",
+      authDomain:        "my-grind-b8486.firebaseapp.com",
+      projectId:         "my-grind-b8486",
+      storageBucket:     "my-grind-b8486.firebasestorage.app",
+      messagingSenderId: "627787811658",
+      appId:             "1:627787811658:web:2558d568cd92822db90fb3"
+    });
+    _db = firebase.firestore();
+    firebase.auth().onAuthStateChanged(function(u){
+      _fbUser = u || null;
+      if (_fbUser) cloudPull();                             // signed in -> pull, merge, re-render
+    });
+  } catch(e){ /* offline or blocked: stay localStorage-only, same as before */ }
+})();
+function _activeMinorId(){ try { return localStorage.getItem('mg_active_minor_id') || null; } catch(e){ return null; } }
+function _userDocRef(){
+  if (!_db || !_fbUser) return null;
+  var base = _db.collection('users').doc(_fbUser.uid);
+  var minorId = _activeMinorId();
+  return minorId ? base.collection('managedMinors').doc(minorId) : base;
+}
+function cloudPush(){
+  var ref = _userDocRef(); if (!ref) return;               // signed out -> no-op (local only)
+  var rArr = Object.keys(readiness).map(function(day){ return Object.assign({ date: day }, readiness[day]); });
+  ref.set({
+    readiness: rArr,
+    workload: sessions,
+    readinessUpdatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true }).catch(function(e){ console.warn('[FB checkin] push:', e); });
+}
+async function cloudPull(){
+  var ref = _userDocRef(); if (!ref) return;
+  try {
+    var snap = await ref.get();
+    var data = (snap && snap.exists) ? (snap.data() || {}) : {};
+    if (Array.isArray(data.readiness)) {
+      data.readiness.forEach(function(r){
+        if (!r || !r.date) return;
+        var l = readiness[r.date];
+        if (!l || (r.ts && (!l.ts || r.ts > l.ts))) { var c = Object.assign({}, r); delete c.date; readiness[r.date] = c; }
+      });
+    }
+    if (Array.isArray(data.workload)) {
+      var smap = {}; sessions.forEach(function(s){ if (s && s.id != null) smap[String(s.id)] = s; });
+      data.workload.forEach(function(s){ if (s && s.id != null){ var ex = smap[String(s.id)]; if (!ex || (s.ts && (!ex.ts || s.ts > ex.ts))) smap[String(s.id)] = s; } });
+      sessions = Object.values(smap);
+    }
+    saveJSON(RKEY, readiness); saveJSON(WKEY, sessions);
+    renderStatus(); renderStrip(); renderRates(); renderLoad();
+    cloudPush();                                            // push merged result so local-only days/sessions sync up
+  } catch(e){ console.warn('[FB checkin] pull:', e); }
+}
 
 document.getElementById('datestrip').textContent =
   new Date().toLocaleDateString(undefined,{weekday:'long', month:'long', day:'numeric'});
@@ -363,7 +435,7 @@ document.getElementById('saveReadiness').addEventListener('click', function(){
   rec.score=readinessScore(rec); rec.ts=new Date().toISOString();
   readiness[today()]=rec; saveJSON(RKEY,readiness);
   mgStampActivityDay(today()); // keeps the journal streak alive (union)
-  // TODO Firestore: players/{uid}/readiness/{today()} = rec  (note kept private to player)
+  cloudPush(); // sync readiness to the player's cloud doc (no-op if signed out)
   renderStatus(); renderStrip();
   var b=this; b.textContent='Saved \u2713'; setTimeout(function(){b.textContent="Save today's check-in";},1200);
 });
@@ -380,7 +452,7 @@ document.getElementById('addSession').addEventListener('click', function(){
   var s={id:Date.now(), date:date, type:type, durationMin:min, rpe:rpe, throws:throws, load:min*rpe, ts:new Date().toISOString()};
   sessions.push(s); saveJSON(WKEY,sessions);
   mgStampActivityDay(today()); // logging a session counts as showing up today (union streak)
-  // TODO Firestore: players/{uid}/sessions push s
+  cloudPush(); // sync workload to the player's cloud doc (no-op if signed out)
   document.getElementById('wMin').value=''; document.getElementById('wRpe').value=''; document.getElementById('wThrows').value='';
   renderLoad();
   var b=this; b.textContent='Added \u2713'; setTimeout(function(){b.textContent='Add session';},1000);
@@ -406,7 +478,7 @@ function renderLoad(){
   document.getElementById('sessList').innerHTML=lh;
   document.querySelectorAll('#sessList .x').forEach(function(x){
     x.addEventListener('click', function(){
-      sessions=sessions.filter(function(s){return s.id!=x.dataset.id;}); saveJSON(WKEY,sessions); renderLoad();
+      sessions=sessions.filter(function(s){return s.id!=x.dataset.id;}); saveJSON(WKEY,sessions); cloudPush(); renderLoad();
     });
   });
 }
@@ -481,6 +553,7 @@ document.getElementById('resetBtn').addEventListener('click', function(){
   if(!confirm('Clear all readiness and workload data?')) return;
   localStorage.removeItem(RKEY); localStorage.removeItem(WKEY);
   readiness={}; sessions=[]; draft={};
+  cloudPush(); // clear the cloud copy too (writes empty arrays) so reset really resets
   renderStatus(); renderStrip(); renderRates(); renderLoad(); renderInsights();
 });
 
