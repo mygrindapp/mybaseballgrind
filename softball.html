@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v310';
+    const CACHE = 'ybg-mygrind-v311';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -13747,6 +13747,9 @@ function getHWLog() {
 
 function saveHWLog(log) {
   try { localStorage.setItem('ybg_hw_log', JSON.stringify(log)); } catch(e) {}
+  // Cloud-sync the Height & Weight growth log so it survives a device change
+  // (same push pattern as academics/settings). No-op until signed in. 2026-06-03.
+  try { if (typeof fbSaveMisc === 'function') fbSaveMisc({ hwLog: log }); } catch(e) {}
 }
 
 // Toggle the H/W check-in form open or closed. Coach Young 2026-05-17:
@@ -19726,6 +19729,18 @@ async function syncFromCloud(uid) {
     }
     if (data.settings && !localStorage.getItem('ybg_settings')) {
       localStorage.setItem('ybg_settings', JSON.stringify(data.settings));
+    }
+    // ── Height & Weight log (union by id; growth history must survive a
+    //    device change). Sorted ASCENDING by dateTs so renderHWTracker's
+    //    log[0] = first / log[len-1] = latest gain math stays correct. ──
+    if (Array.isArray(data.hwLog) && data.hwLog.length) {
+      var hwLocal = [];
+      try { hwLocal = JSON.parse(localStorage.getItem('ybg_hw_log') || '[]'); } catch(e) { hwLocal = []; }
+      var hwMap = {};
+      (Array.isArray(hwLocal) ? hwLocal : []).forEach(function(h) { if (h && h.id != null) hwMap[h.id] = h; });
+      data.hwLog.forEach(function(h) { if (h && h.id != null) hwMap[h.id] = h; });
+      var hwMerged = Object.values(hwMap).sort(function(a,b) { return (a.dateTs||0) - (b.dateTs||0); });
+      localStorage.setItem('ybg_hw_log', JSON.stringify(hwMerged));
     }
     // ── Goals + Entries → ONE read-modify-write of the canonical state ──
     var ls = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
