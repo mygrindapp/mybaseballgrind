@@ -6736,9 +6736,13 @@ window.addEventListener('DOMContentLoaded', () => {
     saveState();
   }
   // Always start at Screen 0 (audience picker) if user hasn't chosen yet,
-  // otherwise Screen 1. Phase 2 still has no mid-funnel resume — every
-  // session restarts from the top of the chosen funnel.
-  go(state.signupFor ? 1 : 0);
+  // otherwise Screen 2 — the top of the chosen funnel. (Screen 1, the
+  // re-explainer, was removed from the funnel 2026-06-03; routing returning
+  // users with a saved signupFor to it stranded them on the now-orphaned
+  // "Step 1 of 8" screen. Both selectAudience paths enter the body at s2.)
+  // Phase 2 still has no mid-funnel resume — every session restarts from
+  // the top of the chosen funnel.
+  go(state.signupFor ? 2 : 0);
 
   // Dev console hint
   console.log('%c⚾ MyGrind Signup — Phase 2 (Round 8 — COMPLETE)', 'color: #C9A84C; font-weight: bold; font-size: 14px;');
