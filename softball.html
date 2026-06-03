@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v312';
+    const CACHE = 'ybg-mygrind-v313';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2033,6 +2033,7 @@ function signOutAndSwitchAccount() {
 <div id="mg-account-bar" style="display:none; background:#0C0A08; border-bottom:1px solid #221C18; padding:7px 14px; align-items:center; justify-content:center; gap:9px; flex-wrap:wrap; position:relative; z-index:81;">
   <span id="mg-account-name" style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--gold);"></span>
   <span id="mg-account-email" style="font-family:'Barlow',sans-serif; font-size:11px; color:#6F655A; word-break:break-all;"></span>
+  <a onclick="mgTab('settings','tab-players')" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold); text-decoration:underline; cursor:pointer; white-space:nowrap;">&#9881; Settings</a>
   <a onclick="signOutAndSwitchAccount()" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#B07A5A; text-decoration:underline; cursor:pointer; white-space:nowrap;">Sign out</a>
 </div>
 
@@ -4430,6 +4431,16 @@ input[type="number"] {
       <div class="section-sub">This is your journal. Your info, your season, your grind.</div>
       <div class="gold-line"></div>
     </div>
+
+    <!-- Settings gateway (2026-06-03): Settings has its own panel; surface a
+         clear, compact entry at the top of Profile — where people look for it,
+         and the tab that already stays highlighted while Settings is open.
+         Same opener the Develop "Settings & Support" card uses. -->
+    <button type="button" onclick="mgTab('settings','tab-players')" style="width:100%; display:flex; align-items:center; gap:12px; margin-bottom:16px; padding:13px 16px; text-align:left; cursor:pointer; background:var(--card); border:1px solid var(--border); border-radius:10px; color:var(--white);">
+      <svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold); flex-shrink:0;"><use href="#mg-icon-settings"/></svg>
+      <span style="flex:1; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; text-transform:uppercase;">Settings</span>
+      <span style="color:var(--grey); font-size:16px; flex-shrink:0;">&rsaquo;</span>
+    </button>
 
     <!-- Persistent autosave indicator — Coach Young 2026-05-17. The prior
          pattern relied on a flash toast that disappeared in 2s; players
