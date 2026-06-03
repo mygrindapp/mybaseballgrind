@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v313';
+    const CACHE = 'ybg-mygrind-v314';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -2837,19 +2837,22 @@ input[type="number"] {
            2026-05-16: when school is out (June-August), card flips to "Spring
            [Year] Final Grades · Locked" treatment so the dashboard doesn't feel
            stale asking for grades that don't exist yet. -->
-      <div id="dash-academics-summer-badge" style="display:none; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2.5px; color:#9A7A30; text-transform:uppercase; margin-bottom:8px;">🔒 <span id="dash-academics-summer-badge-text">Spring · Final Grades · Locked</span></div>
+      <div id="dash-academics-summer-badge" style="display:none; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:800; letter-spacing:2.5px; color:#9A7A30; text-transform:uppercase; margin-bottom:8px;"><span id="dash-academics-summer-badge-text">Spring · Final Grades · Locked</span></div>
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
         <div id="dash-academics-title" class="card-title" style="color:#A8D97B; margin:0; font-size:22px; display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg> Academic Standing</div>
         <span id="dash-academics-manage-label" style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;">Open Academics →</span>
       </div>
 
-      <div style="display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:center; margin-bottom:14px;">
-        <div style="text-align:center; padding:14px 18px; background:var(--card2); border-radius:3px; border-top:2px solid #5A8A3A; min-width:100px;">
-          <div id="dash-gpa-display" style="font-family:'Bebas Neue'; font-size:42px; color:var(--white); line-height:1;">—</div>
+      <!-- GPA hero + one plain-language standing line (2026-06-03 redesign).
+           The full per-division NCAA grid lives in the Academics tab; the
+           dashboard reads as a clean snapshot, not five reference tiles. -->
+      <div style="display:flex; align-items:center; gap:16px; margin-bottom:14px;">
+        <div style="text-align:center; padding:16px 20px; background:var(--card2); border-radius:8px; border-top:2px solid #5A8A3A; flex-shrink:0; min-width:96px;">
+          <div id="dash-gpa-display" style="font-family:'Bebas Neue'; font-size:52px; color:var(--white); line-height:1;">—</div>
           <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase; margin-top:4px;">GPA</div>
           <div id="dash-gpa-target" style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:2px;">Target —</div>
         </div>
-        <div id="dash-elig-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:6px;"></div>
+        <div id="dash-standing" style="flex:1; min-width:0; font-family:'Barlow'; font-size:13.5px; line-height:1.5; color:var(--light);"></div>
       </div>
 
       <div id="dash-subject-pills" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;"></div>
@@ -11796,19 +11799,16 @@ window.markSlotElective = function(category) { setElectiveOverride(category, tru
 window.restoreSlotCore = function(category) { setElectiveOverride(category, false); };
 
 function renderCoreAlerts() {
-  // Pro-only. Free tier shows the soft #core-pro-tease tile instead.
+  // FREE as of 2026-06-03 (Coach Young): the core-course safety check (per-class
+  // "may not count" warnings + the core-aligned summary + the mark-as-elective
+  // override) is now available to everyone. An eligibility safety net is
+  // baseline trust for a recruiting app, not an upsell — a family should never
+  // be silently misled into thinking a non-core class counts toward NCAA core.
+  // The deeper MULTI-YEAR tracker (log prior years for a true NCAA core GPA +
+  // 16-core-course progress across 9-12, per-school targets, junior-year
+  // lock-in alert) stays the Pro play; its upsell tile returns once that
+  // ships (no aspirational "coming soon" UI in the meantime). Hide the old one.
   var teaseEl = document.getElementById('core-pro-tease');
-  if (!MG_PRO) {
-    document.querySelectorAll('.subject-warn').forEach(function(el) {
-      el.style.display = 'none';
-      el.innerHTML = '';
-    });
-    var summaryHide = document.getElementById('core-summary');
-    if (summaryHide) { summaryHide.style.display = 'none'; summaryHide.innerHTML = ''; }
-    if (teaseEl) teaseEl.style.display = 'block';
-    return;
-  }
-  // Pro is on — hide the upsell tile.
   if (teaseEl) teaseEl.style.display = 'none';
 
   const rows = document.querySelectorAll('#grade-checks .grade-row');
@@ -12077,6 +12077,29 @@ function _eligTileHTML(tier, compact) {
          '</div>';
 }
 
+// Collapses computeEligibility()'s per-tier result into ONE plain-language
+// standing line for the dashboard snapshot (2026-06-03). Mode-safe: the tier
+// labels come straight from computeEligibility (NCAA D1/D2/... for HS, Travel
+// Ball/Honor Roll for MS, etc.). The full per-division grid lives in the
+// Academics tab, so this just answers "where do I stand right now?".
+function _dashStandingHTML(elig) {
+  const link = ' <span style="color:#A8D97B; font-weight:700; white-space:nowrap;">Full breakdown &rarr;</span>';
+  const tiers = ['d1','d2','d3','naia','juco'].map(function(k){ return elig[k]; }).filter(Boolean);
+  if (!tiers.length || tiers.every(function(t){ return t.neutral; })) {
+    return '<span style="color:var(--grey);">Log your 6 core grades to see where you stand for college eligibility.</span>' + link;
+  }
+  // Join + collapse the repeated "NCAA " prefix: "NCAA D1, NCAA D2" -> "NCAA D1, D2".
+  const fmt  = function(arr){ return arr.join(', ').replace(/, NCAA /g, ', '); };
+  const ok   = fmt(tiers.filter(function(t){ return t.ok;   }).map(function(t){ return t.label; }));
+  const warn = fmt(tiers.filter(function(t){ return t.warn; }).map(function(t){ return t.label; }));
+  const bad  = fmt(tiers.filter(function(t){ return t.bad;  }).map(function(t){ return t.label; }));
+  const parts = [];
+  if (ok)   parts.push('<span style="color:#58D68D; font-weight:700;">&#10003; Clears ' + ok + '.</span>');
+  if (warn) parts.push('<span style="color:#E67E22; font-weight:700;">Meets the minimum for ' + warn + '.</span>');
+  if (!ok && !warn && bad) parts.push('<span style="color:#E57373; font-weight:700;">Below the minimum for ' + bad + '. Aim higher.</span>');
+  return parts.join(' ') + link;
+}
+
 function renderEligibility() {
   const grid = document.getElementById('elig-grid');
   if (!grid) return;
@@ -12156,37 +12179,56 @@ function renderDashAcademics() {
   const card = document.getElementById('dash-academics-card');
   if (!card) return;
 
-  // Summer-mode swap — apply BEFORE rendering grades so the locked
-  // visual treatment is in place when the values paint.
-  const summer = isAcademicsSummerMode();
+  // Academic calendar treatment (Coach Young 2026-06-03). Replaces a blanket
+  // "summer = locked" that flipped on June 1, before finals are even graded.
+  // Three phases:
+  //   in session (Sep-May): normal "Academic Standing"
+  //   finals window (June): prompt to ADD final spring grades, NOT locked
+  //     (report cards often do not post until ~end of June)
+  //   summer break (Jul-Aug): lock in ONLY once grades are actually entered;
+  //     otherwise keep prompting instead of falsely "locking" empty grades.
   const titleEl   = document.getElementById('dash-academics-title');
   const manageEl  = document.getElementById('dash-academics-manage-label');
   const taglineEl = document.getElementById('dash-academics-tagline');
   const badgeEl   = document.getElementById('dash-academics-summer-badge');
   const badgeTxt  = document.getElementById('dash-academics-summer-badge-text');
-  if (summer) {
-    const yr = new Date().getFullYear();
+  const _yr = new Date().getFullYear();
+  const _month = new Date().getMonth();                    // 0=Jan ... 5=Jun, 6=Jul, 7=Aug
+  const _isFinalsWindow = (_month === 5);                  // June
+  const _isSummerBreak  = (_month === 6 || _month === 7);  // Jul-Aug
+  let _filled = 0;
+  try { _filled = (JSON.parse(localStorage.getItem('ybg_subject_grades') || '[]')).filter(function (g) { return g && g.length > 0; }).length; } catch (e) {}
+  const _allGradesIn = _filled >= 6;
+
+  if (_isFinalsWindow || (_isSummerBreak && !_allGradesIn)) {
+    // FINALS / NEEDS-GRADES — remind the player to enter final spring grades.
+    // Gold "action needed" treatment, not a lock.
     if (badgeEl)   badgeEl.style.display = 'block';
-    if (badgeTxt)  badgeTxt.textContent  = 'Spring ' + yr + ' · Final Grades · Locked';
+    if (badgeTxt)  badgeTxt.textContent  = 'Spring ' + _yr + ' · Final Grades';
+    if (titleEl)   titleEl.textContent   = '📚 Academics · Final Grades';
+    if (manageEl)  manageEl.textContent  = 'Update Grades →';
+    if (taglineEl) {
+      taglineEl.textContent = _allGradesIn
+        ? "Spring grades are in. We'll lock them in for the summer once school is fully out."
+        : (_filled > 0 ? _filled + ' of 6 spring grades in. ' : '') + 'Finals are wrapping up. Add your final spring grades as report cards post (often by end of June) so your standing is current for fall.';
+    }
+    card.style.borderLeftColor = '#C9A84C';
+  } else if (_isSummerBreak) {
+    // SUMMER BREAK + grades entered — locked in, nothing to do until fall.
+    if (badgeEl)   badgeEl.style.display = 'block';
+    if (badgeTxt)  badgeTxt.textContent  = '🔒 Spring ' + _yr + ' · Final Grades · Locked';
     if (titleEl)   titleEl.textContent   = '📚 Academics · Summer Break';
     if (manageEl)  manageEl.textContent  = 'Locked Until Fall';
-    if (taglineEl) taglineEl.textContent = "School's out. Spring grades are locked in. Use this summer to set yourself up: AP prep, summer reading, ACT or SAT date on the calendar. Fall is closer than you think.";
+    if (taglineEl) taglineEl.textContent = "School's out and your spring grades are locked in. Use this summer to set yourself up: AP prep, summer reading, an ACT or SAT date on the calendar. Fall is closer than you think.";
     card.style.borderLeftColor = '#9A7A30';
   } else {
+    // IN SESSION — normal standing + state-aware tagline.
     if (badgeEl)   badgeEl.style.display = 'none';
     if (titleEl)   titleEl.textContent   = '📚 Academic Standing';
     if (manageEl)  manageEl.textContent  = 'Open Academics →';
     card.style.borderLeftColor = '#5A8A3A';
-    // State-aware tagline — Coach Young 2026-05-17: the dashboard card
-    // now complements the dedicated Academics tab instead of duplicating
-    // its pull-quote. Tagline tells the player what to do next based on
-    // how many of the 6 core slots they have filled, so the dashboard
-    // reads as a snapshot and the tab reads as the workspace.
     if (taglineEl) {
-      let _grades = [];
-      try { _grades = JSON.parse(localStorage.getItem('ybg_subject_grades') || '[]'); } catch (e) {}
-      const _filled  = _grades.filter(function (g) { return g && g.length > 0; }).length;
-      const _gpaNow  = (state && state.gpa && state.gpa.current) || '';
+      const _gpaNow = (state && state.gpa && state.gpa.current) || '';
       if (_filled === 0) {
         taglineEl.textContent = 'Start by logging your 6 classes. Tap to open Academics.';
       } else if (_filled < 6) {
@@ -12206,16 +12248,12 @@ function renderDashAcademics() {
   if (gpaEl) gpaEl.textContent = gpaCur || '—';
   if (tgtEl) tgtEl.textContent = gpaTgt ? 'Target ' + gpaTgt : 'Target —';
 
-  // Eligibility tiles (compact for dashboard). Column count flexes per mode
-  // so MS lands on a clean 3-tile single row instead of an awkward 2+1
-  // split (Coach Young 2026-05-17 — "HS Team Prep" dropped, leaving 3 tiles).
+  // Standing line (2026-06-03 redesign): the dashboard now shows the player's
+  // standing in one plain-language line instead of five reference tiles. The
+  // full per-division grid lives in the Academics tab (renderEligibility()).
   const elig = computeEligibility(gpaCur);
-  const grid = document.getElementById('dash-elig-grid');
-  if (grid) {
-    const _ctx = getAcademicContext();
-    grid.style.gridTemplateColumns = (_ctx.mode === 'ms') ? 'repeat(3, 1fr)' : 'repeat(2, 1fr)';
-    grid.innerHTML = _eligTileHTML(elig.d1, true) + _eligTileHTML(elig.d2, true) + _eligTileHTML(elig.d3, true) + _eligTileHTML(elig.naia, true) + _eligTileHTML(elig.juco, true);
-  }
+  const standing = document.getElementById('dash-standing');
+  if (standing) standing.innerHTML = _dashStandingHTML(elig);
 
   // Subject grade pills — category abbreviation + current letter grade.
   // Coach Young 2026-05-17: pills ALWAYS show the category abbreviation
