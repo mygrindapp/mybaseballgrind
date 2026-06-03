@@ -1,0 +1,100 @@
+/*
+  MyGrind Interaction Layer  (assets/interactions.css)
+  Shared press-feedback + motion polish for every page.
+
+  Created 2026-06-03. Why this exists: tappable controls fire their action,
+  but had no visible response on touch. The default mobile tap highlight is
+  globally transparent (`* { -webkit-tap-highlight-color: transparent }`)
+  and almost no elements define an :active state, so taps felt dead ("stale").
+
+  This adds one consistent, premium press response across the whole app and
+  site: a quick compress on press that eases back on release (the same
+  scale(0.97) pattern softball.html already proved on .btn), plus eased
+  motion, keyboard focus rings, and reduced-motion safety.
+
+  Safe by design: additive only. No layout changes, no color tokens required
+  (uses transform/filter, which work on the dark theme everywhere). Link this
+  BEFORE each page's inline <style> so intentional page styles always win on
+  ties. Bare ".card" is deliberately excluded (many are display-only);
+  interactive cards are caught by [onclick].
+*/
+
+:root { --mg-ease: cubic-bezier(0.22, 1, 0.36, 1); }
+
+/* ---- The set of genuinely-tappable controls across all pages ---- */
+button,
+[role="button"],
+[onclick],
+a.btn, .btn, .btn-gold, .btn-outline, .btn-sm, .btn-danger,
+.cta, .primary-cta, .cta-arrow,
+input[type="submit"], input[type="button"],
+.tap-card, .develop-card, .status-card, .plan-picker-card, .exit-card-row,
+.back-btn, .next-btn, .tab-btn, .mg-tab, .bnav-item,
+.share-action-btn, .modal-close-btn, .grade-nag-btn,
+.goal-toggle,
+[class*="-chip"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation; /* removes the 300ms tap delay on controls */
+  transition: transform 0.2s var(--mg-ease),
+              filter 0.2s var(--mg-ease),
+              box-shadow 0.2s var(--mg-ease);
+}
+
+/* ---- Press: quick compress in; base transition eases it back out ---- */
+button:active,
+[role="button"]:active,
+[onclick]:active,
+a.btn:active, .btn:active, .btn-gold:active, .btn-outline:active, .btn-sm:active, .btn-danger:active,
+.cta:active, .primary-cta:active,
+input[type="submit"]:active, input[type="button"]:active,
+.tap-card:active, .develop-card:active, .status-card:active, .plan-picker-card:active, .exit-card-row:active,
+.back-btn:active, .next-btn:active, .tab-btn:active, .mg-tab:active, .bnav-item:active,
+.share-action-btn:active, .modal-close-btn:active, .grade-nag-btn:active,
+.goal-toggle:active,
+[class*="-chip"]:active {
+  transform: scale(0.97);
+  transition-duration: 0.06s;
+}
+
+/* ---- Desktop pointers get a gentle brighten on primary buttons; touch is untouched ---- */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover, .btn-gold:hover, .cta:hover, .primary-cta:hover {
+    filter: brightness(1.06);
+  }
+}
+
+/* ---- Disabled controls never press or brighten ---- */
+:disabled:active,
+[aria-disabled="true"]:active,
+.disabled:active { transform: none; filter: none; }
+
+/* ---- Premium, accessible keyboard focus (only shows for keyboard users) ---- */
+button:focus-visible,
+a:focus-visible,
+[role="button"]:focus-visible,
+[onclick]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #E8C96A;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---- Respect users who prefer reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  button, [role="button"], [onclick], a.btn, .btn, .btn-gold, .btn-outline, .btn-sm, .btn-danger,
+  .cta, .primary-cta, .cta-arrow, input[type="submit"], input[type="button"],
+  .tap-card, .develop-card, .status-card, .plan-picker-card, .exit-card-row,
+  .back-btn, .next-btn, .tab-btn, .mg-tab, .bnav-item,
+  .share-action-btn, .modal-close-btn, .grade-nag-btn, .goal-toggle, [class*="-chip"] {
+    transition: none;
+  }
+  button:active, [role="button"]:active, [onclick]:active, .btn:active, .cta:active, .primary-cta:active,
+  .tap-card:active, .develop-card:active, .status-card:active, .plan-picker-card:active, .exit-card-row:active,
+  .back-btn:active, .next-btn:active, .tab-btn:active, .mg-tab:active, .bnav-item:active,
+  .goal-toggle:active, [class*="-chip"]:active {
+    transform: none;
+  }
+}

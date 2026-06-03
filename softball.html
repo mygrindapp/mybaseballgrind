@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- Shared press-feedback + motion layer (assets/interactions.css). -->
+<link rel="stylesheet" href="/assets/interactions.css">
 <title>MyGrind · Players Journal</title>
 
 
@@ -1433,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v309';
+    const CACHE = 'ybg-mygrind-v310';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
