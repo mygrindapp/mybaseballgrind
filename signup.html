@@ -2426,7 +2426,7 @@ select.field-input {
 
   <!-- Bottom nav -->
   <div class="bnav">
-    <button class="back-btn" onclick="go(1)">&larr; Back</button>
+    <button class="back-btn" onclick="go(0)">&larr; Back</button>
     <div class="dots" id="d2"></div>
     <button class="next-btn" id="n2" onclick="goNext(2, 3)" disabled>Next &rarr;</button>
   </div>
@@ -2536,7 +2536,7 @@ select.field-input {
   <div class="bnav">
     <button class="back-btn" onclick="go(2)">&larr; Back</button>
     <div class="dots" id="d3"></div>
-    <button class="next-btn" id="n3" onclick="goNext(3, 4)" disabled>Next &rarr;</button>
+    <button class="next-btn" id="n3" onclick="goNext(3, 5)" disabled>Next &rarr;</button>
   </div>
 
 </div>
@@ -2744,7 +2744,7 @@ select.field-input {
 
   <!-- Bottom nav — Next always enabled (Annual is pre-selected by default) -->
   <div class="bnav">
-    <button class="back-btn" onclick="go(4)">&larr; Back</button>
+    <button class="back-btn" onclick="go(3)">&larr; Back</button>
     <div class="dots" id="d5"></div>
     <button class="next-btn" id="n5" onclick="goNext(5, 6)">Continue &rarr;</button>
   </div>
@@ -3424,7 +3424,13 @@ select.field-input {
    by toggling .active class. Progress bar + dots reflect state.
    ═══════════════════════════════════════════════════════════ */
 
-const TOTAL_SCREENS = 8;
+// Active funnel screen ids in order, after the 2026-06-03 trim removed the s1
+// re-explainer and the s4 goals survey from the flow. Position in this list
+// drives the progress dots, the "Step X of N" label, and the progress-bar
+// fill — so the physical screen ids stay as-is (no fragile 6.7k-line renumber)
+// and s1/s4 simply become unreachable. s8 is the 100% arrival dashboard.
+const STEP_ORDER = [2, 3, 5, 6, 7, 8];
+const TOTAL_SCREENS = STEP_ORDER.length;
 
 /* ─── PARENT SIGNUP STATE ──────────────────────────────────
    Holds everything we collect across the 8 screens.
@@ -3475,7 +3481,7 @@ const state = {
   // be cycled/swapped to abuse the household pricing tier.
   playersLockedAt: null,    // null | ISO timestamp string
   // Internal — not user-facing
-  currentScreen: 1,
+  currentScreen: 2,
   startedAt: null
 };
 
@@ -3491,6 +3497,11 @@ function loadState() {
     if (!saved) return;
     const parsed = JSON.parse(saved);
     Object.assign(state, parsed);
+    // Post-trim safety (2026-06-03): screens 1 + 4 were removed from the
+    // funnel; a returning user saved mid-old-flow must not resume onto a
+    // now-unreachable screen.
+    if (state.currentScreen === 1) state.currentScreen = 2;
+    else if (state.currentScreen === 4) state.currentScreen = 5;
   } catch(e) { /* no-op */ }
 }
 
@@ -3511,6 +3522,7 @@ function go(n) {
     state.currentScreen = n;
     saveState();
     renderDots(n);
+    updateProgressUI(n);
     window.scrollTo(0, 0);
     // Sync browser history so phone back button rewinds through screens.
     if (!_navFromPop) {
@@ -3634,7 +3646,7 @@ function selectAudience(which) {
     // Parent path — show the device-path modal before continuing to Screen 1.
     openDevicePathModal();
   } else {
-    goNext(0, 1);
+    goNext(0, 2);
   }
 }
 
@@ -3644,7 +3656,7 @@ function selectAudience(which) {
 // per player (unless they pick 'varies').
 function openDevicePathModal() {
   const overlay = document.getElementById('device_path_overlay');
-  if (!overlay) { goNext(0, 1); return; } // fail-open if modal missing
+  if (!overlay) { goNext(0, 2); return; } // fail-open if modal missing
   overlay.classList.add('shown');
   overlay.setAttribute('aria-hidden', 'false');
 }
@@ -3667,7 +3679,7 @@ function selectDevicePath(value) {
     overlay.classList.remove('shown');
     overlay.setAttribute('aria-hidden', 'true');
   }
-  goNext(0, 1);
+  goNext(0, 2);
 }
 
 // Returns true if the active funnel is the adult-self funnel.
@@ -6329,17 +6341,35 @@ function onSkipTrialClicked() {
    completed screens = dim gold dots, future screens = dark dots.
    ───────────────────────────────────────────────────────── */
 function renderDots(currentScreen) {
-  for (let i = 1; i <= TOTAL_SCREENS; i++) {
-    const container = document.getElementById('d' + i);
-    if (!container) continue;
+  // currentScreen is a physical screen id; map it to its position in the
+  // active funnel order so removed screens (s1, s4) leave no gaps in the dots.
+  const pos = STEP_ORDER.indexOf(currentScreen);
+  STEP_ORDER.forEach(function(sid) {
+    const container = document.getElementById('d' + sid);
+    if (!container) return;
     container.innerHTML = '';
-    for (let j = 1; j <= TOTAL_SCREENS; j++) {
+    for (let k = 0; k < TOTAL_SCREENS; k++) {
       const dot = document.createElement('div');
       dot.className = 'dot';
-      if (j === currentScreen) dot.classList.add('active');
-      else if (j < currentScreen) dot.classList.add('done');
+      if (k === pos) dot.classList.add('active');
+      else if (k < pos) dot.classList.add('done');
       container.appendChild(dot);
     }
+  });
+}
+
+// Sets the "Step X of N" label + progress-bar fill for the active funnel
+// screen, computed from STEP_ORDER so the trim needs no hardcoded label edits.
+// Only relabels screens that already carry a "Step …" label, so the s8 arrival
+// dashboard keeps its own copy. Gate screen s0 has no progress UI (pos < 0).
+function updateProgressUI(n) {
+  const pos = STEP_ORDER.indexOf(n);
+  if (pos < 0) return;
+  const fill = document.querySelector('#s' + n + ' .prog-fill');
+  if (fill) fill.style.width = Math.round(((pos + 1) / TOTAL_SCREENS) * 100) + '%';
+  const label = document.querySelector('#s' + n + ' .prog-label span');
+  if (label && /^Step\b/.test(label.textContent || '')) {
+    label.textContent = 'Step ' + (pos + 1) + ' of ' + TOTAL_SCREENS;
   }
 }
 
