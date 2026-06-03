@@ -1278,7 +1278,128 @@
     font-size: 15px;
     line-height: 1.6;
   }
+
+  /* ════════════════════════════════════════════════════════════
+     PREMIUM PASS — 2026-06-03. Depth, radius consistency, and motion
+     polish for the public landing. Appended last so it refines the rules
+     above without rewriting them. Pure CSS (+ a small, defensive reveal
+     script below). Dark + gold brand language preserved. Reversible as
+     one contiguous block. */
+
+  /* 1) Unify the older 3-4px radii with the newer 10-16px card language */
+  .primary-cta { border-radius: 12px; }
+  .form-card   { border-radius: 16px; }
+  .founder-note{ border-radius: 14px; }
+  .form-row input[type="email"], .form-row button { border-radius: 10px; }
+  .form-error  { border-radius: 10px; }
+
+  /* 2) Primary CTA — richer gold + a soft lift (the money button) */
+  .primary-cta {
+    background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 58%, var(--gold-dark) 150%);
+    box-shadow: 0 8px 24px rgba(201,168,76,0.26), inset 0 1px 0 rgba(255,255,255,0.28);
+  }
+  .primary-cta:hover {
+    background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold-light) 60%, var(--gold) 135%);
+    box-shadow: 0 12px 32px rgba(201,168,76,0.44), inset 0 1px 0 rgba(255,255,255,0.32);
+  }
+
+  /* 3) HOW IT WORKS — elevated step cards + premium number badges */
+  .how-grid { gap: 20px; }
+  .how-step {
+    padding: 30px 22px 26px;
+    background: linear-gradient(180deg, rgba(30,30,30,0.72) 0%, rgba(17,17,17,0.55) 100%);
+    border: 1px solid rgba(201,168,76,0.16);
+    border-radius: 16px;
+    box-shadow: 0 12px 34px rgba(0,0,0,0.38);
+    transition: transform 0.25s var(--mg-ease, ease), box-shadow 0.25s var(--mg-ease, ease), border-color 0.25s ease;
+  }
+  .how-step .step-num {
+    background: radial-gradient(circle at 50% 34%, rgba(232,201,106,0.32) 0%, rgba(201,168,76,0.10) 72%);
+    box-shadow: 0 0 0 6px rgba(201,168,76,0.05), 0 6px 18px rgba(0,0,0,0.40), inset 0 1px 0 rgba(255,255,255,0.18);
+    text-shadow: 0 0 16px rgba(201,168,76,0.50);
+  }
+
+  /* 4) Pricing "includes" card — richer surface + check badges */
+  .pricing .plan-includes {
+    background: linear-gradient(180deg, rgba(27,27,27,0.88) 0%, rgba(15,15,15,0.72) 100%);
+    border: 1px solid rgba(201,168,76,0.24);
+    border-radius: 16px;
+    box-shadow: 0 18px 52px rgba(0,0,0,0.46);
+    padding: 26px 26px;
+  }
+  .pricing .plan-includes li { padding-left: 36px; }
+  .pricing .plan-includes li::before {
+    content: "\2713";
+    left: 0; top: 7px;
+    width: 21px; height: 21px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700; line-height: 1;
+    color: var(--gold-light);
+    background: rgba(201,168,76,0.15);
+    border: 1px solid rgba(201,168,76,0.45);
+    border-radius: 50%;
+  }
+
+  /* Desktop hover lift on cards + screenshots (touch is unaffected) */
+  @media (hover: hover) and (pointer: fine) {
+    .how-step:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(0,0,0,0.50); border-color: rgba(201,168,76,0.32); }
+    .app-grid img { transition: transform 0.25s ease, box-shadow 0.25s ease; }
+    .app-grid figure:hover img { transform: translateY(-4px); box-shadow: 0 16px 44px rgba(0,0,0,0.60); }
+  }
+
+  /* 5) Scroll reveal — below-fold sections rise in as you reach them.
+     html.js-reveal is set by the script below BEFORE first paint (no
+     flicker); with no JS, nothing is hidden, so the page is fully
+     visible as a fallback. */
+  html.js-reveal .how-it-works,
+  html.js-reveal .see-the-app,
+  html.js-reveal .pricing,
+  html.js-reveal .faq-section,
+  html.js-reveal .playbook-band {
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+  }
+  html.js-reveal .reveal-in { opacity: 1 !important; transform: none !important; }
+  @media (prefers-reduced-motion: reduce) {
+    html.js-reveal .how-it-works,
+    html.js-reveal .see-the-app,
+    html.js-reveal .pricing,
+    html.js-reveal .faq-section,
+    html.js-reveal .playbook-band { opacity: 1; transform: none; transition: none; }
+  }
 </style>
+<script>
+/* Premium pass: reveal below-fold sections as they enter the viewport.
+   Adds html.js-reveal up front so sections start hidden (no flicker),
+   wires an IntersectionObserver on DOM ready, reveals anything already
+   in view, and has a failsafe so content is never left hidden. */
+(function(){
+  try {
+    document.documentElement.classList.add('js-reveal');
+    var SEL = '.how-it-works, .see-the-app, .pricing, .faq-section, .playbook-band';
+    function revealAll(){ var n=document.querySelectorAll(SEL); for(var i=0;i<n.length;i++){ n[i].classList.add('reveal-in'); } }
+    function setup(){
+      try {
+        var secs = document.querySelectorAll(SEL);
+        if (!secs.length) { return; }
+        if (!('IntersectionObserver' in window)) { revealAll(); return; }
+        var io = new IntersectionObserver(function(entries){
+          entries.forEach(function(e){ if (e.isIntersecting){ e.target.classList.add('reveal-in'); io.unobserve(e.target); } });
+        }, { rootMargin: '0px 0px -10% 0px', threshold: 0.08 });
+        var vh = window.innerHeight || 800;
+        secs.forEach(function(s){
+          var r = s.getBoundingClientRect();
+          if (r.top < vh && r.bottom > 0) { s.classList.add('reveal-in'); } /* already in view */
+          else { io.observe(s); }
+        });
+        setTimeout(revealAll, 4000); /* failsafe: never leave content hidden */
+      } catch(err){ revealAll(); }
+    }
+    if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', setup); }
+    else { setup(); }
+  } catch(e){ try { document.documentElement.classList.remove('js-reveal'); } catch(_){} }
+})();
+</script>
 </head>
 
 <body>
@@ -1457,7 +1578,7 @@
        preserved at /foundermygrind for handpicked outreach. -->
   <aside class="founder-note" id="founder-note">
     <div class="fn-eyebrow">A note from Coach</div>
-    <p>I built MyGrind for my own kids, and for the parents I see every weekend trying to do this the right way.</p>
+    <p>I built MyGrind for my own kids, and for the players and parents I see every day trying to do this the right way.</p>
     <p>Try it free for <strong>14 days</strong>. Your card holds your spot and is not charged until the trial ends. Cancel anytime, no questions asked.</p>
     <p>Log every game. Own the grind.</p>
     <div class="fn-signature">Coach</div>
