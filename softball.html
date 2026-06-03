@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v311';
+    const CACHE = 'ybg-mygrind-v312';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -19555,10 +19555,49 @@ function mgLog(name, params) {
 
 // ══ AUTH STATE ════════════════════════════════════════════════════
 var fbUser = null;
+
+// Identity-switch guard (2026-06-03): when a DIFFERENT account signs in on
+// this device, the cached journal belongs to the previous person. Clearing it
+// before restore stops the shared-family-device bug where Account A would show
+// Account B's profile + a blend of both journals (syncFromCloud is local-wins).
+// Honors the managed-minor scope shim: drop the active-minor pointer FIRST so
+// the canonical removeItems hit the real keys (not an mm: alias), then purge
+// every managed-minor namespace, then the canonical journal/academics/H-W keys.
+function mgClearLocalDataForIdentitySwitch() {
+  try {
+    // Reset scope so canonical key removes are not re-routed to mm:<id>:...
+    try { if (window.MgMinorScope) window.MgMinorScope.setActiveMinorId(null); } catch(e) {}
+    // Purge every managed-minor namespace (all of the prior account's kids).
+    var mm = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf('mm:') === 0) mm.push(k);
+    }
+    mm.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
+    // Canonical journal / profile / academics / settings / H-W keys.
+    ['ybg_softball_profile','ybg_softball_state','ybg_profile','ybg_state',
+     'ybg_subject_grades','ybg_subject_names','ybg_settings','ybg_hw_log',
+     'mg_visited_academics'].forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
+    // Drop the prior identity's in-memory data so the live UI doesn't keep it.
+    try { if (typeof state === 'object' && state) { state.entries = []; state.goals = []; } } catch(e) {}
+  } catch(e) { console.warn('[FB] identity-switch clear:', e); }
+}
+
 auth.onAuthStateChanged(function(user) {
   fbUser = user;
   if (user) {
     console.log('[Firebase] Signed in:', user.email);
+    // If a DIFFERENT account used this device before, wipe the cached journal
+    // before restore so this user sees only their own data. Gated on a stored
+    // prior uid that differs — first sign-in, same-user-new-device, and minor
+    // switching (uid never changes) are all left untouched.
+    var prevUid = null;
+    try { prevUid = localStorage.getItem('mg_auth_uid'); } catch(e) {}
+    if (prevUid && prevUid !== user.uid) {
+      console.log('[Firebase] Account switch on this device; clearing local data before restore.');
+      mgClearLocalDataForIdentitySwitch();
+    }
+    try { localStorage.setItem('mg_auth_uid', user.uid); } catch(e) {}
     syncFromCloud(user.uid);
   }
   updateAccountIndicator();
