@@ -19458,18 +19458,28 @@ function hasVisitedAcademics() {
 
     <div style="font-size:13px;color:#666;margin-bottom:20px;line-height:1.6;">Your review helps other players find this journal and start their own grind. Takes 30 seconds.</div>
 
-    <a id="review-link" href="mailto:support@mygrindapp.com?subject=MyGrind Review&body=I've been using MyGrind for 3 days and wanted to share my feedback:" style="display:block;background:var(--gold);color:#080808;border-radius:6px;padding:14px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-decoration:none;margin-bottom:10px;">⭐ &nbsp;Leave a Review</a>
+    <a id="review-link" href="https://g.page/r/CSbKIirckeG4EBM/review" target="_blank" rel="noopener noreferrer" onclick="reviewClicked()" style="display:block;background:var(--gold);color:#080808;border-radius:6px;padding:14px;font-family:'Barlow Condensed',sans-serif;font-size:16px;font-weight:800;letter-spacing:2px;text-transform:uppercase;text-decoration:none;margin-bottom:10px;">⭐ &nbsp;Leave a Google Review</a>
+
+    <!-- Testimonial capture — saves to the account doc (pending) for Coach to curate onto the landing social-proof block -->
+    <div id="mg-testimonial-wrap" style="margin:4px 0 12px;">
+      <div style="font-size:12px;color:#8A8A8A;margin-bottom:6px;line-height:1.5;">Or send Coach a sentence to feature on the site:</div>
+      <textarea id="mg-testimonial-input" rows="2" maxlength="600" placeholder="What has MyGrind helped you with?" style="width:100%;box-sizing:border-box;background:#15110E;border:1px solid #3D3530;border-radius:6px;padding:10px;color:#F5F0EB;font-family:'Barlow',sans-serif;font-size:14px;resize:vertical;margin-bottom:8px;"></textarea>
+      <button onclick="submitTestimonial()" style="width:100%;background:transparent;border:1px solid var(--gold);border-radius:6px;padding:11px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--gold);cursor:pointer;">Send to Coach</button>
+    </div>
 
     <button onclick="closeReview()" style="width:100%;background:transparent;border:1px solid #3D3530;border-radius:6px;padding:12px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#555;cursor:pointer;">Maybe Later</button>
 
-    <div style="font-size:11px;color:#333;margin-top:12px;">You can also email us at support@mygrindapp.com</div>
+    <div style="font-size:11px;color:#777;margin-top:12px;">Something not working right? <a href="mailto:support@mygrindapp.com?subject=MyGrind Feedback" style="color:#9A9A9A;text-decoration:underline;">Email Coach</a></div>
   </div>
 </div>
 <script>
 // ══ REVIEW PROMPT — fires after first 3-day streak ═══════════════
 function checkReviewPrompt(streak) {
   if (streak < 3) return;
-  var key = 'ybg_review_prompted';
+  // Key rotated 2026-06-03 (was 'ybg_review_prompted') so users who already
+  // saw the old email-only prompt get one fresh ask now that it routes to a
+  // public Google review.
+  var key = 'mg_review_prompted_google';
   if (localStorage.getItem(key) === '1') return; // only show once
   localStorage.setItem(key, '1');
   setTimeout(showReview, 1200); // slight delay after milestone celebration
@@ -19483,6 +19493,36 @@ function showReview() {
 function closeReview() {
   var el = document.getElementById('review-overlay');
   if (el) el.style.display = 'none';
+}
+
+// User tapped through to the Google review page (opens in a new tab).
+// Close the overlay so coming back to the app lands somewhere clean.
+function reviewClicked() {
+  setTimeout(closeReview, 400);
+}
+
+// Testimonial capture. Saves the quote to the ACCOUNT HOLDER's Firestore doc
+// (never a managed-minor sub-doc — featured quotes must come from the consenting
+// adult, not a child record) with status 'pending' for Coach to curate onto the
+// landing page. Mirrors to localStorage so nothing is lost if signed-out/offline.
+function submitTestimonial() {
+  var ta = document.getElementById('mg-testimonial-input');
+  var text = ta ? (ta.value || '').trim() : '';
+  if (!text) { if (ta) ta.focus(); return; }
+  try { localStorage.setItem('mg_testimonial', JSON.stringify({ text: text, at: new Date().toISOString() })); } catch (e) {}
+  try {
+    if (typeof fbUser !== 'undefined' && fbUser && typeof db !== 'undefined') {
+      db.collection('users').doc(fbUser.uid).set({
+        testimonial: {
+          text: text.slice(0, 600),
+          status: 'pending',
+          submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+        }
+      }, { merge: true }).catch(function (e) { console.warn('[FB] testimonial:', e); });
+    }
+  } catch (e) { console.warn('[FB] testimonial:', e); }
+  var wrap = document.getElementById('mg-testimonial-wrap');
+  if (wrap) wrap.innerHTML = '<div style="font-size:13px;color:var(--gold);padding:10px 0;line-height:1.6;text-align:center;">🙏 Thank you. Coach may feature your words on the site.</div>';
 }
 </script>
 <script>
