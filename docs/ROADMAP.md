@@ -6,7 +6,7 @@
 
 ## 🔥 This Week (pick 1 per session)
 
-### P0 — queue (refreshed 2026-05-30 — The 5 Tools education layer shipped (`8f9bf95`), GSC fixed to the www property + 4 blog URLs request-indexed, CA FTB 2023 notice handled (30-day extension). Earlier 2026-05-29: landing conversion + SEO overhaul + blog launch — see Day +11 in STATUS.md. Landing rebuilt to industry-standard order, 6 real screenshots, hero typewriter removed, FAQ overhauled to 8 real parent questions, single pricing CTA, and /blog with 3 SEO articles all live in production.)
+### P0 — queue (refreshed 2026-06-03 PM — PM session shipped 4 more commits: signup resume fix (returning users were stranded on the cut Screen 1 from the AM trim; now resume at s2), review prompt → Google Business reviews + testimonial capture, brand-entity sameAs expanded to 7 + Crunchbase added (3-way "MyGrind" name-collision defense vs the poker + AI-coach apps). **NEXT: fire the warm outreach** — bsonnier referral + coach "free for your team" pitch (paste-ready in the Drive doc; needs bsonnier first name + player name + target coaches). AM — App polish marathon shipped (8 commits, SW v309→v314; interaction/press-feedback layer, landing premium pass, H/W cloud sync, shared-device identity fix, signup trimmed to 6 steps, Settings findable, academics redesign + finals-window fix + NCAA core-check un-gated to free, all 6 landing screenshots refreshed; Decision #62: core check free / multi-year NCAA core tracker = next Pro — full detail in LAUNCH +16 in STATUS.md). Earlier 2026-05-30 — The 5 Tools education layer shipped (`8f9bf95`), GSC fixed to the www property + 4 blog URLs request-indexed, CA FTB 2023 notice handled (30-day extension). Earlier 2026-05-29: landing conversion + SEO overhaul + blog launch — see Day +11 in STATUS.md. Landing rebuilt to industry-standard order, 6 real screenshots, hero typewriter removed, FAQ overhauled to 8 real parent questions, single pricing CTA, and /blog with 3 SEO articles all live in production.)
 
 **DONE 2026-05-30 — Google Search Console:** Confirmed the real data lives in the **www property** (the non-www property shows empty/redirects — apex 308s to www; see memory `gsc_use_www_property`). Sitemap submitted + read (7 discovered); homepage/privacy/terms indexed; the **4 blog URLs were request-indexed**. **NEW TOP PRIORITY: draft the next blog post** ("When Should You Switch Travel Teams?", already in the newsletter pipeline; also queued: youth pitch counts by age, what college coaches actually look at) to feed non-branded search now that the blog is indexing.
 
@@ -27,6 +27,24 @@
 13. **Mr. Sites LA Heat outreach** (carried). Suggested copy in `team_potential_collaborators` memory.
 14. **Em-dash sweep continuation** (~370 instances repo-wide, task #14, deferred polish). Only landing + signup user-visible em-dashes done in pre-ad pass. Future pass must distinguish placeholder em-dashes (e.g. `<span id="x">—</span>`) from sentence em-dashes — file-by-file with quality checks.
 15. **Daily morning affirmation feature** (task #27, ~3-4h, Coach said build later). Curated message library + 7am Resend email + in-app banner.
+
+**NEW QUEUED SPEC (2026-06-03) — Multi-year NCAA core tracker (Pro):** the next Pro academic feature (Decision #62). Let a player log prior years (grades 9-12) → compute a true NCAA core-course GPA (16 core courses, sliding scale), show 16-course progress by category (English/Math/Science/etc.), per-target-school GPA gaps, and a junior-year "lock-in" alert. The free per-class safety check already warns when a class will not count; this is the prescriptive depth on top. Also serves a new user who wants to add prior years just to see where they stand. No "coming soon" UI in-app until it is built.
+
+<!-- SHIPPED 2026-06-03 (App Polish Marathon + Academics Redesign + Findability + Founder Ops):
+- 8 commits to main, SW v309->v314, all verified live.
+- Interaction layer (40e223d, new assets/interactions.css): real pressed/:active feedback + eased motion + :focus-visible rings + reduced-motion across the app + all 7 core pages. Fixes "taps fire but feel stale" (mobile tap-highlight was off, almost no :active states). SW v310.
+- Landing premium pass (348717c): elevated How-it-works cards, gold CTA + pricing depth, unified radii, scroll-reveal. + founder-note copy fix (index + foundermygrind): "parents I see every weekend" -> "players and parents I see every day".
+- H/W growth log cloud sync (e8cd2bc): ybg_hw_log was the last unsynced key; push via fbSaveMisc + union-merge restore. SW v311.
+- Shared-device identity fix (4437f4e): on a different-account sign-in, clear cached journal (canonical + all mm: minor namespaces) before cloud restore so Account A stops showing Account B on a family device; gated on a stored prior uid. SW v312.
+- Signup trim (14e277b): cut Screen 1 re-explainer + pulled goals survey out of the funnel (now Step X of 6 via a STEP_ORDER list; goals data was unused).
+- Settings findable (c2a5302): was buried under Develop; added a Profile-tab row + an account-bar gear. SW v313.
+- Academics redesign (7ab43ba): GPA-hero + plain standing line on the dashboard (full NCAA grid stays in the Academics tab); finals-window lock fix (June prompts for final grades instead of falsely locking; Jul-Aug locks only once grades are in); un-gated the NCAA core-course safety check to FREE (coming-Aug-2026 Pro tease hidden). SW v314.
+- Landing screenshots refreshed (f5af7db): all 6 regenerated headlessly at 1080x1440 to show the current 5-tab nav + HS academics (old set showed the retired 6-tab nav).
+- Decision #62 locked: NCAA core-course safety check is free; the multi-year NCAA core tracker is the next Pro feature.
+- Non-code: recovered + saved the 2 outreach drafts to Drive (Marketing & Social); built "The Daily Grind" daily founder checklist (~/Desktop/MyGrind Business/Daily Grind Checklist.html) + a recurring "Daily Grind" 8:00-8:20am calendar block.
+- DEFERRED: multi-year tracker build (queued spec above), host the checklist at a private /grind URL for phone use, delete the old 8:00 "Start-of-Day Game Plan" event, dead s1/s4 signup markup cleanup.
+- Smoke tests pending (Coach login): signup funnel end-to-end, two-account identity, H/W + check-in cross-device.
+-->
 
 <!-- SHIPPED 2026-06-02 (Newsletter Funnel + Social Rebrand + Conversion + Blog Engine):
 - 9 commits to main (7 session + 2 pre-session morning), all verified live in production.
