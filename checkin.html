@@ -267,6 +267,27 @@
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
 <script>
+// ── Managed-minor scope shim (mirrors softball.html) ──────────────────
+// When a parent is viewing a child profile, mg_active_minor_id is set by the
+// app. Redirect the readiness + workload localStorage keys to a per-minor
+// namespace (mm:<id>:<key>) so a child's check-ins can't blend with the
+// parent's — or another child's — on a shared device. Runs before any key is
+// read below. Exposes _mgRawRemove so the identity-switch guard can delete the
+// real (un-aliased) keys.
+(function(){
+  var SCOPED = { 'mg_readiness_log':1, 'mg_workload_log':1 };
+  var ACTIVE_KEY = 'mg_active_minor_id';
+  function sk(key){
+    if(!SCOPED[key]) return key;
+    var m=null; try{ m=window.localStorage.getItem(ACTIVE_KEY); }catch(e){}
+    return m ? ('mm:'+m+':'+key) : key;
+  }
+  var g=Storage.prototype.getItem, s=Storage.prototype.setItem, r=Storage.prototype.removeItem;
+  Storage.prototype.getItem    = function(k){ return this===window.localStorage ? g.call(this,sk(k))   : g.call(this,k); };
+  Storage.prototype.setItem    = function(k,v){ return this===window.localStorage ? s.call(this,sk(k),v) : s.call(this,k,v); };
+  Storage.prototype.removeItem = function(k){ return this===window.localStorage ? r.call(this,sk(k))   : r.call(this,k); };
+  window._mgRawRemove = function(k){ try{ r.call(window.localStorage, k); }catch(e){} };
+})();
 /* ---------- helpers ---------- */
 var RKEY='mg_readiness_log', WKEY='mg_workload_log';
 function loadJSON(k,f){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):f; }catch(e){ return f; } }
@@ -314,7 +335,28 @@ var _fbUser = null, _db = null;
     _db = firebase.firestore();
     firebase.auth().onAuthStateChanged(function(u){
       _fbUser = u || null;
-      if (_fbUser) cloudPull();                             // signed in -> pull, merge, re-render
+      if (!_fbUser) return;
+      // Identity-switch guard (mirrors softball.html): a DIFFERENT account on
+      // this device means the cached readiness/workload belongs to the prior
+      // person. Clear it (flat + every managed-minor namespace) and drop the
+      // stale active-minor pointer BEFORE pulling, so we never merge or push
+      // their check-ins into this account's cloud doc.
+      var prevUid=null; try{ prevUid=localStorage.getItem('mg_auth_uid'); }catch(e){}
+      if (prevUid && prevUid !== u.uid) {
+        try {
+          var rm=[];
+          for (var i=0;i<localStorage.length;i++){
+            var k=localStorage.key(i);
+            if (k && (k==='mg_readiness_log' || k==='mg_workload_log' || k==='mg_activity_days'
+                      || k==='mg_active_minor_id' || /^mm:[^:]+:(mg_readiness_log|mg_workload_log)$/.test(k))) rm.push(k);
+          }
+          rm.forEach(function(k){ if(window._mgRawRemove) window._mgRawRemove(k); });
+        } catch(e){}
+        readiness = {}; sessions = [];
+        try { renderStatus(); renderStrip(); renderRates(); renderLoad(); } catch(e){}
+      }
+      try { localStorage.setItem('mg_auth_uid', u.uid); } catch(e){}
+      cloudPull();                                          // signed in -> pull, merge, re-render
     });
   } catch(e){ /* offline or blocked: stay localStorage-only, same as before */ }
 })();

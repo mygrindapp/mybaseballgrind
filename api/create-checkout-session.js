@@ -32,14 +32,20 @@
 //   429 { ok: false, error: "rate_limited" }
 //   500 { ok: false, error: "server_misconfigured" | "stripe_error" }
 //
-// SECURITY: Rate-limited per IP using the existing read-tier limiter.
-// trialEndUnix is validated server-side — a client can't request a
-// 10-year trial. Hard-capped at 365 days from now.
+// SECURITY (hardened 2026-06-05, audit fix #1): trial length is SERVER-
+// DERIVED (14d standard / 180d capped founder), so a direct POST can't
+// mint a long free trial; the request is eligibility-gated via
+// checkTrialEligibility() so a previously-trialed email/phone (or an
+// existing customer) can't open another free trial; and the 180-day
+// founder trial is granted only while FOUNDERMYGRIND is under its 100
+// cap. Rate-limited per IP via the existing read-tier limiter.
 // ═══════════════════════════════════════════════════════════
 
 import Stripe from 'stripe';
 import crypto from 'crypto';
 import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
+import { checkTrialEligibility } from '../lib/trial-eligibility-store.js';
+import { getFounderCount, recordFounderSignup } from '../lib/founder-cohort-store.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -55,10 +61,16 @@ const PLAN_TO_PRICE = {
   family_annual:  'price_1TT68UPm4ermqky47QJZ8SnB', // $149.99/yr
 };
 
-// Hard cap on how far in the future a client can push trial_end.
-// Default 14-day trial = ~14 days out. Founder cohort = 180 days. Anything
-// past 365 is a client bug or an attack — reject.
-const MAX_TRIAL_DAYS_FROM_NOW = 365;
+// Trial length is decided SERVER-SIDE — never taken from the client.
+// A standard signup gets 14 days. The FOUNDERMYGRIND cohort gets 180 days,
+// but only while the cohort cap isn't full (otherwise it falls back to 14).
+// This is what stops a direct POST from minting a long free trial.
+// (FOREVERYOUNG2026 lifetime promos never reach this endpoint — signup.html
+// skips the card picker for them — so only FOUNDERMYGRIND is handled here.)
+const STANDARD_TRIAL_DAYS = 14;
+const FOUNDER_CODES = {
+  FOUNDERMYGRIND: { days: 180, cap: 100 },
+};
 
 function setCors(req, res) {
   const origin = req.headers.origin;
@@ -106,7 +118,9 @@ export default async function handler(req, res) {
   await recordRead(clientIp);
 
   // ─── Validate input ───────────────────────────────────────
-  const { email, planType, trialEndUnix, promoCode, gaClientId } = req.body || {};
+  const { email, planType, promoCode, phone, gaClientId } = req.body || {};
+  // NOTE: any client-sent trialEndUnix is intentionally ignored — the trial
+  // length is derived server-side below so it can't be inflated by a POST.
   // GA4 client_id from the browser's _ga cookie (optional). Stored in session
   // metadata so the Stripe webhook can attribute the server-side `purchase`
   // event back to the same GA4 session. Bounded + sanitized — never trusted.
@@ -125,15 +139,42 @@ export default async function handler(req, res) {
     return res.status(400).json({ ok: false, error: 'bad_plan_type', allowed: Object.keys(PLAN_TO_PRICE) });
   }
 
+  // ─── Trial eligibility gate (server-side; the client pre-checks too) ──
+  // Blocks a previously-trialed email/phone — or an existing customer —
+  // from minting another free trial via a direct POST. Mirrors start-trial.js
+  // and check-trial-eligibility.js. Fails OPEN on a Redis blip (eligible),
+  // matching the rest of the pre-launch stack.
+  const elig = await checkTrialEligibility({ email: normEmail, phone });
+  if (!elig.eligible) {
+    console.warn('[create-checkout-session] trial not eligible', {
+      emailHash: piiHash(normEmail),
+      reason: elig.reason || 'already_used',
+    });
+    return res.status(403).json({ ok: false, error: 'trial_not_eligible', reason: elig.reason || 'already_used' });
+  }
+
+  // ─── Server-derived trial length (never trust the client) ─────────────
+  // Standard signup = 14 days. FOUNDERMYGRIND = 180 days, but only while the
+  // 100-cap cohort isn't full. If the founder count is unavailable (Redis
+  // blip) we FAIL SAFE to the 14-day trial rather than hand out a 180-day
+  // trial we can't cap.
   const nowUnix = Math.floor(Date.now() / 1000);
-  const trialEnd = Number(trialEndUnix);
-  if (!Number.isFinite(trialEnd) || trialEnd <= nowUnix) {
-    return res.status(400).json({ ok: false, error: 'trial_end_in_past' });
+  const normPromo = (promoCode || '').trim().toUpperCase();
+  const founder = FOUNDER_CODES[normPromo];
+  let trialDays = STANDARD_TRIAL_DAYS;
+  let founderGranted = false;
+  if (founder) {
+    const countRes = await getFounderCount(normPromo);
+    if (countRes && countRes.ok && countRes.count < founder.cap) {
+      trialDays = founder.days;
+      founderGranted = true;
+    } else if (countRes && countRes.ok) {
+      console.warn('[create-checkout-session] founder cohort full — standard trial', { code: normPromo, count: countRes.count });
+    } else {
+      console.warn('[create-checkout-session] founder count unavailable — failing safe to standard trial', { code: normPromo });
+    }
   }
-  const maxAllowed = nowUnix + (MAX_TRIAL_DAYS_FROM_NOW * 86400);
-  if (trialEnd > maxAllowed) {
-    return res.status(400).json({ ok: false, error: 'trial_end_too_far' });
-  }
+  const trialEnd = nowUnix + (trialDays * 86400);
 
   // ─── Create Checkout Session ──────────────────────────────
   // Stripe creates a subscription in 'trialing' status. No charge today.
@@ -192,14 +233,25 @@ export default async function handler(req, res) {
     return res.status(500).json({ ok: false, error: 'stripe_error', message: e.message });
   }
 
+  // Count this founder against the cohort cap now that checkout is open.
+  // Idempotent (SADD); start-trial.js also records on dashboard arrival.
+  if (founderGranted) {
+    try {
+      await recordFounderSignup({ email: normEmail, promoCode: normPromo });
+    } catch (e) {
+      console.warn('[create-checkout-session] founder record failed (non-fatal)', { error: e && e.message });
+    }
+  }
+
   console.log('[create-checkout-session] session created', {
     sessionId:  session.id,
     emailHash:  piiHash(normEmail),
     plan,
     trialEnd,
-    trialDays:  Math.round((trialEnd - nowUnix) / 86400),
+    trialDays,
+    founder:    founderGranted,
     promo:     promoCode ? piiHash(promoCode) : 'none',
   });
 
-  return res.status(200).json({ ok: true, url: session.url, sessionId: session.id });
+  return res.status(200).json({ ok: true, url: session.url, sessionId: session.id, trialDays });
 }

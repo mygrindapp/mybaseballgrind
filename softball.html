@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v314';
+    const CACHE = 'ybg-mygrind-v315';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1479,6 +1479,14 @@ if ('serviceWorker' in navigator) {
     'ybg_profile':          1,
     'ybg_state':            1,
     'mg_visited_academics': 1,
+    // Per-player data whose cloud writes (fbSaveMisc) already route to the
+    // active minor's Firestore doc — scope the localStorage side too so a
+    // child's grades, subject names, settings, and height/weight log can't
+    // bleed into the parent's view (or another child's) on the same device.
+    'ybg_subject_grades':   1,
+    'ybg_subject_names':    1,
+    'ybg_settings':         1,
+    'ybg_hw_log':           1,
   };
   var ACTIVE_KEY = 'mg_active_minor_id';
 
@@ -8074,6 +8082,11 @@ function activatePaid(accessEmail, purchaserEmail) {
 // we open Stripe sequentially — one checkout per player, same card pre-fills.
 const GIFT_MAX_PLAYERS = 3;
 const GIFT_UPSELL_AT   = 3; // show Team Sponsor upsell when count >= this
+// Per-player gift prices — MUST match what the Stripe links actually charge
+// (STRIPE_ANNUAL_URL = $99.99/yr, STRIPE_MONTHLY_URL = $9.99/mo). Single source
+// of truth so the displayed total can't drift from the real charge again.
+const GIFT_PRICE_ANNUAL  = 99.99;
+const GIFT_PRICE_MONTHLY = 9.99;
 
 // Render state: how many player rows are currently in the DOM
 function getGiftPlayerCount() {
@@ -8166,9 +8179,9 @@ function updateGiftTotal() {
       if (countLabel) countLabel.textContent = count + ' players';
       // We can't know which plan until they click — show annual as the visible benchmark
       // since it's what the "Get Annual" button will charge.
-      if (planLabel) planLabel.textContent = '$99.99/yr each';
+      if (planLabel) planLabel.textContent = '$' + GIFT_PRICE_ANNUAL.toFixed(2) + '/yr each';
       if (totalEl) {
-        const total = 59.99 * count;
+        const total = GIFT_PRICE_ANNUAL * count;
         totalEl.textContent = '$' + total.toFixed(2);
       }
     } else {
@@ -8423,8 +8436,8 @@ async function goToPurchase(plan) {
     if (players.length > 1) {
       const ok = confirm('Ready to purchase for ' + players.length + ' players?\n\n' +
                          'We will open Stripe ' + players.length + ' times. One for each player. ' +
-                         'Your card pre-fills each time. Total: $' + (59.99 * players.length).toFixed(2) +
-                         (plan === 'monthly' ? ' (if you switch to monthly, that becomes $' + (4.99 * players.length).toFixed(2) + '/mo)' : '') + '.\n\nContinue?');
+                         'Your card pre-fills each time. Total: $' + (GIFT_PRICE_ANNUAL * players.length).toFixed(2) +
+                         (plan === 'monthly' ? ' (if you switch to monthly, that becomes $' + (GIFT_PRICE_MONTHLY * players.length).toFixed(2) + '/mo)' : '') + '.\n\nContinue?');
       if (!ok) return;
     }
 
@@ -19583,21 +19596,39 @@ var fbUser = null;
 // every managed-minor namespace, then the canonical journal/academics/H-W keys.
 function mgClearLocalDataForIdentitySwitch() {
   try {
-    // Reset scope so canonical key removes are not re-routed to mm:<id>:...
+    // Reset scope FIRST so canonical key removes aren't re-routed to mm:<id>:...
     try { if (window.MgMinorScope) window.MgMinorScope.setActiveMinorId(null); } catch(e) {}
-    // Purge every managed-minor namespace (all of the prior account's kids).
-    var mm = [];
+
+    // Keys that must SURVIVE an account switch: the identity/scope pointers,
+    // the freshly-signed-in user's auth/session cache + signup state, and the
+    // install / notification / backup UI flags. EVERYTHING ELSE under the
+    // ybg_ / mg_ / mm: prefixes is per-user content (journal, profile photo,
+    // grades, subject names, settings, height/weight, teams, coach contact,
+    // edit PIN, every managed-minor namespace) and gets purged by prefix — no
+    // hand-maintained content list to fall out of date, which is exactly how a
+    // child's profile photo (ybg_profile_pic) leaked across families before.
+    var KEEP = {
+      'mg_auth_uid': 1, 'mg_active_minor_id': 1,
+      'ybg_access': 1, 'ybg_softball_access': 1, 'ybg_fb_pass': 1,
+      'ybg_creator': 1, 'ybg_pin_unlocked': 1,
+      'mg_signup_state': 1, 'mg_signup_for': 1, 'mg_promo_code': 1, 'mg_first_journal_open': 1,
+      'ybg_install_dismissed': 1, 'ybg_ios_dismissed': 1,
+      'ybg_notif_asked': 1, 'ybg_notif_granted': 1,
+      'mg_cloud_backup_dismissed': 1, 'mg_cloud_backup_done': 1,
+    };
+    var toRemove = [];
     for (var i = 0; i < localStorage.length; i++) {
       var k = localStorage.key(i);
-      if (k && k.indexOf('mm:') === 0) mm.push(k);
+      if (!k || KEEP[k]) continue;
+      if (k.indexOf('ybg_reminder_dismiss_') === 0) continue; // per-device reminder UI
+      if (k.indexOf('mm:') === 0 || k.indexOf('ybg_') === 0 || k.indexOf('mg_') === 0) toRemove.push(k);
     }
-    mm.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
-    // Canonical journal / profile / academics / settings / H-W keys.
-    ['ybg_softball_profile','ybg_softball_state','ybg_profile','ybg_state',
-     'ybg_subject_grades','ybg_subject_names','ybg_settings','ybg_hw_log',
-     'mg_visited_academics'].forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
-    // Drop the prior identity's in-memory data so the live UI doesn't keep it.
+    toRemove.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
+
+    // Drop the prior identity's in-memory data + photo so the live UI doesn't
+    // keep showing it after the switch.
     try { if (typeof state === 'object' && state) { state.entries = []; state.goals = []; } } catch(e) {}
+    try { if (typeof renderProfilePic === 'function') renderProfilePic(null); } catch(e) {}
   } catch(e) { console.warn('[FB] identity-switch clear:', e); }
 }
 
