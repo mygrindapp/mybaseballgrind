@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v315';
+    const CACHE = 'ybg-mygrind-v316';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -9369,14 +9369,10 @@ function saveEntry() {
     }
   } catch(_) {}
 
-  // Firebase cloud save hook — runs after local save
-  setTimeout(function() {
-    try {
-      var s = JSON.parse(localStorage.getItem('ybg_softball_state') || '{}');
-      var latest = (s.entries || [])[0];
-      if (latest && typeof fbSaveEntry === 'function') fbSaveEntry(latest);
-    } catch(e) {}
-  }, 500);
+  // Cloud save happens at the END of this function (after the entry is in
+  // state), pushing the ACTUAL saved entry — not a +500ms read of entries[0],
+  // which silently skipped edits to any non-newest entry and left new entries
+  // one save behind in the cloud. See the fbSaveEntry(entry) call below.
   // Original saveEntry below
   const date     = document.getElementById('j-date').value;
   // Future-date guard — the input's max attr is a soft UI hint that
@@ -9710,6 +9706,13 @@ function saveEntry() {
     }
   }
 
+  // Persist locally + push THIS saved entry to the cloud. The old hook always
+  // pushed entries[0], so edits to any non-newest entry never synced and were
+  // reverted on the next restore. saveState() first so localStorage + Firestore
+  // agree; fbSaveEntry(entry) writes the exact doc that was edited/created.
+  try { saveState(); } catch (e) {}
+  try { if (typeof fbSaveEntry === 'function' && typeof fbUser !== 'undefined' && fbUser) fbSaveEntry(entry); } catch (e) {}
+
   // BULLETPROOF entry-list refresh — Coach Young 2026-05-12 (ongoing bug):
   // "Once you hit save the entry is not shown in the log." Force the
   // entries-list filter to a window that includes today's entry AND
@@ -9983,10 +9986,19 @@ function undoDelete() {
   ybgHaptic([15, 30, 15]);
 }
 function finalizeTrashedDelete() {
+  // Undo window closed without an undo → the deletion is now permanent.
+  // Persist the removal locally AND delete the cloud doc, otherwise the next
+  // syncFromCloud (cloud-wins union) re-inserts the entry from its still-present
+  // Firestore doc and it resurrects.
+  var removedId = _trashedEntry ? _trashedEntry.id : null;
   _trashedEntry = null;
   if (_undoTimer) clearTimeout(_undoTimer);
   _undoTimer = null;
   hideUndoToast();
+  if (removedId != null) {
+    try { saveState(); } catch (e) {}
+    try { if (typeof fbDeleteEntry === 'function') fbDeleteEntry(removedId); } catch (e) {}
+  }
 }
 
 // ── COMMENT SYSTEM ───────────────────────────────────
@@ -19729,6 +19741,16 @@ function fbSaveEntry(entry) {
      .set(Object.assign({}, entry, { uid: fbUser.uid, savedAt: firebase.firestore.FieldValue.serverTimestamp() }), { merge: true })
      .catch(function(e) { console.warn('[FB] entry:', e); });
 }
+function fbDeleteEntry(id) {
+  // Permanently remove a deleted entry's Firestore doc. Without this, the
+  // cloud-wins union in syncFromCloud re-inserts the doc on the next app open
+  // and the "deleted" entry resurrects.
+  if (!fbUser || id == null) return;
+  var col = _mgEntriesColRef();
+  if (!col) return;
+  col.doc(String(id)).delete()
+     .catch(function(e) { console.warn('[FB] entry delete:', e); });
+}
 function fbSaveState(state) {
   if (!fbUser) return;
   var ref = _mgUserDocRef();
@@ -20600,23 +20622,33 @@ function dashCoachRender(item) {
 
   body.innerHTML = html;
 }
-function dashCoachLoad() {
-  var phone = dashCoachPlayerPhone();
-  if (!phone) {
-    // No phone in profile → hide card. Player will need a profile w/ phone for V1 surfacing.
-    var card = document.getElementById('dash-coach-card');
+async function dashCoachLoad() {
+  var card = document.getElementById('dash-coach-card');
+  // Coaching feedback includes a minor's coaching content, so this reads via the
+  // OWNER-SCOPED parent(email) path with the signed-in user's Firebase token —
+  // never the old unauthenticated ?player=<phone> path (which let anyone
+  // enumerate a child's feedback + the coach's contact by phone, now removed).
+  try {
+    if (typeof fbUser === 'undefined' || !fbUser || !fbUser.getIdToken) {
+      if (card) card.style.display = 'none';
+      return;
+    }
+    var email = (fbUser.email || '').trim().toLowerCase();
+    if (!email) {
+      try { email = (JSON.parse(localStorage.getItem('ybg_softball_access') || '{}').email || '').trim().toLowerCase(); } catch (e) {}
+    }
+    if (!email) { if (card) card.style.display = 'none'; return; }
+    var token = await fbUser.getIdToken();
+    var resp = await fetch('/api/feedback-list?parent=' + encodeURIComponent(email) + '&days=14', {
+      headers: { 'Authorization': 'Bearer ' + token },
+    });
+    var data = await resp.json().catch(function() { return {}; });
+    if (!data.ok || !Array.isArray(data.items)) return dashCoachRender(null);
+    var withResponse = data.items.filter(function(i) { return i.status === 'responded' && i.response; });
+    dashCoachRender(withResponse[0] || null);
+  } catch (e) {
     if (card) card.style.display = 'none';
-    return;
   }
-  fetch('/api/feedback-list?player=' + encodeURIComponent(phone) + '&days=14')
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (!data.ok || !Array.isArray(data.items)) return dashCoachRender(null);
-      // Find most recent item with a response
-      var withResponse = data.items.filter(function(i) { return i.status === 'responded' && i.response; });
-      dashCoachRender(withResponse[0] || null);
-    })
-    .catch(function() { /* silent — card just stays hidden */ });
 }
 window.dashCoachRefresh = dashCoachLoad;
 

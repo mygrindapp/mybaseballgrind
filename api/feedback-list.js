@@ -1,20 +1,21 @@
 // ═══════════════════════════════════════════════════════════
-// Phase 7b V1 — Lists feedback request/response records for a
-// player (by phone) or parent (by email). Drives the "New from
+// Phase 7b — Lists feedback request/response records for the
+// signed-in account (by parent email). Drives the "New from
 // Coach" card on softball.html and the "This Week's Coaching"
 // card on signup.html Screen 8.
 //
-// Security note for V1: anyone who knows the player's phone or
-// the parent's email can list their feedback. That is acceptable
-// for V1 because (a) phone/email are personal info already in
-// each user's localStorage, (b) the data shown is only their
-// own coach interactions, and (c) the secret token gate still
-// protects writes. V2 (full coach app) will replace this with
-// Firebase auth-scoped reads.
+// Security (2026-06-05 audit fix #4): reads are OWNER-SCOPED.
+// The query is by parent email and gated through lib/access.js —
+// the Authorization: Bearer Firebase ID token's email must match
+// the requested email. The old unauthenticated ?player=<phone>
+// read path was REMOVED: it let anyone who knew or guessed a
+// player's phone pull that minor's coaching content and the
+// coach's name + phone with no token. (Writes were already token-
+// gated by the per-request magic-link token in feedback-store.js.)
 // ═══════════════════════════════════════════════════════════
 
 import crypto from 'crypto';
-import { listForPlayer, listForParent } from '../lib/feedback-store.js';
+import { listForParent } from '../lib/feedback-store.js';
 import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
 import { authorizeEmailOwner } from '../lib/access.js';
 
@@ -49,33 +50,30 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'GET')     return res.status(405).json({ ok: false, error: 'method_not_allowed' });
 
-  const playerPhone = (req.query.player || '').toString();
   const parentEmail = (req.query.parent || '').toString();
   const days        = Math.max(1, Math.min(90, parseInt(req.query.days || '30', 10) || 30));
 
-  if (!playerPhone && !parentEmail) {
-    return res.status(400).json({ ok: false, error: 'missing_filter', items: [] });
+  // Reads are owner-scoped to the account email only. The legacy ?player=<phone>
+  // path was an unauthenticated enumeration surface (anyone who knew a phone got
+  // a minor's coaching content + the coach's name/phone) and has been removed —
+  // both dashboard cards (softball.html, signup.html) query by the signed-in
+  // account's email. A bare phone query is no longer accepted.
+  if (!parentEmail) {
+    return res.status(400).json({ ok: false, error: 'parent_required', items: [] });
   }
 
-  // ─── Owner check on the PARENT (email) path (Firebase ID token, staged) ──
-  // The parent query returns a household's coaching history, so we scope it to
-  // the email's owner (token email must match). See lib/access.js. The PLAYER
-  // (phone) path is NOT gated here: feedback is keyed by phone with no link to
-  // a Firebase uid/email, and phone ownership can't be proven until SMS
-  // verification (Twilio TFV) is live. That path relies on the PII-stripped
-  // response below (no names/parent-email/phone returned) as its V1 posture.
-  if (parentEmail) {
-    const access = await authorizeEmailOwner(req, parentEmail);
-    if (!access.ok) return res.status(access.status).json({ ok: false, error: access.error, items: [] });
-  }
+  // ─── Owner check (Firebase ID token; lib/access.js) ──────────────────────
+  // The query returns a household's coaching history, so we scope it to the
+  // email's owner: the Bearer token's email must match the requested email.
+  const access = await authorizeEmailOwner(req, parentEmail);
+  if (!access.ok) return res.status(access.status).json({ ok: false, error: access.error, items: [] });
 
-  // ─── Rate limit (H1 partial — security audit 2026-05-18) ──
-  // Defeats bulk phone enumeration: an attacker trying many phones to
-  // find which return data hits the 3/hr 10/day IP cap quickly. Does
-  // NOT defeat a TARGETED attack where someone already knows a specific
-  // player's phone — that residual risk is documented and queued for
-  // V2 (full Firebase auth scope per the file's existing security note).
-  // Fail-open on Redis outage matches the rest of the rate-limit infra.
+  // ─── Rate limit (secondary — the owner token above is the real gate) ──
+  // checkIpReadLimit caps a single IP at 60/hr, 600/day (lib/rate-limit.js).
+  // It's defense-in-depth only now: every read already requires a Firebase
+  // token whose email matches the requested account, so there's no anonymous
+  // enumeration surface left to bound. Fail-open on a Redis blip matches the
+  // rest of the rate-limit infra (the owner check above still holds).
   const clientIp = getClientIp(req);
   const ipCheck = await checkIpReadLimit(clientIp);
   if (!ipCheck.ok) {
@@ -86,25 +84,18 @@ export default async function handler(req, res) {
 
   const sinceTs = Date.now() - (days * 24 * 60 * 60 * 1000);
 
-  const result = playerPhone
-    ? await listForPlayer(playerPhone, { sinceTs })
-    : await listForParent(parentEmail, { sinceTs });
+  const result = await listForParent(parentEmail, { sinceTs });
 
   if (!result.ok) return res.status(500).json(result);
 
-  // ─── PII minimization (interim hardening 2026-05-29) ──────────
-  // This V1 endpoint is not yet auth-scoped (see the file header), so we
-  // return only the fields the dashboard cards actually render and drop the
-  // identifiers no client reads. Removes a minor's parent email + parent/
-  // player names + player phone from the response, so even an unauthorized
-  // caller who knows a phone/email gets coaching content, not a contact graph.
+  // ─── PII minimization ─────────────────────────────────────────
+  // The caller is the verified owner, but we still drop fields no client
+  // renders so the payload carries only the minimum:
   //   - parent {name,email}: rendered by no client → dropped entirely.
-  //   - coach.email:         not rendered → dropped (coach name/phone kept for
-  //                          the player's tap-to-text follow-up).
-  //   - player.phone:        never rendered (player path already knows it) →
-  //                          dropped. player.name kept only on the parent
-  //                          query, where the weekly card groups by it.
-  const isParentQuery = !!parentEmail;
+  //   - coach.email:         not rendered → dropped (coach name + phone kept
+  //                          for the dashboard's tap-to-text follow-up).
+  //   - player.phone:        never rendered → dropped (player.name kept; the
+  //                          weekly card groups by it).
   const items = (result.items || []).map((it) => {
     const safe = { ...it };
     delete safe.parent;
@@ -114,7 +105,7 @@ export default async function handler(req, res) {
     }
     if (safe.player) {
       const { phone, ...playerRest } = safe.player;
-      safe.player = isParentQuery ? playerRest : undefined;
+      safe.player = playerRest;
     }
     return safe;
   });
