@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>The Daily Grind — MyGrind Founder Checklist</title>
+<!--
+  The Daily Grind — Coach's standing daily founder-ops checklist.
+  Rebuilt 2026-06-04 after the original (which lived loose on the Desktop) was
+  lost in a Mac cleanup. Now in the repo + served at /grind so it is GitHub-backed
+  and reachable from the phone. Add to Home Screen for one-tap access.
+
+  - Day-aware: weekday-specific items appear only on their day.
+  - Auto-resets every morning (localStorage keyed by date).
+  - One-tap tool links open the right dashboard.
+  Edit the ROUTINE array below to change items.
+-->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Daily Grind">
+<meta name="theme-color" content="#050505">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --gold:#C9A84C; --gold-light:#E8C96A; --gold-bright:#FFD874; --gold-dark:#9A7A30;
+    --black:#050505; --dark:#141414; --card:#1A1A1A; --border:#2E2E2E;
+    --grey:#888; --light:#CCCCCC; --white:#F5F5F5; --green:#5BB873;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{background:var(--black);color:var(--white);font-family:'Barlow',sans-serif}
+  body{max-width:680px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 18px 64px;position:relative;min-height:100vh}
+  .bg{position:fixed;inset:0;pointer-events:none;z-index:0}
+  .bg-diamond{background:repeating-linear-gradient(45deg,transparent 0 31px,rgba(201,168,76,.035) 31px 32px)}
+  .bg-glow{background:radial-gradient(900px 700px at 50% -5%,rgba(201,168,76,.12),transparent 60%)}
+  .container{position:relative;z-index:1}
+
+  header{text-align:center;padding:14px 0 6px}
+  header img{width:76px;height:auto;filter:drop-shadow(0 4px 18px rgba(201,168,76,.25))}
+  h1{font-family:'Bebas Neue',sans-serif;font-weight:400;font-size:52px;line-height:.95;letter-spacing:1px;margin-top:10px}
+  h1 .gold{color:var(--gold)}
+  .date{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;letter-spacing:4px;text-transform:uppercase;color:var(--grey);margin-top:8px}
+
+  .progress-wrap{margin:20px 0 8px}
+  .progress-track{height:10px;background:var(--dark);border:1px solid var(--border);border-radius:99px;overflow:hidden}
+  .progress-fill{height:100%;width:0;border-radius:99px;background:linear-gradient(90deg,var(--gold-dark),var(--gold-bright));transition:width .35s cubic-bezier(.16,1,.3,1)}
+  .progress-label{display:flex;justify-content:space-between;align-items:baseline;margin-top:10px;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase;letter-spacing:2px}
+  .progress-label .count{font-weight:800;font-size:18px;color:var(--gold)}
+  .progress-label .msg{font-size:13px;letter-spacing:2px;color:var(--grey)}
+
+  section{margin-top:26px}
+  .sec-head{display:flex;align-items:center;gap:10px;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);padding:0 2px 10px;border-bottom:1px solid var(--border);margin-bottom:6px}
+  .sec-head .ic{font-size:17px}
+
+  .item{display:flex;align-items:flex-start;gap:13px;padding:14px 6px;border-bottom:1px solid rgba(46,46,46,.5);cursor:pointer;user-select:none}
+  .item:last-child{border-bottom:none}
+  .box{flex:0 0 auto;width:26px;height:26px;margin-top:1px;border:2px solid var(--border);border-radius:7px;display:flex;align-items:center;justify-content:center;transition:.18s;background:var(--dark)}
+  .box svg{width:15px;height:15px;opacity:0;transform:scale(.5);transition:.18s}
+  .item.done .box{background:var(--gold);border-color:var(--gold)}
+  .item.done .box svg{opacity:1;transform:scale(1)}
+  .item .txt{flex:1;font-size:16.5px;line-height:1.4;color:var(--light);padding-top:2px}
+  .item.done .txt{color:var(--grey);text-decoration:line-through;text-decoration-color:rgba(201,168,76,.5)}
+  .item .day-tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--black);background:var(--gold);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:middle}
+  .tool{display:inline-flex;align-items:center;gap:5px;margin-top:7px;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);text-decoration:none;border:1px solid rgba(201,168,76,.35);border-radius:99px;padding:5px 12px}
+  .tool:active{background:rgba(201,168,76,.12)}
+
+  .finale{text-align:center;margin-top:40px;padding:26px 18px;border:1px solid var(--border);border-radius:14px;background:rgba(20,20,20,.6)}
+  .finale .big{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:1px;color:var(--gold)}
+  .finale .sub{font-size:14px;color:var(--grey);margin-top:6px;line-height:1.5}
+  .hint{text-align:center;font-size:12px;color:var(--grey);margin-top:22px;line-height:1.6;letter-spacing:.3px}
+  .reset-btn{display:block;margin:18px auto 0;background:none;border:1px solid var(--border);color:var(--grey);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;letter-spacing:3px;text-transform:uppercase;padding:9px 18px;border-radius:99px;cursor:pointer}
+  .reset-btn:active{border-color:var(--gold);color:var(--gold)}
+  .celebrate .progress-fill{background:linear-gradient(90deg,var(--green),var(--gold-bright))}
+</style>
+</head>
+<body>
+  <div class="bg bg-diamond"></div>
+  <div class="bg bg-glow"></div>
+  <div class="container">
+    <header>
+      <img src="/assets/mark.png" alt="MyGrind">
+      <h1>The Daily <span class="gold">Grind</span></h1>
+      <div class="date" id="date">—</div>
+    </header>
+
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="fill"></div></div>
+      <div class="progress-label">
+        <span class="count" id="count">0 / 0</span>
+        <span class="msg" id="msg">Win the day.</span>
+      </div>
+    </div>
+
+    <div id="list"></div>
+
+    <div class="finale">
+      <div class="big">Win the day.</div>
+      <div class="sub">The business compounds one rep at a time.</div>
+    </div>
+    <button class="reset-btn" id="reset">Reset today</button>
+    <div class="hint">Add to Home Screen for one-tap access.<br>Resets automatically every morning.</div>
+  </div>
+
+<script>
+(function(){
+  // Sun=0 Mon=1 Tue=2 Wed=3 Thu=4 Fri=5 Sat=6
+  var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+  var TOOLS = {
+    morningSync:null,
+    firebase:"https://console.firebase.google.com/project/my-grind-b8486/authentication/users",
+    firestore:"https://console.firebase.google.com/project/my-grind-b8486/firestore",
+    stripe:"https://dashboard.stripe.com/payments",
+    gmail:"https://mail.google.com",
+    ga4:"https://analytics.google.com/analytics/web/#/a331012037p534165965/reports/intelligenthome",
+    vercel:"https://vercel.com/youngsbaseballs-projects/mybaseballgrind",
+    gsc:"https://search.google.com/search-console?resource_id=https%3A%2F%2Fwww.mygrindapp.com%2F",
+    mailchimp:"https://us8.admin.mailchimp.com/campaigns/",
+    notion:"https://www.notion.so/34a819955e6f81b69dd3e4f0f4840f94",
+    calendly:"https://calendly.com/realmikeyoung",
+    ig:"https://www.instagram.com/youngsbaseball/",
+    x:"https://x.com/MyGrindapp",
+    app:"https://mygrindapp.com"
+  };
+
+  // days: omit = every day; otherwise array of weekday numbers
+  var ROUTINE = [
+    { sec:"Start of Day", ic:"☀️", items:[
+      { t:"Run /morning-sync for today's briefing" },
+      { t:"Check overnight signups", link:["Firebase",TOOLS.firebase] },
+      { t:"Check Stripe for new payments", link:["Stripe",TOOLS.stripe] },
+      { t:"Scan inbox for customer + vendor emails", link:["Gmail",TOOLS.gmail] },
+      { t:"Glance at GA4 — is traffic growing, are the ads working?", link:["GA4",TOOLS.ga4] }
+    ]},
+    { sec:"Social", ic:"📣", items:[
+      { t:"Post today's Quote-of-the-Day card to IG Stories (@youngsbaseball)", link:["Instagram",TOOLS.ig] },
+      { t:"Engage — reply to 5 comments or DMs" },
+      { t:"Post the MyGrind Weekly social graphic (aligns with the 9am send)", days:[2] },
+      { t:"Schedule next week's X batch (@MyGrindapp)", days:[0], link:["X",TOOLS.x] },
+      { t:"Drop one feed post or reel", days:[1,3,5] }
+    ]},
+    { sec:"Outreach", ic:"🤝", items:[
+      { t:"Send 1 warm-client / referral message" },
+      { t:"Send 1 coach “free for your team” pitch (hand out FOUNDERMYGRIND)" },
+      { t:"Follow up on any open replies" }
+    ]},
+    { sec:"Customers", ic:"💛", items:[
+      { t:"Respond to any support email today" },
+      { t:"Check for stuck signups (admin rescue if needed)" },
+      { t:"Read one piece of user feedback / journal activity", link:["Firestore",TOOLS.firestore] }
+    ]},
+    { sec:"Content", ic:"✍️", items:[
+      { t:"MyGrind Weekly goes out 9am — confirm it sent", days:[2], link:["Mailchimp",TOOLS.mailchimp] },
+      { t:"Draft next week's newsletter", days:[3,4] },
+      { t:"Work the blog roadmap — move this week's post forward" },
+      { t:"Capture one content idea for later" }
+    ]},
+    { sec:"Admin", ic:"🗂️", items:[
+      { t:"FTB 2023 — move it forward (call Sam if needed)", days:[1] },
+      { t:"Log any business expense in Notion", link:["Notion",TOOLS.notion] },
+      { t:"Run /eod-sync to close the week", days:[5] },
+      { t:"Review the roadmap / next session start", link:["Launch HQ",TOOLS.notion] }
+    ]}
+  ];
+
+  var CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="#050505" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+
+  var now = new Date();
+  var dow = now.getDay();
+  var todayKey = now.getFullYear()+"-"+(now.getMonth()+1)+"-"+now.getDate();
+  var STORE = "mg_daily_grind";
+
+  // load state, reset if it's a new day
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(STORE)) || {}; } catch(e){ state = {}; }
+  if(state.date !== todayKey){ state = { date:todayKey, done:{} }; save(); }
+
+  function save(){ try{ localStorage.setItem(STORE, JSON.stringify(state)); }catch(e){} }
+
+  // date header
+  var fmt = now.toLocaleDateString(undefined,{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('date').textContent = fmt;
+
+  // build list (only items for today)
+  var list = document.getElementById('list');
+  var ids = [];
+  ROUTINE.forEach(function(group, gi){
+    var visible = group.items.filter(function(it){ return !it.days || it.days.indexOf(dow) !== -1; });
+    if(!visible.length) return;
+    var sec = document.createElement('section');
+    var head = document.createElement('div');
+    head.className = 'sec-head';
+    head.innerHTML = '<span class="ic">'+group.ic+'</span>'+group.sec;
+    sec.appendChild(head);
+    visible.forEach(function(it, ii){
+      var id = gi+'-'+group.items.indexOf(it);
+      ids.push(id);
+      var row = document.createElement('div');
+      row.className = 'item' + (state.done[id] ? ' done' : '');
+      row.dataset.id = id;
+      var dayTag = it.days ? '<span class="day-tag">'+it.days.map(function(d){return DOW[d];}).join('/')+'</span>' : '';
+      var tool = it.link ? '<a class="tool" href="'+it.link[1]+'" target="_blank" rel="noopener" onclick="event.stopPropagation()">↗ '+it.link[0]+'</a>' : '';
+      row.innerHTML = '<div class="box">'+CHECK+'</div><div class="txt">'+it.t+dayTag+(tool?'<br>'+tool:'')+'</div>';
+      row.addEventListener('click', function(){ toggle(id, row); });
+      sec.appendChild(row);
+    });
+    list.appendChild(sec);
+  });
+
+  function toggle(id, row){
+    state.done[id] = !state.done[id];
+    row.classList.toggle('done', !!state.done[id]);
+    save(); refresh();
+  }
+
+  function refresh(){
+    var total = ids.length;
+    var done = ids.filter(function(id){ return state.done[id]; }).length;
+    var pct = total ? Math.round(done/total*100) : 0;
+    document.getElementById('fill').style.width = pct+'%';
+    document.getElementById('count').textContent = done+' / '+total;
+    var msg = document.getElementById('msg');
+    if(done===0) msg.textContent = "Win the day.";
+    else if(done<total) msg.textContent = pct+"% — keep going.";
+    else msg.textContent = "🔥 Day won.";
+    document.body.classList.toggle('celebrate', done===total && total>0);
+  }
+
+  document.getElementById('reset').addEventListener('click', function(){
+    state = { date:todayKey, done:{} }; save();
+    document.querySelectorAll('.item.done').forEach(function(r){ r.classList.remove('done'); });
+    refresh();
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>

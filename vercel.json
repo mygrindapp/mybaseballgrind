@@ -7,7 +7,9 @@
   ],
   "rewrites": [
     { "source": "/foundermygrind", "destination": "/foundermygrind.html" },
-    { "source": "/newsletter", "destination": "/newsletter.html" }
+    { "source": "/newsletter", "destination": "/newsletter.html" },
+    { "source": "/qotd-story", "destination": "/qotd-story.html" },
+    { "source": "/grind", "destination": "/grind.html" }
   ],
   "headers": [
     {
