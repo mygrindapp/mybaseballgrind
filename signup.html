@@ -4056,6 +4056,14 @@ function selectFamilySport(sport) {
 }
 
 function selectPlayerCount(count) {
+  // Once invites went out (playersLockedAt) the roster AND the billed tier are
+  // frozen. A resumed session restarts at Screen 2, so without this a parent
+  // who invited 3 players (Family) could lower the count to 1 here and get
+  // routed to Single pricing while 3 locked players persist — a direct under-
+  // charge. Snap to the locked roster length so count, roster and tier align.
+  if (state.playersLockedAt && Array.isArray(state.players) && state.players.length > 0) {
+    count = state.players.length;
+  }
   state.playerCount = count;
   // If the user reduced the count, drop the extra slots so Screen 7 doesn't
   // render stale invites from a previous pass through the flow. Don't trim

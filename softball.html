@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v319';
+    const CACHE = 'ybg-mygrind-v320';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1488,6 +1488,12 @@ if ('serviceWorker' in navigator) {
     'ybg_settings':         1,
     'ybg_hw_log':           1,
     'ybg_profile_pic':      1,
+    // Cross-feature streak ledger the daily check-in stamps. Flat +
+    // un-namespaced before, so a parent's and a managed child's activity
+    // dates merged into one inflated/blended streak. Scoping it per minor
+    // (same shim as above) keeps each profile's streak its own. Account-
+    // switch leakage is already handled by the prefix-purge clear.
+    'mg_activity_days':     1,
   };
   var ACTIVE_KEY = 'mg_active_minor_id';
 
@@ -19200,12 +19206,24 @@ document.addEventListener('click', function(e) {
 window.addEventListener('load', function() {
   setTimeout(function() {
     var hash = (window.location.hash || '').slice(1);
-    var validTabs = ['dashboard','journal','stats','players','team','coach-feedback','calendar','settings'];
-    if (hash && validTabs.indexOf(hash) !== -1) {
+    // Current panel set after the 5-tab redesign (16b30c9). Academics, The 5
+    // Tools, Resources and the 12-Month Calendar live UNDER the Develop hub,
+    // so a deep link to them must light tab-develop — not a 'tab-'+hash id
+    // that no longer exists. (The old list still had calendar/team/coach-
+    // feedback and was missing develop/academics/tools/resources, so cold-
+    // load deep links to the new hub silently fell through and #calendar lit
+    // a dead tab.) Resolve each panel's owning bottom-nav tab explicitly.
+    var TAB_FOR_PANEL = {
+      dashboard: 'tab-dashboard', journal: 'tab-journal', stats: 'tab-stats',
+      players: 'tab-players', develop: 'tab-develop',
+      academics: 'tab-develop', tools: 'tab-develop',
+      resources: 'tab-develop', calendar: 'tab-develop'
+    };
+    if (hash && TAB_FOR_PANEL[hash]) {
       // Drive via popstate-style path: skip history push so we don't
       // duplicate the existing hash entry on first load.
       _mgTabSkipHistoryPush = true;
-      mgTab(hash, 'tab-' + hash);
+      mgTab(hash, TAB_FOR_PANEL[hash]);
       _mgTabSkipHistoryPush = false;
     } else {
       // First-signup routing (Coach Young 2026-05-27): new users land on
