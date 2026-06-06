@@ -3340,6 +3340,13 @@ select.field-input {
       Start My 14-Day Trial &rarr;
     </button>
 
+    <!-- Honest opt-out. Shown only when COPPA does not require a card
+         (toggled in openPlanPicker by hasUnder13). Lets a 13+ user start
+         the trial without a card instead of being trapped on the modal. -->
+    <button type="button" id="plan_picker_skip" onclick="onPlanPickerSkip()" style="display:none; margin:14px auto 0; background:none; border:none; color:var(--grey); font-family:'Barlow',sans-serif; font-size:13px; text-decoration:underline; cursor:pointer;">
+      Maybe later. Start my trial without a card.
+    </button>
+
     <p style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); line-height:1.6; margin:14px 0 0; text-align:center;">
       Secured by Stripe. We never see your card number. Cancel anytime from your dashboard.
     </p>
@@ -5322,23 +5329,26 @@ function renderDashPlayerCard(player, index) {
 }
 
 function buildScreen8() {
-  // ─── Card-on-file plan picker (2026-05-27) ────────────────
-  // Industry-standard: collect the card before the dashboard. The
-  // picker only opens once per signup. Once the user heads to Stripe
-  // Checkout we set mg_plan_picker_shown so a back-button return to
-  // Screen 8 (or a refresh after Stripe cancel) doesn't trap them in
-  // the modal. Lifetime promo users (FOREVERYOUNG2026) and parents who
-  // already completed checkout skip the picker entirely.
+  // ─── Card-on-file plan picker (2026-05-27; hardened 2026-06-06) ──
+  // Industry-standard: collect the card before the dashboard. We mark
+  // mg_plan_picker_shown ONLY when the user completes checkout (the
+  // co=success return in softball.html) or explicitly taps "skip for now"
+  // (onPlanPickerSkip) — NEVER when the picker merely opens. So a parent
+  // who reaches Stripe and backs out without paying sees the picker again
+  // on return instead of silently slipping past it with no card on file
+  // (cancel_url routes them back to Screen 8). The explicit skip avoids a
+  // hard trap for anyone who won't enter a card; it's hidden when COPPA
+  // requires the card (under-13). Lifetime promo users (FOREVERYOUNG2026)
+  // skip the picker entirely (openPlanPicker returns false).
   try {
     var alreadyShown = false;
     try { alreadyShown = localStorage.getItem('mg_plan_picker_shown') === '1'; } catch (_) {}
     if (!alreadyShown) {
       var opened = openPlanPicker();
       if (opened) {
-        try { localStorage.setItem('mg_plan_picker_shown', '1'); } catch (_) {}
         // Bail out of the rest of buildScreen8 — the picker takes over.
-        // After Stripe Checkout the user lands on /softball.html?co=success,
-        // not back here, so the rest of this function isn't needed.
+        // The flag is set on checkout success or explicit skip, NOT here,
+        // so an abandoned checkout re-opens the picker on the next entry.
         return;
       }
     }
@@ -5969,6 +5979,12 @@ function openPlanPicker() {
     if (coppaBanner)       coppaBanner.style.display       = 'none';
   }
 
+  // Skip ("maybe later") is offered only when COPPA does not require a card.
+  // Under-13 households must put a card on file (it doubles as verifiable
+  // parental consent), so the opt-out stays hidden for them.
+  const skipBtn = document.getElementById('plan_picker_skip');
+  if (skipBtn) skipBtn.style.display = hasUnder13 ? 'none' : 'block';
+
   // Highlight Family as Recommended when this is a parent-path signup.
   const familyPill = document.getElementById('ppc_fa_pill');
   if (familyPill) familyPill.style.display = isSelfPath() ? 'none' : '';
@@ -6084,6 +6100,23 @@ async function onPlanPickerContinue() {
     }
     if (cta) { cta.disabled = false; cta.textContent = originalLabel; }
   }
+}
+
+function onPlanPickerSkip() {
+  // Explicit, honest opt-out from the card-on-file step. Only reachable
+  // when COPPA does not require a card (the skip button is hidden for
+  // under-13 — see openPlanPicker). Marks the picker satisfied so we don't
+  // re-nag, closes the modal, and renders the dashboard. The user keeps
+  // their trial and can add a card later from the app.
+  try { localStorage.setItem('mg_plan_picker_shown', '1'); } catch (_) {}
+  var overlay = document.getElementById('plan_picker_overlay');
+  if (overlay) {
+    overlay.classList.remove('shown');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  // Re-run Screen 8: alreadyShown is now true, so the picker is skipped and
+  // the dashboard (trial recording + sign-in banner + player cards) renders.
+  try { buildScreen8(); } catch (_) {}
 }
 
 // Stripe Payment Links (LIVE mode). One link per (Single|Family) × (Annual|Monthly).
@@ -6744,6 +6777,23 @@ window.addEventListener('DOMContentLoaded', () => {
 
   loadState();
 
+  // Stripe "back/cancel" returns here (cancel_url=signup.html?co=cancel) so
+  // an abandoned checkout lands back at the plan picker instead of dead-
+  // ending in the app. If the user got far enough to lock player slots
+  // (i.e. they were mid-checkout), resume at Screen 8 — buildScreen8 re-opens
+  // the picker because mg_plan_picker_shown is only set on checkout success
+  // or an explicit skip. Strip the param so a refresh stays clean.
+  var _resumeAtScreen8 = false;
+  try {
+    var qsCo = new URLSearchParams(window.location.search);
+    if (qsCo.get('co') === 'cancel') {
+      if (state.playersLockedAt) _resumeAtScreen8 = true;
+      qsCo.delete('co');
+      var cleanCo = window.location.pathname + (qsCo.toString() ? '?' + qsCo.toString() : '');
+      window.history.replaceState(null, '', cleanCo);
+    }
+  } catch (e) { /* old browser — fall through to normal start */ }
+
   // ?promo=<code> auto-applies a promo code from the URL (used by the
   // launch-day broadcast email so the link is one-click — code is already
   // attached when the user lands). Param is uppercased + stripped from
@@ -6772,7 +6822,11 @@ window.addEventListener('DOMContentLoaded', () => {
   // "Step 1 of 8" screen. Both selectAudience paths enter the body at s2.)
   // Phase 2 still has no mid-funnel resume — every session restarts from
   // the top of the chosen funnel.
-  go(state.signupFor ? 2 : 0);
+  if (_resumeAtScreen8) {
+    go(8);
+  } else {
+    go(state.signupFor ? 2 : 0);
+  }
 
   // Dev console hint
   console.log('%c⚾ MyGrind Signup — Phase 2 (Round 8 — COMPLETE)', 'color: #C9A84C; font-weight: bold; font-size: 14px;');

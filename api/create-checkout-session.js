@@ -205,7 +205,11 @@ export default async function handler(req, res) {
     },
     payment_method_collection: 'always',
     success_url: 'https://www.mygrindapp.com/softball.html?co=success',
-    cancel_url:  'https://www.mygrindapp.com/softball.html?co=cancel',
+    // Abandon returns to the signup funnel (not the app) so the parent lands
+    // back on the plan picker and can finish or skip — instead of dead-ending
+    // in the journal with no card on file. signup.html's load handler reads
+    // ?co=cancel and resumes at Screen 8. success_url stays on the app.
+    cancel_url:  'https://www.mygrindapp.com/signup.html?co=cancel',
     metadata: {
       mg_email:        normEmail,
       mg_plan_type:    plan,

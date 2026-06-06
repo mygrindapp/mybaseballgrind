@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v318';
+    const CACHE = 'ybg-mygrind-v319';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -7913,6 +7913,10 @@ function lockInCardReturnHandler() {
     if (co === 'success') {
       const acc = getAccessState();
       showShareToast && showShareToast('🔐 Card on file. We will charge on day ' + (acc.trialDurationDays || TRIAL_DAYS) + '.');
+      // Checkout completed — mark the signup plan picker satisfied so it
+      // never re-prompts (signup.html reads this; the flag is intentionally
+      // NOT set on mere redirect-to-Stripe, only here on a real success).
+      try { localStorage.setItem('mg_plan_picker_shown', '1'); } catch (_) {}
     }
     params.delete('co');
     const clean = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
