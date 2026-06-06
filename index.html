@@ -1592,6 +1592,63 @@
     <p class="form-trust">14-day free trial &middot; Card on file &middot; Cancel anytime</p>
   </aside>
 
+  <!-- Newsletter capture (2026-06-06): softer top-of-funnel for visitors not
+       ready for the trial. JSONP submit to the same Mailchimp audience as
+       /newsletter so signups actually land on the list. -->
+  <section class="newsletter-home" id="newsletter-signup" style="max-width:520px; margin:0 auto; padding:4px 20px 8px; text-align:center;">
+    <h2 style="font-family:'Bebas Neue',Arial,sans-serif; letter-spacing:1px; color:#C9A84C; font-size:26px; margin:0 0 8px;">Not ready to start? Get MyGrind Weekly.</h2>
+    <p style="color:#A89880; font-size:15px; line-height:1.5; margin:0 0 14px;">One free email every Tuesday for baseball and softball families. Something you can actually use for your player. No spam, unsubscribe anytime.</p>
+    <form id="mc-home-form" class="form-row" novalidate>
+      <input type="email" id="mc-home-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email">
+      <button type="submit">Subscribe</button>
+      <div class="hp" aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
+    </form>
+    <p id="mc-home-msg" role="status" aria-live="polite" style="font-size:13px; color:#A89880; min-height:18px; margin:8px 0 0;"></p>
+  </section>
+  <script>
+  (function(){
+    var form = document.getElementById('mc-home-form');
+    if (!form) return;
+    var emailEl = document.getElementById('mc-home-email');
+    var msgEl   = document.getElementById('mc-home-msg');
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = (emailEl.value || '').trim();
+      if (!EMAIL_RE.test(email)) { msgEl.textContent = 'Please enter a valid email address.'; return; }
+      var hp = form.querySelector('.hp input');
+      if (hp && hp.value) { msgEl.textContent = "You're on the list."; return; }
+      msgEl.textContent = 'Adding you...';
+      var cb = 'mcHomeCb' + Date.now() + Math.floor(Math.random()*1000);
+      var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
+        + '?u=73280b4c02e9bc56c7e633892&id=a7d801599a&f_id=0089ace1f0'
+        + '&EMAIL=' + encodeURIComponent(email)
+        + '&tags=2216797'
+        + '&b_73280b4c02e9bc56c7e633892_a7d801599a='
+        + '&c=' + cb;
+      var s = document.createElement('script');
+      var settled = false;
+      var to = setTimeout(function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; }, 10000);
+      function cleanup(){ try{delete window[cb];}catch(_){window[cb]=undefined;} if(s.parentNode)s.parentNode.removeChild(s); clearTimeout(to); }
+      window[cb] = function(data){
+        if(settled)return; settled=true; cleanup();
+        var m = (data && data.msg ? String(data.msg) : '').replace(/<[^>]+>/g,'').trim();
+        if ((data && data.result==='success') || /already subscribed/i.test(m)) {
+          form.style.display='none';
+          msgEl.style.color='#C9A84C';
+          msgEl.textContent = "You're on the list. Talk Tuesday.";
+          try { gtag('event','newsletter_signup',{ method:'home_page' }); } catch(_){}
+        } else {
+          msgEl.textContent = m || "We couldn't add that email. Please try again.";
+        }
+      };
+      s.onerror = function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; };
+      s.src = url;
+      document.head.appendChild(s);
+    });
+  })();
+  </script>
+
   <footer id="footer">
     <div class="footer-brand">A Product of My Grind Sports LLC</div>
     <div>

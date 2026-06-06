@@ -5641,29 +5641,35 @@ function mailchimpSyncSignup() {
       return;
     }
 
-    // Same Mailchimp audience + tag as index.html (line 1093) so the
-    // existing welcome automation continues to fire untouched.
+    // Same Mailchimp audience + tag as the /newsletter form so the welcome
+    // automation continues to fire. Reliable JSONP submit: a script tag with
+    // a real ?c= callback is the method Mailchimp actually processes cross-
+    // origin. The prior no-cors fetch could be dropped silently, so app
+    // signups were not reliably reaching the audience. Includes the empty
+    // honeypot field Mailchimp expects.
+    var cb = 'mgmcsubcb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
     var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
       + '?u=73280b4c02e9bc56c7e633892'
       + '&id=a7d801599a'
       + '&f_id=0089ace1f0'
       + '&EMAIL='   + encodeURIComponent(email)
       + (firstName ? '&FNAME=' + encodeURIComponent(firstName) : '')
-      + '&tags=2216797';
+      + '&tags=2216797'
+      + '&b_73280b4c02e9bc56c7e633892_a7d801599a='
+      + '&c=' + cb;
 
-    // no-cors fetch fires the subscribe; we never read the response.
-    // Mailchimp deduplicates server-side so this is safe to re-call.
-    if (window.fetch) {
-      fetch(url, { mode: 'no-cors' }).catch(function(){ /* fail-open */ });
-    } else {
-      // Older browsers — fall back to a script-tag JSONP fire.
-      var s = document.createElement('script');
-      s.src = url + '&c=mgmcsubcb_' + Date.now();
-      s.async = true;
-      s.onerror = function(){ try { document.head.removeChild(s); } catch(_) {} };
-      s.onload  = function(){ try { document.head.removeChild(s); } catch(_) {} };
-      document.head.appendChild(s);
-    }
+    var s = document.createElement('script');
+    window[cb] = function () {            // fire-and-forget — just clean up
+      try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+      if (s.parentNode) s.parentNode.removeChild(s);
+    };
+    s.async = true;
+    s.onerror = function () {
+      try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+      if (s.parentNode) s.parentNode.removeChild(s);
+    };
+    s.src = url;
+    document.head.appendChild(s);
 
     state.mailchimpSynced = true;
     try { saveState(); } catch(_) {}
