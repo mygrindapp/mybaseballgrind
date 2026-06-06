@@ -5142,7 +5142,37 @@ function buildScreen7() {
   grantPromoAccess();
 }
 
+function finishSignup() {
+  // End-of-signup work that must run for EVERY terminal path (self,
+  // fallback-kid parent, all-SMS parent) — not just the ones that reach
+  // Screen 8. Before today, self-path and fallback-kid-parent signups
+  // skipped Screen 8 entirely (onScreen7Continue routes them to
+  // onboarding.html), so they never recorded a trial, never synced the
+  // newsletter, and never got a sign-in code — the "5-20 broadcast hit
+  // 56 contacts and produced 0 Firebase Auth users" failure. All three
+  // calls below are idempotent, so running them here (and again on a
+  // Screen 8 fall-through) is safe.
+  try { recordTrialStartServerSide(); } catch (_) {}
+  try { mailchimpSyncSignup(); } catch (_) {}
+  // Stamp a first-party sign-in intent for this browser session so
+  // signin.html can safely auto-send a code (see the ?auto=1 gate in
+  // signin.html). The value IS the email, so it also supplies the address
+  // for the self-path handoff in onboarding.html's onFinalExit(). A crafted
+  // /signin.html?email=victim&auto=1 link opened by someone else has no
+  // matching intent flag in their session, so it can't email-bomb.
+  try {
+    var pe = (state.parent && state.parent.email) ? state.parent.email.trim().toLowerCase() : '';
+    if (pe && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pe)) {
+      sessionStorage.setItem('mg_signin_intent', pe);
+    }
+  } catch (_) {}
+}
+
 function onScreen7Continue() {
+  // Record the trial + newsletter + sign-in intent for ALL paths up front,
+  // including the self and fallback-kid-parent paths that route to
+  // onboarding.html below and never reach buildScreen8().
+  finishSignup();
   const fallbackNames = getFallbackPlayerNames();
   if (fallbackNames.length > 0) {
     // Route to onboarding.html for PIN setup of the first fallback kid.

@@ -1426,6 +1426,19 @@ function onFinalExit() {
     // the source of truth from this point forward.
     try { localStorage.removeItem('mg_signup_state'); } catch(_){}
   } catch (_) { /* private browsing — no-op */ }
+  // Self-path adults skipped Screen 8 (where Firebase account creation +
+  // the sign-in code live), so create their account now: hand off to the
+  // passwordless sign-in flow, which emails a code and persists the
+  // account on verify. mg_signin_intent (set by signup.html before this
+  // flow began) both supplies the email and authorizes signin.html's
+  // auto-send. Non-self onboarding (parent-invited kid) still goes
+  // straight to the journal — unchanged.
+  var _intentEmail = '';
+  try { _intentEmail = (sessionStorage.getItem('mg_signin_intent') || '').trim().toLowerCase(); } catch (_) {}
+  if (d.self && _intentEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_intentEmail)) {
+    window.location.href = '/signin.html?email=' + encodeURIComponent(_intentEmail) + '&auto=1';
+    return;
+  }
   window.location.href = 'softball.html';
 }
 

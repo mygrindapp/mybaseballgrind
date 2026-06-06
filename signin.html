@@ -673,7 +673,19 @@ window.addEventListener('DOMContentLoaded', async () => {
   // not know existed. requestSignInCode() handles its own UI transitions.
   try {
     const qsAuto = new URLSearchParams(window.location.search).get('auto');
-    if (qsAuto === '1' && prefilled) {
+    // SECURITY GATE (2026-06-06): only auto-send if THIS browser session
+    // legitimately initiated sign-in for THIS email. signup.html /
+    // onboarding.html set mg_signin_intent (= the lowercased email) right
+    // before handing off. A crafted /signin.html?email=victim&auto=1 link
+    // opened by anyone else has no matching intent in their session, so we
+    // never auto-email a code to an arbitrary address — they'd have to tap
+    // "Send My Code" themselves (the normal, rate-limited flow).
+    let intent = '';
+    try { intent = (sessionStorage.getItem('mg_signin_intent') || '').trim().toLowerCase(); } catch (_) {}
+    if (qsAuto === '1' && prefilled && intent && intent === prefilled) {
+      // One-time: clear the intent so refreshing this page doesn't fire a
+      // second unprompted code. The on-page Resend control handles re-sends.
+      try { sessionStorage.removeItem('mg_signin_intent'); } catch (_) {}
       requestSignInCode();
     }
   } catch (e) { /* old browser — user can tap the button manually */ }
