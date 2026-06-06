@@ -34,6 +34,7 @@ import {
   getAllFounderCounts,
   backfillFounders,
 } from '../../lib/founder-cohort-store.js';
+import { checkIpReadLimit, recordRead } from '../../lib/rate-limit.js';
 
 const CAPS = {
   FOUNDERMYGRIND:   100,
@@ -61,6 +62,12 @@ function getAdminToken(req) {
   return (Array.isArray(x) ? x[0] : x) || '';
 }
 
+function getClientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (fwd) return String(fwd).split(',')[0].trim();
+  return req.headers['x-real-ip'] || null;
+}
+
 let _redis = null;
 function getRedis() {
   if (_redis) return _redis;
@@ -77,9 +84,24 @@ export default async function handler(req, res) {
   // history, and Referer headers; this token is high-value (same one that
   // mints sign-in links), so it must not travel in a URL. Accept either
   // `Authorization: Bearer <token>` or `X-Admin-Token: <token>`.
+  // Throttle by IP BEFORE the token compare so unauthenticated probes burn the
+  // budget (defense-in-depth behind the constant-time check). On the right
+  // token this endpoint dumps founder PII (emails), so cap brute-force volume
+  // per IP. Reuses the shared read limiter (60/hr, 600/day); fails open on a
+  // Redis blip so an outage can't lock admin out.
+  const clientIp = getClientIp(req);
+  const ipCheck = await checkIpReadLimit(clientIp);
+  if (!ipCheck.ok) {
+    console.warn('[admin/founder-count] rate limited', { ip: clientIp || 'unknown', reason: ipCheck.reason });
+    return res.status(429).json({ ok: false, error: 'rate_limited' });
+  }
+  await recordRead(clientIp);
+
   const token = getAdminToken(req);
 
   if (!authenticate(token)) {
+    // Previously unlogged — log auth failures so repeated 401s are visible.
+    console.warn('[admin/founder-count] auth failed', { ip: clientIp || 'unknown', tokenLen: String(token || '').length });
     return res.status(401).json({ ok: false, error: 'unauthorized' });
   }
 

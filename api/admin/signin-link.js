@@ -37,6 +37,7 @@
 
 import crypto from 'crypto';
 import Redis from 'ioredis';
+import { checkIpReadLimit, recordRead } from '../../lib/rate-limit.js';
 
 const RESCUE_TTL_SECONDS = 24 * 60 * 60;
 
@@ -65,6 +66,12 @@ function getAdminToken(req) {
   return (Array.isArray(x) ? x[0] : x) || '';
 }
 
+function getClientIp(req) {
+  const fwd = req.headers['x-forwarded-for'];
+  if (fwd) return String(fwd).split(',')[0].trim();
+  return req.headers['x-real-ip'] || null;
+}
+
 function piiHash(s) {
   return crypto.createHash('sha256').update(String(s || '')).digest('hex').slice(0, 12);
 }
@@ -83,6 +90,20 @@ export default async function handler(req, res) {
     console.error('[admin/signin-link] ADMIN_RESCUE_TOKEN missing or too short');
     return res.status(500).json({ ok: false, error: 'server_misconfigured' });
   }
+
+  // Throttle by IP BEFORE the token compare so unauthenticated probes burn the
+  // budget (defense-in-depth behind the constant-time check). This endpoint can
+  // mint a 24h sign-in link for ANY account, so the token is high-value — cap
+  // brute-force volume per IP. Reuses the shared read limiter (60/hr, 600/day),
+  // which fails open on a Redis blip so an outage can't lock admin out.
+  const clientIp = getClientIp(req);
+  const ipCheck = await checkIpReadLimit(clientIp);
+  if (!ipCheck.ok) {
+    console.warn('[admin/signin-link] rate limited', { ip: clientIp || 'unknown', reason: ipCheck.reason });
+    return res.status(429).json({ ok: false, error: 'rate_limited' });
+  }
+  await recordRead(clientIp);
+
   // Admin token comes from a request HEADER only — never the query string.
   // A query-string token leaks into access/proxy logs, browser history, and
   // Referer headers, and this token can mint a sign-in link for ANY account.
