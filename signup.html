@@ -2710,14 +2710,14 @@ select.field-input {
       </div>
     </details>
 
-    <!-- Eager-parent skip-trial option (Coach Young April 27 PM, refined April 28).
-         Small, subtle two-line stack for the parent who's already convinced and
-         doesn't want to wait 14 days. Question on top frames the moment;
-         action line below is the actual link. Phase 5 wires to Stripe. -->
-    <button type="button" class="skip-trial-link" id="s5_skip_trial" onclick="onSkipTrialClicked()">
-      <span class="skip-line-question">Already convinced?</span>
-      <span class="skip-line-action"><u>Pay now and skip the trial</u><span class="skip-link-arrow">&rarr;</span></span>
-    </button>
+    <!-- Skip-trial link REMOVED 2026-06-05 (audit fix): it sat on Screen 5,
+         BEFORE age is collected on Screen 6, and chose Single vs Family by
+         player COUNT alone — so a single under-13 child was routed to a Single
+         plan, bypassing the COPPA under-13 → Family gate the plan picker
+         enforces. Eager parents still capture a card immediately via the
+         card-on-file picker at the end of signup. If a true pre-pay path is
+         wanted again, add it AFTER age collection and force Family when any
+         player is under 13 (share create-checkout-session's enforcement). -->
 
     <!-- Promise block — the trust contract.
          The title + first/third lines are rewritten by applyPromoMessaging()

@@ -1435,7 +1435,7 @@
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
   const swCode = `
-    const CACHE = 'ybg-mygrind-v316';
+    const CACHE = 'ybg-mygrind-v317';
     const ASSETS = ['/'];
     self.addEventListener('install', e => {
       e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -1487,6 +1487,7 @@ if ('serviceWorker' in navigator) {
     'ybg_subject_names':    1,
     'ybg_settings':         1,
     'ybg_hw_log':           1,
+    'ybg_profile_pic':      1,
   };
   var ACTIVE_KEY = 'mg_active_minor_id';
 

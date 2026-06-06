@@ -204,6 +204,12 @@ export default async function handler(req, res) {
 
   try {
     await redis.set(codeKey, codeHash, 'EX', CODE_TTL_SECONDS);
+    // Reset the verify-attempt counter so this freshly-issued code starts with
+    // a clean 5-try budget. Without this, a user who fat-fingered the PREVIOUS
+    // code into the lockout (attempts > 5) stayed locked for up to 15 minutes
+    // even after requesting a new code. The per-email code-send cap (5/hr) is
+    // the real brute-force bound, so resetting attempts on resend is safe.
+    await redis.del('signincode-att:' + emailHash);
   } catch (e) {
     console.error('[auth/request-code] redis SET failed:', e.message);
     return res.status(500).json({ ok: false, error: 'storage_failed' });
@@ -228,7 +234,6 @@ export default async function handler(req, res) {
       toHash:     piiHash(to),
       redirected: !!testRedirect,
       resendId:   result?.data?.id || null,
-      codePrefix: code.slice(0, 2),
     });
   } catch (e) {
     console.error('[auth/request-code] send failed:', e.message);
