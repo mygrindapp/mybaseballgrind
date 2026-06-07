@@ -1435,28 +1435,21 @@
 <script>
 // ── SERVICE WORKER — enables offline use & install ──
 if ('serviceWorker' in navigator) {
-  const swCode = `
-    const CACHE = 'ybg-mygrind-v321';
-    const ASSETS = ['/'];
-    self.addEventListener('install', e => {
-      e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
-      self.skipWaiting();
-    });
-    self.addEventListener('activate', e => {
-      e.waitUntil(caches.keys().then(keys =>
-        Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-      ));
-      self.clients.claim();
-    });
-    self.addEventListener('fetch', e => {
-      e.respondWith(
-        fetch(e.request).catch(() => caches.match(e.request))
-      );
-    });
-  `;
-  const blob = new Blob([swCode], { type: 'application/javascript' });
-  const swUrl = URL.createObjectURL(blob);
-  navigator.serviceWorker.register(swUrl).catch(() => {});
+  // SW migrated from an inline blob to a real /sw.js file (2026-06-06) so Web
+  // Push can be added later — push delivery requires a stable same-origin SW
+  // file (a blob: service worker cannot receive push).
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {});
+    // Retire any legacy blob-URL service workers left by the old inline registration.
+    if (navigator.serviceWorker.getRegistrations) {
+      navigator.serviceWorker.getRegistrations().then(function (regs) {
+        regs.forEach(function (r) {
+          var u = (r.active && r.active.scriptURL) || '';
+          if (u.indexOf('blob:') === 0) { try { r.unregister(); } catch (e) {} }
+        });
+      }).catch(function () {});
+    }
+  });
 }
 
 // ═══════════════════════════════════════════════════════════
