@@ -9910,6 +9910,10 @@ function saveEntry() {
   try { saveState(); } catch (e) {}
   try { if (typeof fbSaveEntry === 'function' && typeof fbUser !== 'undefined' && fbUser) fbSaveEntry(entry); } catch (e) {}
 
+  // Push opt-in nudge — fires once if this save just reached a 3-day streak.
+  // Non-blocking; all gating + one-time logic lives in mgMaybeShowPushPrompt().
+  try { mgMaybeShowPushPrompt(); } catch (e) {}
+
   // BULLETPROOF entry-list refresh — Coach Young 2026-05-12 (ongoing bug):
   // "Once you hit save the entry is not shown in the log." Force the
   // entries-list filter to a window that includes today's entry AND
@@ -13509,6 +13513,65 @@ async function enableDailyReminder() {
   } else {
     try { downloadDailyReminderICS(); } catch (e) {}
   }
+}
+
+// ─── Push opt-in prompt (2026-06-07) ─────────────────────────
+// Fires ONCE, at the high-intent moment a saved entry reaches a 3-day
+// streak ("you have something to lose now"). Drives subscribers to the same
+// enableDailyReminder() path the Settings → Notifications card uses. The
+// browser permission ask is permanent-on-deny and one-shot, so the gates are
+// strict: only when permission is still askable, never if already subscribed,
+// and never twice. Called from saveEntry() after the entry is persisted.
+function mgMaybeShowPushPrompt() {
+  try {
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return;
+    // 'granted' = already on; 'denied' = permanent block — re-asking is wasted + annoying.
+    if (Notification.permission !== 'default') return;
+    if (localStorage.getItem('mg_push_enabled') === '1') return;     // already subscribed
+    if (localStorage.getItem('mg_push_prompt_seen') === '1') return; // shown once already
+    var streak = 0;
+    try { streak = calculateStreak() || 0; } catch (e) { return; }
+    if (streak < 3) return;
+    mgShowPushPrompt(streak);
+  } catch (e) {}
+}
+
+function mgShowPushPrompt(streak) {
+  // Mark seen immediately so a double-save / re-render can't double-show it,
+  // and so BOTH "Not now" and a backdrop dismiss mean never-again.
+  try { localStorage.setItem('mg_push_prompt_seen', '1'); } catch (e) {}
+  if (document.getElementById('mg-push-prompt')) return;
+  if (!document.getElementById('mg-push-prompt-style')) {
+    var stl = document.createElement('style');
+    stl.id = 'mg-push-prompt-style';
+    stl.textContent = '@keyframes mgPushFade{from{opacity:0}to{opacity:1}}@keyframes mgPushUp{from{transform:translateY(100%)}to{transform:translateY(0)}}';
+    document.head.appendChild(stl);
+  }
+  var wrap = document.createElement('div');
+  wrap.id = 'mg-push-prompt';
+  wrap.setAttribute('role', 'dialog');
+  wrap.setAttribute('aria-modal', 'true');
+  wrap.style.cssText = 'position:fixed; inset:0; z-index:99999; display:flex; align-items:flex-end; justify-content:center; background:rgba(0,0,0,0.55); animation:mgPushFade .2s ease;';
+  var card = document.createElement('div');
+  card.style.cssText = "background:#10241A; border:1px solid #1A5F3E; border-radius:18px 18px 0 0; max-width:480px; width:100%; padding:24px 22px calc(24px + env(safe-area-inset-bottom)); box-shadow:0 -8px 40px rgba(0,0,0,0.5); animation:mgPushUp .25s cubic-bezier(.2,.7,.2,1);";
+  card.innerHTML =
+    '<div style="font-family:\'Barlow Condensed\',sans-serif; font-size:24px; font-weight:800; letter-spacing:.5px; color:#fff; text-transform:uppercase; margin-bottom:8px;">Keep your streak alive 🔥</div>' +
+    '<div style="font-family:\'Barlow\',sans-serif; font-size:15px; line-height:1.5; color:#B9C7BF; margin-bottom:20px;">You\'re on a <strong style="color:#5DCFA0;">' + streak + '-day streak</strong>. Want a daily nudge so you never break it? One reminder a day to log your grind. Turn it off anytime in Settings.</div>' +
+    '<button id="mg-push-yes" style="width:100%; background:#5DCFA0; color:#0C0A08; font-family:\'Barlow Condensed\',sans-serif; font-size:15px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:14px; border:none; border-radius:10px; cursor:pointer; margin-bottom:10px;">Yes, remind me</button>' +
+    '<button id="mg-push-no" style="width:100%; background:transparent; color:#7E8C84; font-family:\'Barlow\',sans-serif; font-size:14px; padding:8px; border:none; cursor:pointer;">Not now</button>';
+  wrap.appendChild(card);
+  document.body.appendChild(wrap);
+  function close() { try { wrap.remove(); } catch (e) {} }
+  var yes = document.getElementById('mg-push-yes');
+  var no  = document.getElementById('mg-push-no');
+  if (yes) yes.addEventListener('click', function () {
+    try { ybgHaptic([20, 40, 20]); } catch (e) {}
+    close();
+    try { enableDailyReminder(); } catch (e) {}  // permission ask + subscribe, .ics fallback
+  });
+  if (no) no.addEventListener('click', close);
+  // Tap the backdrop = "Not now" (already marked seen above).
+  wrap.addEventListener('click', function (e) { if (e.target === wrap) close(); });
 }
 
 function calcStats() {
