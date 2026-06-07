@@ -5483,6 +5483,20 @@ input[type="number"] {
       </div>
     </div>
 
+    <!-- ══ PROGRESS TREND — cumulative batting average across games (watch it climb) ══
+         Coach Young 2026-06-06: dependency-free inline-SVG line chart. renderStatTrend()
+         plots the running season AVG after each logged game so improvement is visible. -->
+    <div class="card" id="stat-trend-card" style="margin-bottom:20px; border-radius:3px;">
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">Your Progress · Batting Average</div>
+      <div id="trend-headline" style="display:none; align-items:baseline; gap:10px; margin-bottom:8px;">
+        <span id="trend-current" style="font-family:'Bebas Neue'; font-size:40px; line-height:1; color:var(--gold);">---</span>
+        <span id="trend-delta" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px;"></span>
+      </div>
+      <div id="trend-chart" style="width:100%;"></div>
+      <div id="trend-caption" style="display:none; font-family:'Barlow'; font-size:12px; color:var(--grey); margin-top:8px; line-height:1.5;"></div>
+      <div id="trend-empty" style="display:none; font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6; padding:18px 4px; text-align:center;"></div>
+    </div>
+
     <!-- ══ BATTING STAT DISPLAY ══ -->
     <div class="card" style="margin-bottom:3px; padding-bottom:0; border-bottom:none; border-radius:3px 3px 0 0;">
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">Batting</div>
@@ -13024,6 +13038,90 @@ function updateBaSampleSize(ab) {
   tier.style.color = color;
 }
 
+// ── PROGRESS TREND CHART (cumulative batting average across games) ──
+// Coach Young 2026-06-06: dependency-free inline SVG so players can watch their
+// season AVG climb. Reads game entries (gameStats) from state, sorts oldest to
+// newest, plots the running average (sumH/sumAB) after each game.
+function renderStatTrend() {
+  var card = document.getElementById('stat-trend-card');
+  if (!card) return;
+  var chart = document.getElementById('trend-chart');
+  var empty = document.getElementById('trend-empty');
+  var head  = document.getElementById('trend-headline');
+  var cap   = document.getElementById('trend-caption');
+  var setText = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+
+  var games = ((state && state.entries) || []).filter(function (e) {
+    return e && e.type === 'game' && e.gameStats && (parseInt(e.gameStats.ab, 10) > 0);
+  });
+  games.sort(function (a, b) {
+    var da = null, db = null;
+    try { da = parseEntryDate(a.date); db = parseEntryDate(b.date); } catch (e) {}
+    return (da ? da.getTime() : 0) - (db ? db.getTime() : 0);
+  });
+
+  if (games.length < 2) {
+    if (chart) chart.innerHTML = '';
+    if (head) head.style.display = 'none';
+    if (cap)  cap.style.display = 'none';
+    if (empty) {
+      empty.style.display = 'block';
+      empty.textContent = games.length === 0
+        ? 'Log 2 or more games (with at-bats) in your Journal and your average will start climbing here.'
+        : 'One game logged. Log one more game to start your trend line.';
+    }
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  if (head) head.style.display = 'flex';
+  if (cap)  cap.style.display = 'block';
+
+  var sumH = 0, sumAB = 0, pts = [];
+  games.forEach(function (g) {
+    sumH  += parseInt(g.gameStats.h, 10)  || 0;
+    sumAB += parseInt(g.gameStats.ab, 10) || 0;
+    pts.push(sumAB > 0 ? sumH / sumAB : 0);
+  });
+  var current = pts[pts.length - 1];
+  var delta   = current - pts[0];
+
+  var W = 320, H = 90, padX = 6, padY = 12, n = pts.length;
+  var min = Math.min.apply(null, pts), max = Math.max.apply(null, pts);
+  if (max - min < 0.02) { max += 0.012; min = Math.max(0, min - 0.012); }
+  var X = function (i) { return padX + i * (W - 2 * padX) / (n - 1); };
+  var Y = function (v) { return padY + (H - 2 * padY) * (1 - (v - min) / (max - min)); };
+
+  var line = '', area = 'M' + X(0).toFixed(1) + ' ' + (H - padY).toFixed(1), dots = '';
+  pts.forEach(function (v, i) {
+    var px = X(i).toFixed(1), py = Y(v).toFixed(1);
+    line += (i === 0 ? 'M' : 'L') + px + ' ' + py + ' ';
+    area += ' L' + px + ' ' + py;
+    dots += '<circle cx="' + px + '" cy="' + py + '" r="2.4" fill="#C9A84C"/>';
+  });
+  area += ' L' + X(n - 1).toFixed(1) + ' ' + (H - padY).toFixed(1) + ' Z';
+
+  chart.innerHTML =
+    '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" preserveAspectRatio="xMidYMid meet" style="display:block; height:auto; overflow:visible;">' +
+      '<defs><linearGradient id="mgTrendFill" x1="0" y1="0" x2="0" y2="1">' +
+        '<stop offset="0%" stop-color="#C9A84C" stop-opacity="0.30"/>' +
+        '<stop offset="100%" stop-color="#C9A84C" stop-opacity="0"/>' +
+      '</linearGradient></defs>' +
+      '<path d="' + area + '" fill="url(#mgTrendFill)"/>' +
+      '<path d="' + line + '" fill="none" stroke="#C9A84C" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/>' +
+      dots +
+    '</svg>';
+
+  var fmtAvg = function (x) { return x.toFixed(3).replace(/^0(?=\.)/, ''); };
+  setText('trend-current', fmtAvg(current));
+  var dEl = document.getElementById('trend-delta');
+  if (dEl) {
+    if (Math.abs(delta) < 0.0005) { dEl.textContent = 'Holding steady'; dEl.style.color = 'var(--grey)'; }
+    else if (delta > 0) { dEl.textContent = '▲ +' + fmtAvg(delta) + ' since game 1'; dEl.style.color = '#27AE60'; }
+    else { dEl.textContent = '▼ ' + fmtAvg(Math.abs(delta)) + ' since game 1'; dEl.style.color = '#E57373'; }
+  }
+  setText('trend-caption', 'Your season average across ' + n + ' games. Each point is your average after that game.');
+}
+
 function calcStats() {
   // ── BATTING ──
   const ab  = g('st-ab'), h  = g('st-h'),  bb  = g('st-bb');
@@ -19000,6 +19098,7 @@ setTimeout(function() {
     // (Stats "My Info" card was removed; Profile is now the single source of truth.)
     if (name === 'stats') {
       try { if (typeof calcStats === 'function') calcStats(); } catch(e) {}
+      try { if (typeof renderStatTrend === 'function') renderStatTrend(); } catch(e) {}
     }
     return result;
   };
