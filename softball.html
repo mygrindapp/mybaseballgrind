@@ -5497,6 +5497,21 @@ input[type="number"] {
       <div id="trend-empty" style="display:none; font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6; padding:18px 4px; text-align:center;"></div>
     </div>
 
+    <!-- ══ TRAINING VOLUME TREND — total reps per week (watch the work add up) ══
+         Coach Young 2026-06-06: dependency-free inline-SVG bar chart. renderVolumeTrend()
+         buckets entry reps (swings+gb+throws+pitches) into the last 8 weeks. -->
+    <div class="card" id="vol-trend-card" style="margin-bottom:20px; border-radius:3px;">
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">Your Progress · Training Volume</div>
+      <div id="vol-headline" style="display:none; align-items:baseline; gap:8px; margin-bottom:8px;">
+        <span id="vol-current" style="font-family:'Bebas Neue'; font-size:40px; line-height:1; color:var(--gold);">0</span>
+        <span style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">reps this week</span>
+        <span id="vol-delta" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; margin-left:auto;"></span>
+      </div>
+      <div id="vol-chart" style="width:100%;"></div>
+      <div id="vol-caption" style="display:none; font-family:'Barlow'; font-size:12px; color:var(--grey); margin-top:8px; line-height:1.5;"></div>
+      <div id="vol-empty" style="display:none; font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6; padding:18px 4px; text-align:center;"></div>
+    </div>
+
     <!-- ══ BATTING STAT DISPLAY ══ -->
     <div class="card" style="margin-bottom:3px; padding-bottom:0; border-bottom:none; border-radius:3px 3px 0 0;">
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">Batting</div>
@@ -13122,6 +13137,77 @@ function renderStatTrend() {
   setText('trend-caption', 'Your season average across ' + n + ' games. Each point is your average after that game.');
 }
 
+// ── TRAINING VOLUME TREND (total reps per week, last 8 weeks) ──
+// Coach Young 2026-06-06: dependency-free inline-SVG bar chart so players can
+// watch their work add up. Buckets entry.reps (swings+gb+throws+pitches) by
+// week and draws a bar per week; the current week is the bright bar.
+function renderVolumeTrend() {
+  var card = document.getElementById('vol-trend-card');
+  if (!card) return;
+  var chart = document.getElementById('vol-chart');
+  var empty = document.getElementById('vol-empty');
+  var head  = document.getElementById('vol-headline');
+  var cap   = document.getElementById('vol-caption');
+  var setText = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
+
+  var NWEEKS = 8, MS_WEEK = 7 * 86400000;
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var buckets = []; for (var w = 0; w < NWEEKS; w++) buckets.push(0);
+  var total = 0;
+
+  ((state && state.entries) || []).forEach(function (e) {
+    if (!e || !e.reps) return;
+    var d = null;
+    try { d = parseEntryDate(e.date); } catch (err) {}
+    if (!d) return;
+    var weeksAgo = Math.floor((today - d) / MS_WEEK);
+    if (weeksAgo < 0) weeksAgo = 0;
+    if (weeksAgo > NWEEKS - 1) return;
+    var r = (parseInt(e.reps.swings, 10) || 0) + (parseInt(e.reps.gb, 10) || 0) +
+            (parseInt(e.reps.throws, 10) || 0) + (parseInt(e.reps.pitches, 10) || 0);
+    buckets[NWEEKS - 1 - weeksAgo] += r;
+    total += r;
+  });
+
+  if (total === 0) {
+    if (chart) chart.innerHTML = '';
+    if (head) head.style.display = 'none';
+    if (cap)  cap.style.display = 'none';
+    if (empty) { empty.style.display = 'block'; empty.textContent = 'Log swings, grounders, or throws on a Journal entry and your weekly training volume will show up here.'; }
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  if (head) head.style.display = 'flex';
+  if (cap)  cap.style.display = 'block';
+
+  var thisWeek = buckets[NWEEKS - 1], lastWeek = buckets[NWEEKS - 2];
+  var maxV = Math.max.apply(null, buckets); if (maxV <= 0) maxV = 1;
+
+  var W = 320, H = 90, padX = 4, padTop = 8, padBot = 4, n = NWEEKS, gap = 4;
+  var bw = (W - 2 * padX - gap * (n - 1)) / n;
+  var bars = '';
+  buckets.forEach(function (v, i) {
+    var h = (v / maxV) * (H - padTop - padBot);
+    var x = padX + i * (bw + gap);
+    var y = H - padBot - h;
+    var fill = (i === n - 1) ? '#C9A84C' : 'rgba(201,168,76,0.38)';
+    bars += '<rect x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(h, 1).toFixed(1) + '" rx="2" fill="' + fill + '"/>';
+  });
+  chart.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" preserveAspectRatio="xMidYMid meet" style="display:block; height:auto;">' + bars + '</svg>';
+
+  setText('vol-current', thisWeek.toLocaleString());
+  var dEl = document.getElementById('vol-delta');
+  if (dEl) {
+    var diff = thisWeek - lastWeek;
+    if (lastWeek === 0 && thisWeek > 0) { dEl.textContent = 'First reps this week'; dEl.style.color = 'var(--grey)'; }
+    else if (diff > 0) { dEl.textContent = '▲ +' + diff.toLocaleString() + ' vs last week'; dEl.style.color = '#27AE60'; }
+    else if (diff < 0) { dEl.textContent = '▼ ' + Math.abs(diff).toLocaleString() + ' vs last week'; dEl.style.color = '#E57373'; }
+    else { dEl.textContent = 'Same as last week'; dEl.style.color = 'var(--grey)'; }
+  }
+  setText('vol-caption', 'Total reps (swings, grounders, throws) per week over the last ' + NWEEKS + ' weeks.');
+}
+
 function calcStats() {
   // ── BATTING ──
   const ab  = g('st-ab'), h  = g('st-h'),  bb  = g('st-bb');
@@ -19099,6 +19185,7 @@ setTimeout(function() {
     if (name === 'stats') {
       try { if (typeof calcStats === 'function') calcStats(); } catch(e) {}
       try { if (typeof renderStatTrend === 'function') renderStatTrend(); } catch(e) {}
+      try { if (typeof renderVolumeTrend === 'function') renderVolumeTrend(); } catch(e) {}
     }
     return result;
   };
