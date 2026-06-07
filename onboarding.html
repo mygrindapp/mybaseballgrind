@@ -110,6 +110,19 @@
   --accent-rgb: 201, 168, 76;
 }
 
+/* ── Global tactile press — every button reacts to tap/click (added 2026-06-06) ── */
+button, [role="button"], input[type="submit"], input[type="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform .08s ease;
+}
+button:active, [role="button"]:active, input[type="submit"]:active, input[type="button"]:active {
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  button:active, [role="button"]:active { transform: none; }
+}
+
 [data-sport="softball"] {
   --gold: #D4547A;
   --accent-rgb: 212, 84, 122;
@@ -148,7 +161,7 @@ h1 span { color: var(--gold); }
 
 /* Card containers (used on plan-preview screen) */
 .card { background: #231F1C; border: 1px solid #3D3530; border-radius: 8px; padding: 16px; margin-bottom: 12px; color: #D4C8BC; }
-.card-gold { background: linear-gradient(135deg,#1A1400,#0E0C00); border-color: #9A7A30; }
+.card-gold { background: linear-gradient(135deg,#1A1400,#0E0C00); border-color: #8F7A36; }
 .card-title { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
 
 /* Multi-select hint pill (above goals/struggles/coach-feedback screens) */
@@ -195,7 +208,7 @@ h1 span { color: var(--gold); }
   transition: border-color 0.15s;
 }
 .pin-box:focus { border-color: var(--gold); }
-.pin-box.filled { border-color: #9A7A30; }
+.pin-box.filled { border-color: #8F7A36; }
 .pin-helper {
   text-align: center;
   font-size: 13px;
@@ -219,7 +232,7 @@ h1 span { color: var(--gold); }
 /* Promise card (S13 — Coach Young's promise) */
 .promise-card {
   background: linear-gradient(135deg, #1A1400, #0E0C00);
-  border: 1px solid #9A7A30;
+  border: 1px solid #8F7A36;
   border-radius: 10px;
   padding: 28px 22px;
   text-align: center;
@@ -251,7 +264,7 @@ h1 span { color: var(--gold); }
 /* Final exit screen (S14 — placeholder dashboard) */
 .exit-card {
   background: linear-gradient(135deg, rgba(var(--accent-rgb),0.08), rgba(var(--accent-rgb),0.02));
-  border: 1px solid #9A7A30;
+  border: 1px solid #8F7A36;
   border-radius: 10px;
   padding: 24px 20px;
   margin-bottom: 16px;

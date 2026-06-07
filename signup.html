@@ -71,6 +71,8 @@
      Future rounds will append <div class="screen"> blocks.
      ═══════════════════════════════════════════════════════════ -->
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;500;600;700&family=Barlow:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -78,14 +80,27 @@
    anywhere in the file. Matches the same tokens used in signin.html. */
 :root {
   --gold:       #C9A84C;
-  --gold-light: #E8C97A;
-  --gold-dark:  #8B6914;
-  --white:      #F4F4F4;
-  --light:      #E0D6C2;
-  --grey:       #B8AC9A;
-  --card:       #161210;
-  --card2:      #1F1814;
+  --gold-light: #E0BC60;
+  --gold-dark:  #8F7A36;
+  --white:      #F5F0EB;
+  --light:      #D4C8BC;
+  --grey:       #A89880;
+  --card:       #231F1C;
+  --card2:      #2A2622;
   --border:     #3D3530;
+}
+
+/* ── Global tactile press — every button reacts to tap/click (added 2026-06-06) ── */
+button, [role="button"], input[type="submit"], input[type="button"], .hero-cta, .primary-cta {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: transform .08s ease;
+}
+button:active, [role="button"]:active, input[type="submit"]:active, input[type="button"]:active, .hero-cta:active, .primary-cta:active {
+  transform: scale(0.96);
+}
+@media (prefers-reduced-motion: reduce) {
+  button:active, [role="button"]:active, .hero-cta:active, .primary-cta:active { transform: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -94,8 +109,8 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 html, body {
-  background: #0A0A0A;
-  color: #F4F4F4;
+  background: #181614;
+  color: #F5F0EB;
   font-family: 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
@@ -118,7 +133,7 @@ body {
   padding: 0;
   background:
     radial-gradient(ellipse at top, rgba(201,168,76,0.04) 0%, transparent 50%),
-    #0A0A0A;
+    #181614;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -128,7 +143,7 @@ body {
   width: 100%;
   max-width: 480px;
   min-height: 100vh;
-  background: #0A0A0A;
+  background: #181614;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -172,7 +187,7 @@ body {
    ═══════════════════════════════════════════════════════════ */
 .prog-wrap {
   padding: 18px 24px 0 24px;
-  background: #0A0A0A;
+  background: #181614;
 }
 .prog-track {
   height: 3px;
@@ -240,7 +255,7 @@ h1 {
   font-size: 46px;
   letter-spacing: 1px;
   line-height: 1.05;
-  color: #F4F4F4;
+  color: #F5F0EB;
   margin-bottom: 14px;
 }
 h1 span {
@@ -291,7 +306,7 @@ h1 span {
   width: 28px;
   height: 28px;
   background: rgba(201,168,76,0.1);
-  border: 1px solid #9A7A30;
+  border: 1px solid #8F7A36;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -307,7 +322,7 @@ h1 span {
   color: #D4C8B8;
   padding-top: 2px;
 }
-.step-text strong { color: #F4F4F4; font-weight: 600; }
+.step-text strong { color: #F5F0EB; font-weight: 600; }
 
 /* ═══════════════════════════════════════════════════════════
    TRUST STRIP
@@ -354,7 +369,7 @@ h1 span {
   background: #181818;
   border: 1px solid #272727;
   border-radius: 3px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   font-family: 'Barlow', sans-serif;
   font-size: 16px;             /* 16px prevents iOS zoom on focus */
   font-weight: 400;
@@ -444,7 +459,7 @@ h1 span {
 }
 .email-feedback.suggesting .ef-suggested {
   font-weight: 700;
-  color: #F4F4F4;
+  color: #F5F0EB;
 }
 
 /* Confirmation state — restructured April 28 (round 2) per Coach Young.
@@ -489,7 +504,7 @@ h1 span {
   font-family: 'Barlow', sans-serif;
   font-size: 16px;
   font-weight: 700;
-  color: #F4F4F4;
+  color: #F5F0EB;
   letter-spacing: 0.2px;
   word-break: break-all;
 }
@@ -552,7 +567,7 @@ h1 span {
   font-family: 'Bebas Neue', cursive;
   font-size: 20px;
   letter-spacing: 1.5px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   margin-bottom: 2px;
   line-height: 1.1;
 }
@@ -585,7 +600,7 @@ h1 span {
 .tap-card.selected .tap-card-check {
   background: #C9A84C;
   border-color: #C9A84C;
-  color: #0A0A0A;
+  color: #181614;
 }
 
 /* Footnote / sub-message under tap-cards */
@@ -722,7 +737,7 @@ h1 span {
   max-width: 360px;
   margin: 6px auto 18px auto;
   height: 1px;
-  background: #1A1A1A;
+  background: #231F1C;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -794,7 +809,7 @@ h1 span {
   color: #D4C8B8;
 }
 .goal-toggle.selected .goal-toggle-text {
-  color: #F4F4F4;
+  color: #F5F0EB;
 }
 
 /* Checkbox-style indicator (square, not circle — to differentiate from
@@ -816,7 +831,7 @@ h1 span {
 .goal-toggle.selected .goal-toggle-check {
   background: #C9A84C;
   border-color: #C9A84C;
-  color: #0A0A0A;
+  color: #181614;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -862,7 +877,7 @@ h1 span {
   left: 50%;
   transform: translateX(-50%);
   background: #C9A84C;
-  color: #0A0A0A;
+  color: #181614;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -876,7 +891,7 @@ h1 span {
   font-family: 'Bebas Neue', cursive;
   font-size: 22px;
   letter-spacing: 2px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   margin-bottom: 8px;
 }
 .price-card.selected .price-card-name {
@@ -941,7 +956,7 @@ h1 span {
   font-family: 'Bebas Neue', cursive;
   font-size: 24px;
   letter-spacing: 0.5px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   line-height: 1;
 }
 .price-card-total .total-context {
@@ -975,7 +990,7 @@ h1 span {
 .price-card.selected .price-card-check {
   background: #C9A84C;
   border-color: #C9A84C;
-  color: #0A0A0A;
+  color: #181614;
 }
 
 /* Switch hint copy — just below pricing cards */
@@ -1058,7 +1073,7 @@ h1 span {
 .promo-input.promo-applied {
   border-color: #C9A84C;
   background: rgba(201,168,76,0.06);
-  color: #F4F4F4;
+  color: #F5F0EB;
 }
 .promo-helper {
   margin-top: 6px;
@@ -1152,7 +1167,7 @@ h1 span {
   font-weight: 700;
   width: 14px;
 }
-.promise-block-line strong { color: #F4F4F4; }
+.promise-block-line strong { color: #F5F0EB; }
 
 /* ═══════════════════════════════════════════════════════════
    PLAYER SLOT INDICATOR (Screen 6 — for multi-player flows)
@@ -1212,7 +1227,7 @@ h1 span {
 .fallback-row.checked .fallback-checkbox {
   background: #C9A84C;
   border-color: #C9A84C;
-  color: #0A0A0A;
+  color: #181614;
 }
 .fallback-label {
   font-size: 13px;
@@ -1291,7 +1306,7 @@ select.field-input {
   font-family: 'Bebas Neue', cursive;
   font-size: 18px;
   letter-spacing: 1.5px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   flex: 1;
 }
 .status-card-icon {
@@ -1388,7 +1403,7 @@ select.field-input {
   color: #D4C4A8;
   margin-bottom: 8px;
 }
-.next-block-line strong { color: #F4F4F4; }
+.next-block-line strong { color: #F5F0EB; }
 .next-block-line:last-child { margin-bottom: 0; }
 .next-block-line strong { color: #D4C8B8; }
 
@@ -1471,7 +1486,7 @@ select.field-input {
   font-family: 'Bebas Neue', cursive;
   font-size: 20px;
   letter-spacing: 1.5px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   flex: 1;
 }
 .dash-player-status {
@@ -1614,7 +1629,7 @@ select.field-input {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, transparent 0%, #0A0A0A 30%);
+  background: linear-gradient(180deg, transparent 0%, #181614 30%);
   padding: 16px 24px 24px 24px;
   display: flex;
   align-items: center;
@@ -1651,7 +1666,7 @@ select.field-input {
 
 .next-btn {
   background: linear-gradient(135deg, #C9A84C, #B89740);
-  color: #0A0A0A;
+  color: #181614;
   min-width: 100px;
   box-shadow: 0 2px 12px rgba(201,168,76,0.2);
 }
@@ -1670,7 +1685,7 @@ select.field-input {
   max-width: 320px;
   margin: 0 auto 16px auto;
   background: linear-gradient(135deg, #C9A84C, #B89740);
-  color: #0A0A0A;
+  color: #181614;
   font-family: 'Bebas Neue', cursive;
   font-size: 22px;
   letter-spacing: 2.5px;
@@ -1797,7 +1812,7 @@ select.field-input {
   font-family: 'Bebas Neue', cursive;
   font-size: 28px;
   letter-spacing: 1px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   margin: 0 0 14px 0;
   line-height: 1.1;
 }
@@ -1833,7 +1848,7 @@ select.field-input {
 .phone-confirm-row .pcr-phone {
   font-family: 'Barlow', sans-serif;
   font-size: 14px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   font-weight: 600;
   letter-spacing: 0.3px;
 }
@@ -1855,7 +1870,7 @@ select.field-input {
   margin: 0 0 18px 0;
   padding: 13px;
   background: rgba(201,168,76,0.05);
-  border: 1px solid #2E2E2E;
+  border: 1px solid #3D3530;
   border-radius: 10px;
   cursor: pointer;
 }
@@ -1866,9 +1881,9 @@ select.field-input {
   width: 22px;
   height: 22px;
   margin-top: 1px;
-  border: 2px solid #8B6914;
+  border: 2px solid #8F7A36;
   border-radius: 6px;
-  background: #141414;
+  background: #1E1A17;
   cursor: pointer;
   position: relative;
   transition: 0.15s;
@@ -1884,7 +1899,7 @@ select.field-input {
   top: 2px;
   width: 6px;
   height: 11px;
-  border: solid #050505;
+  border: solid #181614;
   border-width: 0 2.5px 2.5px 0;
   transform: rotate(45deg);
 }
@@ -1898,7 +1913,7 @@ select.field-input {
   color: #C9A84C;
 }
 .phone-confirm-consent .pcc-text a {
-  color: var(--gold-light, #E8C97A);
+  color: var(--gold-light, #E0BC60);
   text-decoration: underline;
 }
 /* Send button stays dimmed until the consent box is ticked. */
@@ -1942,7 +1957,7 @@ select.field-input {
 }
 .phone-confirm-send {
   background: #C9A84C;
-  color: #0A0A0A;
+  color: #181614;
 }
 .phone-confirm-send:hover {
   background: #D4B85A;
@@ -1977,7 +1992,7 @@ select.field-input {
   width: 100%;
   transition: all 0.15s ease;
 }
-.modal-close-btn:hover { border-color: #6B5E52; color: #F4F4F4; }
+.modal-close-btn:hover { border-color: #6B5E52; color: #F5F0EB; }
 
 .share-link-row {
   display: flex;
@@ -1992,7 +2007,7 @@ select.field-input {
   padding: 12px 14px;
   font-family: 'Barlow', sans-serif;
   font-size: 15px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   text-align: left;
   min-width: 0;
 }
@@ -2009,7 +2024,7 @@ select.field-input {
   border: none;
   transition: all 0.15s ease;
 }
-.share-action-btn.primary { background: #C9A84C; color: #0A0A0A; }
+.share-action-btn.primary { background: #C9A84C; color: #181614; }
 .share-action-btn.primary:hover { background: #D4B85A; }
 .share-action-btn.secondary {
   background: transparent;
@@ -2088,7 +2103,7 @@ select.field-input {
 .settings-row-value {
   font-family: 'Barlow', sans-serif;
   font-size: 16px;
-  color: #F4F4F4;
+  color: #F5F0EB;
   text-align: right;
   word-break: break-all;
 }
@@ -2241,7 +2256,7 @@ select.field-input {
            passwordless sign-in flow at /signin.html. -->
       <div style="text-align:center; margin-top:24px; padding-top:20px; border-top:1px solid var(--border, #3D3530);">
         <p style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--grey); margin-bottom:6px;">Already have an account?</p>
-        <a href="/signin.html" style="display:inline-block; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold-dark, #8B6914); padding-bottom:2px;">Sign In →</a>
+        <a href="/signin.html" style="display:inline-block; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); text-decoration:none; border-bottom:1px solid var(--gold-dark, #8F7A36); padding-bottom:2px;">Sign In →</a>
       </div>
 
     </div>
@@ -2515,7 +2530,7 @@ select.field-input {
       <button type="button" class="tap-card" id="pc_3" onclick="selectPlayerCount(3)">
         <div class="tap-card-emoji" style="position:relative;">
           <svg class="mg-icon" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-users"/></svg>
-          <span style="position:absolute; bottom:-2px; right:-6px; background:var(--gold,#E8C97A); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:0.5px; padding:1px 5px; border-radius:8px; line-height:1.3;">3+</span>
+          <span style="position:absolute; bottom:-2px; right:-6px; background:var(--gold,#E0BC60); color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:0.5px; padding:1px 5px; border-radius:8px; line-height:1.3;">3+</span>
         </div>
         <div class="tap-card-body">
           <div class="tap-card-title">Three or More</div>
@@ -3376,7 +3391,7 @@ select.field-input {
     cursor: pointer;
     transition: border-color 0.15s, background 0.15s;
   }
-  .plan-picker-card:hover { border-color: #8B6914; }
+  .plan-picker-card:hover { border-color: #8F7A36; }
   .plan-picker-card.selected {
     border-color: #C9A84C;
     background: rgba(232,201,122,0.08);
@@ -3400,14 +3415,14 @@ select.field-input {
     font-family: 'Bebas Neue', cursive;
     font-size: 18px;
     letter-spacing: 1.5px;
-    color: #E8C97A;
+    color: #E0BC60;
     margin-bottom: 4px;
   }
   .plan-picker-price {
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 22px;
     font-weight: 800;
-    color: #F4F4F4;
+    color: #F5F0EB;
   }
   .plan-picker-price span {
     font-size: 14px;
@@ -4434,7 +4449,7 @@ function applySlotLockUI(locked) {
     const el = document.createElement('div');
     el.id = 'slot_lock_banner';
     el.style.cssText =
-      'background:rgba(201,168,76,0.08);border:1px solid #9A7A30;border-radius:3px;' +
+      'background:rgba(201,168,76,0.08);border:1px solid #8F7A36;border-radius:3px;' +
       'padding:12px 14px;margin:14px 0 0;font-family:Barlow,sans-serif;font-size:13px;' +
       'color:#E8DCC4;line-height:1.5;display:none;';
     el.innerHTML =
@@ -5524,9 +5539,9 @@ function injectSigninLinkBannerOnScreen8(href, email) {
     'color:#F2EAD9'
   ].join(';');
   banner.innerHTML =
-      '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:20px;letter-spacing:1.5px;color:#E8C97A;">ONE LAST STEP</div>'
+      '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:20px;letter-spacing:1.5px;color:#E0BC60;">ONE LAST STEP</div>'
     + '<p style="font-size:14px;line-height:1.5;margin:0;color:#F2EAD9;">Email yourself a 6-digit sign-in code so you can come back from any device. We send it to <strong>' + email + '</strong>.</p>'
-    + '<a href="' + href + '" style="display:inline-block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;text-decoration:none;text-align:center;">Send me a code →</a>';
+    + '<a href="' + href + '" style="display:inline-block;background:#E0BC60;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;text-decoration:none;text-align:center;">Send me a code →</a>';
   panel.insertBefore(banner, panel.firstChild);
 }
 
@@ -5718,12 +5733,12 @@ function showTrialAlreadyUsedOverlay(reason) {
   ].join(';');
   overlay.innerHTML =
     '<div style="max-width:440px;width:100%;background:#0E0006;border:1px solid #B89A4B;border-radius:12px;padding:28px 24px;text-align:center;">'
-    + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:28px;letter-spacing:2px;color:#E8C97A;margin-bottom:8px;">WELCOME BACK</div>'
+    + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:28px;letter-spacing:2px;color:#E0BC60;margin-bottom:8px;">WELCOME BACK</div>'
     + '<div style="height:2px;background:#B89A4B;width:48px;margin:0 auto 18px;"></div>'
     + '<p style="font-size:15px;line-height:1.6;margin:0 0 14px;color:#F2EAD9;">' + reasonLine + '</p>'
     + '<p style="font-size:14px;line-height:1.6;margin:0 0 22px;color:#9F9486;">Sign in to restore your account on this device. We will email you a one-time link to get you back in.</p>'
     + '<div style="display:flex;flex-direction:column;gap:10px;">'
-    +   '<a href="' + signinHref + '" style="display:block;background:#E8C97A;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:14px 16px;border-radius:8px;text-decoration:none;">Sign In to Your Account →</a>'
+    +   '<a href="' + signinHref + '" style="display:block;background:#E0BC60;color:#080808;font-family:\'Barlow Condensed\',sans-serif;font-size:13px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:14px 16px;border-radius:8px;text-decoration:none;">Sign In to Your Account →</a>'
     +   '<button onclick="document.getElementById(\'trial-used-overlay\').remove();" style="background:transparent;border:1px solid #555;color:#9F9486;font-family:\'Barlow Condensed\',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:12px 16px;border-radius:8px;cursor:pointer;">Close</button>'
     + '</div>'
     + '<div style="margin-top:14px; padding-top:14px; border-top:1px solid #2A1810;">'

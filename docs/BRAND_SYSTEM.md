@@ -20,30 +20,37 @@ When this doc and the code disagree, the code wins — but please update this do
 
 Define these as CSS custom properties on `:root` for every page.
 
+**The MyGrind canonical palette is WARM near-black + gold** (leather / gold-leaf / heritage tone), unified across every surface on 2026-06-06. Do not introduce neutral/cool darks (`#050505`, `#0A0A0A`, `#141414`, `#1A1A1A`) — those are the old pre-unification values and have been retired.
+
 | Token | Hex | Use |
 |---|---|---|
 | `--gold` | `#C9A84C` | Primary brand accent — buttons, gold headlines, borders, eyebrow accents |
-| `--gold-light` | `#E8C96A` | Hover state for gold elements |
-| `--gold-bright` | `#FFD874` | The bright peak in shimmer gradients on the gold finale |
-| `--gold-dark` | `#9A7A30` | The dark edges in gold gradients |
-| `--black` | `#050505` | Page background (deliberately near-black, slightly warmer than `#000`) |
-| `--dark` | `#141414` | Form/card primary surface |
-| `--card` | `#1A1A1A` | Card backgrounds (slightly lighter than form) |
-| `--border` | `#2E2E2E` | Default borders on cards/inputs |
-| `--grey` | `#888` | Muted/secondary text |
-| `--light` | `#CCCCCC` | Body copy on dark surfaces |
-| `--white` | `#F5F5F5` | Headlines, primary text |
+| `--gold-light` | `#E0BC60` | Hover state for gold elements |
+| `--gold-bright` | `#FFD874` | The bright peak in shimmer gradients on the gold finale (marketing pages only) |
+| `--gold-dark` | `#8F7A36` | The dark edges in gold gradients |
+| `--black` | `#181614` | Page background (warm near-black) |
+| `--dark` | `#1E1A17` | Form/card primary surface |
+| `--card` | `#231F1C` | Card backgrounds (slightly lighter than form) |
+| `--card2` | `#2A2622` | Raised / secondary card surface |
+| `--border` | `#3D3530` | Default borders on cards/inputs |
+| `--grey` | `#A89880` | Muted/secondary text (warm) |
+| `--light` | `#D4C8BC` | Body copy on dark surfaces (warm) |
+| `--white` | `#F5F0EB` | Headlines, primary text (warm white) |
 | `--red` | `#C0392B` | Error states (use `#E57373` for error message text on dark bg for contrast) |
 
 ---
 
 ## Typography
 
-Three Google Fonts, loaded together:
+Three core Google Fonts, loaded together. **Always `preconnect` first** so fonts paint fast (avoids the flash of unstyled text that reads as "cheap"):
 
 ```html
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
 ```
+
+A fourth face, **Lora** (italic), is loaded *only in the journal app* (`softball.html`) for editorial quote text — `font-family: 'Lora', Georgia, serif`. **Do not load Inter** — it was removed 2026-06-06 (it only ever sat unused at the tail of a system-font fallback chain and downloaded for nothing).
 
 | Family | Use | Weight | Notes |
 |---|---|---|---|

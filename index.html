@@ -17,7 +17,7 @@
 <meta name="description" content="MyGrind is a daily training journal app for serious baseball and softball players. Track stats, set goals, log practices and games, and stay accountable to the grind.">
 <meta name="keywords" content="MyGrind, MyGrind app, baseball journal app, softball journal app, baseball training app, softball training app, player development, daily training journal, baseball stats tracker, softball stats tracker">
 <meta name="author" content="MyGrind">
-<meta name="theme-color" content="#0A0A0A">
+<meta name="theme-color" content="#181614">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
 <!-- Open Graph (Facebook, LinkedIn, iMessage previews) -->
@@ -250,16 +250,29 @@
 <style>
   :root {
     --gold: #C9A84C;
-    --gold-light: #E8C96A;
+    --gold-light: #E0BC60;
     --gold-bright: #FFD874;
-    --gold-dark: #9A7A30;
-    --black: #050505;
-    --dark: #141414;
-    --card: #1A1A1A;
-    --border: #2E2E2E;
-    --grey: #888;
-    --light: #CCCCCC;
-    --white: #F5F5F5;
+    --gold-dark: #8F7A36;
+    --black: #181614;
+    --dark: #1E1A17;
+    --card: #231F1C;
+    --border: #3D3530;
+    --grey: #A89880;
+    --light: #D4C8BC;
+    --white: #F5F0EB;
+  }
+
+  /* ── Global tactile press — every button reacts to tap/click (added 2026-06-06) ── */
+  button, [role="button"], input[type="submit"], input[type="button"], .hero-cta, .primary-cta {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform .08s ease;
+  }
+  button:active, [role="button"]:active, input[type="submit"]:active, input[type="button"]:active, .hero-cta:active, .primary-cta:active {
+    transform: scale(0.96);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button:active, [role="button"]:active, .hero-cta:active, .primary-cta:active { transform: none; }
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
