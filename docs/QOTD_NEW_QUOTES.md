@@ -8,7 +8,7 @@ with `scripts/build_qotd.py`.
 **Voice:** thoughtful, sport-rooted (baseball + softball), genuinely motivating,
 friendly, human. No special characters, no banned words (elite/beast/etc.). Most
 themes have a **baseball** and a **softball** version so the app serves the right
-one by sport mode; a few are universal. Author renders as "The Grind" (no dash).
+one by sport mode; a few are universal. Author renders as "MyGrind" (no dash).
 
 This file is the durable, GitHub-backed source for the new quotes so they can
 never be lost again. Edit here, then transcribe into `YBG_QOTD`.

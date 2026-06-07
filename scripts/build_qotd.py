@@ -65,7 +65,7 @@ def parse_quotes(src_path: Path):
 
         quotes.append({
             "q": unescape(qy.group(1)),
-            "a": unescape(ay.group(1)) if ay else "The Grind",
+            "a": unescape(ay.group(1)) if ay else "MyGrind",
             "sport": (sy.group(1).lower() if sy else "universal"),
         })
     return quotes
