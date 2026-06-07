@@ -2848,7 +2848,7 @@ input[type="number"] {
       <span style="font-size:18px; line-height:1; flex-shrink:0;">🔔</span>
       <div style="flex:1; min-width:0;">
         <div id="dash-nudge-text" style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.45;"></div>
-        <button type="button" onclick="downloadDailyReminderICS()" style="background:none; border:none; padding:0; margin-top:4px; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dark); text-decoration:underline; cursor:pointer;">🔔 Remind me daily on my phone</button>
+        <button type="button" onclick="enableDailyReminder()" style="background:none; border:none; padding:0; margin-top:4px; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dark); text-decoration:underline; cursor:pointer;">🔔 Remind me daily on my phone</button>
       </div>
       <button type="button" onclick="mgTab('journal','tab-journal')" style="flex-shrink:0; background:var(--gold); border:none; color:#181614; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:9px 14px; border-radius:6px; cursor:pointer;">Log Now</button>
       <button type="button" onclick="dismissDashNudge()" aria-label="Dismiss" style="flex-shrink:0; background:transparent; border:none; color:var(--grey); font-size:18px; line-height:1; cursor:pointer; padding:4px 6px;">×</button>
@@ -13412,6 +13412,68 @@ function downloadDailyReminderICS() {
   } catch (e) {}
 }
 
+// ── WEB PUSH for the daily reminder (Phase B) ──
+// Integrates with the EXISTING Notifications card (requestNotifications + the
+// notif-time picker). Granting notifications also subscribes this device to real
+// server push, so the reminder reaches a CLOSED app — the old setTimeout only
+// fired while the tab was open. Coach Young 2026-06-06.
+var MG_VAPID_PUBLIC = 'BEtaKBhlSfrgzXvuVp-batxCMs1rTVqAdSP80DZM_Sl_GhE8TRMBXjuiLbxy4uxQaphwwcRbqw4ei0B0oYSQ774';
+function mgUrlB64ToUint8(b) {
+  var pad = '='.repeat((4 - b.length % 4) % 4);
+  var s = (b + pad).replace(/-/g, '+').replace(/_/g, '/');
+  var raw = atob(s); var arr = new Uint8Array(raw.length);
+  for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+  return arr;
+}
+// Silent subscribe — register this device for push at the user's reminder hour
+// (read from the existing notif-time setting). Returns true on success.
+async function mgSubscribePush() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return false;
+  if (Notification.permission !== 'granted') return false;
+  try {
+    var reg = await navigator.serviceWorker.ready;
+    var sub = await reg.pushManager.getSubscription();
+    if (!sub) sub = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: mgUrlB64ToUint8(MG_VAPID_PUBLIC) });
+    var hour = 18;
+    try { var st = JSON.parse(localStorage.getItem('ybg_settings') || '{}'); if (st.notifTime) { var h = parseInt(String(st.notifTime).split(':')[0], 10); if (!isNaN(h)) hour = h; } } catch (e) {}
+    var acc = (function () { try { return JSON.parse(localStorage.getItem('ybg_access') || '{}'); } catch (e) { return {}; } })();
+    var tz = (function () { try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch (e) { return 'America/Los_Angeles'; } })();
+    await fetch('/api/push-subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ subscription: sub.toJSON(), tz: tz, hour: hour, email: acc.email || null }) });
+    try { localStorage.setItem('mg_push_enabled', '1'); } catch (e) {}
+    return true;
+  } catch (e) { return false; }
+}
+async function mgUnsubscribePush() {
+  try {
+    var reg = await navigator.serviceWorker.ready;
+    var sub = await reg.pushManager.getSubscription();
+    if (sub) {
+      var ep = sub.endpoint;
+      try { await sub.unsubscribe(); } catch (e) {}
+      try { await fetch('/api/push-subscribe', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: ep }) }); } catch (e) {}
+    }
+  } catch (e) {}
+  try { localStorage.removeItem('mg_push_enabled'); } catch (e) {}
+}
+// Dashboard-nudge "Remind me daily" handler: subscribe to push, or fall back to
+// the .ics calendar reminder when push isn't available (e.g. iOS not installed).
+async function enableDailyReminder() {
+  if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) {
+    try { downloadDailyReminderICS(); } catch (e) {}
+    return;
+  }
+  var perm = Notification.permission;
+  if (perm !== 'granted') { try { perm = await Notification.requestPermission(); } catch (e) {} }
+  if (perm !== 'granted') { try { downloadDailyReminderICS(); } catch (e) {} return; }
+  var ok = await mgSubscribePush();
+  if (ok) {
+    try { ybgHaptic([20, 40, 20]); } catch (e) {}
+    alert("Daily reminder is on. We'll nudge you each evening to keep your streak alive.");
+  } else {
+    try { downloadDailyReminderICS(); } catch (e) {}
+  }
+}
+
 function calcStats() {
   // ── BATTING ──
   const ab  = g('st-ab'), h  = g('st-h'),  bb  = g('st-bb');
@@ -15175,7 +15237,14 @@ function applySettings(s) {
 // ── NOTIFICATION TOGGLE SLIDER ──
 function toggleNotifDaily() {
   const cb = document.getElementById('notif-daily-toggle');
-  if (cb) { cb.checked = !cb.checked; updateNotifSlider(cb.checked); saveSettings(); }
+  if (!cb) return;
+  cb.checked = !cb.checked;
+  updateNotifSlider(cb.checked);
+  saveSettings();
+  // Turning on subscribes this device to real push (via requestNotifications);
+  // turning off unsubscribes so the server stops sending.
+  if (cb.checked) { try { requestNotifications(); } catch (e) {} }
+  else { try { mgUnsubscribePush(); } catch (e) {} }
 }
 function updateNotifSlider(on) {
   const slider = document.getElementById('notif-daily-slider');
@@ -15214,6 +15283,7 @@ async function requestNotifications() {
     if (note) note.style.display = 'none';
     const s = loadSettings();
     scheduleNotification(s);
+    try { mgSubscribePush(); } catch (e) {}  // real server push → reaches a closed app
     // Send a test notification immediately
     setTimeout(() => {
       // Use the active sport's emoji so softball users see 🥎 in their
