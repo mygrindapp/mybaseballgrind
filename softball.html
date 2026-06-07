@@ -3775,6 +3775,22 @@ input[type="number"] {
         <label id="j-title-label">Title</label>
         <input type="text" id="j-title" placeholder="e.g. End of Week Reflection" style="max-width:360px;">
       </div>
+      <!-- Smart journal prompt — Coach Young 2026-06-06: a context-aware, rotating
+           spark above the free-text box so the page is never blank. renderJournalPrompt()
+           picks a prompt (streak / recent game / time-away, else daily rotation). -->
+      <div id="j-prompt-strip" style="display:none; background:linear-gradient(135deg, rgba(201,168,76,0.10), rgba(201,168,76,0.02)); border:1px solid var(--gold-dark); border-radius:8px; padding:12px 14px; margin-bottom:14px;">
+        <div style="display:flex; align-items:flex-start; gap:10px;">
+          <span style="font-size:16px; line-height:1.3;">💭</span>
+          <div style="flex:1; min-width:0;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold-dark); margin-bottom:3px;">Need a spark?</div>
+            <div id="j-prompt-text" style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.45;"></div>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button type="button" onclick="useJournalPrompt()" style="flex:1; background:var(--gold); border:none; color:#181614; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:9px 12px; border-radius:6px; cursor:pointer;">Write About This</button>
+          <button type="button" onclick="shuffleJournalPrompt()" aria-label="New prompt" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:9px 14px; border-radius:6px; cursor:pointer;">↻ New</button>
+        </div>
+      </div>
       <label id="j-what-label">What did I work on today?</label>
       <textarea id="j-what" inputmode="text" placeholder="What drills, reps, or skills did I focus on? What felt good?"></textarea>
       <!-- Team-practice individual layer (Coach Young 2026-05-11 walkthrough).
@@ -8956,6 +8972,7 @@ function showPanel(id) {
   // initial cap is now yesterday.
   if (id === 'journal') {
     try { setJDateMaxToToday(); } catch (e) {}
+    try { renderJournalPrompt(); } catch (e) {}
   }
   // Scroll back to top on tab switch
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -13206,6 +13223,81 @@ function renderVolumeTrend() {
     else { dEl.textContent = 'Same as last week'; dEl.style.color = 'var(--grey)'; }
   }
   setText('vol-caption', 'Total reps (swings, grounders, throws) per week over the last ' + NWEEKS + ' weeks.');
+}
+
+// ── SMART JOURNAL PROMPTS ──
+// Coach Young 2026-06-06: kills blank-page paralysis. Shows a context-aware
+// reflection prompt above the journal free-text box; falls back to a daily
+// rotating pool. Growth-oriented voice (no elite/beast/grind-harder).
+var MG_JOURNAL_PROMPTS = [
+  "What's one thing you did better today than yesterday?",
+  "What part of your game felt sharp today? What felt off?",
+  "What's one small thing you can fix before your next time out?",
+  "Who helped you today, and did you thank them?",
+  "What did today teach you about yourself as a player?",
+  "What are you proud of today that won't show up in a box score?",
+  "What's a habit that's quietly making you better?",
+  "If you could replay one moment today, what would you do differently?",
+  "What did you do today that your future self will thank you for?",
+  "What's frustrating you right now, and what's one step through it?",
+  "What would a good day look like for you tomorrow?",
+  "What goal did you move closer to today, even a little?",
+  "What did you learn watching a teammate or an opponent today?",
+  "Where did you compete the hardest today?",
+  "What's one thing you want your coach to know about your week?"
+];
+var _mgPromptIdx = 0;
+function pickContextualJournalPrompt() {
+  try {
+    var entries = (state && state.entries) || [];
+    var streak = (typeof calculateStreak === 'function') ? calculateStreak() : 0;
+    var last = entries[0];
+    var daysSince = null;
+    if (last && last.date) { var d = parseEntryDate(last.date); if (d) daysSince = Math.floor((new Date() - d) / 86400000); }
+    if (daysSince !== null && daysSince >= 4) {
+      return "It's been a few days. What pulled you away, and what brings you back to the work?";
+    }
+    if (streak >= 3) {
+      return "You're on a " + streak + "-day streak. What's keeping you consistent right now?";
+    }
+    if (last && last.type === 'game') {
+      return "After your last game: what's one thing you'd carry into the next one?";
+    }
+  } catch (e) {}
+  return null;
+}
+function renderJournalPrompt() {
+  var strip = document.getElementById('j-prompt-strip');
+  var txt = document.getElementById('j-prompt-text');
+  if (!strip || !txt) return;
+  var ctx = pickContextualJournalPrompt();
+  if (ctx) {
+    txt.textContent = ctx;
+  } else {
+    var now = new Date();
+    var day = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
+    _mgPromptIdx = day % MG_JOURNAL_PROMPTS.length;
+    txt.textContent = MG_JOURNAL_PROMPTS[_mgPromptIdx];
+  }
+  strip.style.display = 'block';
+}
+function shuffleJournalPrompt() {
+  var txt = document.getElementById('j-prompt-text');
+  if (!txt) return;
+  _mgPromptIdx = (_mgPromptIdx + 1) % MG_JOURNAL_PROMPTS.length;
+  txt.textContent = MG_JOURNAL_PROMPTS[_mgPromptIdx];
+  try { ybgHaptic(10); } catch (e) {}
+}
+function useJournalPrompt() {
+  var txt = document.getElementById('j-prompt-text');
+  var ta = document.getElementById('j-what');
+  if (!txt || !ta) return;
+  var prompt = txt.textContent;
+  if (!ta.value.trim()) ta.value = prompt + '\n';
+  else if (ta.value.indexOf(prompt) === -1) ta.value = ta.value.replace(/\s*$/, '') + '\n\n' + prompt + '\n';
+  ta.focus();
+  try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {}
+  try { ybgHaptic(12); } catch (e) {}
 }
 
 function calcStats() {
