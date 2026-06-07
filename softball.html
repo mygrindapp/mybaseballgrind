@@ -15805,6 +15805,7 @@ function updateStreakDisplay() {
 
   // Check for milestones
   checkMilestones(streak);
+  try { checkAchievements(); } catch (e) {}
 }
 
 // ── YOUR WEEK card (streak hero + weekly effort recap) ──
@@ -15941,6 +15942,7 @@ function showMilestone(streak) {
   sub.textContent   = s;
   card.style.display = 'block';
   card.dataset.streak = streak;
+  card.dataset.achTitle = '';
   ybgHaptic([40, 60, 40]);
 }
 
@@ -15951,6 +15953,18 @@ function dismissMilestone() {
 
 function shareMilestone() {
   const card = document.getElementById('milestone-card');
+  // Achievement badges share their title instead of a streak count.
+  if (card && card.dataset && card.dataset.achTitle) {
+    var prof = (function () { try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); } catch (e) { return {}; } })();
+    var nm = prof.firstName || prof.name || 'I';
+    var subj = (nm === 'I') ? 'I just earned' : nm + ' just earned';
+    var amsg = subj + ' "' + card.dataset.achTitle + '" on MY GRIND ' + getBallEmoji() + '🔥\n\n' +
+      'Journaling every game, tracking every stat. Built for the grind.\n\n' +
+      'Get it free for 14 days 👇\nhttps://www.mygrindapp.com/signup.html?trial=1';
+    if (navigator.share) { navigator.share({ title: 'MyGrind', text: amsg }).catch(function () { fallbackShare(amsg); }); }
+    else { fallbackShare(amsg); }
+    return;
+  }
   const streak = card?.dataset?.streak || calculateStreak();
   const profile = (function() {
     try { return JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); }
@@ -15992,6 +16006,72 @@ function fallbackShare(msg) {
   } catch(err) {
     window.location.href = url;
   }
+}
+
+// ─── ACHIEVEMENT BADGES (milestones beyond streaks) ──────
+// Coach Young 2026-06-06: celebrate real progress moments (entries logged,
+// first game, first home run, games tracked). Reuses the milestone-card; each
+// badge fires once (localStorage guard). On a player's first run we backfill
+// already-earned badges silently so an existing user isn't spammed.
+var MG_ACHIEVEMENTS = [
+  { id: 'first_entry', emoji: '📓', title: 'FIRST ENTRY',       sub: 'Day one is on the board. The journal remembers everything.',         test: function (c) { return c.count >= 1; } },
+  { id: 'first_game',  emoji: '⚾', title: 'FIRST GAME LOGGED',  sub: 'Your first game is in the book. Every at-bat counts now.',           test: function (c) { return c.games >= 1; } },
+  { id: 'first_hr',    emoji: '🚀', title: 'FIRST HOME RUN',     sub: 'First one over the fence is in the books. Go get the next.',         test: function (c) { return c.hr >= 1; } },
+  { id: 'entries_10',  emoji: '📚', title: '10 ENTRIES',         sub: 'Ten entries deep. The habit is real now.',                          test: function (c) { return c.count >= 10; } },
+  { id: 'games_10',    emoji: '📊', title: '10 GAMES TRACKED',   sub: 'Ten games of real data. Your stats actually mean something now.',    test: function (c) { return c.games >= 10; } },
+  { id: 'entries_25',  emoji: '🏅', title: '25 ENTRIES',         sub: 'Twenty-five entries. Most players never log one. You logged 25.',    test: function (c) { return c.count >= 25; } },
+  { id: 'entries_50',  emoji: '🥇', title: '50 ENTRIES',         sub: 'Fifty entries of honest work. This is who you are now.',             test: function (c) { return c.count >= 50; } },
+  { id: 'entries_100', emoji: '💎', title: '100 ENTRIES',        sub: 'One hundred entries. A full record of everything you built.',        test: function (c) { return c.count >= 100; } }
+];
+
+function mgAchievementContext() {
+  var entries = (state && state.entries) || [];
+  var games = 0, hr = 0;
+  entries.forEach(function (e) {
+    if (e && e.type === 'game' && e.gameStats) {
+      games++;
+      hr += parseInt(e.gameStats.hr, 10) || 0;
+    }
+  });
+  return { count: entries.length, games: games, hr: hr };
+}
+
+function checkAchievements() {
+  try {
+    var ctx = mgAchievementContext();
+    var firstRun = !localStorage.getItem('ybg_ach_init');
+    var toShow = null;
+    MG_ACHIEVEMENTS.forEach(function (a) {
+      var earned = false;
+      try { earned = a.test(ctx); } catch (e) {}
+      if (!earned) return;
+      var key = 'ybg_ach_' + a.id;
+      if (localStorage.getItem(key) === '1') return; // already celebrated
+      localStorage.setItem(key, '1');
+      if (!firstRun && !toShow) toShow = a; // surface only the first new one
+    });
+    if (firstRun) { try { localStorage.setItem('ybg_ach_init', '1'); } catch (e) {} }
+    // Don't clobber a streak-milestone card shown the same cycle.
+    var card = document.getElementById('milestone-card');
+    if (toShow && card && card.style.display !== 'block') {
+      showAchievement(toShow.emoji, toShow.title, toShow.sub);
+    }
+  } catch (e) {}
+}
+
+function showAchievement(emoji, title, sub) {
+  var card = document.getElementById('milestone-card');
+  var eEl  = document.getElementById('milestone-emoji');
+  var tEl  = document.getElementById('milestone-title');
+  var sEl  = document.getElementById('milestone-sub');
+  if (!card) return;
+  if (eEl) eEl.textContent = emoji;
+  if (tEl) tEl.textContent = title;
+  if (sEl) sEl.textContent = sub;
+  card.style.display = 'block';
+  card.dataset.streak = '';
+  card.dataset.achTitle = title;
+  try { ybgHaptic([40, 60, 40]); } catch (e) {}
 }
 
 // ─── WEEKLY RECAP ────────────────────────────────────────
