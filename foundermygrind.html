@@ -234,19 +234,6 @@
     --white: #F5F0EB;
   }
 
-  /* ── Global tactile press — every button reacts to tap/click (added 2026-06-06) ── */
-  button, [role="button"], input[type="submit"], input[type="button"], .hero-cta, .primary-cta {
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    transition: transform .08s ease;
-  }
-  button:active, [role="button"]:active, input[type="submit"]:active, input[type="button"]:active, .hero-cta:active, .primary-cta:active {
-    transform: scale(0.96);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    button:active, [role="button"]:active, .hero-cta:active, .primary-cta:active { transform: none; }
-  }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   html, body {
@@ -611,7 +598,7 @@
     transition: border-color 0.18s ease, box-shadow 0.18s ease;
     -webkit-appearance: none; appearance: none;
   }
-  .form-row input[type="email"]::placeholder { color: #555; }
+  .form-row input[type="email"]::placeholder { color: #5C544A; }
   .form-row input[type="email"]:focus {
     border-color: var(--gold);
     box-shadow: 0 0 0 3px rgba(201,168,76,0.15);
@@ -660,7 +647,7 @@
     gap: 10px;
     width: 100%;
     background: var(--gold);
-    color: #080808;
+    color: #0C0A08;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 16px;
     font-weight: 800;
@@ -813,7 +800,7 @@
     font-size: 11px;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: #555;
+    color: #5C544A;
     opacity: 0;
     transform: translateY(18px);
   }
@@ -821,7 +808,7 @@
 
   footer .footer-brand { color: var(--grey); margin-bottom: 8px; }
   footer a {
-    color: #555; text-decoration: none;
+    color: #5C544A; text-decoration: none;
     margin: 0 8px;
     transition: color 0.18s ease;
   }

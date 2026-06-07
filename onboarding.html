@@ -110,19 +110,6 @@
   --accent-rgb: 201, 168, 76;
 }
 
-/* ── Global tactile press — every button reacts to tap/click (added 2026-06-06) ── */
-button, [role="button"], input[type="submit"], input[type="button"] {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-  transition: transform .08s ease;
-}
-button:active, [role="button"]:active, input[type="submit"]:active, input[type="button"]:active {
-  transform: scale(0.96);
-}
-@media (prefers-reduced-motion: reduce) {
-  button:active, [role="button"]:active { transform: none; }
-}
-
 [data-sport="softball"] {
   --gold: #D4547A;
   --accent-rgb: 212, 84, 122;
@@ -165,12 +152,12 @@ h1 span { color: var(--gold); }
 .card-title { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
 
 /* Multi-select hint pill (above goals/struggles/coach-feedback screens) */
-.multi-hint { display: inline-block; background: #231F1C; border: 1px solid #3D3530; border-radius: 20px; padding: 4px 12px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #555; margin-bottom: 12px; }
+.multi-hint { display: inline-block; background: #231F1C; border: 1px solid #3D3530; border-radius: 20px; padding: 4px 12px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #5C544A; margin-bottom: 12px; }
 
 /* Streak preview row (S11 plan preview) */
 .streak-row { display: flex; gap: 6px; justify-content: center; margin: 10px 0 8px; }
 .sday { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
-.sday.done { background: var(--gold); color: #080808; }
+.sday.done { background: var(--gold); color: #0C0A08; }
 .sday.today { background: rgba(var(--accent-rgb),0.15); border: 1.5px solid var(--gold); color: var(--gold); }
 .sday.empty { background: #231F1C; border: 1px solid #3D3530; color: #4B3E35; }
 
@@ -180,7 +167,7 @@ h1 span { color: var(--gold); }
 .stat-lbl { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #6B5E52; margin-top: 4px; }
 
 /* Big primary CTA (used on welcome + final exit) */
-.cta { display: block; width: 100%; background: var(--gold); color: #080808; border: none; border-radius: 6px; padding: 16px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 17px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; }
+.cta { display: block; width: 100%; background: var(--gold); color: #0C0A08; border: none; border-radius: 6px; padding: 16px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 17px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; }
 .cta:active { opacity: 0.85; }
 
 /* Bottom nav (Back / dots / Next) — fixed at bottom */
@@ -190,7 +177,7 @@ h1 span { color: var(--gold); }
 .dots { display: flex; gap: 5px; align-items: center; }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: #2A2622; transition: background 0.3s; }
 .dot.on { background: var(--gold); }
-.next-btn { background: var(--gold); color: #080808; border: none; border-radius: 4px; padding: 9px 20px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
+.next-btn { background: var(--gold); color: #0C0A08; border: none; border-radius: 4px; padding: 9px 20px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
 .next-btn[disabled] { opacity: 0.3; cursor: not-allowed; }
 
 /* PIN input row (S0.5) */
@@ -318,7 +305,7 @@ h1 span { color: var(--gold); }
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 9px;
   letter-spacing: 2.5px;
-  color: #555;
+  color: #5C544A;
   margin-top: 2px;
   font-weight: 400;
 }
