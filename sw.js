@@ -2,10 +2,10 @@
 // Migrated 2026-06-06 from an inline blob registration in softball.html to this
 // real same-origin file, because Web Push requires a stable file-based service
 // worker (a blob: SW can't receive push). Caching behavior is unchanged from the
-// old inline version; cache bumped v321 -> v322. The push/notificationclick
+// old inline version; cache bumped v324 -> v325. The push/notificationclick
 // handlers below are inert until subscriptions + the send cron ship (Phases B/C).
 
-const CACHE = 'ybg-mygrind-v322';
+const CACHE = 'ybg-mygrind-v325';
 const ASSETS = ['/'];
 
 self.addEventListener('install', e => {

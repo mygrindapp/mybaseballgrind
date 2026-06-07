@@ -6173,6 +6173,46 @@ function getPromoInfo(code) {
   return PROMO_INFO[code.trim().toUpperCase()] || null;
 }
 
+// Server-side lifetime redemption (2026-06-07 audit #4). grantPromoAccess()
+// writes an OPTIMISTIC localStorage lifetime grant; this call makes it real:
+// the server atomically claims one of the 10 FOREVERYOUNG2026 slots and writes
+// a sub:<email> record so paid status is server-authoritative (softball.html's
+// syncSubscriptionFromServer then trusts the server, closing the old "type the
+// code / set paid=true in DevTools = free forever, cap ignored" hole). If the
+// 10 spots are already gone (409), we DOWNGRADE the optimistic local grant to
+// the standard 14-day trial so the 11th+ redeemer doesn't keep a free-forever
+// grant the server never honored. Fire-and-forget — a network failure just
+// leaves the optimistic grant in place; the server reconciles on next load.
+function redeemLifetimeServerSide(email) {
+  var e = (email || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) return;
+  try {
+    fetch('/api/redeem-lifetime', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email: e, promoCode: 'FOREVERYOUNG2026' })
+    }).then(function (r) {
+      if (r.status !== 409) return; // 200 = granted; other errors leave optimistic grant for next-load reconcile
+      // Cap full — roll back the optimistic lifetime grant to a 14-day trial.
+      try {
+        var acc = JSON.parse(localStorage.getItem('ybg_access') || '{}');
+        if (acc.plan === 'lifetime') {
+          delete acc.paid;
+          acc.plan       = 'trial';
+          acc.trialStart = acc.trialStart || Date.now();
+          acc.promoCode  = '';
+          var s = JSON.stringify(acc);
+          localStorage.setItem('ybg_access', s);
+          try { sessionStorage.setItem('ybg_access', s); } catch (_) {}
+          try { localStorage.setItem('ybg_softball_access', s); } catch (_) {}
+          try { localStorage.removeItem('mg_promo_code'); } catch (_) {}
+        }
+      } catch (_) {}
+      alert('The 10 lifetime “FOREVERYOUNG2026” spots are all claimed. You’re all set with the standard 14-day free trial instead — thanks for being here early!');
+    }).catch(function () { /* network — server stays source of truth on next load */ });
+  } catch (_) {}
+}
+
 // ─── PROMO ACCESS GRANT ─────────────────────────────────────
 // Writes the access state ybg_access so the journal honors the promo
 // when the user finishes signup. Without this, promo copy promised the
@@ -6235,6 +6275,13 @@ function grantPromoAccess() {
     // see it too — onFinalExit reads this before falling back to the default
     // 14-day trial grant.
     try { localStorage.setItem('mg_promo_code', state.promoCode); } catch (e) {}
+
+    // Lifetime (FOREVERYOUNG2026): make the optimistic grant above server-
+    // authoritative and enforce the 10-cap. Fire-and-forget — rolls the local
+    // grant back to a 14-day trial if the cap is already full. (Audit #4.)
+    if (info.kind === 'lifetime') {
+      redeemLifetimeServerSide(next.email || email);
+    }
   } catch (e) {
     console.warn('[MG] grantPromoAccess failed:', e);
   }
@@ -6785,6 +6832,11 @@ window.addEventListener('DOMContentLoaded', () => {
       localStorage.removeItem('mg_signup_state');
       localStorage.removeItem('mg_sport');
       localStorage.removeItem('ybg_creator');
+      // Also clear the card-on-file picker flag so a fresh test run re-shows
+      // the picker. The flag is only set on checkout success / explicit skip,
+      // so leaving it set would make ?reset=1 silently skip the picker on the
+      // next pass and quietly mask picker regressions during live testing.
+      localStorage.removeItem('mg_plan_picker_shown');
       qs.delete('reset');
       var clean = window.location.pathname + (qs.toString() ? '?' + qs.toString() : '');
       window.history.replaceState(null, '', clean);

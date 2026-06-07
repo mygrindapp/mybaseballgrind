@@ -7866,6 +7866,22 @@ function checkAccess() {
         _existing.paid = true;
         _existing.plan = 'lifetime';
         _existing.promoCode = _promo;
+        // Make the grant server-authoritative + enforce the 10-cap (audit #4).
+        // Belt-and-suspenders for the rare path where this fallback grant fires
+        // without signup.html's redeem having persisted. Fire-and-forget;
+        // syncSubscriptionFromServer() reconciles paid status against the server
+        // record this writes. (If the cap was already full the server writes no
+        // record and the user reconciles down to a trial on a later load.)
+        try {
+          var _le = (_existing.email || '').trim().toLowerCase();
+          if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_le)) {
+            fetch('/api/redeem-lifetime', {
+              method:  'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body:    JSON.stringify({ email: _le, promoCode: 'FOREVERYOUNG2026' })
+            }).catch(function () {});
+          }
+        } catch (_e) {}
       } else if (_promo === 'FOUNDERMYGRIND') {
         _existing.trialStart        = Date.now();
         _existing.trialDurationDays = 180;
@@ -8508,6 +8524,27 @@ async function routeExistingCustomerToPortal(email) {
     // 404 no_customer = genuinely no subscription yet → safe to start one.
     if (resp.status === 404 && data && data.error === 'no_customer') {
       return 'new_customer';
+    }
+    // 401/403 = the billing portal requires a Firebase session this in-app user
+    // doesn't have. In-app users authenticated only via the legacy local
+    // ybg_access (no Firebase sign-in) hit this because mgIdTokenHeader()
+    // returns {} with no token, so the owner check rejects them. That is a
+    // FIXABLE sign-in gap, NOT a dead-end and NOT a transient 5xx: route them
+    // through the passwordless sign-in so they get a real session, then they
+    // can reach billing. Previously this fell through to the generic error
+    // alert and blocked every upgrade for local-auth-only payers. (2026-06-07
+    // audit #3.) The sign-in is user-initiated (they tapped upgrade), so
+    // stamping mg_signin_intent to authorize signin.html's auto-send is
+    // legitimate — it is not the email-bomb vector the gate guards against.
+    if (resp.status === 401 || resp.status === 403) {
+      var _pe = (email || '').trim().toLowerCase();
+      if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_pe)) {
+        try { sessionStorage.setItem('mg_signin_intent', _pe); } catch (_) {}
+        alert('Quick security step: to manage or upgrade your plan we need to confirm it’s you. We’ll email a 6-digit code to ' + _pe + ' — enter it to finish signing in, then tap upgrade again to go straight to billing.');
+        window.location.href = '/signin.html?email=' + encodeURIComponent(_pe) + '&auto=1';
+        return 'needs_signin';
+      }
+      // No usable email to sign in with — fall through to the generic error.
     }
     console.warn('[purchase] portal check failed; not opening Payment Link', { status: resp.status, data });
     alert('We could not open your billing page just now. Please try again in a moment, or email coach@mygrindapp.com and we will sort it out.\n\n(This check protects you from accidentally being charged for a second subscription.)');
@@ -20334,10 +20371,57 @@ var fbUser = null;
 // Honors the managed-minor scope shim: drop the active-minor pointer FIRST so
 // the canonical removeItems hit the real keys (not an mm: alias), then purge
 // every managed-minor namespace, then the canonical journal/academics/H-W keys.
-function mgClearLocalDataForIdentitySwitch() {
+function mgClearLocalDataForIdentitySwitch(prevUid) {
   try {
     // Reset scope FIRST so canonical key removes aren't re-routed to mm:<id>:...
     try { if (window.MgMinorScope) window.MgMinorScope.setActiveMinorId(null); } catch(e) {}
+
+    // ─── Pre-switch safety net (2026-06-07 audit) ──────────────
+    // Before purging, snapshot the OUTGOING identity's local journal so any
+    // entries that never made it to the cloud (logged offline, or saved in the
+    // window before the +500ms cloud push) aren't lost irreversibly when a
+    // shared device is handed to a different account. Only back up when there's
+    // actually content to lose, key the snapshot by the prior uid (one snapshot
+    // per uid — re-writing is cheap and self-capping), and prune to the most
+    // recent few so this can't grow unbounded across many handoffs. v1 just
+    // persists the snapshot under a KEEP-listed key; a restore affordance can
+    // come later. Reads the canonical journal state directly (scope was just
+    // reset to null above, so this is the parent/self journal, not a minor's).
+    try {
+      if (prevUid) {
+        var _outgoing = null;
+        try { _outgoing = localStorage.getItem('ybg_softball_state'); } catch(e) {}
+        var _hasEntries = false;
+        if (_outgoing) {
+          try {
+            var _parsed = JSON.parse(_outgoing);
+            _hasEntries = _parsed && Array.isArray(_parsed.entries) && _parsed.entries.length > 0;
+          } catch(e) {}
+        }
+        if (_hasEntries) {
+          try {
+            localStorage.setItem('mg_preswitch_backup:' + prevUid,
+              JSON.stringify({ ts: Date.now(), uid: prevUid, state: _outgoing }));
+          } catch(e) { /* quota / private mode — best effort, don't block the wipe */ }
+          // Prune: keep only the 3 most recent backups across all prior uids.
+          try {
+            var _bk = [];
+            for (var _b = 0; _b < localStorage.length; _b++) {
+              var _bkk = localStorage.key(_b);
+              if (_bkk && _bkk.indexOf('mg_preswitch_backup:') === 0) {
+                var _bts = 0;
+                try { _bts = (JSON.parse(localStorage.getItem(_bkk) || '{}').ts) || 0; } catch(e) {}
+                _bk.push({ k: _bkk, ts: _bts });
+              }
+            }
+            if (_bk.length > 3) {
+              _bk.sort(function(a, b) { return b.ts - a.ts; });
+              _bk.slice(3).forEach(function(o) { try { localStorage.removeItem(o.k); } catch(e) {} });
+            }
+          } catch(e) {}
+        }
+      }
+    } catch(e) { console.warn('[FB] pre-switch backup:', e); }
 
     // Keys that must SURVIVE an account switch: the identity/scope pointers,
     // the freshly-signed-in user's auth/session cache + signup state, and the
@@ -20361,6 +20445,7 @@ function mgClearLocalDataForIdentitySwitch() {
       var k = localStorage.key(i);
       if (!k || KEEP[k]) continue;
       if (k.indexOf('ybg_reminder_dismiss_') === 0) continue; // per-device reminder UI
+      if (k.indexOf('mg_preswitch_backup:') === 0) continue;  // pre-switch journal safety net (survives the purge)
       if (k.indexOf('mm:') === 0 || k.indexOf('ybg_') === 0 || k.indexOf('mg_') === 0) toRemove.push(k);
     }
     toRemove.forEach(function(k) { try { localStorage.removeItem(k); } catch(e) {} });
@@ -20384,7 +20469,7 @@ auth.onAuthStateChanged(function(user) {
     try { prevUid = localStorage.getItem('mg_auth_uid'); } catch(e) {}
     if (prevUid && prevUid !== user.uid) {
       console.log('[Firebase] Account switch on this device; clearing local data before restore.');
-      mgClearLocalDataForIdentitySwitch();
+      mgClearLocalDataForIdentitySwitch(prevUid);
     }
     try { localStorage.setItem('mg_auth_uid', user.uid); } catch(e) {}
     syncFromCloud(user.uid);
