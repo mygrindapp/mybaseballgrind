@@ -1636,6 +1636,45 @@ function renderInstallCard() {
   }
   const target = document.getElementById('install-state-' + state);
   if (target) target.style.display = 'block';
+  try { renderDashInstallCard(); } catch (e) {}
+}
+
+// ── DASHBOARD INSTALL CARD (prominent, top-of-home, dismissible) ──
+// Coach Young 2026-06-06: the Settings install card was too buried. This
+// surfaces a prominent install CTA at the TOP of the Dashboard — but only
+// when NOT already installed and not previously dismissed. Platform-aware:
+// Android/Chrome/Edge get the real one-tap prompt (installApp); iOS/other
+// route to the Settings install guide via openInstallHelp().
+function renderDashInstallCard() {
+  var el = document.getElementById('dash-install-card');
+  if (!el) return;
+  var isInStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+  var dismissed = false;
+  try { dismissed = !!localStorage.getItem('ybg_dash_install_dismissed'); } catch (e) {}
+  if (isInStandalone || dismissed) { el.style.display = 'none'; return; }
+  var isIos = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  var btn = document.getElementById('dash-install-btn');
+  var sub = document.getElementById('dash-install-sub');
+  if (deferredInstallPrompt) {
+    if (btn) btn.innerHTML = '⚾ &nbsp;Install MyGrind';
+    if (sub) sub.textContent = 'One tap. Opens instantly. Works offline. No App Store needed.';
+  } else if (isIos) {
+    if (btn) btn.innerHTML = '⚾ &nbsp;Add to Home Screen';
+    if (sub) sub.textContent = 'Two quick taps to put MyGrind on your home screen.';
+  } else {
+    if (btn) btn.innerHTML = '⚾ &nbsp;How to Install';
+    if (sub) sub.textContent = 'Add MyGrind to your device for one-tap access.';
+  }
+  el.style.display = 'block';
+}
+function dashInstallAction() {
+  if (deferredInstallPrompt) { installApp(); }
+  else if (typeof openInstallHelp === 'function') { openInstallHelp(); }
+}
+function dismissDashInstall() {
+  var el = document.getElementById('dash-install-card');
+  if (el) el.style.display = 'none';
+  try { localStorage.setItem('ybg_dash_install_dismissed', '1'); } catch (e) {}
 }
 
 // "Find these steps later in Settings →" link in the iOS bottom banner.
@@ -2809,6 +2848,59 @@ input[type="number"] {
       <div class="gold-line"></div>
     </div>
 
+    <!-- ══ INSTALL MYGRIND — prominent home-screen CTA (dismissible; hidden once installed) ══
+         Coach Young 2026-06-06: moved the install prompt out of buried Settings
+         to the top of the Dashboard so players actually see it. renderDashInstallCard()
+         controls visibility + per-platform button text. -->
+    <div id="dash-install-card" style="display:none; position:relative; background:linear-gradient(135deg, rgba(201,168,76,0.16), rgba(201,168,76,0.04)); border:1px solid var(--gold-dark); border-radius:14px; padding:16px 18px 18px; margin-bottom:18px; box-shadow:0 8px 30px rgba(0,0,0,0.35);">
+      <button onclick="dismissDashInstall()" aria-label="Dismiss" style="position:absolute; top:6px; right:8px; background:transparent; border:none; color:var(--grey); font-size:20px; line-height:1; cursor:pointer; padding:6px 8px;">×</button>
+      <div style="display:flex; align-items:center; gap:14px;">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex-shrink:0;"><use href="#mg-icon-home"/></svg>
+        <div style="flex:1; min-width:0;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--white);">Put MyGrind on Your Home Screen</div>
+          <div id="dash-install-sub" style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.5; margin-top:3px;">One tap. Opens instantly. Works offline. No App Store needed.</div>
+        </div>
+      </div>
+      <button id="dash-install-btn" onclick="dashInstallAction()" class="btn btn-gold" style="width:100%; margin-top:14px; padding:14px 24px; font-size:14px;">⚾ &nbsp;Install MyGrind</button>
+    </div>
+
+    <!-- ══ YOUR WEEK — streak hero + weekly effort recap ══
+         Coach Young 2026-06-06: the payoff card. Turns the data players log
+         into a visible "here's what you did" story so the app gives back, not
+         just takes input. renderYourWeek() fills it from state + streak. -->
+    <div class="card" id="your-week-card" style="display:none; margin-bottom:18px; background:linear-gradient(135deg,#221C12,#161210); border:1px solid var(--gold-dark);">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div id="yw-streak-emoji" style="font-size:40px; line-height:1; flex-shrink:0;">🔥</div>
+        <div style="flex:1; min-width:0;">
+          <div style="display:flex; align-items:baseline; gap:8px;">
+            <span id="yw-streak-num" style="font-family:'Bebas Neue',sans-serif; font-size:46px; line-height:0.85; color:var(--gold);">0</span>
+            <span style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--light);">Day Streak</span>
+          </div>
+          <div id="yw-milestone-line" style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); margin-top:3px;"></div>
+        </div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold-dark); align-self:flex-start;">Your Week</div>
+      </div>
+
+      <div style="height:1px; background:var(--border); margin:14px 0;"></div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; text-align:center;">
+        <div>
+          <div id="yw-days" style="font-family:'Bebas Neue',sans-serif; font-size:28px; line-height:1; color:var(--white);">0/7</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Days Logged</div>
+        </div>
+        <div>
+          <div id="yw-entries" style="font-family:'Bebas Neue',sans-serif; font-size:28px; line-height:1; color:var(--white);">0</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Entries</div>
+        </div>
+        <div>
+          <div id="yw-reps" style="font-family:'Bebas Neue',sans-serif; font-size:28px; line-height:1; color:var(--white);">0</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Reps Logged</div>
+        </div>
+      </div>
+
+      <div id="yw-summary" style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.55; margin-top:14px; text-align:center;"></div>
+    </div>
+
     <!-- ══ DAILY CHECK-IN — top-of-dashboard daily action ══
          Surfaced here 2026-06-02 (nav redesign, ROADMAP increment 4): the
          readiness + workload check is a daily habit, so it earns prime
@@ -2901,7 +2993,7 @@ input[type="number"] {
     <div id="milestone-card" class="card" style="display:none; margin-bottom:20px; background:linear-gradient(135deg,var(--gold) 0%,#8B2050 100%); border:2px solid #FFD966; padding:20px; text-align:center;">
       <div id="milestone-emoji" style="font-size:40px; line-height:1; margin-bottom:8px;">🔥</div>
       <div id="milestone-title" style="font-family:'Bebas Neue',cursive; font-size:26px; letter-spacing:2px; color:#161210; line-height:1;">STREAK UNLOCKED</div>
-      <div id="milestone-sub" style="font-family:'Barlow'; font-size:13px; color:#2A0018; margin-top:4px; margin-bottom:14px;">You hit a 7-day streak. Keep grinding.</div>
+      <div id="milestone-sub" style="font-family:'Barlow'; font-size:13px; color:#2A0018; margin-top:4px; margin-bottom:14px;">You hit a 7-day streak. Keep going.</div>
       <button onclick="shareMilestone()" style="background:#161210; color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:1px solid #000; border-radius:8px; cursor:pointer;">
         📲 Share This Win
       </button>
@@ -8819,6 +8911,8 @@ function showPanel(id) {
   // entries logged since last navigation. Coach Young 2026-05-09: dashboard
   // wasn't always showing latest totals after saving an entry from Journal.
   if (id === 'dashboard') {
+    try { renderDashInstallCard(); } catch (e) {}
+    try { renderYourWeek(); } catch (e) {}
     try { renderTrainingVolume(); } catch (e) {}
     try { renderWorkoutVolume();  } catch (e) {}
     try { renderRestDayVolume();  } catch (e) {}
@@ -15437,6 +15531,83 @@ function updateStreakDisplay() {
   checkMilestones(streak);
 }
 
+// ── YOUR WEEK card (streak hero + weekly effort recap) ──
+// Coach Young 2026-06-06: the payoff card on the Dashboard. Reads the data the
+// player already logs (entries, reps, check-in days, goals, streak) and reflects
+// it back as a visible weekly story, so logging feels rewarding instead of like
+// a notepad. All client-side; no new storage.
+function renderYourWeek() {
+  var card = document.getElementById('your-week-card');
+  if (!card) return;
+  var streak = 0;
+  try { streak = calculateStreak(); } catch (e) {}
+
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var weekStart = new Date(today); weekStart.setDate(today.getDate() - 6); // last 7 days incl. today
+
+  var entriesThisWeek = 0, repsThisWeek = 0;
+  var loggedDays = {};
+  ((state && state.entries) || []).forEach(function (e) {
+    if (!e || !e.date) return;
+    var d = null;
+    try { d = parseEntryDate(e.date); } catch (err) {}
+    if (!d || d < weekStart || d > today) return;
+    entriesThisWeek++;
+    loggedDays[d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate()] = true;
+    if (e.reps) {
+      ['swings', 'gb', 'throws'].forEach(function (f) {
+        var v = parseInt(e.reps[f], 10);
+        if (!isNaN(v)) repsThisWeek += v;
+      });
+    }
+  });
+  // Quick check-in days (no journal entry) also count toward "days logged".
+  try {
+    var actDays = JSON.parse(localStorage.getItem('mg_activity_days') || '[]');
+    if (Array.isArray(actDays)) actDays.forEach(function (k) {
+      var p = String(k).split('-');
+      if (p.length === 3) {
+        var dd = new Date(+p[0], +p[1] - 1, +p[2]);
+        if (dd >= weekStart && dd <= today) loggedDays[dd.getFullYear() + '-' + dd.getMonth() + '-' + dd.getDate()] = true;
+      }
+    });
+  } catch (e) {}
+  var daysLogged = Math.min(Object.keys(loggedDays).length, 7);
+
+  // Streak emoji tier (mirrors updateStreakDisplay): cold / flame / diamond.
+  var emoji = '🧊';
+  if (streak >= 7) emoji = '💎';
+  else if (streak >= 1 || entriesThisWeek >= 3) emoji = '🔥';
+
+  // Next milestone countdown.
+  var nextMs = null;
+  for (var i = 0; i < STREAK_MILESTONES.length; i++) {
+    if (STREAK_MILESTONES[i] > streak) { nextMs = STREAK_MILESTONES[i]; break; }
+  }
+  var msLine;
+  if (streak === 0) msLine = 'Log today to start your streak.';
+  else if (nextMs) { var togo = nextMs - streak; msLine = togo + (togo === 1 ? ' day' : ' days') + ' to your next milestone (' + nextMs + ' days).'; }
+  else msLine = 'You are in a league of your own.';
+
+  var set = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+  set('yw-streak-emoji', emoji);
+  set('yw-streak-num', streak);
+  set('yw-milestone-line', msLine);
+  set('yw-days', daysLogged + '/7');
+  set('yw-entries', entriesThisWeek);
+  set('yw-reps', repsThisWeek);
+
+  var summary;
+  if (daysLogged === 0)      summary = 'Your week starts with one entry. Log today and the rest builds from here.';
+  else if (daysLogged >= 6)  summary = 'You showed up ' + daysLogged + ' of the last 7 days. This is what consistency looks like.';
+  else if (daysLogged >= 3)  summary = 'You showed up ' + daysLogged + ' of the last 7 days. Strong week. Keep it going.';
+  else                       summary = 'You showed up ' + daysLogged + ' of the last 7 days. Every day you log is a day you grow.';
+  set('yw-summary', summary);
+
+  card.style.display = 'block';
+}
+
 // ─── DAILY QUOTES (rotates daily) ───
 
 function renderDailyQuote() {
@@ -15479,15 +15650,15 @@ function showMilestone(streak) {
   const sub    = document.getElementById('milestone-sub');
   if (!card) return;
 
-  let e = '🔥', t = streak + '-DAY STREAK', s = 'You hit a ' + streak + '-day streak. Keep grinding.';
-  if (streak === 3)   { e = '🎯'; t = '3-DAY START';       s = 'Three days in. The habit is forming.'; }
-  if (streak === 7)   { e = '🔥'; t = 'ONE WEEK STRONG';   s = '7 days locked in. You are building something real.'; }
-  if (streak === 14)  { e = '💪'; t = '2 WEEKS DEEP';      s = 'Two weeks. This is no longer a phase. This is who you are.'; }
-  if (streak === 30)  { e = '⚾'; t = '30-DAY GRINDER';    s = 'A full month. Most players never make it here. You did.'; }
-  if (streak === 50)  { e = '🏆'; t = '50-DAY BEAST';      s = 'You are in the top 1% of players on MyGrind.'; }
-  if (streak === 100) { e = '💎'; t = 'CENTURY CLUB';      s = '100 days. This is what separates the great from the good.'; }
-  if (streak === 200) { e = '👑'; t = 'ELITE GRINDER';     s = '200 days. Legendary. Share The Grind with a teammate.'; }
-  if (streak === 365) { e = '⭐'; t = 'FULL YEAR GRIND';   s = 'A year straight. You are in a league of your own.'; }
+  let e = '🔥', t = streak + '-DAY STREAK', s = 'You showed up ' + streak + ' days straight. Keep going.';
+  if (streak === 3)   { e = '🎯'; t = '3-DAY START';       s = 'Three days in. The habit is taking root.'; }
+  if (streak === 7)   { e = '🔥'; t = 'ONE WEEK STRONG';   s = 'Seven days straight. You are building something real.'; }
+  if (streak === 14)  { e = '💪'; t = 'TWO WEEKS IN';      s = 'Two weeks of showing up. This is becoming who you are.'; }
+  if (streak === 30)  { e = '⚾'; t = 'ONE MONTH STRONG';  s = 'A full month. Most players never get here. You did.'; }
+  if (streak === 50)  { e = '🏆'; t = '50 DAYS';           s = 'Fifty days of consistent work. You are in rare company.'; }
+  if (streak === 100) { e = '💎'; t = 'CENTURY CLUB';      s = '100 days. This is what consistency looks like.'; }
+  if (streak === 200) { e = '👑'; t = '200 DAYS';          s = 'Two hundred days. Incredible. Share MyGrind with a teammate.'; }
+  if (streak === 365) { e = '⭐'; t = 'ONE FULL YEAR';     s = 'A year straight. You are in a league of your own.'; }
 
   emoji.textContent = e;
   title.textContent = t;
@@ -17716,7 +17887,7 @@ function renderJoinedView() {
 
   // Update the sub-label
   const sub = document.getElementById('team-panel-sub');
-  if (sub) sub.textContent = "You're on " + (t.name || 'a team') + ' · Keep grinding';
+  if (sub) sub.textContent = "You're on " + (t.name || 'a team') + ' · Keep building';
 }
 
 function messageCoach() {
