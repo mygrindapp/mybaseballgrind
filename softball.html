@@ -2848,6 +2848,19 @@ input[type="number"] {
       <div class="gold-line"></div>
     </div>
 
+    <!-- ══ DAILY NUDGE — streak-protection reminder when not logged today ══
+         Coach Young 2026-06-06: in-app nudge (shows on Dashboard when today has
+         no entry/check-in) + a no-backend .ics daily phone reminder. renderDailyNudge(). -->
+    <div id="dash-nudge" style="display:none; align-items:center; gap:12px; background:rgba(201,168,76,0.08); border:1px solid var(--gold-dark); border-radius:10px; padding:12px 14px; margin-bottom:16px;">
+      <span style="font-size:18px; line-height:1; flex-shrink:0;">🔔</span>
+      <div style="flex:1; min-width:0;">
+        <div id="dash-nudge-text" style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.45;"></div>
+        <button type="button" onclick="downloadDailyReminderICS()" style="background:none; border:none; padding:0; margin-top:4px; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dark); text-decoration:underline; cursor:pointer;">🔔 Remind me daily on my phone</button>
+      </div>
+      <button type="button" onclick="mgTab('journal','tab-journal')" style="flex-shrink:0; background:var(--gold); border:none; color:#181614; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:9px 14px; border-radius:6px; cursor:pointer;">Log Now</button>
+      <button type="button" onclick="dismissDashNudge()" aria-label="Dismiss" style="flex-shrink:0; background:transparent; border:none; color:var(--grey); font-size:18px; line-height:1; cursor:pointer; padding:4px 6px;">×</button>
+    </div>
+
     <!-- ══ INSTALL MYGRIND — prominent home-screen CTA (dismissible; hidden once installed) ══
          Coach Young 2026-06-06: moved the install prompt out of buried Settings
          to the top of the Dashboard so players actually see it. renderDashInstallCard()
@@ -5503,7 +5516,14 @@ input[type="number"] {
          Coach Young 2026-06-06: dependency-free inline-SVG line chart. renderStatTrend()
          plots the running season AVG after each logged game so improvement is visible. -->
     <div class="card" id="stat-trend-card" style="margin-bottom:20px; border-radius:3px;">
-      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">Your Progress · Batting Average</div>
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:12px; flex-wrap:wrap;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold);">Your Progress</div>
+        <div style="display:flex; gap:4px;">
+          <button type="button" class="trend-metric-btn" data-m="avg" onclick="setTrendMetric('avg')" style="background:var(--gold); border:1px solid var(--gold); color:#181614; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 11px; border-radius:6px; cursor:pointer;">AVG</button>
+          <button type="button" class="trend-metric-btn" data-m="obp" onclick="setTrendMetric('obp')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 11px; border-radius:6px; cursor:pointer;">OBP</button>
+          <button type="button" class="trend-metric-btn" data-m="slg" onclick="setTrendMetric('slg')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 11px; border-radius:6px; cursor:pointer;">SLG</button>
+        </div>
+      </div>
       <div id="trend-headline" style="display:none; align-items:baseline; gap:10px; margin-bottom:8px;">
         <span id="trend-current" style="font-family:'Bebas Neue'; font-size:40px; line-height:1; color:var(--gold);">---</span>
         <span id="trend-delta" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px;"></span>
@@ -8957,6 +8977,7 @@ function showPanel(id) {
   // wasn't always showing latest totals after saving an entry from Journal.
   if (id === 'dashboard') {
     try { renderDashInstallCard(); } catch (e) {}
+    try { renderDailyNudge(); } catch (e) {}
     try { renderYourWeek(); } catch (e) {}
     try { renderTrainingVolume(); } catch (e) {}
     try { renderWorkoutVolume();  } catch (e) {}
@@ -13070,7 +13091,26 @@ function updateBaSampleSize(ab) {
   tier.style.color = color;
 }
 
-// ── PROGRESS TREND CHART (cumulative batting average across games) ──
+// Metric for the progress trend chart: 'avg' | 'obp' | 'slg' (Coach Young 2026-06-06).
+var _mgTrendMetric = 'avg';
+function setTrendMetric(m) {
+  _mgTrendMetric = (m === 'obp' || m === 'slg') ? m : 'avg';
+  try { renderStatTrend(); } catch (e) {}
+  try { updateTrendMetricUI(); } catch (e) {}
+  try { ybgHaptic(8); } catch (e) {}
+}
+function updateTrendMetricUI() {
+  ['avg', 'obp', 'slg'].forEach(function (m) {
+    var btn = document.querySelector('.trend-metric-btn[data-m="' + m + '"]');
+    if (!btn) return;
+    var on = (m === _mgTrendMetric);
+    btn.style.background = on ? 'var(--gold)' : 'transparent';
+    btn.style.color = on ? '#181614' : 'var(--gold)';
+    btn.style.borderColor = on ? 'var(--gold)' : 'var(--gold-dark)';
+  });
+}
+
+// ── PROGRESS TREND CHART (cumulative AVG / OBP / SLG across games) ──
 // Coach Young 2026-06-06: dependency-free inline SVG so players can watch their
 // season AVG climb. Reads game entries (gameStats) from state, sorts oldest to
 // newest, plots the running average (sumH/sumAB) after each game.
@@ -13108,11 +13148,22 @@ function renderStatTrend() {
   if (head) head.style.display = 'flex';
   if (cap)  cap.style.display = 'block';
 
-  var sumH = 0, sumAB = 0, pts = [];
+  var sumH = 0, sumAB = 0, sumOB = 0, sumPA = 0, sumTB = 0, pts = [];
   games.forEach(function (g) {
-    sumH  += parseInt(g.gameStats.h, 10)  || 0;
-    sumAB += parseInt(g.gameStats.ab, 10) || 0;
-    pts.push(sumAB > 0 ? sumH / sumAB : 0);
+    var gs = g.gameStats;
+    var ab = parseInt(gs.ab, 10) || 0, h = parseInt(gs.h, 10) || 0;
+    var bb = parseInt(gs.bb, 10) || 0, hr = parseInt(gs.hr, 10) || 0;
+    sumH += h; sumAB += ab; sumOB += (h + bb); sumPA += (ab + bb);
+    // Total bases: prefer the per-game SLG stored at save (already accounts for
+    // 2B/3B); fall back to singles+HR when older entries lack it.
+    var tb = (gs.slg != null && gs.slg !== '' && !isNaN(parseFloat(gs.slg)))
+      ? Math.round(parseFloat(gs.slg) * ab) : (h + hr);
+    sumTB += tb;
+    var val;
+    if (_mgTrendMetric === 'obp')      val = sumPA > 0 ? sumOB / sumPA : 0;
+    else if (_mgTrendMetric === 'slg') val = sumAB > 0 ? sumTB / sumAB : 0;
+    else                               val = sumAB > 0 ? sumH / sumAB : 0;
+    pts.push(val);
   });
   var current = pts[pts.length - 1];
   var delta   = current - pts[0];
@@ -13151,7 +13202,8 @@ function renderStatTrend() {
     else if (delta > 0) { dEl.textContent = '▲ +' + fmtAvg(delta) + ' since game 1'; dEl.style.color = '#27AE60'; }
     else { dEl.textContent = '▼ ' + fmtAvg(Math.abs(delta)) + ' since game 1'; dEl.style.color = '#E57373'; }
   }
-  setText('trend-caption', 'Your season average across ' + n + ' games. Each point is your average after that game.');
+  var metricLabel = _mgTrendMetric === 'obp' ? 'on-base percentage' : (_mgTrendMetric === 'slg' ? 'slugging percentage' : 'batting average');
+  setText('trend-caption', 'Your season ' + metricLabel + ' across ' + n + ' games. Each point is the cumulative number after that game.');
 }
 
 // ── TRAINING VOLUME TREND (total reps per week, last 8 weeks) ──
@@ -13298,6 +13350,73 @@ function useJournalPrompt() {
   ta.focus();
   try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {}
   try { ybgHaptic(12); } catch (e) {}
+}
+
+// ── DAILY REMINDER ──
+// Coach Young 2026-06-06. Two parts, both no-backend:
+//  1. In-app nudge on the Dashboard when the player hasn't logged today.
+//  2. A downloadable .ics that puts a real daily recurring reminder on their
+//     phone's calendar (the only way to reach a closed app without push/SMS infra).
+function mgLoggedToday() {
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var tk = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+  try { var d = JSON.parse(localStorage.getItem('mg_activity_days') || '[]'); if (Array.isArray(d) && d.indexOf(tk) >= 0) return true; } catch (e) {}
+  var ents = (state && state.entries) || [];
+  for (var i = 0; i < ents.length; i++) {
+    var ed = null; try { ed = parseEntryDate(ents[i].date); } catch (e) {}
+    if (ed && ed.getTime() === today.getTime()) return true;
+  }
+  return false;
+}
+function renderDailyNudge() {
+  var el = document.getElementById('dash-nudge');
+  if (!el) return;
+  var now = new Date();
+  var tk = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  var dismissed = false;
+  try { dismissed = (localStorage.getItem('mg_nudge_dismissed') === tk); } catch (e) {}
+  if (dismissed || mgLoggedToday()) { el.style.display = 'none'; return; }
+  var streak = 0; try { streak = calculateStreak(); } catch (e) {}
+  var txt = document.getElementById('dash-nudge-text');
+  if (txt) {
+    if (streak >= 1) txt.innerHTML = "Keep your <strong style='color:var(--gold);'>" + streak + "-day streak</strong> alive — you haven't logged today.";
+    else txt.textContent = "You haven't logged today. One entry keeps the habit going.";
+  }
+  el.style.display = 'flex';
+}
+function dismissDashNudge() {
+  var el = document.getElementById('dash-nudge');
+  if (el) el.style.display = 'none';
+  try { var n = new Date(); localStorage.setItem('mg_nudge_dismissed', n.getFullYear() + '-' + String(n.getMonth() + 1).padStart(2, '0') + '-' + String(n.getDate()).padStart(2, '0')); } catch (e) {}
+}
+function downloadDailyReminderICS() {
+  function pad(n) { return String(n).padStart(2, '0'); }
+  var now = new Date();
+  var dt = now.getFullYear() + pad(now.getMonth() + 1) + pad(now.getDate());
+  var stamp = now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) + 'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + pad(now.getUTCSeconds()) + 'Z';
+  var ics = [
+    'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//MyGrind//Daily Reminder//EN', 'CALSCALE:GREGORIAN',
+    'BEGIN:VEVENT',
+    'UID:mygrind-daily-' + now.getTime() + '@mygrindapp.com',
+    'DTSTAMP:' + stamp,
+    'DTSTART:' + dt + 'T180000',   // 6:00 PM local (floating time); change it in your calendar
+    'DURATION:PT15M',
+    'RRULE:FREQ=DAILY',
+    'SUMMARY:Log today\'s MyGrind',
+    'DESCRIPTION:Open MyGrind and log today. Keep your streak alive.\\nhttps://www.mygrindapp.com/softball.html',
+    'BEGIN:VALARM', 'TRIGGER:PT0M', 'ACTION:DISPLAY', 'DESCRIPTION:Log today\'s MyGrind', 'END:VALARM',
+    'END:VEVENT', 'END:VCALENDAR'
+  ].join('\r\n');
+  try {
+    var blob = new Blob([ics], { type: 'text/calendar' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url; a.download = 'mygrind-daily-reminder.ics';
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { try { document.body.removeChild(a); URL.revokeObjectURL(url); } catch (e) {} }, 200);
+    try { ybgHaptic(12); } catch (e) {}
+  } catch (e) {}
 }
 
 function calcStats() {
