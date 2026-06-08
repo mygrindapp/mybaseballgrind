@@ -14,7 +14,7 @@
     var URIS = {
       logo: '/assets/img/mg-f153679d.png',
       mark: '/assets/img/mg-4ea08e31.png',
-      mark_white: '/assets/img/mg-67867bf9.png'
+      mark_white: '/assets/img/mg-mark-dark.png'
     };
     function apply() {
       var nodes = document.querySelectorAll("[data-mg-img]");
@@ -2057,10 +2057,11 @@ function signOutAndSwitchAccount() {
 
 <header>
   <div class="logo">
-    <!-- Mark inverted to white via CSS filter — Coach Young 2026-05-07: "the
-         icon should be the white mygrind icon." Pure white reads better
-         against the dark header than the gold mark. The wordmark below
-         stays gold per brand. -->
+    <!-- Dark-surface MyGrind mark (gold compass + baseball, cream "MG") on a
+         transparent background, served via the mark_white key. Coach 2026-06-08:
+         keep the gold on black backgrounds, not a flat-white silhouette. The old
+         mark_white asset was a dark mark baked onto a white tile that read as a
+         sticker on the dark header; replaced with assets/mark-on-dark.png. -->
     <img class="logo-badge" data-mg-img="mark_white" alt="MyGrind" style="width:60px; height:60px; clip-path:none; background:transparent;">
   </div>
   <!-- Phase 1D — Multi-sport toggle. Hidden by default; CSS reveals it only
