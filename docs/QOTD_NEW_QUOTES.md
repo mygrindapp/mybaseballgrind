@@ -10,6 +10,8 @@ friendly, human. No special characters, no banned words (elite/beast/etc.). Most
 themes have a **baseball** and a **softball** version so the app serves the right
 one by sport mode; a few are universal. Author renders as "MyGrind" (no dash).
 
+**Lead with inspiration, not instruction (locked 2026-06-08):** every quote should carry the "control what you can control" energy (theme 11 is the model and gets the most likes) and motivate players to keep logging. Avoid technical coaching tips like command vs velocity, pitch mix, or mechanics. They read as instruction and fall flat.
+
 This file is the durable, GitHub-backed source for the new quotes so they can
 never be lost again. Edit here, then transcribe into `YBG_QOTD`.
 
@@ -98,18 +100,40 @@ never be lost again. Edit here, then transcribe into `YBG_QOTD`.
 
 ---
 
-## Remaining for tomorrow — batch 3 (sport-specific gems) + cleanup
+## Batch 3 — FINALIZED (2026-06-08, themes 21-28)
 
-Draft these in the same voice, then fold in the leftover original themes (dedupe):
+Reworked from the original "sport-specific gems" into the locked INSPIRATIONAL / mindset direction (see Voice note above; the technical coaching-tip angles were cut). Approved one-by-one with Coach.
 
-- **Command over velocity** (BB): the pitcher who throws 3 for strikes beats the one who throws 5 hard
-- **Breaking ball off the fastball** (BB): the fastball earns the breaking ball
-- **Speed changes the room** (BB): the 60 time / run tool
-- **The rise ball born in the bullpen** (SB)
-- **Drop ball is physics, rise ball is faith** (SB): throw both with conviction
-- **Know your role at DP/Flex** (SB)
-- **Slap and bunt versatility** (SB): master both, coaches have no answer
-- **The little things scouts see**: throw across the diamond + run to first, before the swing
-- Dedupe remaining originals: visualization / mental reps, own your mistakes (say it out loud), bad calls happen, every drill is a story (identity), ask questions, the game is hard for everyone (keep going), stay coachable, train slow play fast, your weak spot needs reps.
+**21. Command Over Velocity** (baseball)
+- "Velocity turns heads. Command keeps you pitching, and you build it one bullpen at a time."
 
-Then: integrate full set into `YBG_QOTD`, choose card design ("cosmically good" look), render Story (1080x1920) + Feed (1080x1350) + Square (1080x1080).
+**22. Control the Work** (universal)
+- "You cannot control how fast you improve. You can control showing up and putting in the work. Stack enough days, and the progress shows up whether you felt it coming or not."
+
+**23. Trust the Work** (universal)
+- "You will have days that feel like you are going nowhere. That feeling lies. Progress is too slow to feel day to day, so trust the work and keep showing up. It is adding up even when you cannot feel it."
+
+**24. Born in the Bullpen** (softball)
+- "The rise nobody can catch up to was built on a thousand quiet bullpen reps. What looks like magic in the circle on Saturday is just Tuesday's work showing up."
+
+**25. Commit All the Way** (universal)
+- "Nothing in this game works halfway. Commit all the way to the swing, the throw, the next rep. You will still miss sometimes, but never because you held back."
+
+**26. Own Your Role** (universal)
+- "You will not always be the star. You can always be the player your team counts on. Own whatever role you are handed, and be ready the second your name is called. That player always finds the field."
+
+**27. Sharpen All Five** (universal)
+- "There are five tools in this game, and not one takes care of itself. Work your weaknesses until they get sharp, and work your strengths so they never go dull. The complete player grinds on both."
+
+**28. The Little Things** (universal)
+- "Long before anyone notices your swing, they notice how you run to first and hustle on and off the field. The little things you do when you think no one is watching are exactly the ones that get remembered."
+
+### Parked for a future theme
+- **Free Bases** (baseball): "walks give away free bases, and free bases beat you." (Cut from #21; good idea, needs its own quote.)
+
+---
+
+## Still remaining
+- **Dedupe the leftover originals** into the inspirational direction: visualization / mental reps, own your mistakes (say it out loud), bad calls happen, every drill is a story (identity), ask questions, the game is hard for everyone (keep going), stay coachable, train slow play fast, your weak spot needs reps. Rework any that read as instruction; cut anything redundant with themes 1-28.
+- **Integrate** the full finalized set into `YBG_QOTD` in `softball.html`. Decide the author string first (this doc says "MyGrind"; the live app array uses "The Grind").
+- **Render** Story (1080x1920) + Feed (1080x1350) + Square (1080x1080) with `scripts/build_qotd.py`.
