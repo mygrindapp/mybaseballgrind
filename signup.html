@@ -2104,6 +2104,17 @@ select.field-input {
 .settings-support-line a { color: #C9A84C; text-decoration: none; font-weight: 600; }
 .settings-support-line a:hover { text-decoration: underline; }
 </style>
+<!-- Meta Pixel (My Pixel · 326334441984368) -->
+<script>
+!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+document,'script','https://connect.facebook.net/en_US/fbevents.js');
+fbq('init','326334441984368');fbq('track','PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=326334441984368&ev=PageView&noscript=1"/></noscript>
+<!-- End Meta Pixel -->
 </head>
 <body>
 
@@ -5590,6 +5601,18 @@ function recordTrialStartServerSide() {
                 method: 'signup_flow',
                 plan:   state.preferredPlan || 'unknown',
                 sport:  state.familySport  || 'unknown'
+              });
+            }
+          } catch (_) {}
+          // Meta Pixel conversion: fires at the same server-confirmed, brand-new
+          // signup moment as the GA sign_up event above (state.startedAt guards
+          // this whole block to exactly once). This is THE event to optimize
+          // Meta ad delivery on. Pixel base code lives in <head>.
+          try {
+            if (typeof fbq === 'function') {
+              fbq('track', 'CompleteRegistration', {
+                content_name: 'trial_started',
+                status: true
               });
             }
           } catch (_) {}
