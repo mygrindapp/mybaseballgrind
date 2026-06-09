@@ -6,7 +6,7 @@
 | --- | --- |
 | `00-the-game-is-80-mental-practice.png` | The game is 80% mental. Practice is 90% physical. Grind the body now so your mind is free when it counts. |
 | `01-good-grades-keep-you-eligible-and.png` | Good grades keep you eligible and on the field. Take care of the classroom first. No coach can recruit a player who cannot suit up. |
-| `02-one-pitch-one-at-bat-one.png` | One pitch. One at-bat. One inning. Win the moment in front of you and the score takes care of itself. |
+| `02-one-pitch-one-at-bat-one.png` | One pitch. One at-bat. One inning. Win the moment in front of you, and the score takes care of itself. |
 | `03-practice-does-not-make-perfect-it.png` | Practice does not make perfect. It makes permanent. A lazy rep teaches the wrong thing, so do it right or do it again. |
 | `04-someone-will-always-be-bigger-or.png` | Someone will always be bigger or faster. Keep your grades up and keep grinding. Others fall off, doors open, and hard work beats talent when talent stops working. |
 | `05-you-cannot-control-how-fast-you.png` | You cannot control how fast you improve. You can control showing up and putting in the work. Stack enough days, and the progress shows up whether you felt it coming or not. |

@@ -117,7 +117,7 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { background: #181614; color: #F5F0EB; font-family: 'Barlow', Arial, sans-serif; font-size: 16px; min-height: 100vh; }
-.screen { display: none; flex-direction: column; min-height: 100vh; padding: 0 0 80px; max-width: 480px; margin: 0 auto; }
+.screen { display: none; flex-direction: column; min-height: 100vh; padding: 0 0 100px; max-width: 480px; margin: 0 auto; } /* 80→100px 2026-06-09 cut-off audit: .bnav is ~77px on home-indicator iPhones (10 + 33 button + 34 safe-area), so 80px left 3px of clearance */
 .screen.on { display: flex; }
 .screen-body { padding: 24px 24px 0; flex: 1; }
 

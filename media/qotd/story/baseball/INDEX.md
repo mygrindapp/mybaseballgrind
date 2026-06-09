@@ -11,9 +11,9 @@
 | `04-confidence-is-built-in-the-grind.png` | Confidence is built in the grind, never handed to you. Once you feel the work you put in, a cold swing cannot shake you. That belief keeps you playing long after others quit. |
 | `05-when-your-pitcher-is-grinding-be.png` | When your pitcher is grinding, be the one who jogs in and picks him up. Great teammates are remembered longer than great stats. |
 | `06-a-thousand-swings-in-the-cage.png` | A thousand swings in the cage for the one that wins the game. Nobody sees the thousand. Everybody sees the one. |
-| `07-the-scoreboard-tells-you-who-won.png` | The scoreboard tells you who won. Your notes tell you why, and turn a rough night into next week's adjustment. |
+| `07-the-scoreboard-tells-you-who-won.png` | The scoreboard tells you who won. Your notes tell you why and turn a rough night into next week's adjustment. |
 | `08-games-are-not-won-in-the.png` | Games are not won in the first inning. They are won in the last, when your legs are heavy and your training takes over. |
-| `09-even-hall-of-famers-failed-more.png` | Even Hall of Famers failed more than 65% of the time. They never gave up, digging in to get a base hit 100% of the time. |
+| `09-even-hall-of-famers-failed-more.png` | Even Hall of Famers failed more than 65% of the time. They never gave up. They dug in expecting a hit every single time. |
 | `10-your-offseason-is-where-the-season.png` | Your offseason is where the season is won. The work nobody sees in the winter is what shows up under the lights. |
 | `11-the-grind-is-the-work-nobody.png` | The grind is the work nobody sees. Tired, hungry, hands bleeding, you keep going. That is how you stay ready and never come off the field. |
 | `12-you-are-only-as-good-as.png` | You are only as good as your last game, they say. But coaches remember who kept believing and picked up the team. Be that player. |

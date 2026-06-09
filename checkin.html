@@ -157,8 +157,12 @@
 <body>
 <div class="app">
   <header>
-    <a class="mark" href="softball.html" style="text-decoration:none;">MYGRIND</a>
-    <a class="who" href="softball.html" style="text-decoration:none;">&larr; Back to journal</a>
+    <!-- 2026-06-09: both links were "back to journal" → softball.html, which
+         replayed the QOTD splash mid-session (annoying round trip). The
+         mg_skip_qotd_once flag tells the app to skip the quote one time and
+         land straight on the Dashboard (the app's default landing). -->
+    <a class="mark" href="softball.html" onclick="try{sessionStorage.setItem('mg_skip_qotd_once','1')}catch(e){}" style="text-decoration:none;">MYGRIND</a>
+    <a class="who" href="softball.html" onclick="try{sessionStorage.setItem('mg_skip_qotd_once','1')}catch(e){}" style="text-decoration:none;">&larr; Back to dashboard</a>
   </header>
   <div class="datestrip" id="datestrip"></div>
 

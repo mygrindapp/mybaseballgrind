@@ -7113,15 +7113,21 @@ input[type="number"] {
 
   </div>
 
-</main>
-
-<!-- ── FOOTER ── -->
+<!-- ── FOOTER ── Moved INSIDE <main> 2026-06-09 (cut-off audit): the
+     2026-05-17 nav-drift fix made <main> the app's scroll container and
+     the body static, which stranded this footer below a viewport that
+     never scrolls — it was physically unreachable on the Stats/Profile
+     tabs that show it. Inside main it scrolls with the content. Toggle
+     logic (showPanel + the late display:block script) is getElementById-
+     based, so no JS changes needed. -->
 <div id="social-share-footer" style="background:#080804; border-top:1px solid #1A1800; padding:24px; text-align:center; position:relative; z-index:1;">
   <div style="max-width:480px; margin:0 auto;">
     <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#3D3530; margin-bottom:10px;">© 2026 MyGrind · All Rights Reserved</div>
     <div style="font-family:'Barlow',sans-serif; font-size:11px; color:#2A2800;">support@mygrindapp.com</div>
   </div>
 </div>
+
+</main>
 <script>
 // ─── DATA STORE ───────────────────────────────────────────
 // Load saved state from localStorage on startup (if present)
@@ -20258,7 +20264,7 @@ var YBG_QOTD = [
   { q: "Nobody sees the 6am tee work or the grounders after everyone leaves. That quiet work is who you are when the lights come on.", a: "MyGrind", sport: "baseball" },
   { q: "Nobody sees the early cage swings or the reps after practice ends. That quiet work is who you are when the lights come on.", a: "MyGrind", sport: "softball" },
   { q: "Your bat will go cold and your glove will have rough days. The way you run out every grounder never has to. That effort is always yours.", a: "MyGrind", sport: "baseball" },
-  { q: "Your bat will go quiet and the rise ball will fool you. The way you run out every grounder never has to. That effort is always yours.", a: "MyGrind", sport: "softball" },
+  { q: "The rise ball will fool you and your bat will go quiet. The way you run out every grounder never has to. That effort is always yours.", a: "MyGrind", sport: "softball" },
   { q: "Talent gets your name on the roster. The swings nobody sees get it into the lineup.", a: "MyGrind", sport: "baseball" },
   { q: "Talent gets you on the team. The reps nobody sees put you in the circle when it counts.", a: "MyGrind", sport: "softball" },
   { q: "An 0-for-4 is not the end of your story. It is four notes for your next at-bat. Learn one thing and get back up there.", a: "MyGrind", sport: "baseball" },
@@ -20270,14 +20276,14 @@ var YBG_QOTD = [
   { q: "A thousand swings in the cage for the one that wins the game. Nobody sees the thousand. Everybody sees the one.", a: "MyGrind", sport: "baseball" },
   { q: "A thousand cuts in the cage for the one that wins the game. Nobody sees the thousand. Everybody sees the one.", a: "MyGrind", sport: "softball" },
   { q: "The game is 80% mental. Practice is 90% physical. Grind the body now so your mind is free when it counts.", a: "MyGrind" },
-  { q: "The scoreboard tells you who won. Your notes tell you why, and turn a rough night into next week's adjustment.", a: "MyGrind", sport: "baseball" },
-  { q: "The scoreboard tells you who won. Your notes tell you why, and turn a rough weekend into next week's adjustment.", a: "MyGrind", sport: "softball" },
+  { q: "The scoreboard tells you who won. Your notes tell you why and turn a rough night into next week's adjustment.", a: "MyGrind", sport: "baseball" },
+  { q: "The scoreboard tells you who won. Your notes tell you why and turn a rough weekend into next week's adjustment.", a: "MyGrind", sport: "softball" },
   { q: "Games are not won in the first inning. They are won in the last, when your legs are heavy and your training takes over.", a: "MyGrind", sport: "baseball" },
   { q: "Games are not won in the first inning. They are won in the last, when everyone is tired and your conditioning takes over.", a: "MyGrind", sport: "softball" },
   { q: "Good grades keep you eligible and on the field. Take care of the classroom first. No coach can recruit a player who cannot suit up.", a: "MyGrind" },
-  { q: "Even Hall of Famers failed more than 65% of the time. They never gave up, digging in to get a base hit 100% of the time.", a: "MyGrind", sport: "baseball" },
-  { q: "Even the best to ever play failed more than 65% of the time. They never gave up, stepping in to get a base hit 100% of the time.", a: "MyGrind", sport: "softball" },
-  { q: "One pitch. One at-bat. One inning. Win the moment in front of you and the score takes care of itself.", a: "MyGrind" },
+  { q: "Even Hall of Famers failed more than 65% of the time. They never gave up. They dug in expecting a hit every single time.", a: "MyGrind", sport: "baseball" },
+  { q: "Even the best to ever play failed more than 65% of the time. They never gave up. They stepped in expecting a hit every single time.", a: "MyGrind", sport: "softball" },
+  { q: "One pitch. One at-bat. One inning. Win the moment in front of you, and the score takes care of itself.", a: "MyGrind" },
   { q: "Your offseason is where the season is won. The work nobody sees in the winter is what shows up under the lights.", a: "MyGrind", sport: "baseball" },
   { q: "Your offseason is where the season is won. The cold winter reps nobody sees are what show up when the game is on the line.", a: "MyGrind", sport: "softball" },
   { q: "The grind is the work nobody sees. Tired, hungry, hands bleeding, you keep going. That is how you stay ready and never come off the field.", a: "MyGrind", sport: "baseball" },
@@ -20370,6 +20376,15 @@ function closeQotd() {
 // Show quote on every app open — after access check clears (800ms delay)
 window.addEventListener('load', function() {
   setTimeout(function() {
+    // Returning from an in-app page (Daily Check-In sets this)? Skip the
+    // quote replay — they already saw today's quote when they opened the
+    // app — and let default routing land them on the Dashboard (2026-06-09).
+    try {
+      if (sessionStorage.getItem('mg_skip_qotd_once') === '1') {
+        sessionStorage.removeItem('mg_skip_qotd_once');
+        return;
+      }
+    } catch (e) {}
     // Only show if not on the trial/paywall overlay
     var trialOverlay = document.getElementById('trial-overlay');
     var isBlocked = trialOverlay && trialOverlay.style.display === 'flex';
