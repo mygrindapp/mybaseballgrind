@@ -249,6 +249,44 @@ input.code-input {
   margin-right: 8px;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── TODAY'S GRIND — daily quote card shown above sign-in so a
+   returning user gets the brand moment, not a cold form. ─── */
+.qotd {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, #1F1B18, #15120F);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px 18px;
+  margin-bottom: 18px;
+  text-align: center;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4);
+}
+.qotd-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.qotd-quote {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--white);
+  margin-bottom: 14px;
+}
+.qotd-mark {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: var(--gold-dark);
+  text-transform: uppercase;
+}
 </style>
 </head>
 <body>
@@ -256,11 +294,18 @@ input.code-input {
 <div class="wordmark">MY<span>GRIND</span></div>
 <div class="tagline">Players Journal · Built for the Grind</div>
 
+<!-- ─── TODAY'S GRIND — daily-quote brand moment for returning users. ─── -->
+<div class="qotd" id="qotd-card">
+  <div class="qotd-label">Today's Grind</div>
+  <p class="qotd-quote" id="qotd-quote">&ldquo;Two things you control: your effort and your attitude. Own them both.&rdquo;</p>
+  <div class="qotd-mark">MyGrind</div>
+</div>
+
 <!-- ─── STATE: ENTER EMAIL ─────────────────────────────────── -->
 <div class="card" id="state-enter-email">
   <h1>Sign <span>In</span></h1>
   <div class="gold-bar"></div>
-  <p class="sub">We'll email you a 6-digit code. Type it in on the next screen to finish signing in. Works on every device.</p>
+  <p class="sub">Welcome back. We'll email you a 6-digit code. Type it in on the next screen to finish signing in. Works on every device.</p>
 
   <label for="email-input">Your Email</label>
   <input type="email" id="email-input" placeholder="you@email.com" autocomplete="email" inputmode="email" autocapitalize="off" autocorrect="off">
@@ -690,6 +735,35 @@ window.addEventListener('DOMContentLoaded', async () => {
     }
   } catch (e) { /* old browser — user can tap the button manually */ }
 });
+
+// ─── TODAY'S GRIND — pick the daily quote for the sign-in brand moment ──
+// Sport-neutral lines pulled from the in-app QOTD library (the "universal"
+// set in softball.html). Chosen by day-of-year so it rotates daily without
+// loading the whole app. Falls back to the quote already in the markup.
+(function renderSigninQotd() {
+  var QUOTES = [
+    "Two things you control: your effort and your attitude. Own them both.",
+    "Nothing in this game works halfway. Commit all the way to the swing, the throw, the next rep. You will still miss sometimes, but never because you held back.",
+    "Stay ready so you don't have to get ready.",
+    "You don't rise to the occasion. You fall to your level of preparation.",
+    "Talent opens the door. Discipline keeps you in the room.",
+    "Practice does not make perfect. It makes permanent. A lazy rep teaches the wrong thing, so do it right or do it again.",
+    "One pitch. One at-bat. One inning. Win the moment in front of you and the score takes care of itself.",
+    "Pressure is what you make it. Train hard enough that pressure feels like Tuesday.",
+    "Hustle is the only stat that never slumps.",
+    "Stats follow effort. Effort doesn't follow stats.",
+    "Play for the name on the front. Your name on the back takes care of itself.",
+    "The game is 80% mental. Practice is 90% physical. Grind the body now so your mind is free when it counts."
+  ];
+  try {
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var day = Math.floor((now - start) / 86400000);
+    var q = QUOTES[day % QUOTES.length];
+    var el = document.getElementById('qotd-quote');
+    if (el) el.textContent = '“' + q + '”';
+  } catch (e) { /* leave the default quote in the markup */ }
+})();
 </script>
 
 </body>

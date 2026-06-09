@@ -49,7 +49,7 @@
 <script defer src="/_vercel/insights/script.js"></script>
 
 <!-- ── PWA MANIFEST ── -->
-<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22My%20Grind%22%2C%22short_name%22%3A%22My%20Grind%22%2C%22start_url%22%3A%22./%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait-primary%22%2C%22background_color%22%3A%22%23181614%22%2C%22theme_color%22%3A%22%23C9A84C%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/apple-touch-icon.png%22%2C%22sizes%22%3A%22180x180%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-192.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%5D%7D">
+<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22My%20Grind%22%2C%22short_name%22%3A%22My%20Grind%22%2C%22start_url%22%3A%22/softball.html%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait-primary%22%2C%22background_color%22%3A%22%23181614%22%2C%22theme_color%22%3A%22%23C9A84C%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/apple-touch-icon.png%22%2C%22sizes%22%3A%22180x180%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-192.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%5D%7D">
 
 <!-- ── APP ICONS — embedded as base64 ── -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://www.mygrindapp.com/assets/apple-touch-icon.png">
@@ -7993,6 +7993,29 @@ function checkAccess() {
       return;
     }
   } catch (_) { /* fall through to bounce */ }
+
+  // ─── Returning-user routing (2026-06-09) ──────────────────
+  // A returner whose session lapsed but who has used MyGrind on THIS device
+  // (a remembered email or a built player profile) should land on Sign In,
+  // not the new-customer signup wall. Pass the known email so signin.html
+  // prefills it. Devices with no prior signal still fall through to signup —
+  // we can't tell a returner from a brand-new visitor when storage is empty.
+  try {
+    var _knownEmail = '';
+    try {
+      var _accR = JSON.parse(localStorage.getItem('ybg_access') ||
+                             localStorage.getItem('ybg_softball_access') || '{}');
+      if (_accR && _accR.email) _knownEmail = String(_accR.email).trim().toLowerCase();
+    } catch (_) {}
+    var _hasProfile = false;
+    try { _hasProfile = !!localStorage.getItem('mg_player_profile'); } catch (_) {}
+    if (_knownEmail || _hasProfile) {
+      var _signinUrl = 'https://www.mygrindapp.com/signin.html';
+      if (_knownEmail) _signinUrl += '?email=' + encodeURIComponent(_knownEmail);
+      window.location.href = _signinUrl;
+      return;
+    }
+  } catch (_) { /* fall through to signup */ }
 
   // Truly anonymous visitor — send to signup.
   window.location.href = 'https://www.mygrindapp.com/signup.html';
