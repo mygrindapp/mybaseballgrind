@@ -2702,7 +2702,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     </div>
 
     <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.6; margin-bottom:20px;">
-      Tap a question to expand. Still stuck? Use Send Feedback from the More menu and we will get back to you fast.
+      Tap a question to expand. Still stuck? Use the Send Feedback button at the bottom of this screen and we will get back to you fast.
     </div>
 
     <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
@@ -2737,12 +2737,12 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
       <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">What if I forget my account or lose access?</summary>
-      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Tap Send Feedback in the More menu and email <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a> with your name and your parent's email. We will recover it for you.</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Tap Send Feedback at the bottom of this screen, or email <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a> with your name and your parent's email. We will recover it for you.</div>
     </details>
 
     <details style="background:#1A1410; border:1px solid var(--gold-dark); border-radius:4px; padding:14px 16px; margin-bottom:10px;">
       <summary style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--gold); cursor:pointer; outline:none;">How do I contact support?</summary>
-      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Tap Send Feedback in the More menu. It opens a pre-filled email to <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a>. We answer fast.</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.7; padding-top:10px;">Tap Send Feedback at the bottom of this screen. It opens our feedback form and goes straight to <a href="mailto:support@mygrindapp.com" style="color:var(--gold);">support@mygrindapp.com</a>. We answer fast.</div>
     </details>
 
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:18px;">
@@ -3005,6 +3005,23 @@ input[type="number"] {
         <button onclick="dashCoachRefresh()" style="background:transparent;border:1px solid var(--gold-dark);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 10px;border-radius:8px;cursor:pointer;">Refresh</button>
       </div>
       <div id="dash-coach-body" style="padding:16px 18px;"></div>
+    </div>
+
+    <!-- ── FIRST-OPEN WELCOME (2026-06-09) — one-time card for a player's
+         first arrival from onboarding. onboarding.html sets
+         mg_first_journal_open=1 (already KEEP-listed here as the
+         "welcome-state flag"); this card is its missing consumer. Shows
+         until the first entry is logged or the player dismisses it. -->
+    <div id="first-open-welcome" class="card" style="display:none; margin-bottom:20px; background:linear-gradient(135deg,var(--gold) 0%,#8B2050 100%); border:2px solid #FFD966; padding:20px; text-align:center;">
+      <div style="font-size:40px; line-height:1; margin-bottom:8px;">👋</div>
+      <div id="first-open-welcome-title" style="font-family:'Bebas Neue',cursive; font-size:26px; letter-spacing:2px; color:#161210; line-height:1;">WELCOME TO MYGRIND</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:#2A0018; margin-top:4px; margin-bottom:14px;">Your journal is ready. One entry starts your streak — log today's work.</div>
+      <button onclick="firstOpenWelcomeStart()" style="background:#161210; color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:1px solid #000; border-radius:8px; cursor:pointer;">
+        📓 Log My First Entry
+      </button>
+      <button onclick="dismissFirstOpenWelcome()" style="background:transparent; color:#2A0018; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:12px 16px; border:none; cursor:pointer; margin-left:6px;">
+        Dismiss
+      </button>
     </div>
 
     <!-- ── MILESTONE CELEBRATION (hidden by default, shown when hit) ── -->
@@ -4532,6 +4549,7 @@ input[type="number"] {
         <div class="empty-icon">📓</div>
         <h3>No Entries Yet</h3>
         <p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day. Learn from it and move on.</p>
+        <button type="button" onclick="mgScrollToEntryForm()" style="margin-top:14px; background:var(--gold); color:var(--black); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:none; border-radius:8px; cursor:pointer;">📓 Log Your First Entry</button>
       </div>
     </div>
 
@@ -8982,6 +9000,11 @@ function init() {
   try { buildRepChips(); } catch(e) { console.warn('[MG] init buildRepChips:', e); }
   try { buildSoloWorkChips(); } catch(e) { console.warn('[MG] init buildSoloWorkChips:', e); }
 
+  // First-open welcome — one-time greeting for players arriving from
+  // onboarding (mg_first_journal_open). Runs after renderAll so the
+  // entries check sees loaded state.
+  try { renderFirstOpenWelcome(); } catch(e) { console.warn('[MG] init firstOpenWelcome:', e); }
+
   // ── CREATOR ACCESS & OLD FLAG CLEANUP ──────────────
   try {
     const _acc = JSON.parse(localStorage.getItem('ybg_softball_access') || '{}');
@@ -11524,10 +11547,64 @@ function toggleEntryCard(entryId) {
   if (!isOpen) ybgHaptic(8);
 }
 
+// Empty-state CTA — "No Entries Yet" needs a tappable next step, not just
+// copy pointing "above" (2026-06-09 audit). Scrolls back up to the entry form.
+// Instant (not smooth) scroll — smooth is unreliable inside the fixed app
+// shell's scroll container and can silently no-op.
+function mgScrollToEntryForm() {
+  try {
+    var el = document.getElementById('j-type');
+    if (el) el.scrollIntoView({ block: 'center' });
+  } catch (e) {}
+}
+
+// ─── FIRST-OPEN WELCOME (2026-06-09) ─────────────────────
+// Consumer for the mg_first_journal_open flag onboarding.html sets at its
+// final exit. Greets the player by name on their first Dashboard arrival
+// and hands them straight into their first entry. The flag survives until
+// the first entry is logged (or an explicit dismiss) so an accidental
+// reload doesn't eat the welcome. Defined in THIS script block (not a later
+// one) because init() is invoked at the end of this block — a later-block
+// definition is a ReferenceError at init time.
+function renderFirstOpenWelcome() {
+  var card = document.getElementById('first-open-welcome');
+  if (!card) return;
+  var flag = '0';
+  try { flag = localStorage.getItem('mg_first_journal_open') || '0'; } catch (e) {}
+  var hasEntries = !!(state && state.entries && state.entries.length);
+  if (flag !== '1' || hasEntries) {
+    // First entry exists → the welcome did its job; retire the flag.
+    if (flag === '1' && hasEntries) { try { localStorage.removeItem('mg_first_journal_open'); } catch (e) {} }
+    card.style.display = 'none';
+    return;
+  }
+  var nm = '';
+  try { var p = JSON.parse(localStorage.getItem('mg_player_profile') || '{}'); nm = p.name || ''; } catch (e) {}
+  if (!nm) { try { var p2 = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); nm = p2.firstName || p2.name || ''; } catch (e) {} }
+  var titleEl = document.getElementById('first-open-welcome-title');
+  if (titleEl) titleEl.textContent = nm ? ('WELCOME, ' + nm.toUpperCase()) : 'WELCOME TO MYGRIND';
+  card.style.display = 'block';
+  try { if (typeof ybgHaptic === 'function') ybgHaptic([40, 60, 40]); } catch (e) {}
+}
+
+function firstOpenWelcomeStart() {
+  try { localStorage.removeItem('mg_first_journal_open'); } catch (e) {}
+  var card = document.getElementById('first-open-welcome');
+  if (card) card.style.display = 'none';
+  mgTab('journal', 'tab-journal');
+  setTimeout(mgScrollToEntryForm, 200);
+}
+
+function dismissFirstOpenWelcome() {
+  try { localStorage.removeItem('mg_first_journal_open'); } catch (e) {}
+  var card = document.getElementById('first-open-welcome');
+  if (card) card.style.display = 'none';
+}
+
 function renderEntries() {
   const container = document.getElementById('entries-list');
   if (!state.entries.length) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day. Learn from it and move on.</p></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day. Learn from it and move on.</p><button type="button" onclick="mgScrollToEntryForm()" style="margin-top:14px; background:var(--gold); color:var(--black); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:none; border-radius:8px; cursor:pointer;">📓 Log Your First Entry</button></div>`;
     return;
   }
   // Apply the active filter window. If it lands on an empty set but the

@@ -375,15 +375,18 @@ button.btn-gold:disabled { opacity: 0.4; cursor: not-allowed; }
   }
 
   // Validation rule: a response is only meaningful if EITHER at least one
-  // selected chip carries personal detail (>= 15 chars) OR the overall
-  // comment carries personal context (>= 30 chars). Prior versions auto-
+  // selected chip carries personal detail (>= 10 chars) OR the overall
+  // comment carries personal context (>= 20 chars). Prior versions auto-
   // filled chips with canned defaults like "Stay through the ball, trust
   // your prep" which landed in the player's dashboard with zero ties to
   // their actual question. That was the source of "the coach didn't make
   // sense" feedback. Block the submit until the coach writes something
   // personal so we never ship a generic, context-free response again.
-  var MIN_CHIP_DETAIL = 15;
-  var MIN_COMMENT     = 30;
+  // 2026-06-09: floors lowered 15→10 / 30→20 — the old floors also blocked
+  // short-but-real replies ("Try box drills" = 14 chars), and a blocked
+  // coach means a player who hears nothing. Keep the guard, lower the bar.
+  var MIN_CHIP_DETAIL = 10;
+  var MIN_COMMENT     = 20;
 
   window.submitResponse = function() {
     $('err-toast').style.display = 'none';
