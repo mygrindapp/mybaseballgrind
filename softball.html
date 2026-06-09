@@ -20036,11 +20036,15 @@ window.addEventListener('load', function() {
       // First-signup routing (Coach Young 2026-05-27): new users land on
       // Profile (panel-players) so they can identify themselves and tap
       // "Continue to Academics" at the bottom. Once Academics has been
-      // visited at least once OR the profile is complete, default is
-      // Journal. isProfileComplete + hasVisitedAcademics defined below.
+      // visited at least once OR the profile is complete, default is the
+      // Dashboard. isProfileComplete + hasVisitedAcademics defined below.
+      // Changed 2026-06-09 from Journal -> Dashboard: returning users land on
+      // the engagement home (streak, Your Week, daily nudge) instead of a
+      // blank log screen. Logging stays one tap away via the bottom Journal
+      // tab + the Dashboard "Log Now" nudge when today is unlogged.
       var graduated = (typeof isProfileComplete === 'function' && isProfileComplete()) ||
                       (typeof hasVisitedAcademics === 'function' && hasVisitedAcademics());
-      var defaultTab = graduated ? 'journal' : 'players';
+      var defaultTab = graduated ? 'dashboard' : 'players';
       mgTab(defaultTab, 'tab-' + defaultTab);
     }
   }, 250);
@@ -20168,8 +20172,12 @@ function showQotd() {
 function closeQotd() {
   var overlay = document.getElementById('qotd-overlay');
   if (overlay) overlay.style.display = 'none';
-  // Land on Daily Journal
-  showPanel('journal');
+  // Land on the Dashboard (changed 2026-06-09 from Journal). The QOTD popup
+  // shows on every open, so this is the real default-landing screen — drop
+  // returning users on the engagement home (streak / Your Week / Log Now
+  // nudge), not a blank log screen. Logging stays one tap via the bottom
+  // Journal tab.
+  showPanel('dashboard');
 }
 
 // Show quote on every app open — after access check clears (800ms delay)
