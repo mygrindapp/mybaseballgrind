@@ -2866,6 +2866,24 @@ input[type="number"] {
       <button type="button" onclick="dismissDashNudge()" aria-label="Dismiss" style="flex-shrink:0; background:transparent; border:none; color:var(--grey); font-size:18px; line-height:1; cursor:pointer; padding:4px 6px;">×</button>
     </div>
 
+    <!-- ══ DAILY CHECK-IN — top-of-dashboard daily action ══
+         Surfaced 2026-06-02 (nav redesign); moved above the install card
+         2026-06-09 flow audit — a DAILY ritual outranks a one-time utility.
+         Sub line is now LIVE: renderDashCheckin() reads today's readiness
+         from mg_readiness_log (minor-scoped) so the card shows "✓ Checked
+         in · Fresh (4.2)" instead of static copy once today's check-in is
+         done. Links straight to checkin.html (also reachable from Develop). -->
+    <a href="checkin.html" class="card" id="dash-checkin-card" style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:linear-gradient(135deg,#1A1410,#100C08); border-left:3px solid var(--gold); cursor:pointer; text-decoration:none;">
+      <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:rgba(232,201,122,0.10); border:1px solid var(--gold-dark);">
+        <svg class="mg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-activity"/></svg>
+      </span>
+      <span style="flex:1; min-width:0;">
+        <span style="display:block; font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--white,#F2EAD9);">Daily Check-In</span>
+        <span id="dash-checkin-sub" style="display:block; font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.4; margin-top:2px;">Log readiness and workload. Two taps, keeps your streak alive.</span>
+      </span>
+      <span style="font-size:22px; color:var(--gold-dark,#B89A4B); flex-shrink:0;">&rsaquo;</span>
+    </a>
+
     <!-- ══ INSTALL MYGRIND — prominent home-screen CTA (dismissible; hidden once installed) ══
          Coach Young 2026-06-06: moved the install prompt out of buried Settings
          to the top of the Dashboard so players actually see it. renderDashInstallCard()
@@ -2918,22 +2936,6 @@ input[type="number"] {
 
       <div id="yw-summary" style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.55; margin-top:14px; text-align:center;"></div>
     </div>
-
-    <!-- ══ DAILY CHECK-IN — top-of-dashboard daily action ══
-         Surfaced here 2026-06-02 (nav redesign, ROADMAP increment 4): the
-         readiness + workload check is a daily habit, so it earns prime
-         Dashboard real estate instead of living only in the Develop hub.
-         Links straight to checkin.html (also reachable from Develop). -->
-    <a href="checkin.html" class="card" id="dash-checkin-card" style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:linear-gradient(135deg,#1A1410,#100C08); border-left:3px solid var(--gold); cursor:pointer; text-decoration:none;">
-      <span style="flex-shrink:0; display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:rgba(232,201,122,0.10); border:1px solid var(--gold-dark);">
-        <svg class="mg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-activity"/></svg>
-      </span>
-      <span style="flex:1; min-width:0;">
-        <span style="display:block; font-family:'Barlow Condensed',sans-serif; font-size:18px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--white,#F2EAD9);">Daily Check-In</span>
-        <span style="display:block; font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.4; margin-top:2px;">Log readiness and workload. Two taps, keeps your streak alive.</span>
-      </span>
-      <span style="font-size:22px; color:var(--gold-dark,#B89A4B); flex-shrink:0;">&rsaquo;</span>
-    </a>
 
     <!-- ══ WHY I GRIND — top of dashboard ══
          Coach Young 2026-05-22: small inspiration card showing the
@@ -3071,21 +3073,12 @@ input[type="number"] {
       <div id="dash-week-body" style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6;"></div>
     </div>
 
-    <div class="grid-3" style="margin-bottom:20px;">
-      <div class="stat-card" style="position:relative; overflow:hidden;">
-        <div id="streak-flame" style="display:none; position:absolute; top:6px; right:8px; font-size:18px; opacity:0.8;">🔥</div>
-        <div class="stat-num" id="dash-streak">0</div>
-        <div class="stat-label">Day Streak</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" id="dash-entries">0</div>
-        <div class="stat-label">Total Entries</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num" id="dash-goals">0</div>
-        <div class="stat-label">Goals Active</div>
-      </div>
-    </div>
+    <!-- grid-3 stat trio (Day Streak / Total Entries / Goals Active) removed
+         2026-06-09 flow audit: the streak appeared 3x on one screen (nudge,
+         Your Week hero, here) and entries/goals are covered by the Your Week
+         card + Season Goals card. The dash-streak / dash-entries / dash-goals
+         / streak-flame writers in renderAll()/updateStreakDisplay() are all
+         null-guarded, so no JS change was needed. -->
 
     <!-- ══ TRAINING VOLUME — auto-aggregated from journal reps ══
          Coach Young 2026-05-08: aggregates state.entries[].reps into season /
@@ -3431,16 +3424,11 @@ input[type="number"] {
          the More menu. Surface a dashboard tile so players see the
          monthly prescription up front. Tapping routes to the existing
          calendar panel — no duplicate render, single source of truth. -->
-    <button onclick="mgTab('calendar', null)" class="card" style="display:flex; align-items:center; justify-content:space-between; width:100%; margin-top:16px; padding:14px 18px; background:var(--card); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:6px; cursor:pointer; text-align:left;">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="font-size:22px; line-height:1; color:var(--gold); display:inline-flex; align-items:center;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-calendar"/></svg></div>
-        <div>
-          <div style="font-family:'Bebas Neue'; font-size:18px; letter-spacing:1.5px; color:var(--gold); line-height:1;">12-Month Training Calendar</div>
-          <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:var(--grey); margin-top:3px;">Weekly prescriptions for every month of the year</div>
-        </div>
-      </div>
-      <div style="font-family:'Bebas Neue'; font-size:20px; color:var(--gold); line-height:1;">→</div>
-    </button>
+    <!-- 12-Month Calendar dashboard tile removed 2026-06-09 flow audit:
+         the Develop hub (2026-06-02 redesign) is the calendar's canonical
+         home and panel-calendar's back-pill already returns there. The
+         dashboard's This Week prescription card still samples the calendar
+         live, so the monthly content stays visible on Home. -->
 
     <!-- ── WEEK RECAP + SHARE WITH FAMILY ── Merged 2026-05-12 (Coach
          Young walkthrough). Two cards used to sit here side by side
@@ -3488,22 +3476,12 @@ input[type="number"] {
            The gold bar didn't carry any meaning. -->
     </div>
 
-    <!-- ── REMINDER BANNER STACK ── Coach Young 2026-05-11: "There
-         should be a reminder or pop up to update grades when quarter
-         and semester grades come out. Also the reminder for weight and
-         height should pop up on journal. Show on Journal because that's
-         where the player is daily."
-         Populated by renderJournalReminders() — fires on tab open + on
-         load. Each banner is dismissable (per-window for grades, per-
-         due-date for H/W) so it doesn't nag forever. -->
-    <div id="journal-reminders"></div>
-
-    <!-- ── DAILY QUOTE (rotates each day) — bigger format for journal ── -->
-    <div id="daily-quote-card" class="card" style="margin-bottom:20px; background:linear-gradient(135deg,#1A0010,#0E000A); border-left:4px solid var(--gold); padding:24px 26px;">
-      <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:14px; text-align:center;">Today's Grind</div>
-      <div id="daily-quote-text" style="font-family:Georgia,serif; font-size:20px; font-style:italic; color:var(--white); line-height:1.6; text-align:center;"></div>
-      <div id="daily-quote-author" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:2px; color:var(--gold); margin-top:14px; text-align:center; text-transform:uppercase;"></div>
-    </div>
+    <!-- Reminder banners + daily quote moved BELOW the entry form
+         2026-06-09 flow audit: during grade windows a quarterly task
+         (the grades nag) and a second quote moment (the QOTD already gets
+         the open splash) were pushing the #1 daily action a full screen
+         down. The form now leads; both blocks render between it and the
+         entries history, where they're still seen on every visit. -->
 
     <!-- "New Entry" card title removed 2026-05-10 walkthrough — the
          panel banner ("DAILY JOURNAL") and the obvious form below
@@ -3516,12 +3494,11 @@ input[type="number"] {
            it interactive AND adding a loud visual banner below the
            save button when date !== today, so the player can't pick a
            past date and not realize they did. -->
+      <!-- Entry Type now leads the row (2026-06-09 flow audit): on phones the
+           form-row stacks vertically and the kid's mental model is "what did
+           I do," not "when" — the date already defaults to today. IDs and
+           handlers unchanged; this is a pure column swap. -->
       <div class="form-row">
-        <div>
-          <label>Date</label>
-          <input type="date" id="j-date" onchange="updateBackdateBanner(); try { applyOffDayLock(); toggleGameStats(); } catch(e) {}">
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px; line-height:1.4;">Defaults to today. Pick a past date if you forgot to log a missed day.</div>
-        </div>
         <div>
           <label>Entry Type</label>
           <select id="j-type" onchange="toggleGameStats()">
@@ -3532,6 +3509,11 @@ input[type="number"] {
             <option value="reflection">Reflection</option>
             <option value="offday">😴 Off Day (full rest)</option>
           </select>
+        </div>
+        <div>
+          <label>Date</label>
+          <input type="date" id="j-date" onchange="updateBackdateBanner(); try { applyOffDayLock(); toggleGameStats(); } catch(e) {}">
+          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:4px; line-height:1.4;">Defaults to today. Pick a past date if you forgot to log a missed day.</div>
         </div>
       </div>
 
@@ -4479,7 +4461,29 @@ input[type="number"] {
          (22px to match the dashboard card-title bumps from today), and more
          margin-top breathing room so the player perceives "here's where I
          REVIEW past entries" as a distinct surface from the form above. -->
-    <div style="margin-top:56px; padding:20px 18px 18px; background:var(--card2); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:4px;">
+    <!-- ── REMINDER BANNER STACK ── Coach Young 2026-05-11: "There
+         should be a reminder or pop up to update grades when quarter
+         and semester grades come out. Also the reminder for weight and
+         height should pop up on journal. Show on Journal because that's
+         where the player is daily."
+         Populated by renderJournalReminders() — fires on tab open + on
+         load. Each banner is dismissable (per-window for grades, per-
+         due-date for H/W) so it doesn't nag forever.
+         Moved below the entry form 2026-06-09 (flow audit) so a quarterly
+         task never outranks the daily logging action. -->
+    <div id="journal-reminders" style="margin-top:24px;"></div>
+
+    <!-- ── DAILY QUOTE (rotates each day) — bigger format for journal ──
+         Moved below the entry form 2026-06-09 (flow audit): the QOTD
+         already owns the app-open splash; here it reads as a reward after
+         logging instead of a hurdle before it. -->
+    <div id="daily-quote-card" class="card" style="margin-top:20px; margin-bottom:20px; background:linear-gradient(135deg,#1A0010,#0E000A); border-left:4px solid var(--gold); padding:24px 26px;">
+      <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:14px; text-align:center;">Today's Grind</div>
+      <div id="daily-quote-text" style="font-family:Georgia,serif; font-size:20px; font-style:italic; color:var(--white); line-height:1.6; text-align:center;"></div>
+      <div id="daily-quote-author" style="font-family:'Barlow Condensed'; font-size:13px; letter-spacing:2px; color:var(--gold); margin-top:14px; text-align:center; text-transform:uppercase;"></div>
+    </div>
+
+    <div style="margin-top:32px; padding:20px 18px 18px; background:var(--card2); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:4px;">
 
     <div style="display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--border);">
       <div>
@@ -7318,6 +7322,21 @@ function updateLastBackupDisplay() {
   } catch(e) { el.textContent = 'Last backup: ' + last; }
 }
 
+// ─── INTERRUPT BUDGET (2026-06-09) ───────────────────────
+// One big ask per page load. Before this, a player hitting a 3-day streak
+// got the milestone card + push opt-in + Google-review overlay + backup
+// banner all at once (screenshot-verified pile-up). Milestone celebrations
+// are inline cards and always show; the three ASKS (push, backup, review)
+// each call mgClaimInterrupt() and the first claimant wins — the others
+// silently retry on a future load because none burn their once-ever keys
+// unless they actually showed.
+var _mgInterruptClaimed = false;
+function mgClaimInterrupt() {
+  if (_mgInterruptClaimed) return false;
+  _mgInterruptClaimed = true;
+  return true;
+}
+
 // ─── BACKUP NUDGE ────────────────────────────────────────
 // Non-blocking banner shown on the Dashboard if the user has 3+ entries
 // AND no backup in the last 7 days. Dismissable for the session.
@@ -7335,7 +7354,14 @@ function checkBackupNudge() {
     }
     if (daysSince < 7) return;
 
-    showBackupNudge(entryCount, daysSince);
+    // Lowest-priority ask: wait 3s so a milestone/push/review moment can
+    // claim the session slot first; if one did, the banner waits for the
+    // next load (the 7-day condition keeps it coming back).
+    setTimeout(function () {
+      if (document.getElementById('backup-nudge-banner')) return;
+      if (!mgClaimInterrupt()) return;
+      showBackupNudge(entryCount, daysSince);
+    }, 3000);
   } catch(e) { /* never let the nudge break the app */ }
 }
 
@@ -11558,6 +11584,50 @@ function mgScrollToEntryForm() {
   } catch (e) {}
 }
 
+// ─── LIVE DAILY CHECK-IN STATUS (2026-06-09) ─────────────
+// The Dashboard check-in card was static copy; now it reflects today's
+// state so the loop closes: checkin.html writes mg_readiness_log (aliased
+// to mm:<id>: keys for managed minors — replicate that read here, this
+// page doesn't have checkin's Storage shim), and this paints "✓ Checked
+// in · Fresh (4.2)" using checkin's own status thresholds (>=4 Fresh,
+// >=3 Manage it, else Back off). Averaging is key-agnostic (any 1–5
+// numeric fields) so a metric rename in checkin.html can't break it.
+function renderDashCheckin() {
+  var sub = document.getElementById('dash-checkin-sub');
+  if (!sub) return;
+  var t = null;
+  try {
+    var minor = null;
+    try { minor = localStorage.getItem('mg_active_minor_id'); } catch (e) {}
+    var raw = (minor ? localStorage.getItem('mm:' + minor + ':mg_readiness_log') : null) ||
+              localStorage.getItem('mg_readiness_log');
+    var log = raw ? JSON.parse(raw) : null;
+    if (log) {
+      var d = new Date();
+      var key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      t = log[key] || null;
+    }
+  } catch (e) { t = null; }
+  if (!t) {
+    sub.textContent = 'Not yet today — log readiness and workload. Two taps, keeps your streak alive.';
+    return;
+  }
+  var vals = [];
+  try {
+    Object.keys(t).forEach(function (k) {
+      var v = t[k];
+      if (typeof v === 'number' && v >= 1 && v <= 5) vals.push(v);
+    });
+  } catch (e) {}
+  if (!vals.length) { sub.textContent = '✓ Checked in today'; return; }
+  var avg = vals.reduce(function (a, b) { return a + b; }, 0) / vals.length;
+  var label, color;
+  if (avg >= 4)      { label = 'Fresh — go compete'; color = '#5DCFA0'; }
+  else if (avg >= 3) { label = 'Manage it';          color = '#E8C97A'; }
+  else               { label = 'Back off — recover'; color = '#E57373'; }
+  sub.innerHTML = '✓ Checked in today · <strong style="color:' + color + ';">' + label + ' (' + avg.toFixed(1) + ')</strong>';
+}
+
 // ─── FIRST-OPEN WELCOME (2026-06-09) ─────────────────────
 // Consumer for the mg_first_journal_open flag onboarding.html sets at its
 // final exit. Greets the player by name on their first Dashboard arrival
@@ -13058,6 +13128,7 @@ function renderAll() {
   renderPlayers();
   renderGoals();
   try { renderGoalPresetChips(); } catch(e) {}
+  try { renderDashCheckin(); } catch(e) {}
   // Null-safe updates — the dashboard cards may not all be on this page
   const _entriesEl = document.getElementById('dash-entries');
   const _goalsEl   = document.getElementById('dash-goals');
@@ -13644,6 +13715,11 @@ function mgMaybeShowPushPrompt() {
     var streak = 0;
     try { streak = calculateStreak() || 0; } catch (e) { return; }
     if (streak < 3) return;
+    // One ask per session (2026-06-09): fires on save, so it usually claims
+    // first — by design; Decision #67 made the day-3 save THE push moment.
+    // mg_push_prompt_seen is only set inside mgShowPushPrompt, so a blocked
+    // attempt simply retries on the next save.
+    if (!mgClaimInterrupt()) return;
     mgShowPushPrompt(streak);
   } catch (e) {}
 }
@@ -20358,14 +20434,21 @@ function hasVisitedAcademics() {
   </div>
 </div>
 <script>
-// ══ REVIEW PROMPT — fires after first 3-day streak ═══════════════
+// ══ REVIEW PROMPT — fires after first 7-day streak ═══════════════
+// 2026-06-09: trigger moved 3 → 7 days. Day 3 is the most fragile habit
+// moment and already carries the milestone card + push opt-in; asking for
+// a public review there buried the celebration. Day 7 ("ONE WEEK STRONG")
+// is when goodwill peaks. Also gated through mgClaimInterrupt() — and the
+// once-ever key is only burned when the overlay actually shows, so a
+// blocked attempt retries on a later load instead of vanishing forever.
 function checkReviewPrompt(streak) {
-  if (streak < 3) return;
+  if (streak < 7) return;
   // Key rotated 2026-06-03 (was 'ybg_review_prompted') so users who already
   // saw the old email-only prompt get one fresh ask now that it routes to a
   // public Google review.
   var key = 'mg_review_prompted_google';
   if (localStorage.getItem(key) === '1') return; // only show once
+  if (!mgClaimInterrupt()) return; // another ask owns this session — retry next load
   localStorage.setItem(key, '1');
   setTimeout(showReview, 1200); // slight delay after milestone celebration
 }
