@@ -6860,6 +6860,10 @@ window.addEventListener('DOMContentLoaded', () => {
       // so leaving it set would make ?reset=1 silently skip the picker on the
       // next pass and quietly mask picker regressions during live testing.
       localStorage.removeItem('mg_plan_picker_shown');
+      // And the standalone promo hand-off key (separate from mg_signup_state's
+      // promoCode) — without this, a device that once carried FOUNDERMYGRIND
+      // keeps re-applying founder copy/trial even after a "fresh" reset run.
+      localStorage.removeItem('mg_promo_code');
       qs.delete('reset');
       var clean = window.location.pathname + (qs.toString() ? '?' + qs.toString() : '');
       window.history.replaceState(null, '', clean);
