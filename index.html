@@ -2,6 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- ── Returning-user routing (2026-06-09) ── Runs before anything else so a
+     recognized returner is sent into the app router (softball.html) instead
+     of this new-customer marketing page, which is what made returners land on
+     the signup wall (the old home-screen start_url "./" also resolves here).
+     New visitors + search crawlers have no localStorage signal, so they see
+     this page normally. ?home=1 bypasses for anyone who wants the site. -->
+<script>
+(function () {
+  try {
+    if (location.search.indexOf('home=1') !== -1) return;
+    var hasProfile = false, email = '';
+    try { hasProfile = !!localStorage.getItem('mg_player_profile'); } catch (e) {}
+    try {
+      var acc = JSON.parse(localStorage.getItem('ybg_access') ||
+                           localStorage.getItem('ybg_softball_access') || '{}');
+      if (acc && acc.email) email = String(acc.email).trim().toLowerCase();
+    } catch (e) {}
+    if (hasProfile || email) location.replace('/softball.html');
+  } catch (e) { /* show the marketing page on any unexpected error */ }
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <!-- Shared press-feedback + motion layer (assets/interactions.css). -->
 <link rel="stylesheet" href="/assets/interactions.css">
