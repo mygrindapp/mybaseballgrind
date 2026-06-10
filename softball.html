@@ -19905,7 +19905,7 @@ setTimeout(function() {
 
     <!-- CTA -->
     <button onclick="closeQotd()" style="background:var(--gold);color:#0C0A08;border:none;border-radius:8px;padding:14px 40px;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;letter-spacing:2px;text-transform:uppercase;cursor:pointer;width:100%;max-width:280px;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.88'" onmouseout="this.style.opacity='1'">
-      ⚾ &nbsp;Start MyGrind →
+      <span id="qotd-start-ball">⚾</span> &nbsp;Start MyGrind →
     </button>
     <div style="font-family:'Barlow Condensed',sans-serif;font-size:11px;letter-spacing:1px;color:#4A4239;margin-top:14px;text-transform:uppercase;">Opening Daily Journal...</div>
   </div>
@@ -20357,6 +20357,14 @@ function showQotd() {
   var authorEl = document.getElementById('qotd-author');
   if (textEl)   textEl.textContent   = '"' + q.q + '"';
   if (authorEl) authorEl.textContent = q.a;
+
+  // Sport-aware CTA emoji (2026-06-09): the button was hardcoded ⚾ — the
+  // last non-sport-aware glyph on this screen. getBallEmoji() reads the
+  // SPORTS config, so softball gets 🥎 and any future sport just works.
+  try {
+    var ballEl = document.getElementById('qotd-start-ball');
+    if (ballEl && typeof getBallEmoji === 'function') ballEl.textContent = getBallEmoji();
+  } catch (e) {}
 
   var overlay = document.getElementById('qotd-overlay');
   if (overlay) overlay.style.display = 'flex';

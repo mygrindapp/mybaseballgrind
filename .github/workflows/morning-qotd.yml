@@ -1,0 +1,30 @@
+# Morning QOTD push — "☀️ Today's Grind is ready"
+#
+# Why GitHub Actions and not a Vercel cron: both Vercel Hobby cron slots are
+# taken (weekly-digest Mondays + the 6pm-PT daily reminder). This workflow is
+# the third scheduler, hitting the same endpoint with ?mode=qotd.
+#
+# ONE-TIME SETUP (Coach): add the CRON_SECRET repo secret —
+#   GitHub → Settings → Secrets and variables → Actions → New repository secret
+#   Name: CRON_SECRET, Value: same as the Vercel env var (in your Notes app).
+# Until the secret exists, runs fail with 401 and nothing is sent.
+#
+# Test anytime from the Actions tab → "Morning QOTD push" → Run workflow.
+#
+# Timing: 14:30 UTC = 7:30am PDT (summer) / 6:30am PST (winter). GitHub cron
+# can drift up to ~15 minutes at busy times — fine for a morning quote.
+name: Morning QOTD push
+
+on:
+  schedule:
+    - cron: "30 14 * * *"
+  workflow_dispatch: {}
+
+jobs:
+  knock:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send morning quote push
+        run: |
+          curl -fsS "https://www.mygrindapp.com/api/cron/daily-reminder?mode=qotd" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

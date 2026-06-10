@@ -26,6 +26,14 @@
 //   ?test=1   — send NOW to CREATOR_EMAIL's device(s) (or the newest sub if
 //               unset), ignoring hour + PUSH_DRY_RUN. Use to verify on your phone.
 //   ?limit=N  — cap sends in one run
+//   ?mode=qotd — MORNING QUOTE KNOCK (2026-06-09). Same subscribers, different
+//               payload: "Today's Grind is ready" + the app opens to the QOTD
+//               splash, so the quote itself never needs a server-side copy
+//               (single source of truth stays the YBG_QOTD array in
+//               softball.html). Scheduled via .github/workflows/morning-qotd.yml
+//               because both Vercel Hobby cron slots are taken (weekly-digest +
+//               this endpoint's 6pm-PT run). Distinct notification tag so the
+//               morning knock and evening reminder never replace each other.
 // ═══════════════════════════════════════════════════════════
 
 import webpush from 'web-push';
@@ -86,12 +94,26 @@ export default async function handler(req, res) {
   if (limit > 0) targets = targets.slice(0, limit);
 
   if (dryRun) {
-    console.log('[daily-reminder] DRY RUN', { mode, test, totalEnabled: all.subs.length, wouldSend: targets.length });
-    return res.status(200).json({ ok: true, dryRun: true, mode, totalEnabled: all.subs.length, wouldSend: targets.length });
+    const qotdDry = String(req.query.mode || '') === 'qotd';
+    console.log('[daily-reminder] DRY RUN', { mode, qotd: qotdDry, test, totalEnabled: all.subs.length, wouldSend: targets.length });
+    return res.status(200).json({ ok: true, dryRun: true, mode, qotd: qotdDry, totalEnabled: all.subs.length, wouldSend: targets.length });
   }
 
-  const body = MSGS[now.getUTCDate() % MSGS.length];
-  const payload = JSON.stringify({ title: 'MyGrind', body, url: '/softball.html#journal', tag: 'mygrind-daily' });
+  const qotd = String(req.query.mode || '') === 'qotd';
+  const QOTD_MSGS = [
+    "Your quote of the day is waiting. Read it, then go win the day.",
+    "A new quote is up. Start your day with it.",
+    "Today's quote is ready. One minute of mindset before the work.",
+  ];
+  const body = qotd ? QOTD_MSGS[now.getUTCDate() % QOTD_MSGS.length]
+                    : MSGS[now.getUTCDate() % MSGS.length];
+  const payload = JSON.stringify(
+    qotd
+      // Plain /softball.html: the app's open-splash shows the day's quote,
+      // so the push is the knock and the splash is the payoff.
+      ? { title: "☀️ Today's Grind is ready", body, url: '/softball.html', tag: 'mygrind-qotd' }
+      : { title: 'MyGrind', body, url: '/softball.html#journal', tag: 'mygrind-daily' }
+  );
 
   let sent = 0, pruned = 0, failed = 0;
   for (const s of targets) {
@@ -108,6 +130,6 @@ export default async function handler(req, res) {
     }
   }
 
-  console.log('[daily-reminder] done', { mode, test, sent, pruned, failed });
-  return res.status(200).json({ ok: true, mode, test, sent, pruned, failed, totalEnabled: all.subs.length });
+  console.log('[daily-reminder] done', { mode, qotd, test, sent, pruned, failed });
+  return res.status(200).json({ ok: true, mode, qotd, test, sent, pruned, failed, totalEnabled: all.subs.length });
 }
