@@ -2299,7 +2299,11 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="gold-bar"></div>
 
     <p class="sub" id="s1_sub">
-      This takes about 3 minutes. We'll set up your account, then send your player an invite to their phone.
+      This takes about 3 minutes. We'll set up your account, then send your player an invite by text or email.
+    </p>
+
+    <p class="sub" id="s1_player_guard" style="font-size:13px; opacity:.78; margin-top:6px;">
+      Are you a player joining a parent's plan? Don't sign up here - use the invite link your parent sent you.
     </p>
 
     <!-- Three-step explainer -->
@@ -3242,6 +3246,14 @@ fbq('init','326334441984368');fbq('track','PageView');
       <button type="button" class="share-action-btn primary" onclick="onCopyInviteLink()" id="invite_copy_btn">Copy Link</button>
       <button type="button" class="share-action-btn secondary" onclick="onShareInviteNative()" id="invite_share_native_btn" style="display:none;">Send via Messages…</button>
     </div>
+    <!-- Direct send (2026-06-10): we text or email the link for the parent.
+         One input, auto-detects phone vs email. Backed by /api/invite-send.
+         Works for the kid-with-email case without a phone number. -->
+    <div class="share-link-row" style="margin-top:10px;">
+      <input type="text" class="share-link-input" id="invite_direct_dest" inputmode="email" autocomplete="off" placeholder="Player's phone number or email" style="text-align:left;">
+    </div>
+    <button type="button" class="share-action-btn primary" onclick="onSendInviteDirect()" id="invite_direct_btn" style="margin-top:8px; width:100%;">Text or Email It for Me</button>
+    <div class="field-helper" id="invite_direct_status" style="margin-top:6px; text-align:center; min-height:16px;"></div>
     <button type="button" class="share-action-btn secondary" onclick="onOpenInviteHere()" style="margin-top:8px; width:100%;">Open on this device</button>
     <button type="button" class="share-action-btn qr" onclick="onToggleInviteQR()" id="invite_qr_btn">
       <span style="display:inline-flex; align-items:center; vertical-align:-3px; margin-right:6px;"><svg class="mg-icon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-qr-code"/></svg></span>Show QR Code
@@ -6653,6 +6665,7 @@ function onNativeShare() {
    ═══════════════════════════════════════════════════════════ */
 
 let _inviteShareCurrentUrl = '';
+let _inviteShareCurrentPlayer = null;
 
 function openInviteShareModal(playerIndex) {
   if (!Array.isArray(state.players)) return;
@@ -6666,6 +6679,16 @@ function openInviteShareModal(playerIndex) {
                 '&sport=' + encodeURIComponent(sport);
 
   _inviteShareCurrentUrl = url;
+  _inviteShareCurrentPlayer = { name: name, sport: sport };
+
+  // Direct-send UI: prefill with the phone the parent already typed
+  // at signup (if any), clear any stale status, re-enable the button.
+  const directDest = document.getElementById('invite_direct_dest');
+  if (directDest) directDest.value = (player.phone || player.playerPhone || '');
+  const directStatus = document.getElementById('invite_direct_status');
+  if (directStatus) directStatus.textContent = '';
+  const directBtn = document.getElementById('invite_direct_btn');
+  if (directBtn) { directBtn.disabled = false; directBtn.textContent = 'Text or Email It for Me'; }
 
   const nameSpan = document.getElementById('invite_share_name');
   if (nameSpan) nameSpan.textContent = name;
@@ -6779,6 +6802,72 @@ function onOpenInviteHere() {
   // Kid completes onboarding, signs in later via signin.html on
   // their own device using the email they enter during setup.
   window.location.href = _inviteShareCurrentUrl;
+}
+
+// ─── DIRECT SEND (2026-06-10) ──────────────────────────────
+// One input, auto-detects phone vs email, POSTs /api/invite-send.
+// SMS rides Twilio (toll-free verified June 2026); email rides
+// Resend with the branded warm-dark template. Until SMS_DRY_RUN
+// is flipped to false in Vercel, the server answers texts with an
+// honest "not switched on yet" message and email keeps working.
+function onSendInviteDirect() {
+  const input  = document.getElementById('invite_direct_dest');
+  const btn    = document.getElementById('invite_direct_btn');
+  const status = document.getElementById('invite_direct_status');
+  if (!input || !btn || !_inviteShareCurrentPlayer) return;
+
+  const dest    = (input.value || '').trim();
+  const isEmail = dest.indexOf('@') !== -1;
+
+  if (!dest) {
+    if (status) status.textContent = 'Enter their phone number or email first.';
+    return;
+  }
+  if (isEmail) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dest)) {
+      if (status) status.textContent = "That email doesn't look right - check it and try again.";
+      return;
+    }
+  } else {
+    const digits = dest.replace(/\D/g, '');
+    if (!(digits.length === 10 || (digits.length === 11 && digits.charAt(0) === '1'))) {
+      if (status) status.textContent = 'Enter a 10-digit US phone number or an email address.';
+      return;
+    }
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  if (status) status.textContent = '';
+
+  fetch('/api/invite-send', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      destination: dest,
+      playerName:  _inviteShareCurrentPlayer.name,
+      sport:       _inviteShareCurrentPlayer.sport,
+      parentName:  (state.parent && state.parent.firstName) || 'Your parent',
+      parentEmail: (state.parent && state.parent.email) || ''
+    })
+  })
+  .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+  .then(function (resp) {
+    btn.disabled = false;
+    btn.textContent = 'Text or Email It for Me';
+    if (resp.ok && resp.d && resp.d.success) {
+      if (status) status.textContent = isEmail
+        ? '\u2713 Invite emailed to ' + dest
+        : '\u2713 Invite texted to ' + dest;
+    } else {
+      if (status) status.textContent = (resp.d && resp.d.error) || 'Could not send - copy the link above instead.';
+    }
+  })
+  .catch(function () {
+    btn.disabled = false;
+    btn.textContent = 'Text or Email It for Me';
+    if (status) status.textContent = 'Could not send - copy the link above instead.';
+  });
 }
 
 function openSettingsModal() {
