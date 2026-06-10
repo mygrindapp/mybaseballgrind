@@ -11,13 +11,15 @@
 #
 # Test anytime from the Actions tab → "Morning QOTD push" → Run workflow.
 #
-# Timing: 14:30 UTC = 7:30am PDT (summer) / 6:30am PST (winter). GitHub cron
-# can drift up to ~15 minutes at busy times — fine for a morning quote.
+# Timing: 13:00 UTC = 6:00am PDT (summer) / 5:00am PST (winter). GitHub cron
+# is UTC-only and does NOT follow DST — to hold 6am year-round, change this to
+# "0 14 * * *" when PST begins (~early Nov) and back to "0 13 * * *" at PDT
+# (~mid-Mar). GitHub cron can drift up to ~15 min at busy times — fine here.
 name: Morning QOTD push
 
 on:
   schedule:
-    - cron: "30 14 * * *"
+    - cron: "0 13 * * *"
   workflow_dispatch: {}
 
 jobs:
