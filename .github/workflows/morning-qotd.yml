@@ -26,5 +26,14 @@ jobs:
     steps:
       - name: Send morning quote push
         run: |
-          curl -fsS "https://www.mygrindapp.com/api/cron/daily-reminder?mode=qotd" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+          # Print the HTTP status + response body (no secrets in either) so a
+          # failure reads "HTTP 401" instead of curl's opaque "exit code 22".
+          code=$(curl -sS -o /tmp/resp.txt -w "%{http_code}" \
+            "https://www.mygrindapp.com/api/cron/daily-reminder?mode=qotd" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}")
+          echo "HTTP $code"
+          cat /tmp/resp.txt; echo
+          if [ "$code" != "200" ]; then
+            echo "::error::Push endpoint returned HTTP $code — if 401, the CRON_SECRET repo secret doesn't match Vercel's."
+            exit 1
+          fi
