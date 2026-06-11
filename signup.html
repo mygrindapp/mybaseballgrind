@@ -7004,6 +7004,8 @@ window.addEventListener('DOMContentLoaded', () => {
       // promoCode) — without this, a device that once carried FOUNDERMYGRIND
       // keeps re-applying founder copy/trial even after a "fresh" reset run.
       localStorage.removeItem('mg_promo_code');
+      // Same hygiene for the team/referral attribution tag.
+      localStorage.removeItem('mg_team_code');
       qs.delete('reset');
       var clean = window.location.pathname + (qs.toString() ? '?' + qs.toString() : '');
       window.history.replaceState(null, '', clean);
@@ -7043,6 +7045,19 @@ window.addEventListener('DOMContentLoaded', () => {
       qsPromo.delete('promo');
       var cleanPromo = window.location.pathname + (qsPromo.toString() ? '?' + qsPromo.toString() : '');
       window.history.replaceState(null, '', cleanPromo);
+    }
+    // ?team=<code> tags the signup with a team/referral source (2026-06-11),
+    // so seeded-team offers are attributable: each coach gets a link like
+    // signup.html?team=ENCINO12U&promo=FOUNDERMYGRIND. Stored standalone in
+    // localStorage (not signup state) because the app, not the funnel, pushes
+    // it to the user's Firestore doc on the first journal entry. ?ref= is
+    // accepted as an alias for player-to-player referral links.
+    var teamParam = qsPromo.get('team') || qsPromo.get('ref');
+    if (teamParam) {
+      try { localStorage.setItem('mg_team_code', teamParam.trim().toUpperCase().slice(0, 24)); } catch (e2) {}
+      qsPromo.delete('team'); qsPromo.delete('ref');
+      var cleanTeam = window.location.pathname + (qsPromo.toString() ? '?' + qsPromo.toString() : '');
+      window.history.replaceState(null, '', cleanTeam);
     }
   } catch (e) { /* old browser — fall through */ }
 

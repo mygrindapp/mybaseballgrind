@@ -10088,9 +10088,16 @@ function saveEntry() {
   try { saveState(); } catch (e) {}
   try { if (typeof fbSaveEntry === 'function' && typeof fbUser !== 'undefined' && fbUser) fbSaveEntry(entry); } catch (e) {}
 
+  // Day-0 activation + team-code attribution stamps (once each, no-ops after).
+  try { mgStampActivationOnce(); } catch (e) {}
+
   // Push opt-in nudge — fires once if this save just reached a 3-day streak.
   // Non-blocking; all gating + one-time logic lives in mgMaybeShowPushPrompt().
   try { mgMaybeShowPushPrompt(); } catch (e) {}
+
+  // Referral nudge — once ever, after push has had its claim; routes into the
+  // existing pre-written-SMS share flow. Gating lives in the function.
+  try { mgMaybeShowReferralPrompt(); } catch (e) {}
 
   // BULLETPROOF entry-list refresh — Coach Young 2026-05-12 (ongoing bug):
   // "Once you hit save the entry is not shown in the log." Force the
@@ -13854,6 +13861,84 @@ function mgShowPushPrompt(streak) {
   if (no) no.addEventListener('click', close);
   // Tap the backdrop = "Not now" (already marked seen above).
   wrap.addEventListener('click', function (e) { if (e.target === wrap) close(); });
+}
+
+// ─── Referral prompt + activation stamps (2026-06-11) ────────
+// The growth loop: a player who just saved an entry is at peak buy-in, so
+// that is the one moment we ask them to pull a teammate in. Fires ONCE ever
+// (mg_referral_prompt_seen), respects the one-ask-per-load interrupt budget,
+// and routes into the existing pre-written-SMS share flow (shareToSocial).
+// Ordered AFTER the push prompt in saveEntry on purpose: Decision #67 made
+// the day-3 save THE push moment, so push gets first claim; a blocked
+// referral attempt simply retries on the next save.
+function mgMaybeShowReferralPrompt() {
+  try {
+    if (localStorage.getItem('mg_referral_prompt_seen') === '1') return;
+    if (!state.entries || state.entries.length < 1) return;
+    if (typeof shareToSocial !== 'function') return;
+    if (!mgClaimInterrupt()) return;
+    mgShowReferralPrompt();
+  } catch (e) {}
+}
+
+function mgShowReferralPrompt() {
+  // Mark seen immediately so a double-save can't double-show it, and so
+  // "Not now" and a backdrop dismiss both mean never-again.
+  try { localStorage.setItem('mg_referral_prompt_seen', '1'); } catch (e) {}
+  if (document.getElementById('mg-ref-prompt')) return;
+  if (!document.getElementById('mg-ref-prompt-style')) {
+    var stl = document.createElement('style');
+    stl.id = 'mg-ref-prompt-style';
+    stl.textContent = '@keyframes mgRefFade{from{opacity:0}to{opacity:1}}@keyframes mgRefUp{from{transform:translateY(100%)}to{transform:translateY(0)}}';
+    document.head.appendChild(stl);
+  }
+  var wrap = document.createElement('div');
+  wrap.id = 'mg-ref-prompt';
+  wrap.setAttribute('role', 'dialog');
+  wrap.setAttribute('aria-modal', 'true');
+  wrap.style.cssText = 'position:fixed; inset:0; z-index:99999; display:flex; align-items:flex-end; justify-content:center; background:rgba(0,0,0,0.55); animation:mgRefFade .2s ease;';
+  var card = document.createElement('div');
+  card.style.cssText = "background:#1E1A17; border:1px solid #3D3530; border-radius:18px 18px 0 0; max-width:480px; width:100%; padding:24px 22px calc(24px + env(safe-area-inset-bottom)); box-shadow:0 -8px 40px rgba(0,0,0,0.5); animation:mgRefUp .25s cubic-bezier(.2,.7,.2,1);";
+  card.innerHTML =
+    '<div style="font-family:\'Barlow Condensed\',sans-serif; font-size:24px; font-weight:800; letter-spacing:.5px; color:#fff; text-transform:uppercase; margin-bottom:8px;">The grind is better with teammates 🤝</div>' +
+    '<div style="font-family:\'Barlow\',sans-serif; font-size:15px; line-height:1.5; color:#D4C8BC; margin-bottom:20px;">Entry logged. Know a player who should be putting in this work too? Send them the app. We pre-write the text, you just hit send.</div>' +
+    '<button id="mg-ref-yes" style="width:100%; background:var(--gold,#C9A84C); color:#0C0A08; font-family:\'Barlow Condensed\',sans-serif; font-size:15px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:14px; border:none; border-radius:10px; cursor:pointer; margin-bottom:10px;">💬 Text a Teammate</button>' +
+    '<button id="mg-ref-no" style="width:100%; background:transparent; color:#7A7064; font-family:\'Barlow\',sans-serif; font-size:14px; padding:8px; border:none; cursor:pointer;">Not now</button>';
+  wrap.appendChild(card);
+  document.body.appendChild(wrap);
+  function close() { try { wrap.remove(); } catch (e) {} }
+  var yes = document.getElementById('mg-ref-yes');
+  var no  = document.getElementById('mg-ref-no');
+  if (yes) yes.addEventListener('click', function () {
+    try { ybgHaptic([20, 40, 20]); } catch (e) {}
+    close();
+    try { shareToSocial('sms'); } catch (e) {}  // existing pre-written invite flow
+  });
+  if (no) no.addEventListener('click', close);
+  wrap.addEventListener('click', function (e) { if (e.target === wrap) close(); });
+}
+
+// Activation + attribution stamps, pushed to the user's Firestore doc via
+// fbSaveMisc so per-team funnel health is queryable: firstEntryAt against the
+// Auth account's creationTime = Day-0 activation; teamCode (captured by
+// signup.html from ?team=/?ref= links) = which seeded team the signup came
+// from. Both fire once, are cheap no-ops after that, and never block a save.
+function mgStampActivationOnce() {
+  try {
+    var signedIn = (typeof fbUser !== 'undefined' && fbUser && typeof fbSaveMisc === 'function');
+    // First-ever entry only: length === 1 means THIS save created it, so
+    // long-time users (length > 1 before this shipped) are never mis-stamped.
+    if (!localStorage.getItem('mg_first_entry_at') && state.entries && state.entries.length === 1) {
+      var nowIso = new Date().toISOString();
+      localStorage.setItem('mg_first_entry_at', nowIso);
+      if (signedIn) fbSaveMisc({ firstEntryAt: nowIso });
+    }
+    var team = localStorage.getItem('mg_team_code');
+    if (team && signedIn && localStorage.getItem('mg_team_code_synced') !== '1') {
+      fbSaveMisc({ teamCode: team });
+      localStorage.setItem('mg_team_code_synced', '1');
+    }
+  } catch (e) {}
 }
 
 function calcStats() {
