@@ -3058,7 +3058,9 @@ input[type="number"] {
     </div>
 
     <div class="alert alert-gold" id="dash-month-banner">
-      ⚾ &nbsp;<strong>MAY</strong> · In-Season
+      <!-- Filled by renderDashMonthCard() from the live months[] calendar.
+           Left empty so a render failure shows nothing instead of a stale
+           hardcoded month (was frozen on "MAY · In-Season"). -->
     </div>
 
     <!-- ── THIS WEEK'S PRESCRIPTION ── Sampled live from the 12-month
@@ -18559,6 +18561,94 @@ const WEEKLY_PLAN = {
   ]
 };
 const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+// ─── Calendar-aware Today's Plan (2026-06-11) ─────────────
+// Coach: "check all cards on dashboard to update to the new calendar."
+// WEEKLY_PLAN above ran the same Mon/Wed/Fri rotation all 12 months, so in
+// June's rest window the card prescribed heavy lifting on the exact days the
+// calendar (and the This Week card above it) said recovery. This derives the
+// day's items from the training calendar's phases instead: in-season
+// maintenance (Mar-May), June rest-then-build by week of month, the
+// Jul-Nov 4-day build, December's maintenance + winter-break shutdown, and
+// the Jan/Feb ramp. Sunday is rest and family in every month, per the
+// calendar. WEEKLY_PLAN remains only as the error fallback.
+function mgTodayPlanItems(d) {
+  var day = d.getDay();                                       // 0 Sun .. 6 Sat
+  var mo  = d.getMonth();                                     // 0 Jan .. 11 Dec
+  var wk  = Math.min(Math.floor((d.getDate() - 1) / 7), 3);   // week of month 0..3
+  var REST     = { id: 'rest',     icon: '😴', label: 'Rest day. Recharge body + mind, family time' };
+  var ARMCARE  = { id: 'armcare',  icon: '🩹', label: 'Arm + shoulder care. Bands every day, no exceptions' };
+  var MOBILITY = { id: 'mobility', icon: '🤸', label: 'Mobility + arm care. 20 min full routine' };
+
+  if (day === 0) return [REST];  // Sunday is sacred, every month
+
+  // IN-SEASON (Mar-May): protect the body, daily short hitting, daily arm care.
+  if (mo >= 2 && mo <= 4) {
+    var items = [];
+    if (day === 1 || day === 3) items.push({ id: 'lift', icon: '🏋️', label: 'Maintenance lifting. Moderate weight, protect the season' });
+    items.push({ id: 'hit', icon: '🏏', label: 'Hitting. 30 focused swings, quality over volume' });
+    items.push(ARMCARE);
+    return items;
+  }
+
+  // JUNE: rest first, build second (week of month decides the phase).
+  if (mo === 5) {
+    if (wk <= 1) return [
+      { id: 'recovery', icon: '🛌', label: 'Recovery week. No throwing, no heavy lifting. Sleep 9 hours' },
+      { id: 'mobility', icon: '🤸', label: 'Light stretching + a walk. Let the body heal' }
+    ];
+    if (wk === 2) return [
+      { id: 'hit',      icon: '🏏', label: 'Light hitting returns. 30 to 40 easy tee swings, wood' },
+      { id: 'mobility', icon: '🤸', label: 'Mobility + bands only. Still no throwing' }
+    ];
+    // Week 4: the build begins.
+    var jun = [];
+    if (day === 1 || day === 3 || day === 5) jun.push({ id: 'lift', icon: '🏋️', label: 'Weight Room (build phase). Squats, deadlifts, bench, rows' });
+    else jun.push(MOBILITY);
+    jun.push({ id: 'hit', icon: '🏏', label: 'Hitting (wood bat). 50 swings daily, build the hands' });
+    return jun;
+  }
+
+  // DECEMBER: maintenance + flexibility, then the winter-break shutdown.
+  if (mo === 11) {
+    if (wk >= 2) return [
+      { id: 'rest', icon: '🎄', label: 'Winter break. Throwing shutdown, light movement only, family first' },
+      { id: 'hit',  icon: '🏏', label: 'Optional: 20 to 30 dry swings to keep the feel' }
+    ];
+    var dec = [];
+    if (day === 1 || day === 3 || day === 5) dec.push({ id: 'lift', icon: '🏋️', label: 'Maintenance lifting. Moderate weight, protect the joints' });
+    dec.push({ id: 'flex', icon: '🧘', label: 'Yoga / deep stretch, 15 to 20 min. Most flexible month of the year' });
+    dec.push({ id: 'hit',  icon: '🏏', label: 'Hitting (wood bat). 75 to 100 swings until break' });
+    return dec;
+  }
+
+  // JANUARY: the ramp. Volume returns, mechanics sharpen.
+  if (mo === 0) {
+    var jan = [];
+    if (day === 1 || day === 3 || day === 5) jan.push({ id: 'lift', icon: '🏋️', label: 'Weight Room. Squats, deadlifts, bench, rows, pull-ups' });
+    else jan.push(MOBILITY);
+    jan.push({ id: 'hit', icon: '🏏', label: 'Hitting. Minimum 50 swings with intent, season bat' });
+    return jan;
+  }
+
+  // FEBRUARY: pre-season. Game situations, maintenance lifting, arm care.
+  if (mo === 1) {
+    var feb = [];
+    if (day === 1 || day === 3) feb.push({ id: 'lift', icon: '🏋️', label: 'Maintenance lifting. Protect what you built' });
+    else feb.push({ id: 'field', icon: '🧤', label: 'Fielding situations + arm care + footwork' });
+    feb.push({ id: 'hit', icon: '🏏', label: 'Hitting. 50 situational swings, two-strike + oppo work' });
+    return feb;
+  }
+
+  // JULY-NOVEMBER: the strength build. 4-day lifting, wood bat daily.
+  var bld = [];
+  if (day === 1 || day === 2 || day === 4 || day === 5) bld.push({ id: 'lift', icon: '🏋️', label: 'Weight Room (build). Heavy compound lifts, add weight weekly' });
+  if (day === 3) bld.push({ id: 'speed', icon: '🏃', label: 'Speed + mobility. Sprints, jumps, deep stretch' });
+  bld.push({ id: 'hit', icon: '🏏', label: 'Hitting (wood bat). 75 swings minimum, every swing with intent' });
+  if (day === 6) bld.push({ id: 'recovery', icon: '🩹', label: 'Active recovery. Walk, stretch, hydrate' });
+  return bld;
+}
+
 function todayPlanKey() {
   const d = new Date();
   return 'ybg_todayplan_' + d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
@@ -18578,7 +18668,11 @@ function renderTodayPlan() {
     if (!list) return;
     const dayIdx = new Date().getDay();
     if (dayLabel) dayLabel.textContent = DAY_NAMES[dayIdx] + "'s Plan";
-    const items = WEEKLY_PLAN[dayIdx] || [];
+    // Calendar-aware items (2026-06-11); the static WEEKLY_PLAN rotation
+    // survives only as the fallback if the phase derivation ever throws.
+    let items = null;
+    try { items = mgTodayPlanItems(new Date()); } catch (e) { items = null; }
+    if (!items || !items.length) items = WEEKLY_PLAN[dayIdx] || [];
     const state = getTodayPlanState();
     let done = 0;
     list.innerHTML = items.map(function(item) {
