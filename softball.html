@@ -4607,7 +4607,7 @@ input[type="number"] {
     <button onclick="mgBack('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
       <div class="section-title">MY<span>CALENDAR</span></div>
-      <div class="section-sub">Training Prescriptions · Built from 20+ Years of Player Development</div>
+      <div class="section-sub">Training Prescriptions · Built from 35 Years of Player Development</div>
       <div class="gold-line"></div>
     </div>
     <div class="scroll-hint">Tap any month to expand weekly prescriptions</div>
@@ -7497,7 +7497,7 @@ let state = loadState() || {
 // ─── MONTHS DATA ──────────────────────────────────────────
 const months = [
   {
-    name: "JANUARY", type: "offseason", focus: "Health Check · Mechanics · Weight Room · Daily Hitting",
+    name: "JANUARY", type: "offseason", phase: "The Ramp", focus: "Health Check · Mechanics · Weight Room · Daily Hitting",
     intro: "January is where June shows up. The work you put in right now. The swings, the weight room, the long toss. You will start seeing it the moment the season starts. Fine-tune your mechanics, build your base, and remember: hitting is something you do every single day. Sunday is for rest, family, and recharging. Everything else. You grind.",
     weeks: [
       { title: "Week 1: Body Audit & Weekly Schedule", content: "Full health audit. Head to toe. Address anything sore before you start. Then lock in your weekly schedule and stick to it every week this month.\n\n🏋️ MON · WED · FRI: Weight Room: Squats, deadlifts, bench press, rows, pull-ups. Heavy compound movements. Build your base.\n⚾ MON–SAT: Hitting (Every Day): Minimum 50 tee swings with intent. Hitting is not a practice-day activity. It is a daily discipline. Start building the habit now.\n🤸 TUE · THU: Mobility & Arm & Shoulder Care: Full arm & shoulder care routine, hip flexor work, shoulder mobility 20 min.\n😴 SUNDAY: Rest. Family. Friends. Recharge your body and your mind. You cannot pour from an empty cup." },
@@ -7508,7 +7508,7 @@ const months = [
     note: "The work you did last June is showing up right now. January does not lie. Get healthy first, fine-tune second, then build. Hit every single day. Not just when you feel like it. Sunday is sacred. Rest, spend it with your family, and come back Monday with something to prove."
   },
   {
-    name: "FEBRUARY", type: "preseason", focus: "Situational Baseball · Mental Game · Daily Hitting · Maintenance Lifting",
+    name: "FEBRUARY", type: "preseason", phase: "Pre-Season", focus: "Situational Baseball · Mental Game · Daily Hitting · Maintenance Lifting",
     intro: "February is where it starts looking like real baseball. Everything you built in the off-season now gets applied to game situations. Hitting is still every single day. It does not stop because the season is close, it gets more focused. Weight training shifts to maintenance. You are protecting what you built, not adding more. And Sunday? That is still for rest and the people who matter most to you.",
     weeks: [
       { title: "Week 1: Offensive Situations + Daily Hitting", content: "Hit and run, bunt for a hit, sacrifice bunt, two-strike approach, first-and-third reads. Every hitter should know their job in every count.\n\n🏋️ MON · WED: Weight Room (Maintenance): Moderate weight, higher reps. Protect the strength you built. Squats, rows, bench, pull-ups. Same lifts, less intensity.\n⚾ MON–SAT: Hitting (Every Day): Minimum 50 swings. But now with a situational focus. Two-strike approach one day, opposite field the next. Never just mindless swings.\n🤸 TUE · THU · FRI: Fielding situations, arm & shoulder care, footwork.\n😴 SUNDAY: Rest. Family. Your loved ones miss you during the season. Give them February Sundays." },
@@ -7519,7 +7519,7 @@ const months = [
     note: "February is when baseball starts looking like baseball. Hit every day. It is not a suggestion, it is the standard. Weight room shifts to maintenance. Protect what you built. And never forget: Sunday is for rest, family, and the people who keep you grounded. That balance is what makes great players."
   },
   {
-    name: "MARCH", type: "season", focus: "Consistency · Daily Hitting · Maintenance Lifting · Sunday Rest",
+    name: "MARCH", type: "season", phase: "In-Season", focus: "Consistency · Daily Hitting · Maintenance Lifting · Sunday Rest",
     intro: "The season is here. Your job now is to compete fully and stay consistent. Hitting is still every day. Before practice, after practice, wherever you can get your swings in. Weight training is maintenance only. Protect your body for the long haul. And Sunday? Unless you have a game, Sunday belongs to rest and the people you love.",
     weeks: [
       { title: "Week 1: Lock In Your Weekly Routine", content: "Establish your in-season weekly schedule right now and run it every single week:\n\n🏋️ MON · WED: Maintenance Lifting: 3 sets of compound movements, moderate weight. Squats, bench, rows, pull-ups. Protect your strength. Do not add, maintain.\n⚾ EVERY DAY: Hitting: Before practice or after. Tee work, soft toss. Minimum 30 focused swings. In-season hitting is about maintaining mechanics, not volume.\n🩹 DAILY: Arm & Shoulder Care: Non-negotiable. Every single day. No exceptions.\n😴 SUNDAY: Rest and family. Unless there is a game scheduled, this day belongs to the people who support you." },
@@ -7530,7 +7530,7 @@ const months = [
     note: "Lock in your routine and run it every week without deviation. Hit every day. Even on game days, get your swings in. Lift to maintain, not to build. And give Sunday to your family. The people who show up to every game, drive you to practice, and support this dream. They deserve that day."
   },
   {
-    name: "APRIL", type: "season", focus: "Daily Hitting · Team First · Maintenance · Sunday Rest",
+    name: "APRIL", type: "season", phase: "In-Season", focus: "Daily Hitting · Team First · Maintenance · Sunday Rest",
     intro: "The season is rolling and the grind is real. One game at a time. Hit every single day. It is the habit that separates the consistent performers from the streaky ones. Your weight room work is maintenance only. And Sunday is for rest and the people who matter most. The balance between the grind and the rest is what keeps you sharp all season.",
     weeks: [
       { title: "Week 1: One Game at a Time + Daily Hitting", content: "Close the book on every game. Win or loss. Write it down and move on.\n\n🏋️ MON · WED: Maintenance Lifting: Full body, moderate weight. Squats, rows, bench, pull-ups. Non-negotiable.\n⚾ EVERY DAY: Hitting: Daily tee or soft toss. In April, your mechanics are either getting sharp or getting sloppy. Hitting every day keeps them sharp.\n🩹 DAILY: Arm & Shoulder Care: Non-negotiable. June is when arms break if you skip this in April.\n😴 SUNDAY: Rest and family. You play for them as much as you play for yourself." },
@@ -7541,7 +7541,7 @@ const months = [
     note: "April tests your consistency. The players who hit every day, lift twice a week, stay mentally present, and give Sunday to their families are the ones who are still playing their best baseball in June. Build the habits now."
   },
   {
-    name: "MAY", type: "season", focus: "Season Closing · CIF Playoffs · Finals Week · Sunday Rest",
+    name: "MAY", type: "season", phase: "In-Season", focus: "Season Closing · CIF Playoffs · Finals Week · Sunday Rest",
     intro: "May is where the season ends. For non-playoff teams, regular season closes the first week of May. For playoff teams, CIF playoffs run through end of May with state regionals into early June. Either way: finals week, last day of school late in the month for most, body wear at the highest point of the year. Hit every day until your last game. Lift twice a week. Arm care every morning. Sunday is for your family. The players who finish May strong walk into the off-season healthy and ready to build.",
     weeks: [
       { title: "Week 1: Regular Season Closes", content: "This is the week regular season wraps for most teams. League title games, playoff seeding, last regular-season games for non-playoff teams.\n\n🏋️ MON · WED: Maintenance Lifting: Stay consistent. Your legs power everything. Do not let them go.\n⚾ EVERY DAY: Hitting: Daily tee or soft toss. Quality over quantity. Save the body for the games.\n🩹 DAILY: Arm and Shoulder Care: Bands every morning. Your arm has worked since February.\n🏆 PLAYOFFS: If you made it, rest the off-day and study your seed and bracket. If not, your season is closing this week. Finish on your terms.\n😴 SUNDAY: Rest. Family. Recharge." },
@@ -7552,7 +7552,7 @@ const months = [
     note: "May is season-ending month. For non-playoff teams, regular season ends week 1 and the three-week rest from throwing starts week 2. For playoff teams, you grind through CIF playoffs into late May or early June, then your rest starts. Either way: hit every day until your season ends, then step fully away from the throwing program. Your arm has earned it. Pitchers, plan on a longer shutdown: 2 to 3 continuous months with no overhead throwing (see June). June through Thanksgiving is when you build, but only after recovery is real."
   },
   {
-    name: "JUNE", type: "offseason", focus: "Post-Season Rest · Body Recovery · Begin Strength Build · Sunday Family",
+    name: "JUNE", type: "offseason", phase: "Rest + Recovery", focus: "Post-Season Rest · Body Recovery · Begin Strength Build · Sunday Family",
     intro: "Your season is done. For most non-playoff teams it ended in May. For playoff teams, CIF finals May 29-30 or state regionals into early June closed it out. Either way: your first three weeks after the final game are throwing rest. The fourth week you start building. Pitchers, your arm rests longer: Pitch Smart (MLB and USA Baseball) calls for 2 to 3 continuous months with no overhead throwing every year, and this is the window. Build the body and the bat while the arm heals. If your rest already happened in May, you can shift the build forward. June through Thanksgiving is your strength-building season. The work you put in this summer is what shows up in March.",
     weeks: [
       { title: "Week 1: Post-Season Decompression", content: "Season is done. Step away from baseball for a week. No throwing. No heavy lifting. Walk, stretch, sleep, eat. Your body has been on grind mode since February. It needs to heal before it can grow.\n\n🛌 RECOVERY: Sleep 9 hours. Real growth starts in bed.\n🤸 DAILY: Light stretching only. No bands, no bullpens, no long toss.\n⚾ DRY SWINGS: 20 in the mirror if you want to keep the feel. Optional, not required.\n😴 SUNDAY: Family. Be present. They held things down for you all season." },
@@ -7563,7 +7563,7 @@ const months = [
     note: "June is recovery first, build second. Position players: take three real weeks off throwing, then ease the arm back in week four. Pitchers: your shutdown runs longer. Pitch Smart calls for 2 to 3 continuous months with no overhead throwing every year, so the bat and the weight room come back in week four but the mound does not. The next six months are when players get bigger, stronger, faster. The base you build this summer is what makes you a different player in March."
   },
   {
-    name: "JULY", type: "offseason", focus: "Travel Ball · Showcases · Rest · Wood Bats · Sunday Always",
+    name: "JULY", type: "offseason", phase: "Summer Ball · Build", focus: "Travel Ball · Showcases · Rest · Wood Bats · Sunday Always",
     intro: "July is a fork in the road. Travel ball and showcases, or rest and off-season planning. Either way, Sunday is non-negotiable rest and family time. If you are competing, Sunday is recovery. If you are in your off-season, Sunday is exactly what it has always been. Rest, family, and recharging for the work ahead.",
     weeks: [
       { title: "IF STILL COMPETING: Tournament Mentality", content: "Compete fully. Recovery between games is not optional.\n\n🏋️ No heavy lifting during tournament weekends. Body weight movements and bands only between games.\n⚾ EVERY DAY: Hitting: Keep swinging even between tournament days. Tee work, 20–30 swings. Stay in the groove.\n😴 SUNDAY: If no game: complete rest. Family time. Let your body recover. If you have a game: compete, then rest after.\n📓️ Grade every tournament game A through D and write it down." },
@@ -7574,7 +7574,7 @@ const months = [
     note: "July is a fork in the road. Compete or rest. Both are right moves. What is never the right move is doing nothing with intention, or skipping Sunday family time. Protect your body, protect your relationships, and build your plan for the most important months of your baseball year."
   },
   {
-    name: "AUGUST", type: "offseason", focus: "Strength Build Escalates · Speed · Tryout Season · Wood Bats Daily · Sunday Rest",
+    name: "AUGUST", type: "offseason", phase: "The Build", focus: "Strength Build Escalates · Speed · Tryout Season · Wood Bats Daily · Sunday Rest",
     intro: "You started the build in late June. July got you moving again. August is where the intensity climbs. Heavy compound lifts four days a week. Wood bat every day. Add speed and explosion to the program. August is also tryout season: most travel and select programs set next season's rosters this month. Nobody remembers the off-season. The results show up in March. Sunday stays sacred.",
     weeks: [
       { title: "Week 1: Escalate the Build + Tryout Season", content: "The base is set from late June and July. Now the intensity climbs. And it is tryout season: travel and select teams set next season's rosters in August.\n\n🎯 TRYOUTS: Find your tryout dates now and register early. Some programs run tryouts late July into August, and rosters fill fast. You have been building since June. This is where it shows.\n🏋️ MON · TUE · THU · FRI: Weight Room: Heavy compound lifts. Squats, deadlifts, bench press, rows, pull-ups. Build your legs and posterior chain. Progressive overload every week. Track your numbers.\n⚾️ MON to SAT: Hitting (Wood Bat, Every Day): All swings with wood from now through December. Tee, soft toss, front toss, wood only. Minimum 50 swings daily.\n🤸 WED: Active recovery: stretching, mobility, light cardio.\n😴 SUNDAY: Rest. Family. Absolutely non-negotiable. Your body needs this day." },
@@ -7585,7 +7585,7 @@ const months = [
     note: "August is where the build hits its stride. June handled the rest, July got you moving, August is when intensity climbs. The players who push the weight room hard, swing wood every day, and add speed work to the program are the ones who show up to opening day looking different. Hit every day. Lift four days a week. Rest on Sunday. Repeat."
   },
   {
-    name: "SEPTEMBER", type: "offseason", focus: "Weight Room · Wood Bats · Goals · Sunday Always",
+    name: "SEPTEMBER", type: "offseason", phase: "The Build", focus: "Weight Room · Wood Bats · Goals · Sunday Always",
     intro: "You have had your rest. August set the foundation. Now you build on it. September through October is your peak strength-building window. Push the weight room hard. Swing wood every day. Set your goals for next season. And protect Sunday. It is the day that keeps everything in balance.",
     weeks: [
       { title: "Week 1: Weight Room: Stay Hard", content: "September through October is your window to put on real strength before the holidays slow things down.\n\n🏋️ MON · TUE · THU · FRI: Weight Room: Heavy compound lifts. Progressive overload every week. Squats, deadlifts, bench, rows. Track your numbers. You should be stronger than August.\n⚾ MON–SAT: Hitting (Wood Bat, Every Day): 75 swings minimum. All wood. Film your sessions and send them to your instructor.\n🏃 WED: Sprint work, first-step quickness, 60-yard dash tracking.\n😴 SUNDAY: Rest. Family. Non-negotiable. This is what keeps the grind sustainable." },
@@ -7596,7 +7596,7 @@ const months = [
     note: "September is when the work gets quiet and the results get loud. Nobody is watching. No games on the schedule. Just you, the weight room, and a wood bat. Hit every day. Lift four days a week. Give Sunday to your family. The player you are becoming right now is the one who shows up in February."
   },
   {
-    name: "OCTOBER", type: "offseason", focus: "Peak Strength Month · Wood Bats · Sunday Rest",
+    name: "OCTOBER", type: "offseason", phase: "Peak Strength", focus: "Peak Strength Month · Wood Bats · Sunday Rest",
     intro: "October is your peak strength month. The last full month of heavy lifting before November transitions to maintenance. Push harder than September in the weight room. Swing wood every single day. And protect Sunday. It is the anchor that makes the rest of the week possible.",
     weeks: [
       { title: "Week 1: Peak Month: Weight Room Hard", content: "Your heaviest lifts of the entire off-season happen in October. This is the window. Take advantage of it.\n\n🏋️ MON · TUE · THU · FRI: Weight Room: Max effort. Heaviest squats, deadlifts, bench, rows of the off-season. Recruit a training partner. Push each other to places you would not go alone.\n⚾ MON–SAT: Hitting (Wood Bat, Every Day): 100 swings. High-rep sessions. These October swings become March batting averages.\n🤸 WED: Mobility, ladder drills, position-specific footwork.\n😴 SUNDAY: Rest. Family. October Sundays are special. The weather is turning and the people who love you want to spend time with you." },
@@ -7607,7 +7607,7 @@ const months = [
     note: "Most players are asleep in October. That is your advantage. Peak strength month. Push the weight room like it is your job. Swing wood every day. And give Sunday to your family, your faith, and your rest. That is the full picture of what it takes to show up in March looking like a different player."
   },
   {
-    name: "NOVEMBER", type: "offseason", focus: "Heavy Lifting · Wood Bats · Strength Peak · Sunday Rest",
+    name: "NOVEMBER", type: "offseason", phase: "Final Build", focus: "Heavy Lifting · Wood Bats · Strength Peak · Sunday Rest",
     intro: "November is your last full month of heavy lifting before the holidays slow things down. Heavy compound lifts continue through Thanksgiving. You are still building. After Thanksgiving the gears shift to maintenance and flexibility, but until then this is still your strength window. Wood bats every day. Track your numbers. Show up like the player you are becoming.",
     weeks: [
       { title: "Week 1: Heavy Lifting Continues", content: "August through October built the base. November is where you stack on top of it.\n\n🏋️ MON · TUE · THU · FRI: Weight Room (Heavy): Compound lifts. Same program from October but heavier. Squats, deadlifts, bench, rows, pull-ups. Track your numbers.\n⚾️ MON to SAT: Hitting (Wood Bat, Every Day): 100 swings. Tee, soft toss, front toss. Wood only.\n🤸 WED: Mobility and arm care maintenance. 20 minutes. Stay mobile while you push the weight.\n😴 SUNDAY: Rest. Family. The grind sustains because Sunday is sacred." },
@@ -7618,7 +7618,7 @@ const months = [
     note: "November is the last month of the heavy build. Push the weight room hard through Thanksgiving. Wood bats every day. Then on the back side of Thanksgiving, the body starts shifting gears: maintenance lifting, yoga, flexibility. The players who max out November and protect their body in December are the ones who walk into January healthy and ready to peak."
   },
   {
-    name: "DECEMBER", type: "offseason", focus: "Maintenance Lifting · Yoga and Flexibility · Winter Break Throwing Rest · Family",
+    name: "DECEMBER", type: "offseason", phase: "The Bridge", focus: "Maintenance Lifting · Yoga and Flexibility · Winter Break Throwing Rest · Family",
     intro: "December is the transition month. Heavy lifting from August through Thanksgiving is done. Now you protect what you built. Maintenance lifting, yoga, deep flexibility work. Winter break in the middle of the month is your second mandatory throwing rest of the year. Two to three weeks completely off throwing while you are with family. After winter break, the season bat replaces the wood bat. That switch is the signal that the season is coming. Sundays are sacred, especially during the holidays.",
     weeks: [
       { title: "Week 1: Maintenance and Flexibility Foundation", content: "Heavy build is over. Now you protect your body.\n\n🏋️ MON · WED · FRI: Weight Room (Maintenance): Moderate weight, 3x12 to 15 reps. Full body. Protect joints heading into the holidays.\n🧘️ DAILY: Yoga or deep stretching. 15 to 20 minutes. Hips, hamstrings, shoulders, thoracic spine. This is the most flexible you should be all year.\n⚾️ MON to SAT: Hitting (Wood Bat): 100 swings. Wood until winter break, then season bat comes out.\n😴 SUNDAY: Family. Be present. December Sundays are some of the best of the year." },
@@ -9359,7 +9359,12 @@ function buildCalendar() {
 
   months.forEach((m, i) => {
     const badgeClass = m.type === 'season' ? 'badge-season' : m.type === 'preseason' ? 'badge-preseason' : 'badge-offseason';
-    const badgeText = m.type === 'season' ? 'In-Season' : m.type === 'preseason' ? 'Pre-Season' : 'Off-Season';
+    // Phase names over the generic season/off-season split (2026-06-11,
+    // Coach: "give it another name that maybe stronger") — 8 months wore the
+    // identical "Off-Season" badge, hiding the phases the calendar teaches.
+    // Colors still follow type; the text now names the month's job: The
+    // Ramp, Rest + Recovery, The Build, Peak Strength, The Bridge.
+    const badgeText = m.phase || (m.type === 'season' ? 'In-Season' : m.type === 'preseason' ? 'Pre-Season' : 'Off-Season');
 
     const weeksHTML = m.weeks.map((w, wi) => {
       const parsed = parseWeekContent(w.content);
@@ -18479,7 +18484,7 @@ function renderDashMonthCard() {
     if (monthEl)  monthEl.textContent = ' · ' + titleCase;
     if (bodyEl && m.note) bodyEl.innerHTML = '"' + m.note + '"<br><br><span style="font-family:\'Barlow Condensed\',sans-serif; font-weight:700; letter-spacing:1px; color:var(--gold);">Coach</span>';
     const ballEmoji = (typeof getBallEmoji === 'function') ? getBallEmoji() : '⚾';
-    if (bannerEl) bannerEl.innerHTML = ballEmoji + ' &nbsp;<strong>' + m.name + '</strong> · ' + typeLabel + ' · ' + (m.focus || '');
+    if (bannerEl) bannerEl.innerHTML = ballEmoji + ' &nbsp;<strong>' + m.name + '</strong> · ' + (m.phase || typeLabel) + ' · ' + (m.focus || '');
   } catch(err) { try { console.warn('[dash-month-card]', err); } catch(e) {} }
 }
 
