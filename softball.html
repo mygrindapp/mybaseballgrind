@@ -3178,6 +3178,13 @@ input[type="number"] {
           <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; margin-top:4px;">Season</div>
         </div>
       </div>
+      <!-- Personal records (2026-06-11): best Top Set weight per lift,
+           computed in renderWorkoutVolume from workout entries. Hidden
+           until the player logs a Top Set. -->
+      <div id="dash-workout-prs" style="display:none; margin-top:10px; padding:10px 12px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
+        <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:#E67E22; text-transform:uppercase; margin-bottom:4px;">💪 Personal Records</div>
+        <div id="dash-workout-prs-line" style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6;"></div>
+      </div>
     </div>
 
     <!-- ══ REST DAYS — counts offday-type journal entries ══
@@ -4176,7 +4183,12 @@ input[type="number"] {
       </style>
       <div id="j-workout-section" style="display:none; border:1px solid var(--border); border-radius:3px; padding:18px; margin-bottom:20px;">
         <div style="font-family:'Barlow Condensed'; font-size:20px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:8px; display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-dumbbell"/></svg> Gym Session</div>
-        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:18px; line-height:1.55;">Strength + conditioning built for baseball / softball. Rotational power, lower-body explosiveness, arm health. Off-season is where seasons are won.</div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin-bottom:10px; line-height:1.55;">Strength + conditioning built for baseball / softball. Rotational power, lower-body explosiveness, arm health. Off-season is where seasons are won.</div>
+        <!-- Month-phase line (2026-06-11): ties the gym form to the in-app
+             training calendar so the player lifts with the season's intent
+             (June = recovery first, October = peak month). Populated from
+             the shared `months` data by an IIFE next to that array. -->
+        <div id="mg-wo-phase" style="display:none; margin-bottom:18px; padding:8px 12px; background:rgba(201,168,76,0.08); border-left:2px solid var(--gold,#C9A84C); border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.5;"></div>
 
         <!-- Session-type chips — Coach Young 2026-05-11 iteration 3:
              "Session type should be first thing you choose before
@@ -4219,6 +4231,31 @@ input[type="number"] {
         <div style="margin-top:18px;">
           <label class="wo-section-label">Main Lifts <span class="wo-section-hint">(what you actually worked on)</span></label>
           <textarea id="j-wo-lifts" oninput="_refreshWoLiftChips()" placeholder="e.g. Trap Bar DL 3x5 @ 225 · Med Ball Rotational Throw 3x8 · Bench 3x5 @ 155 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
+        </div>
+
+        <!-- Top Set (2026-06-11): the one structured number per session.
+             The training calendar tells players to "track your numbers and
+             attempt a personal best," but the free-text lifts log can't be
+             compared across months. This optional lift + weight pair powers
+             real PR tracking (best per lift on the dashboard Gym card + a
+             "NEW PR" toast on save) without slowing the log down. -->
+        <div style="margin-top:18px;">
+          <label class="wo-section-label">Top Set <span class="wo-section-hint">(optional. Heaviest set of the day. This is how PRs get tracked.)</span></label>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:flex-start;">
+            <select id="j-wo-pr-lift" style="max-width:200px; margin-bottom:0;">
+              <option value="">Pick a lift</option>
+              <option value="Squat">Squat</option>
+              <option value="Trap Bar / Deadlift">Trap Bar / Deadlift</option>
+              <option value="Bench Press">Bench Press</option>
+              <option value="Row">Row</option>
+              <option value="Overhead Press">Overhead Press</option>
+              <option value="Power Clean">Power Clean</option>
+              <option value="Pull-ups (weighted)">Pull-ups (weighted)</option>
+              <option value="Other">Other</option>
+            </select>
+            <input type="number" id="j-wo-pr-weight" min="0" max="1000" step="5" placeholder="lbs" style="width:90px; margin-bottom:0;">
+            <input type="number" id="j-wo-pr-reps" min="0" max="50" step="1" placeholder="reps" style="width:90px; margin-bottom:0;">
+          </div>
         </div>
         <div style="margin-top:18px;">
           <label class="wo-section-label">Duration <span class="wo-section-hint">(minutes)</span></label>
@@ -7553,6 +7590,19 @@ const months = [
   }
 ];
 
+// Gym form month-phase line (2026-06-11): surfaces the current month's
+// training-calendar focus inside the Gym Session form so the player lifts
+// with the season's intent. Reads the `months` array above; the form markup
+// is earlier in the DOM, so the element exists by the time this runs.
+try {
+  var _woPhaseEl = document.getElementById('mg-wo-phase');
+  var _woM = months[new Date().getMonth()];
+  if (_woPhaseEl && _woM) {
+    _woPhaseEl.innerHTML = '📅 <strong style="color:var(--gold,#C9A84C);">' + _woM.name + ' on the training calendar:</strong> ' + _woM.focus;
+    _woPhaseEl.style.display = 'block';
+  }
+} catch (e) {}
+
 // ─── INIT ─────────────────────────────────────────────────
 // ═══════════════════════════════════════════════════════
 // YBG MY GRIND — EMAIL-LOCKED ACCESS SYSTEM
@@ -9663,6 +9713,14 @@ function _doEditEntry(id) {
     if (entry.workout.intensity) { try { selectWoIntensity(entry.workout.intensity); } catch (e) { setVal('j-wo-intensity', entry.workout.intensity); } }
     setVal('j-wo-lifts',     entry.workout.lifts);
     setVal('j-wo-duration',  entry.workout.duration);
+    // Reflection was never restored on edit (2026-06-11 fix), so re-saving
+    // an edited workout silently blanked it. Top Set restores with it.
+    setVal('j-wo-reflection', entry.workout.reflection);
+    if (entry.workout.topSet) {
+      setVal('j-wo-pr-lift',   entry.workout.topSet.lift);
+      setVal('j-wo-pr-weight', entry.workout.topSet.weight);
+      setVal('j-wo-pr-reps',   entry.workout.topSet.reps);
+    }
   }
 
   // Rep counter — restore chip selections
@@ -9702,7 +9760,8 @@ function cancelEdit() {
    'j-comment-name','j-comment-role','j-comment-text',
    'j-inst-name','j-inst-focus','j-inst-notes','j-inst-takeaway','j-inst-note','j-inst-duration','j-inst-next',
    'j-coach-note',
-   'j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration',
+   'j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration','j-wo-reflection',
+   'j-wo-pr-lift','j-wo-pr-weight','j-wo-pr-reps',
    'gs-ab','gs-h','gs-hr','gs-rbi','gs-r','gs-bb','gs-k','gs-sb',
    'gs-ip','gs-er','gs-pk','gs-pbb','gs-po','gs-a','gs-e'
   ].forEach(function(id) {
@@ -10010,7 +10069,12 @@ function saveEntry() {
     const woLifts      = document.getElementById('j-wo-lifts')?.value.trim()    || '';
     const woDuration   = document.getElementById('j-wo-duration')?.value        || '';
     const woReflection = document.getElementById('j-wo-reflection')?.value.trim() || '';
-    if (woFocus || woLifts || woIntensity || woReflection) {
+    // Top Set (2026-06-11): lift + weight is the PR unit. Reps are context.
+    const woPrLift   = document.getElementById('j-wo-pr-lift')?.value          || '';
+    const woPrWeight = parseFloat(document.getElementById('j-wo-pr-weight')?.value) || 0;
+    const woPrReps   = parseInt(document.getElementById('j-wo-pr-reps')?.value, 10) || 0;
+    const woTopSet   = (woPrLift && woPrWeight > 0) ? { lift: woPrLift, weight: woPrWeight, reps: woPrReps } : null;
+    if (woFocus || woLifts || woIntensity || woReflection || woTopSet) {
       entry.workout = {
         focus:      woFocus,
         intensity:  woIntensity,
@@ -10022,6 +10086,24 @@ function saveEntry() {
         // searched independently in future entry-view passes.
         reflection: woReflection,
       };
+      if (woTopSet) {
+        entry.workout.topSet = woTopSet;
+        // PR check against every OTHER workout entry (exclude the one being
+        // edited so re-saving an edit can't beat itself). First-ever log of
+        // a lift is a baseline, not a PR, so no toast without a prior best.
+        try {
+          var _prPrior = 0;
+          (state.entries || []).forEach(function (e) {
+            if (!e || e.type !== 'workout' || e.id === entry.id) return;
+            var ts = e.workout && e.workout.topSet;
+            if (ts && ts.lift === woTopSet.lift && Number(ts.weight) > _prPrior) _prPrior = Number(ts.weight);
+          });
+          if (_prPrior > 0 && woTopSet.weight > _prPrior) {
+            var _prMsg = '💪 NEW PR: ' + woTopSet.lift + ' ' + woTopSet.weight + ' lbs (was ' + _prPrior + ')';
+            setTimeout(function () { try { showShareToast(_prMsg); } catch (e) {} }, 700);
+          }
+        } catch (e) {}
+      }
     }
   }
 
@@ -10169,7 +10251,7 @@ function saveEntry() {
   document.getElementById('j-comment-role').value = '';
   document.getElementById('j-comment-text').value = '';
   // Reset Workout fields
-  ['j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration','j-wo-reflection'].forEach(id => {
+  ['j-wo-focus','j-wo-intensity','j-wo-lifts','j-wo-duration','j-wo-reflection','j-wo-pr-lift','j-wo-pr-weight','j-wo-pr-reps'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
   });
@@ -14482,6 +14564,27 @@ function renderWorkoutVolume() {
     set('dash-workout-7d',     last7);
     set('dash-workout-month',  monthToDate);
     set('dash-workout-season', workouts.length);
+
+    // Personal records: best Top Set weight per lift (2026-06-11). The
+    // calendar tells players to track their numbers; this is where the
+    // numbers show up. Hidden until at least one Top Set exists.
+    try {
+      var prBest = {};
+      workouts.forEach(function (e) {
+        var ts = e.workout && e.workout.topSet;
+        if (!ts || !ts.lift || !(Number(ts.weight) > 0)) return;
+        if (!prBest[ts.lift] || Number(ts.weight) > prBest[ts.lift]) prBest[ts.lift] = Number(ts.weight);
+      });
+      var prCard = document.getElementById('dash-workout-prs');
+      var prLine = document.getElementById('dash-workout-prs-line');
+      var lifts = Object.keys(prBest);
+      if (prCard && prLine && lifts.length > 0) {
+        prLine.textContent = lifts.map(function (l) { return l + ' ' + prBest[l] + ' lbs'; }).join('  ·  ');
+        prCard.style.display = 'block';
+      } else if (prCard) {
+        prCard.style.display = 'none';
+      }
+    } catch (e) {}
 
     // "Last: 3 days ago" hint — keeps the consistency story honest. If
     // mostRecent is today (or future-dated entry), show "Today".
