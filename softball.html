@@ -3052,7 +3052,7 @@ input[type="number"] {
       </div>
 
       <div class="card">
-        <div class="card-title" id="dash-coach-note-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-message-circle"/></svg> Coach's Note</div>
+        <div class="card-title" id="dash-coach-note-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-message-circle"/></svg> Coach's Note<span id="dash-coach-note-month"></span></div>
         <div class="coach-note" id="dash-coach-note-body" style="margin:0; font-size:15px;"></div>
       </div>
     </div>
@@ -18467,12 +18467,17 @@ function renderDashMonthCard() {
       'transition': 'Transition'
     };
     const typeLabel = typeLabels[m.type] || (m.type || '');
-    const titleEl  = document.getElementById('dash-coach-note-title');
+    // Month lands in a dedicated span so the card's SVG icon survives the
+    // render (textContent on the title was wiping it back to an emoji), and
+    // the note signs "Coach" per the brand voice rule (was the retired
+    // ". The Grind" signature — missed in the 2026-06-06 rebrand).
+    const monthEl  = document.getElementById('dash-coach-note-month');
     const bodyEl   = document.getElementById('dash-coach-note-body');
     const bannerEl = document.getElementById('dash-month-banner');
-    if (titleEl)  titleEl.textContent  = "🗒️ Coach's Note · " + titleCase;
-    if (bodyEl && m.note) bodyEl.innerHTML = '"' + m.note + '"<br><br>. The Grind';
-    if (bannerEl) bannerEl.innerHTML = '⚾ &nbsp;<strong>' + m.name + '</strong> · ' + typeLabel + ' · ' + (m.focus || '');
+    if (monthEl)  monthEl.textContent = ' · ' + titleCase;
+    if (bodyEl && m.note) bodyEl.innerHTML = '"' + m.note + '"<br><br><span style="font-family:\'Barlow Condensed\',sans-serif; font-weight:700; letter-spacing:1px; color:var(--gold);">Coach</span>';
+    const ballEmoji = (typeof getBallEmoji === 'function') ? getBallEmoji() : '⚾';
+    if (bannerEl) bannerEl.innerHTML = ballEmoji + ' &nbsp;<strong>' + m.name + '</strong> · ' + typeLabel + ' · ' + (m.focus || '');
   } catch(err) { try { console.warn('[dash-month-card]', err); } catch(e) {} }
 }
 
