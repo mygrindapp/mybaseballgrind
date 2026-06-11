@@ -4602,7 +4602,7 @@ input[type="number"] {
   <div class="panel" id="panel-calendar">
     <!-- Back-to-Develop affordance. Calendar is reached from the Develop hub
          (2026-06-02 nav redesign), so the back pill returns there. -->
-    <button onclick="mgTab('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Develop</button>
+    <button onclick="mgBack('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
       <div class="section-title">MY<span>CALENDAR</span></div>
       <div class="section-sub">Training Prescriptions · Built from 20+ Years of Player Development</div>
@@ -5075,7 +5075,7 @@ input[type="number"] {
   <div class="panel" id="panel-academics">
     <!-- Back-to-Develop pill. Academics is reached from the Develop hub
          (2026-06-02 nav redesign), so the back pill returns there. -->
-    <button onclick="mgTab('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Develop</button>
+    <button onclick="mgBack('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
       <div class="section-title">MY<span>ACADEMICS</span></div>
       <div class="section-sub" id="acad-page-sub">No Grades · No Game</div>
@@ -5230,7 +5230,7 @@ input[type="number"] {
   <!-- ══════════════════════════════════════════ TEAM ══ -->
   <div class="panel" id="panel-team">
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
-    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
+    <button onclick="mgBack('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
       <div class="section-title">MY<span>TEAM</span></div>
       <div class="section-sub" id="team-panel-sub">Join a team · or create one as a coach</div>
@@ -5478,7 +5478,7 @@ input[type="number"] {
   <!-- ══════════════════════════════════════════ COACH FEEDBACK ══ -->
   <div class="panel" id="panel-coach-feedback">
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
-    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
+    <button onclick="mgBack('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
       <div class="section-title">MY<span>COACH</span></div>
       <div class="section-sub">Send a question. Get your coach's structured feedback.</div>
@@ -6026,7 +6026,7 @@ input[type="number"] {
   <!-- ══════════════════════════════════════════ SETTINGS ══ -->
   <div class="panel" id="panel-settings">
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
-    <button onclick="mgTab('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back to Dashboard</button>
+    <button onclick="mgBack('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
       <div class="section-title">MY<span>SETTINGS</span></div>
       <div class="section-sub">Account · Preferences · Help</div>
@@ -6581,6 +6581,7 @@ input[type="number"] {
   </div>
 
   <div class="panel" id="panel-tools">
+    <button onclick="mgBack('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
 
     <!-- Hero. margin-top:48px clears the 64px fixed top bar so the Bebas
          title isn't cut off when the panel opens at scroll-top (Coach Young
@@ -6780,6 +6781,7 @@ input[type="number"] {
   </div>
 
   <div class="panel" id="panel-resources">
+    <button onclick="mgBack('develop', 'tab-develop')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
 
     <!-- Hero card: warm gold-accent intro. margin-top:48px clears the 64px
          fixed top bar so the Bebas Neue title isn't clipped when the panel
@@ -20232,7 +20234,27 @@ setTimeout(function() {
 // already navigating back to.
 var _mgTabSkipHistoryPush = false;
 
+// ─── Smart back (2026-06-11) ──────────────────────────────
+// Coach: "once I'm in Resources there is no way back to Develop." Every
+// sub-page now carries a "← Back" pill that returns to the top-level tab
+// the player actually came from (recorded on every mgTab call below), with
+// the page's logical parent as the fallback. Only top-level tabs are valid
+// return targets so sub-page-to-sub-page hops can't create back loops.
+var _mgNavCur = null;
+var _mgNavPrev = null;
+var _MG_TOP_TABS = { dashboard:'tab-dashboard', journal:'tab-journal', stats:'tab-stats', develop:'tab-develop', players:'tab-players' };
+function mgBack(fallbackPanel, fallbackTab) {
+  var prev = _mgNavPrev;
+  if (prev && _MG_TOP_TABS[prev.panel]) {
+    mgTab(prev.panel, _MG_TOP_TABS[prev.panel]);
+  } else {
+    mgTab(fallbackPanel, fallbackTab);
+  }
+}
+
 function mgTab(panel, tabId) {
+  // Record where the player came from for mgBack() smart returns.
+  if (!_mgNavCur || _mgNavCur.panel !== panel) { _mgNavPrev = _mgNavCur; _mgNavCur = { panel: panel, tab: tabId }; }
   // History push for browser/device back-button support — Coach Young
   // 2026-05-17: hitting the phone back arrow inside the app was
   // exiting the entire app because mgTab() never pushed history. Now
