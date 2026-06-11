@@ -2407,7 +2407,7 @@ fbq('init','326334441984368');fbq('track','PageView');
       Pick an option above
     </button>
     <div style="text-align:center; margin-top:12px; font-family:'Barlow'; font-size:11px; color:#5C544A;">
-      📚 No Grades · No Game · The Grind
+      📚 No Grades · No Game · MyGrind
     </div>
   </div>
 </div>
@@ -9398,7 +9398,7 @@ function buildCalendar() {
         <p style="font-size:14px; color:var(--light); line-height:1.7; margin-bottom:20px; border-left:3px solid var(--gold-dark); padding-left:16px;">${m.intro}</p>
         ${weeksHTML}
         <div class="coach-note">
-          <strong>⚾ The Grind's Note</strong>
+          <strong>${(typeof getBallEmoji === 'function') ? getBallEmoji() : '⚾'} Coach's Note</strong>
           "${m.note}"
         </div>
         <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
