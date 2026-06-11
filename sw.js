@@ -5,7 +5,7 @@
 // old inline version; cache bumped v326 -> v327. The push/notificationclick
 // handlers below are inert until subscriptions + the send cron ship (Phases B/C).
 
-const CACHE = 'ybg-mygrind-v341';
+const CACHE = 'ybg-mygrind-v342';
 const ASSETS = ['/'];
 
 self.addEventListener('install', e => {
