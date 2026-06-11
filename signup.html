@@ -4907,6 +4907,12 @@ function onPhoneConfirmSend() {
   // Record explicit consent (localStorage + Firestore via /api/sms-consent)
   // before we advance toward the send.
   recordSmsConsent();
+  // ACTUALLY SEND THE INVITES (2026-06-10). Until today this button
+  // recorded consent and navigated - no text ever went out, even though
+  // Screen 7 claimed "Invite sent". Now each non-fallback player with a
+  // phone gets their setup link texted via /api/invite-send (Twilio,
+  // toll-free verified June 2026). Idempotent via player.inviteSentAt.
+  sendQueuedPlayerInvites();
   hidePhoneConfirmModal();
   // Slot-lock fires the moment "send" is confirmed. From here on, navigating
   // back to Screen 6 shows a read-only view — players cannot be silently
@@ -4917,6 +4923,51 @@ function onPhoneConfirmSend() {
     saveState();
   }
   go(7);
+}
+
+// Fire the real invite text for every player queued at the consent modal.
+// Fire-and-forget per player: a failed send never blocks Screen 7, and the
+// parent can always re-send from the player card's share modal ("Text or
+// Email It for Me"). Idempotency: a player with inviteSentAt set is skipped,
+// so re-confirming the modal or back-and-forth navigation never double-texts.
+// The server adds its own backstops (per-destination 2/24h, per-IP limits).
+function sendQueuedPlayerInvites() {
+  try {
+    const total = state.playerCount || 1;
+    const players = (state.players || []).slice(0, total);
+    const parentName  = (state.parent && state.parent.firstName) || 'Your parent';
+    const parentEmail = (state.parent && state.parent.email) || '';
+    players.forEach(function (p) {
+      if (!p || p.fallback || !p.phone) return;   // only players we text
+      if (p.inviteSentAt) return;                  // already sent - never double-text
+      fetch('/api/invite-send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          destination: String(p.phone),
+          playerName:  p.firstName || 'there',
+          sport:       p.sport || state.familySport || 'baseball',
+          parentName:  parentName,
+          parentEmail: parentEmail
+        }),
+        keepalive: true
+      })
+      .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+      .then(function (resp) {
+        if (resp.ok && resp.d && resp.d.success) {
+          p.inviteSentAt = new Date().toISOString();
+          delete p.inviteSendError;
+        } else {
+          p.inviteSendError = (resp.d && resp.d.error) || 'send_failed';
+        }
+        try { saveState(); } catch (e) {}
+      })
+      .catch(function () {
+        p.inviteSendError = 'network_error';
+        try { saveState(); } catch (e) {}
+      });
+    });
+  } catch (e) { /* never block the signup flow on invite bookkeeping */ }
 }
 
 // Back: go back one player slot, OR back to Screen 5 if at first player
