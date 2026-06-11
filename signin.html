@@ -369,6 +369,7 @@ fbq('init','326334441984368');fbq('track','PageView');
 <!-- ═══ FIREBASE ═══════════════════════════════════════════════ -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+<script src="assets/qotd.js"></script>
 <script>
 // Firebase config — MUST match softball.html so the same auth state persists
 // across both surfaces. Coach Young 2026-05-27 v2: passwordless 6-digit code
@@ -752,27 +753,17 @@ window.addEventListener('DOMContentLoaded', async () => {
 // set in softball.html). Chosen by day-of-year so it rotates daily without
 // loading the whole app. Falls back to the quote already in the markup.
 (function renderSigninQotd() {
-  var QUOTES = [
-    "Two things you control: your effort and your attitude. Own them both.",
-    "Nothing in this game works halfway. Commit all the way to the swing, the throw, the next rep. You will still miss sometimes, but never because you held back.",
-    "Stay ready so you don't have to get ready.",
-    "You don't rise to the occasion. You fall to your level of preparation.",
-    "Talent opens the door. Discipline keeps you in the room.",
-    "Practice does not make perfect. It makes permanent. A lazy rep teaches the wrong thing, so do it right or do it again.",
-    "One pitch. One at-bat. One inning. Win the moment in front of you and the score takes care of itself.",
-    "Pressure is what you make it. Train hard enough that pressure feels like Tuesday.",
-    "Hustle is the only stat that never slumps.",
-    "Stats follow effort. Effort doesn't follow stats.",
-    "Play for the name on the front. Your name on the back takes care of itself.",
-    "The game is 80% mental. Practice is 90% physical. Grind the body now so your mind is free when it counts."
-  ];
+  // CONTINUITY (2026-06-10): the sign-in card now uses the SAME shared
+  // library + picker as the in-app QOTD overlay (assets/qotd.js), so the
+  // quote here matches the one behind the 6:00am push all day. The list
+  // that used to live inline here is gone - one source, no drift.
   try {
-    var now = new Date();
-    var start = new Date(now.getFullYear(), 0, 0);
-    var day = Math.floor((now - start) / 86400000);
-    var q = QUOTES[day % QUOTES.length];
+    var pick = (typeof mgPickTodaysQuote === 'function') ? mgPickTodaysQuote() : null;
+    if (!pick || !pick.q) return; // shared file failed to load - keep the default markup quote
     var el = document.getElementById('qotd-quote');
-    if (el) el.textContent = '“' + q + '”';
+    if (el) el.textContent = '\u201C' + pick.q + '\u201D';
+    var mark = document.querySelector('.qotd-mark');
+    if (mark && pick.a) mark.textContent = pick.a;
   } catch (e) { /* leave the default quote in the markup */ }
 })();
 </script>
