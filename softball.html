@@ -2639,6 +2639,12 @@ fbq('init','326334441984368');fbq('track','PageView');
      near-identical on a dark theme since the original was 98% opaque. */
   background: #14100D;
   border-top: 1px solid #2A2622;
+  /* iOS Safari paints composited fixed bars on their own layer; sub-pixel
+     rounding during scroll can open a ~0.5px seam at the top edge where the
+     page shows through ("tabs bleeding into the page" — Coach, 2026-06-12,
+     phone only; invisible on desktop). The shadow extends the solid nav
+     color 2px above the border so there is no gap to peek through. */
+  box-shadow: 0 -2px 0 #14100D;
   display: flex;
   align-items: stretch;
   height: 62px;
