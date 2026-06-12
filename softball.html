@@ -1957,7 +1957,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     <!-- Editable post caption -->
     <div style="position:relative; margin-bottom:16px;">
       <textarea id="share-modal-text" style="width:100%; min-height:160px; background:#1E1A17; border:1px solid #2A0018; color:#F5F0EB; font-family:'Barlow',sans-serif; font-size:14px; line-height:1.7; padding:14px 16px; border-radius:6px; outline:none; resize:none; box-sizing:border-box;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='#2A0018'"></textarea>
-      <div style="position:absolute; bottom:10px; right:12px; font-family:'Barlow',sans-serif; font-size:11px; color:#3D3530;">✏️ Edit if you'd like</div>
+      <div style="position:absolute; bottom:10px; right:12px; font-family:'Barlow',sans-serif; font-size:11px; color:#3D3530;"><svg class="mg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-pencil"/></svg> Edit if you'd like</div>
     </div>
 
     <!-- App icon card instead of raw URL -->
@@ -2024,7 +2024,7 @@ fbq('init','326334441984368');fbq('track','PageView');
      Firestore → flag set → never shows again. -->
 <div id="cloud-backup-banner" style="display:none; background:linear-gradient(90deg,#0E1A12,#10241A,#0E1A12); border-bottom:1px solid #1A5F3E; padding:12px 24px; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; z-index:99; position:relative;">
   <div style="display:flex; align-items:center; gap:10px; flex:1; min-width:240px;">
-    <span style="font-size:18px;">☁️</span>
+    <span style="font-size:18px;"><svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:#5DCFA0;"><use href="#mg-icon-cloud"/></svg></span>
     <div>
       <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#5DCFA0;">Back Up Your Journal</div>
       <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#A8C8B8; line-height:1.5; margin-top:2px;">
@@ -2093,8 +2093,6 @@ fbq('init','326334441984368');fbq('track','PageView');
 <div id="mg-account-bar" style="display:none; background:#0C0A08; border-bottom:1px solid #221C18; padding:7px 14px; align-items:center; justify-content:center; gap:9px; flex-wrap:wrap; position:relative; z-index:81;">
   <span id="mg-account-name" style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:var(--gold);"></span>
   <span id="mg-account-email" style="font-family:'Barlow',sans-serif; font-size:11px; color:#6F655A; word-break:break-all;"></span>
-  <a onclick="mgTab('settings','tab-players')" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold); text-decoration:underline; cursor:pointer; white-space:nowrap;">&#9881; Settings</a>
-  <a onclick="signOutAndSwitchAccount()" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:#B07A5A; text-decoration:underline; cursor:pointer; white-space:nowrap;">Sign out</a>
 </div>
 
 <!-- ── TRIAL COUNTDOWN BANNER ── -->
@@ -2107,7 +2105,7 @@ fbq('init','326334441984368');fbq('track','PageView');
       <span style="font-family:'Barlow Condensed',sans-serif; font-size:13px; color:var(--gold);" id="trial-days-word"> days</span>
       <span style="font-family:'Barlow Condensed',sans-serif; font-size:13px; color:#807565;"> remaining · </span>
       <span style="font-family:'Barlow Condensed',sans-serif; font-size:12px; color:#5C544A;" id="trial-banner-email"></span>
-      <span style="font-family:'Barlow Condensed',sans-serif; font-size:11px; color:#3D3530;"> 🔒 locked</span>
+      <span style="font-family:'Barlow Condensed',sans-serif; font-size:11px; color:#3D3530;"> <svg class="mg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-lock"/></svg> locked</span>
     </div>
   </div>
   <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -2181,7 +2179,7 @@ fbq('init','326334441984368');fbq('track','PageView');
 
 <!-- ── PAID SUCCESS TOAST ── -->
 <div id="paid-toast" style="display:none; position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1A3A1A; border:1px solid #27AE60; border-radius:4px; padding:14px 24px; z-index:9999; align-items:center; gap:12px; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
-  <span style="font-size:24px;">✅</span>
+  <span style="font-size:24px;"><svg class="mg-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:#27AE60;"><use href="#mg-icon-check-circle"/></svg></span>
   <div>
     <div style="font-family:'Bebas Neue',cursive; font-size:20px; letter-spacing:2px; color:#27AE60;">FULL ACCESS UNLOCKED</div>
     <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1px; color:#807565;">Welcome to MyGrind. No limits, all year.</div>
@@ -2751,10 +2749,10 @@ fbq('init','326334441984368');fbq('track','PageView');
            the modal first so the player isn't looking at a stacked modal
            + scrolled tab. -->
       <button type="button" onclick="closeHelpModal(); openSettingsAtFeedback();" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:8px; cursor:pointer; text-align:center;">
-        ✉️ Send Feedback
+        <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-mail"/></svg> Send Feedback
       </button>
       <a href="mailto:hello@mygrindapp.com?subject=MyGrind%20Feature%20Request&body=Hi%20MyGrind%20Team%2C%0A%0A" style="display:flex; align-items:center; justify-content:center; gap:6px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:12px 6px; border-radius:2px; text-decoration:none; text-align:center;">
-        💡 Suggest a Feature
+        <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-lightbulb"/></svg> Suggest a Feature
       </a>
     </div>
   </div>
@@ -2857,10 +2855,10 @@ input[type="number"] {
          Coach Young 2026-06-06: in-app nudge (shows on Dashboard when today has
          no entry/check-in) + a no-backend .ics daily phone reminder. renderDailyNudge(). -->
     <div id="dash-nudge" style="display:none; align-items:center; gap:12px; background:rgba(201,168,76,0.08); border:1px solid var(--gold-dark); border-radius:10px; padding:12px 14px; margin-bottom:16px;">
-      <span style="font-size:18px; line-height:1; flex-shrink:0;">🔔</span>
+      <span style="font-size:18px; line-height:1; flex-shrink:0;"><svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:var(--gold);"><use href="#mg-icon-bell"/></svg></span>
       <div style="flex:1; min-width:0;">
         <div id="dash-nudge-text" style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); line-height:1.45;"></div>
-        <button type="button" onclick="enableDailyReminder()" style="background:none; border:none; padding:0; margin-top:4px; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dark); text-decoration:underline; cursor:pointer;">🔔 Remind me daily on my phone</button>
+        <button type="button" onclick="enableDailyReminder()" style="background:none; border:none; padding:0; margin-top:4px; font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--gold-dark); text-decoration:underline; cursor:pointer;"><svg class="mg-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-bell"/></svg> Remind me daily on my phone</button>
       </div>
       <button type="button" onclick="mgTab('journal','tab-journal')" style="flex-shrink:0; background:var(--gold); border:none; color:#181614; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:9px 14px; border-radius:6px; cursor:pointer;">Log Now</button>
       <button type="button" onclick="dismissDashNudge()" aria-label="Dismiss" style="flex-shrink:0; background:transparent; border:none; color:var(--grey); font-size:18px; line-height:1; cursor:pointer; padding:4px 6px;">×</button>
@@ -3019,7 +3017,7 @@ input[type="number"] {
       <div id="first-open-welcome-title" style="font-family:'Bebas Neue',cursive; font-size:26px; letter-spacing:2px; color:#161210; line-height:1;">WELCOME TO MYGRIND</div>
       <div style="font-family:'Barlow'; font-size:13px; color:#2A0018; margin-top:4px; margin-bottom:14px;">Your journal is ready. One entry starts your streak — log today's work.</div>
       <button onclick="firstOpenWelcomeStart()" style="background:#161210; color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:1px solid #000; border-radius:8px; cursor:pointer;">
-        📓 Log My First Entry
+        <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg> Log My First Entry
       </button>
       <button onclick="dismissFirstOpenWelcome()" style="background:transparent; color:#2A0018; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:12px 16px; border:none; cursor:pointer; margin-left:6px;">
         Dismiss
@@ -3032,7 +3030,7 @@ input[type="number"] {
       <div id="milestone-title" style="font-family:'Bebas Neue',cursive; font-size:26px; letter-spacing:2px; color:#161210; line-height:1;">STREAK UNLOCKED</div>
       <div id="milestone-sub" style="font-family:'Barlow'; font-size:13px; color:#2A0018; margin-top:4px; margin-bottom:14px;">You hit a 7-day streak. Keep going.</div>
       <button onclick="shareMilestone()" style="background:#161210; color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:1px solid #000; border-radius:8px; cursor:pointer;">
-        📲 Share This Win
+        <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-share"/></svg> Share This Win
       </button>
       <button onclick="dismissMilestone()" style="background:transparent; color:#2A0018; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:12px 16px; border:none; cursor:pointer; margin-left:6px;">
         Dismiss
@@ -3184,7 +3182,7 @@ input[type="number"] {
            computed in renderWorkoutVolume from workout entries. Hidden
            until the player logs a Top Set. -->
       <div id="dash-workout-prs" style="display:none; margin-top:10px; padding:10px 12px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
-        <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:#E67E22; text-transform:uppercase; margin-bottom:4px;">💪 Personal Records</div>
+        <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:1.5px; color:#E67E22; text-transform:uppercase; margin-bottom:4px;"><svg class="mg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-dumbbell"/></svg> Personal Records</div>
         <div id="dash-workout-prs-line" style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.6;"></div>
       </div>
     </div>
@@ -3454,7 +3452,7 @@ input[type="number"] {
            the boundary BEFORE the kid taps share so they trust the surface.
            Pairs with the same disclosure embedded inside the recap itself. -->
       <div style="display:inline-flex; align-items:center; gap:6px; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#58D68D; background:rgba(39,174,96,0.08); border:1px solid rgba(39,174,96,0.25); border-radius:999px; padding:5px 11px; margin-bottom:14px;">
-        🔒 Reflections + Notes Stay Yours
+        <svg class="mg-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-lock"/></svg> Reflections + Notes Stay Yours
       </div>
       <div id="weekly-recap-body" style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.7; margin-bottom:14px;"></div>
       <!-- 2-button row — Coach Young 2026-05-17. Was 3 buttons (Text full-width
@@ -3465,10 +3463,10 @@ input[type="number"] {
            Primary gold fill on Text keeps the visual hierarchy clear. -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
         <button onclick="shareWeeklyRecap()" style="background:var(--gold); border:1px solid var(--gold); color:#161210; font-family:'Barlow Condensed'; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:11px 8px; border-radius:8px; cursor:pointer;">
-          📲 Text My Week
+          <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-share"/></svg> Text My Week
         </button>
         <button onclick="exportJournalPDF()" style="background:var(--card2); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px 8px; border-radius:8px; cursor:pointer;">
-          📄 Full Journal
+          <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg> Full Journal
         </button>
       </div>
     </div>
@@ -3686,7 +3684,7 @@ input[type="number"] {
              unless the user taps the compressed pill to re-open it. -->
         <div id="arm-care-expanded">
           <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px;">
-            <div class="card-title" style="margin-bottom:0;">💪 Arm & Shoulder Care · Today</div>
+            <div class="card-title" style="margin-bottom:0; display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-dumbbell"/></svg> Arm & Shoulder Care · Today</div>
             <!-- Collapse button — only visible when all 5 are checked AND
                  the user has expanded the pill back open. Lets them re-hide
                  the list manually instead of having to uncheck/recheck. -->
@@ -4440,7 +4438,7 @@ input[type="number"] {
            than today. Loud orange so the player can't accidentally
            back-date and not realize. Coach Young 2026-05-11. -->
       <div id="backdate-banner" style="display:none; margin-bottom:12px; padding:12px 14px; background:rgba(230,126,34,0.12); border:1px solid #E67E22; border-radius:3px; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:#E67E22; line-height:1.4;">
-        📅 Logging for <span id="backdate-banner-date">—</span><span id="backdate-banner-suffix" style="font-weight:600; color:#C0681E; margin-left:6px;"></span>
+        <svg class="mg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-calendar"/></svg> Logging for <span id="backdate-banner-date">—</span><span id="backdate-banner-suffix" style="font-weight:600; color:#C0681E; margin-left:6px;"></span>
       </div>
 
       <!-- Editing banner — shown when user is editing a saved past entry.
@@ -4459,7 +4457,7 @@ input[type="number"] {
            centered, fixed-width action button — clearly the form's
            commit affordance, not a section banner. -->
       <div style="display:flex; gap:10px; justify-content:center; margin-top:8px;">
-        <button class="btn btn-gold" id="save-entry-btn" onclick="saveEntry()" style="min-width:200px;">📓 &nbsp;Save Entry</button>
+        <button class="btn btn-gold" id="save-entry-btn" onclick="saveEntry()" style="min-width:200px;"><svg class="mg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg>&nbsp;Save Entry</button>
         <button class="btn btn-outline" id="cancel-edit-btn" onclick="cancelEdit()" style="display:none;">Cancel</button>
       </div>
     </div>
@@ -4487,7 +4485,7 @@ input[type="number"] {
       <label>What did they tell me?</label>
       <textarea id="ac-text" placeholder="e.g. Coach said my first step to the bag was late. Dad said keep my head up after errors..."></textarea>
       <div style="display:flex; gap:10px;">
-        <button class="btn btn-gold" onclick="submitComment()">💬 &nbsp;Save Feedback</button>
+        <button class="btn btn-gold" onclick="submitComment()"><svg class="mg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-message-circle"/></svg>&nbsp;Save Feedback</button>
         <button class="btn btn-outline" onclick="cancelComment()">Cancel</button>
       </div>
     </div>
@@ -4682,7 +4680,7 @@ input[type="number"] {
             background:var(--gold); border:2px solid var(--dark);
             display:flex; align-items:center; justify-content:center;
             cursor:pointer; font-size:13px;
-          ">✏️</div>
+          "><svg class="mg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:#161210;"><use href="#mg-icon-pencil"/></svg></div>
           <input type="file" id="profile-pic-input" accept="image/*" style="display:none;" onchange="handleProfilePic(event)">
         </div>
         <!-- Name + position display -->
@@ -4693,7 +4691,7 @@ input[type="number"] {
           <div id="profile-hw-display" style="display:none; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#58D68D; margin-bottom:12px;"></div>
           <div style="display:flex; gap:8px; flex-wrap:wrap;">
             <button onclick="document.getElementById('profile-pic-input').click()" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:8px; cursor:pointer;">
-              📸 Upload Photo
+              <svg class="mg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-camera"/></svg> Upload Photo
             </button>
             <button id="profile-pic-remove" onclick="removeProfilePic()" style="display:none; background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:8px; cursor:pointer;">
               ✕ Remove
@@ -4716,7 +4714,7 @@ input[type="number"] {
          basics, on-the-field, and academics sections. -->
     <div class="card" style="margin-bottom:16px;">
       <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;">
-        <span style="font-size:18px;">🎯</span>
+        <span style="font-size:18px;"><svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:var(--gold);"><use href="#mg-icon-target"/></svg></span>
         Why I Grind
       </div>
       <div style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.55; margin-bottom:12px;">
@@ -4907,7 +4905,7 @@ input[type="number"] {
 
       <!-- NEXT CHECK-IN REMINDER -->
       <div id="hw-reminder" style="display:none; margin-top:12px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.08); border:1px solid var(--gold-dark); border-radius:2px; font-family:'Barlow Condensed'; font-size:12px; letter-spacing:1px; color:var(--gold-light);">
-        ⏰ &nbsp;<span id="hw-reminder-text"></span>
+        <svg class="mg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-bell"/></svg>&nbsp;<span id="hw-reminder-text"></span>
       </div>
     </div>
 
@@ -5011,13 +5009,7 @@ input[type="number"] {
          Relocated here 2026-06-02 from the retired More drawer (nav
          redesign, ROADMAP Option A). Profile is now the home for
          configuration + help. Uses the shared .develop-card style. -->
-    <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin:22px 0 10px;">Settings &amp; Support</div>
-
-    <button onclick="mgTab('settings','tab-players')" class="develop-card">
-      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-settings"/></svg></span>
-      <span class="develop-card-text"><span class="develop-card-title">Settings</span><span class="develop-card-sub">Sport, reminders, backup, subscription.</span></span>
-      <span class="develop-card-chev">&rsaquo;</span>
-    </button>
+    <div style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin:22px 0 10px;">Help &amp; Support</div>
 
     <button onclick="openHelpModal()" class="develop-card">
       <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-help-circle"/></svg></span>
@@ -5315,7 +5307,7 @@ input[type="number"] {
         <div class="card-title" style="display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg> Head Coach</div>
         <div id="team-coach-info" style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.8;"></div>
         <button id="team-message-coach" onclick="messageCoach()" style="width:100%; margin-top:12px; background:var(--card2); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px; border-radius:8px; cursor:pointer;">
-          ✉️ Email My Coach
+          <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-mail"/></svg> Email My Coach
         </button>
       </div>
 
@@ -5326,7 +5318,7 @@ input[type="number"] {
           Send this week's journal summary straight to your coach. Great for showing you're putting in the work.
         </div>
         <button onclick="sendJournalToCoach()" style="width:100%; background:var(--gold); color:#161210; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px; border:none; border-radius:8px; cursor:pointer;">
-          📧 Send My Week to Coach
+          <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-mail"/></svg> Send My Week to Coach
         </button>
       </div>
 
@@ -5368,7 +5360,7 @@ input[type="number"] {
           <div id="coach-team-code" style="font-family:'Bebas Neue'; font-size:28px; letter-spacing:3px; color:var(--gold);">—</div>
         </div>
         <button onclick="shareTeamInvite()" style="width:100%; background:var(--gold); color:#161210; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px; border:none; border-radius:8px; cursor:pointer;">
-          📲 Share With Players
+          <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-share"/></svg> Share With Players
         </button>
       </div>
 
@@ -5405,7 +5397,7 @@ input[type="number"] {
           <!-- Logo preview + extracted colors -->
           <div style="display:flex; gap:14px; align-items:center; margin-bottom:14px;">
             <div id="sponsor-logo-preview" style="width:80px; height:80px; border-radius:50%; background:#231F1C; border:2px dashed #3D3530; display:flex; align-items:center; justify-content:center; font-size:28px; color:#4A4239; flex-shrink:0; overflow:hidden;">
-              📷
+              <svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block;"><use href="#mg-icon-camera"/></svg>
             </div>
             <div style="flex:1; min-width:0;">
               <div style="font-family:'Barlow Condensed'; font-size:10px; letter-spacing:2px; color:var(--grey); text-transform:uppercase; margin-bottom:6px;">Extracted Colors</div>
@@ -5418,10 +5410,10 @@ input[type="number"] {
           </div>
 
           <button onclick="document.getElementById('sponsor-logo-input').click()" style="width:100%; background:var(--card2); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px; border-radius:8px; cursor:pointer; margin-bottom:8px;">
-            📤 Upload Team Logo
+            <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-share"/></svg> Upload Team Logo
           </button>
           <button id="sponsor-apply-colors-btn" onclick="applySponsorColors()" style="display:none; width:100%; background:var(--gold); color:#0C0A08; font-family:'Barlow Condensed'; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:11px; border:none; border-radius:8px; cursor:pointer;">
-            ✅ Apply These Colors
+            <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-check-circle"/></svg> Apply These Colors
           </button>
         </div>
 
@@ -5432,7 +5424,7 @@ input[type="number"] {
             Send players a sponsor invite. When they open the link, they'll be added to your roster with <strong style="color:var(--gold);">full access — no payment required.</strong> Existing paid players can also join without using a seat (they keep their own plan).
           </div>
           <button onclick="sendSponsorInvite()" style="width:100%; background:var(--gold); color:#0C0A08; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px; border:none; border-radius:8px; cursor:pointer;">
-            📲 Share Sponsor Invite
+            <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-share"/></svg> Share Sponsor Invite
           </button>
         </div>
 
@@ -5456,7 +5448,7 @@ input[type="number"] {
             End of season? Run a roster review — keep your returners, cut the ones moving on, and free up seats before next year. This also runs automatically on your sponsorship anniversary.
           </div>
           <button onclick="openSeasonEndReview()" style="width:100%; background:transparent; border:1px solid #E67E22; color:#E67E22; font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px; border-radius:8px; cursor:pointer;" onmouseover="this.style.background='rgba(230,126,34,0.08)'" onmouseout="this.style.background='transparent'">
-            🗓️ Run Season-End Review
+            <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-calendar"/></svg> Run Season-End Review
           </button>
         </div>
 
@@ -5466,7 +5458,7 @@ input[type="number"] {
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Team Settings</div>
         <button onclick="openTeamCreateModal(true)" style="width:100%; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px; border-radius:8px; cursor:pointer; margin-bottom:8px;">
-          ✏️ Edit Team Info
+          <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-pencil"/></svg> Edit Team Info
         </button>
         <button onclick="disbandTeam()" style="width:100%; background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:11px; border-radius:8px; cursor:pointer;">
           🗑️ Disband Team
@@ -5570,7 +5562,7 @@ input[type="number"] {
            editability; now a clear non-interactive badge that points to
            the source of truth (Game entries in the journal). -->
       <div style="display:flex; align-items:center; gap:8px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px; padding:8px 14px; white-space:nowrap;">
-        <span style="font-size:14px;">🔒</span>
+        <span style="font-size:14px;"><svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:var(--gold);"><use href="#mg-icon-lock"/></svg></span>
         <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; line-height:1.2;">
           <div style="color:var(--gold);">Read-Only</div>
           <div style="color:var(--grey); font-weight:600; letter-spacing:0.5px; text-transform:none; font-size:11px; margin-top:2px;">Edit games in the journal · Stats update here</div>
@@ -5950,7 +5942,7 @@ input[type="number"] {
 
       <!-- Copy link -->
       <button onclick="shareToSocial('copy')" id="share-copy-btn" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:2px; text-transform:uppercase; padding:11px 28px; border-radius:8px; cursor:pointer;">
-        📋 Copy Trial Link
+        <svg class="mg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-clipboard-list"/></svg> Copy Trial Link
       </button>
     </div>
 
@@ -5959,11 +5951,11 @@ input[type="number"] {
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--grey); margin-bottom:14px;">What They Get — Free for 14 Days</div>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
         <div style="background:var(--card2); border-radius:3px; padding:12px 14px; border-left:3px solid var(--gold);">
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px;">📓 Daily Journal</div>
+          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-book-open"/></svg> Daily Journal</div>
           <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Game · Practice · Reflection</div>
         </div>
         <div style="background:var(--card2); border-radius:3px; padding:12px 14px; border-left:3px solid var(--gold);">
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px;">📊 Stats Tracker</div>
+          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg> Stats Tracker</div>
           <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">AVG · OBP · ERA · Auto-Calc</div>
         </div>
         <div style="background:var(--card2); border-radius:3px; padding:12px 14px; border-left:3px solid var(--gold);">
@@ -5975,11 +5967,11 @@ input[type="number"] {
           <div data-mg-text="No Grades · No Game" style="font-family:'Barlow'; font-size:14px; color:var(--grey);">No Grades · No Game</div>
         </div>
         <div style="background:var(--card2); border-radius:3px; padding:12px 14px; border-left:3px solid var(--gold);">
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px;">📏 Physical Dev</div>
+          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-activity"/></svg> Physical Dev</div>
           <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Height · Weight · 60 Time</div>
         </div>
         <div style="background:var(--card2); border-radius:3px; padding:12px 14px; border-left:3px solid var(--gold);">
-          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px;">💬 Coach Feedback</div>
+          <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; color:var(--gold); margin-bottom:2px; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-message-circle"/></svg> Coach Feedback</div>
           <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Log what coaches tell you</div>
         </div>
       </div>
@@ -5998,7 +5990,7 @@ input[type="number"] {
       <div style="margin-bottom:12px;">
 
         <button onclick="shareToSocial('sms')" style="display:flex; flex-direction:row; align-items:center; justify-content:center; gap:14px; width:100%; background:linear-gradient(135deg,#27AE60,#1E8449); border:none; border-radius:8px; padding:20px; cursor:pointer;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">
-          <span style="font-size:34px;">💬</span>
+          <span style="font-size:34px;"><svg class="mg-icon" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:#FFFFFF;"><use href="#mg-icon-message-circle"/></svg></span>
           <div style="text-align:left;">
             <div style="font-family:'Barlow Condensed'; font-size:17px; font-weight:800; letter-spacing:1.5px; color:white; text-transform:uppercase; line-height:1;">Text a Teammate</div>
             <div style="font-family:'Barlow'; font-size:12px; color:rgba(255,255,255,0.85); margin-top:4px;">Opens Messages with a pre-written invite</div>
@@ -6010,10 +6002,10 @@ input[type="number"] {
       <!-- Native share + copy row -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <button onclick="shareToSocial('native')" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#0C0A08; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:14px; border:none; border-radius:6px; cursor:pointer;">
-          📤 Share via Phone
+          <svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-share"/></svg> Share via Phone
         </button>
         <button onclick="shareToSocial('copy')" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:14px; border-radius:6px; cursor:pointer;">
-          📋 Copy Link
+          <svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-clipboard-list"/></svg> Copy Link
         </button>
       </div>
     </div>
@@ -6131,7 +6123,7 @@ input[type="number"] {
       <!-- Daily Journal Reminder -->
       <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border);">
         <div>
-          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;">📓 Daily Journal Reminder</div>
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;"><svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg> Daily Journal Reminder</div>
           <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Reminds you to log today's game or practice</div>
         </div>
         <label style="position:relative; display:inline-block; width:52px; height:28px; flex-shrink:0;">
@@ -6145,7 +6137,7 @@ input[type="number"] {
       <!-- Time picker -->
       <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-bottom:1px solid var(--border);">
         <div>
-          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;">⏰ Reminder Time</div>
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;"><svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-bell"/></svg> Reminder Time</div>
           <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Default: 7:30 PM daily</div>
         </div>
         <input type="time" id="notif-time" value="19:30" onchange="saveSettings()" style="background:var(--card2); border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:14px; font-weight:700; padding:8px 12px; border-radius:2px; outline:none; width:120px;">
@@ -6535,7 +6527,7 @@ input[type="number"] {
     </a>
 
     <button onclick="mgTab('tools','tab-develop')" class="develop-card">
-      <span class="develop-card-icon">🎯</span>
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-target"/></svg></span>
       <span class="develop-card-text">
         <span class="develop-card-title">The 5 Tools</span>
         <span class="develop-card-sub">Hit, power, run, arm, field. Benchmarks by level.</span>
@@ -6544,7 +6536,7 @@ input[type="number"] {
     </button>
 
     <button onclick="mgTab('resources','tab-develop')" class="develop-card">
-      <span class="develop-card-icon">📚</span>
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-book-open"/></svg></span>
       <span class="develop-card-text">
         <span class="develop-card-title">Resources</span>
         <span class="develop-card-sub">Recruiting, eligibility, and the links coaches ask about.</span>
@@ -6553,7 +6545,7 @@ input[type="number"] {
     </button>
 
     <button onclick="mgTab('calendar','tab-develop')" class="develop-card">
-      <span class="develop-card-icon">📅</span>
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-calendar"/></svg></span>
       <span class="develop-card-text">
         <span class="develop-card-title">12-Month Calendar</span>
         <span class="develop-card-sub">What to work on, month by month, all year.</span>
@@ -6562,7 +6554,7 @@ input[type="number"] {
     </button>
 
     <button onclick="mgTab('academics','tab-develop')" class="develop-card">
-      <span class="develop-card-icon">🎓</span>
+      <span class="develop-card-icon"><svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="color:var(--gold);"><use href="#mg-icon-graduation-cap"/></svg></span>
       <span class="develop-card-text">
         <span class="develop-card-title">Academics</span>
         <span class="develop-card-sub">Grades and eligibility. The other half of the recruit.</span>
@@ -6592,7 +6584,7 @@ input[type="number"] {
          a cutoff that ends a career. -->
     <div class="card" style="margin-top:48px; margin-bottom:16px; padding-top:20px; background:linear-gradient(180deg, rgba(232,201,122,0.08) 0%, rgba(184,154,75,0.03) 100%); border-color:var(--gold-dark);">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
-        <span style="font-size:26px; line-height:1;">🎯</span>
+        <span style="font-size:26px; line-height:1;"><svg class="mg-icon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:block; color:var(--gold);"><use href="#mg-icon-target"/></svg></span>
         <div style="font-family:'Bebas Neue',sans-serif; font-size:30px; letter-spacing:2px; color:var(--gold); line-height:1.2;">The 5 Tools</div>
       </div>
       <div style="font-family:'Barlow',sans-serif; font-size:16px; color:var(--light); line-height:1.6;">
@@ -9786,7 +9778,7 @@ function _doEditEntry(id) {
   const cancelBtn = document.getElementById('cancel-edit-btn');
   const banner = document.getElementById('editing-banner');
   const bannerDate = document.getElementById('editing-banner-date');
-  if (saveBtn)   saveBtn.innerHTML = '💾 &nbsp;Update Entry';
+  if (saveBtn)   saveBtn.innerHTML = '<svg class="mg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-save"/></svg>&nbsp;Update Entry';
   if (cancelBtn) cancelBtn.style.display = 'inline-block';
   if (banner)    banner.style.display = 'block';
   if (bannerDate) bannerDate.textContent = entry.date || 'this entry';
@@ -9824,7 +9816,7 @@ function cancelEdit() {
   const saveBtn = document.getElementById('save-entry-btn');
   const cancelBtn = document.getElementById('cancel-edit-btn');
   const banner = document.getElementById('editing-banner');
-  if (saveBtn)   saveBtn.innerHTML = '📓 &nbsp;Save Entry';
+  if (saveBtn)   saveBtn.innerHTML = '<svg class="mg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg>&nbsp;Save Entry';
   if (cancelBtn) cancelBtn.style.display = 'none';
   if (banner)    banner.style.display = 'none';
 }
@@ -10192,7 +10184,7 @@ function saveEntry() {
     const saveBtn = document.getElementById('save-entry-btn');
     const cancelBtn = document.getElementById('cancel-edit-btn');
     const banner = document.getElementById('editing-banner');
-    if (saveBtn)   saveBtn.innerHTML = '📓 &nbsp;Save Entry';
+    if (saveBtn)   saveBtn.innerHTML = '<svg class="mg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg>&nbsp;Save Entry';
     if (cancelBtn) cancelBtn.style.display = 'none';
     if (banner)    banner.style.display = 'none';
   } else {
@@ -15507,11 +15499,11 @@ function copyReferralLink() {
   const url = TRIAL_URL;
   if (navigator.clipboard) {
     navigator.clipboard.writeText(url).then(() => {
-      btn.innerHTML = '✅ Copied!';
+      btn.innerHTML = '<svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-check-circle"/></svg> Copied!';
       btn.style.color = '#27AE60';
       btn.style.borderColor = '#27AE60';
       setTimeout(() => {
-        btn.innerHTML = '📋 Copy Link';
+        btn.innerHTML = '<svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-clipboard-list"/></svg> Copy Link';
         btn.style.color = '#C6B59B';
         btn.style.borderColor = '#3D3530';
       }, 2500);
@@ -16062,7 +16054,7 @@ function shareToSocial(platform) {
   if (platform === 'copy') {
     navigator.clipboard?.writeText(SHARE_URL).then(() => {
       const btn = document.getElementById('share-copy-btn');
-      if (btn) { btn.textContent = '✅ Link Copied!'; btn.style.color = '#27AE60'; btn.style.borderColor = '#27AE60'; setTimeout(() => { btn.textContent = '📋 Copy Trial Link'; btn.style.color = ''; btn.style.borderColor = ''; }, 2500); }
+      if (btn) { btn.innerHTML = '<svg class="mg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-check-circle"/></svg> Link Copied!'; btn.style.color = '#27AE60'; btn.style.borderColor = '#27AE60'; setTimeout(() => { btn.innerHTML = '<svg class="mg-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-2px;"><use href="#mg-icon-clipboard-list"/></svg> Copy Trial Link'; btn.style.color = ''; btn.style.borderColor = ''; }, 2500); }
       showShareToast('✅ Trial link copied!');
     }).catch(() => prompt('Copy this link:', SHARE_URL));
     return;
