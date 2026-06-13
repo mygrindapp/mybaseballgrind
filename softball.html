@@ -359,6 +359,25 @@
     --green: #27AE60;
   }
 
+  /* ── OUTDOOR / HIGH-CONTRAST MODE — Coach 2026-06-12 ──
+     Optional Settings toggle (#pref-outdoor) for reading the app at the
+     field in direct sunlight, WITHOUT abandoning the Warm Dark brand. It
+     does not invert to a white theme — it lifts the muted greys, brightens
+     body copy, strengthens card borders, and drops the low-contrast diamond
+     pattern so secondary text stops washing out. Brand accents (gold/pink,
+     red, green) are deliberately left untouched. Scoped to body.mg-outdoor,
+     so the default look is provably unchanged when the toggle is off.
+     Driven through CSS variables, so every surface that uses var(--grey/
+     --light/--border/--card) brightens at once. */
+  body.mg-outdoor {
+    --grey:  #C9BDA9;   /* was #A89880 — secondary text, sunlight-legible */
+    --light: #F0E9E0;   /* was #D4C8BC — primary body copy brighter */
+    --border:#5C5249;   /* was #3D3530 — card edges actually visible outdoors */
+    --card:  #2A2622;   /* was #231F1C — lift cards off the page background */
+    --card2: #322D28;   /* was #2A2622 */
+  }
+  body.mg-outdoor::before { display: none; }   /* kill the contrast-sapping pattern */
+
   [data-sport="softball"] {
     --gold: #D4547A;
     --gold-light: #E87FA0;
@@ -6217,6 +6236,23 @@ input[type="number"] {
         <label style="position:relative; display:inline-block; width:52px; height:28px; flex-shrink:0;">
           <input type="checkbox" id="pref-scroll" checked onchange="saveSettings(); mgUpdatePrefSlider('pref-scroll')" style="opacity:0; width:0; height:0;">
           <span class="mg-pref-slider" data-pref-target="pref-scroll" onclick="mgTogglePref('pref-scroll')" style="position:absolute; cursor:pointer; inset:0; background:#3D3530; border-radius:28px; transition:0.3s;">
+            <span class="mg-pref-knob" style="position:absolute; height:20px; width:20px; left:4px; bottom:4px; background:#231F1C; border-radius:50%; transition:0.3s;"></span>
+          </span>
+        </label>
+      </div>
+
+      <!-- Outdoor Mode — Coach 2026-06-12. High-contrast boost for reading
+           in direct sunlight at the field. Toggles body.mg-outdoor (see the
+           palette override in the head). Default OFF so the brand look is
+           the default. -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-top:1px solid var(--border);">
+        <div style="flex:1; min-width:0; padding-right:14px;">
+          <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;">Outdoor Mode</div>
+          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Brighter text and edges for bright sun at the field</div>
+        </div>
+        <label style="position:relative; display:inline-block; width:52px; height:28px; flex-shrink:0;">
+          <input type="checkbox" id="pref-outdoor" onchange="saveSettings(); mgUpdatePrefSlider('pref-outdoor')" style="opacity:0; width:0; height:0;">
+          <span class="mg-pref-slider" data-pref-target="pref-outdoor" onclick="mgTogglePref('pref-outdoor')" style="position:absolute; cursor:pointer; inset:0; background:#3D3530; border-radius:28px; transition:0.3s;">
             <span class="mg-pref-knob" style="position:absolute; height:20px; width:20px; left:4px; bottom:4px; background:#231F1C; border-radius:50%; transition:0.3s;"></span>
           </span>
         </label>
@@ -15596,6 +15632,7 @@ const DEFAULT_SETTINGS = {
   prefAutostats:true,
   prefInstall:  true,
   prefScroll:   true,
+  prefOutdoor:  false,
 };
 
 // ─── FEEDBACK ─────────────────────────────────────────────
@@ -15664,6 +15701,7 @@ function saveSettings() {
     prefAutostats: document.getElementById('pref-autostats')?.checked ?? true,
     prefInstall:   document.getElementById('pref-install')?.checked ?? true,
     prefScroll:    document.getElementById('pref-scroll')?.checked ?? true,
+    prefOutdoor:   document.getElementById('pref-outdoor')?.checked ?? false,
   };
   try { localStorage.setItem('ybg_settings', JSON.stringify(s)); } catch(e) {}
   // Auto-backup settings to cloud (signed-in only; additive merge).
@@ -15684,6 +15722,7 @@ function loadSettings() {
     set('pref-autostats',     s.prefAutostats);
     set('pref-install',       s.prefInstall);
     set('pref-scroll',        s.prefScroll);
+    set('pref-outdoor',       s.prefOutdoor);
     updateNotifSlider(s.notifDaily);
     // App Preferences sliders — match the visual state of the underlying
     // checkbox after load. mgUpdatePrefSlider() is a no-op if the slider
@@ -15692,6 +15731,7 @@ function loadSettings() {
       mgUpdatePrefSlider('pref-autosave');
       mgUpdatePrefSlider('pref-autostats');
       mgUpdatePrefSlider('pref-scroll');
+      mgUpdatePrefSlider('pref-outdoor');
     } catch (e) {}
     applySettings(s);
     // updateSettingsAccountInfo removed 2026-05-17 — Account card deleted in
@@ -15847,6 +15887,8 @@ function tellATeammate() {
 
 function applySettings(s) {
   updateNotifSlider(s.notifDaily);
+  // Outdoor Mode — high-contrast palette override (see body.mg-outdoor in head).
+  try { document.body.classList.toggle('mg-outdoor', !!s.prefOutdoor); } catch (e) {}
 }
 
 // updateSettingsAccountInfo() removed 2026-05-17 — the standalone Account
