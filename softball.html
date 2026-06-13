@@ -619,8 +619,18 @@
      "float" and cuts off the bottom. On desktop we return to normal
      full-page scrolling and center the app as an intentional phone-width
      column. Scoped to min-width:768px so the mobile layout is provably
-     untouched. Added 2026-05-31. */
-  @media (min-width: 768px) {
+     untouched. Added 2026-05-31.
+
+     2026-06-12 (Coach): added `and (pointer: fine)`. Root cause of the
+     "tabs go dead after I rotate the phone" bug: a phone in LANDSCAPE is
+     ~844px+ wide, which crossed this 768px breakpoint and swapped the whole
+     app between the phone scroll-lock model and this desktop model on every
+     rotation. iOS Safari leaves the hardware-accelerated fixed nav with a
+     stale touch hit-region after that swap, so taps land on nothing until a
+     reload. `pointer: fine` means a precise pointer (mouse/trackpad), which
+     phones and tablets never report, so touch devices now stay in the ONE
+     phone layout in both orientations. Real desktops still get the column. */
+  @media (min-width: 768px) and (pointer: fine) {
     html, body { height: auto; min-height: 100vh; overflow: visible; }
     body::before { display: none; }            /* kill the floating fixed pattern */
     main {
@@ -2670,20 +2680,20 @@ fbq('init','326334441984368');fbq('track','PageView');
   <button class="tab-btn mg-tab" id="tab-dashboard" onclick="mgTab('dashboard','tab-dashboard')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid var(--gold);color:var(--gold);cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-home"/></svg>Home
   </button>
-  <button class="tab-btn mg-tab" id="tab-journal"  onclick="mgTab('journal','tab-journal')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#5C544A;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+  <button class="tab-btn mg-tab" id="tab-journal"  onclick="mgTab('journal','tab-journal')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#9A8C76;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-book-open"/></svg>Journal
   </button>
-  <button class="tab-btn mg-tab" id="tab-stats"    onclick="mgTab('stats','tab-stats')"    style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#5C544A;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+  <button class="tab-btn mg-tab" id="tab-stats"    onclick="mgTab('stats','tab-stats')"    style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#9A8C76;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg>Stats
   </button>
   <!-- Develop hub (NEW 2026-06-02, ROADMAP Option A): single home for The 5
        Tools, Resources, the 12-Month Calendar, and Academics — replaces the
        standalone Academics tab AND the More drawer. Doubles as the MyGrind
        Pro upsell anchor (free = reference layer, Pro = prescriptive layer). -->
-  <button class="tab-btn mg-tab" id="tab-develop"  onclick="mgTab('develop','tab-develop')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#5C544A;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+  <button class="tab-btn mg-tab" id="tab-develop"  onclick="mgTab('develop','tab-develop')" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#9A8C76;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-target"/></svg>Develop
   </button>
-  <button class="tab-btn mg-tab" id="tab-players"  onclick="mgTab('players','tab-players')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#5C544A;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
+  <button class="tab-btn mg-tab" id="tab-players"  onclick="mgTab('players','tab-players')"  style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;background:transparent;border:none;border-top:2px solid transparent;color:#9A8C76;cursor:pointer;padding:8px 4px;transition:all 0.15s;font-family:'Barlow Condensed',sans-serif;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">
     <svg class="mg-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-user"/></svg>Profile
   </button>
 </nav>
@@ -16475,6 +16485,15 @@ document.addEventListener('pointerdown', function(e) {
     window.visualViewport.addEventListener('scroll',  onScroll);
   }
 
+  // Coach 2026-06-12: rotation was the worst offender for the dead-tab bug.
+  // The layout model no longer swaps on rotation (the desktop breakpoint is
+  // now gated behind pointer:fine), but re-pin the nav anyway once the new
+  // orientation settles. iOS reports the new dimensions late, so fire twice.
+  window.addEventListener('orientationchange', function () {
+    setTimeout(forceNavVisible, 150);
+    setTimeout(forceNavVisible, 450);
+  });
+
   document.addEventListener('focusout', function (e) {
     if (!e.target || !FORM_TAGS[e.target.tagName]) return;
     // Small delay so tabbing between fields doesn't flicker the nav.
@@ -20370,9 +20389,12 @@ function mgTab(panel, tabId) {
     }
   }
 
-  // Reset all tabs
+  // Reset all tabs. Inactive color #9A8C76 (Coach 2026-06-12): the old
+  // #5C544A was 2.6:1 on the near-black bar and washed out in sunlight.
+  // This warm tan is ~5:1, readable outdoors; the active tab still reads
+  // unmistakably via its saturated gold fill + 2px gold top border.
   document.querySelectorAll('.mg-tab').forEach(function(t) {
-    t.style.color       = '#5C544A';
+    t.style.color       = '#9A8C76';
     t.style.borderColor = 'transparent';
   });
   // Highlight active tab (if it's a bottom bar tab)
