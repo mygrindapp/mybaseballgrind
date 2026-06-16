@@ -70,6 +70,10 @@ const PLAN_TO_PRICE = {
 const STANDARD_TRIAL_DAYS = 14;
 const FOUNDER_CODES = {
   FOUNDERMYGRIND: { days: 180, cap: 100 },
+  // D1 Training partner cohort (2026-06-16) — same 180-day free trial, its
+  // own cap so it never eats into the founder 100. Mirror in lib/founder-
+  // cohort-store.js (TRACKED_CODES + CAPS) and the Stripe D1GRIND promo.
+  D1GRIND:        { days: 180, cap: 250 },
 };
 
 function setCors(req, res) {

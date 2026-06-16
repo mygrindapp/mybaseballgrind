@@ -6247,6 +6247,15 @@ const PROMO_INFO = {
     durationLabel: '6 months',
     summary: '✓ Founder code applied — your first 6 months are free. Welcome to the first 100.'
   },
+  // D1 Training partner code (2026-06-16). Same 6-month free grant as the
+  // founder cohort (kind:'months' → 180-day trial), its own Stripe promo +
+  // server cap so it never draws from the FOUNDERMYGRIND 100. Issued to D1
+  // facilities via signup.html?team=D1<CITY>&promo=D1GRIND.
+  'D1GRIND': {
+    kind: 'months',
+    durationLabel: '6 months',
+    summary: '✓ D1 Training partner code applied — your first 6 months are free.'
+  },
   'FOREVERYOUNG2026': {
     kind: 'lifetime',
     durationLabel: 'forever',
