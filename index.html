@@ -1372,12 +1372,89 @@
     .app-grid figure:hover img { transform: translateY(-4px); box-shadow: 0 16px 44px rgba(0,0,0,0.60); }
   }
 
-  /* 5) Scroll reveal — below-fold sections rise in as you reach them.
-     html.js-reveal is set by the script below BEFORE first paint (no
-     flicker); with no JS, nothing is hidden, so the page is fully
-     visible as a fallback. */
+  /* ── SOCIAL PROOF — parent testimonial card (added 2026-06-16). Mirrors the
+     .founder-note treatment: warm panel, gold hairline, left-aligned quote.
+     First verified review = Steven P. (5.0 on Google Business Profile). */
+  .testimonial-band {
+    position: relative; z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 8px 24px 16px 24px;
+    text-align: center;
+  }
+  .testimonial-band h2.section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(28px, 5vw, 44px);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 26px;
+    line-height: 1.1;
+  }
+  .testimonial-card {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 26px 28px 22px;
+    background: rgba(20, 20, 20, 0.55);
+    border: 1px solid rgba(201,168,76,0.22);
+    border-left: 3px solid var(--gold);
+    border-radius: 3px;
+    text-align: left;
+  }
+  .testimonial-card .stars {
+    color: var(--gold-bright);
+    font-size: 19px;
+    letter-spacing: 4px;
+    line-height: 1;
+    margin-bottom: 16px;
+    text-shadow: 0 0 16px rgba(201,168,76,0.35);
+  }
+  .testimonial-card blockquote {
+    margin: 0; border: 0;
+    font-family: 'Barlow', sans-serif;
+    font-size: clamp(16px, 2.3vw, 18px);
+    color: var(--white);
+    line-height: 1.62;
+  }
+  .testimonial-card .tq-attr {
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    flex-wrap: wrap;
+  }
+  .testimonial-card .tq-avatar {
+    flex: 0 0 auto;
+    width: 38px; height: 38px;
+    display: inline-flex; align-items: center; justify-content: center;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px; line-height: 1;
+  }
+  .testimonial-card .tq-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .testimonial-card .tq-badge {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--grey);
+  }
+
+  /* 5) Scroll reveal — below-fold sections rise in as you reach them. */
   html.js-reveal .how-it-works,
   html.js-reveal .see-the-app,
+  html.js-reveal .testimonial-band,
   html.js-reveal .pricing,
   html.js-reveal .faq-section,
   html.js-reveal .playbook-band {
@@ -1388,6 +1465,7 @@
   @media (prefers-reduced-motion: reduce) {
     html.js-reveal .how-it-works,
     html.js-reveal .see-the-app,
+    html.js-reveal .testimonial-band,
     html.js-reveal .pricing,
     html.js-reveal .faq-section,
     html.js-reveal .playbook-band { opacity: 1; transform: none; transition: none; }
@@ -1401,7 +1479,7 @@
 (function(){
   try {
     document.documentElement.classList.add('js-reveal');
-    var SEL = '.how-it-works, .see-the-app, .pricing, .faq-section, .playbook-band';
+    var SEL = '.how-it-works, .see-the-app, .testimonial-band, .pricing, .faq-section, .playbook-band';
     function revealAll(){ var n=document.querySelectorAll(SEL); for(var i=0;i<n.length;i++){ n[i].classList.add('reveal-in'); } }
     function setup(){
       try {
@@ -1538,6 +1616,25 @@ fbq('init','326334441984368');fbq('track','PageView');
         <figcaption>Softball, fully supported. Same grind.</figcaption>
       </figure>
     </div>
+  </section>
+
+  <!-- SOCIAL PROOF — first verified parent review (Steven P., 5.0★ Google
+       Business Profile, confirmed 2026-06-16). Placed before pricing to lift
+       cold ad traffic over the signup line. Customer's own voice — typos
+       fixed only, never rewritten into MyGrind brand voice. -->
+  <section class="testimonial-band" id="reviews">
+    <h2 class="section-title">What parents are saying</h2>
+    <figure class="testimonial-card">
+      <div class="stars" aria-label="Rated 5 out of 5 stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <blockquote>
+        &ldquo;I simply love this app! As a parent, I&rsquo;ve been waiting for a tool like this. After paying for countless hours of workouts, batting, and fielding sessions, I can finally see what my sons are learning. No more one-word answers to &lsquo;what did Coach teach you today?&rsquo; I&rsquo;d recommend this app to any parent and player who&rsquo;s serious about their sport.&rdquo;
+      </blockquote>
+      <figcaption class="tq-attr">
+        <span class="tq-avatar" aria-hidden="true">S</span>
+        <span class="tq-name">Steven P.</span>
+        <span class="tq-badge">Verified 5-star Google review &middot; MyGrind parent</span>
+      </figcaption>
+    </figure>
   </section>
 
   <!-- PRICING — reworked 2026-05-29: the price grid is hidden on the landing
