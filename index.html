@@ -35,6 +35,23 @@
   gtag('js', new Date());
   gtag('config', 'G-5HLS0F06CQ');
 </script>
+<script>
+  // Funnel tracking (2026-06-17): fire a GA4 event when a visitor clicks any
+  // "Start My Free Trial" CTA on the landing page, so the home -> signup
+  // drop-off is measurable. We could see the 83% bounce but not which step
+  // failed. Delegated + capture so it catches the click before navigation;
+  // gtag sends via sendBeacon, which survives the page change. `location`
+  // tags which CTA fired. NEXT (manual): mark `trial_start_click` as a Key
+  // Event in GA4 Admin -> Events once it has fired a few times.
+  document.addEventListener('click', function (e) {
+    var cta = e.target && e.target.closest && e.target.closest('a.primary-cta');
+    if (!cta) return;
+    var loc = cta.classList.contains('pricing-cta') ? 'home_pricing'
+            : cta.classList.contains('fn-cta')      ? 'home_founder_note'
+            : 'home_hero';
+    try { gtag('event', 'trial_start_click', { location: loc }); } catch (_) {}
+  }, true);
+</script>
 <meta name="description" content="MyGrind is a daily training journal app for serious baseball and softball players. Track stats, set goals, log practices and games, and stay accountable to the grind.">
 <meta name="keywords" content="MyGrind, MyGrind app, baseball journal app, softball journal app, baseball training app, softball training app, player development, daily training journal, baseball stats tracker, softball stats tracker">
 <meta name="author" content="MyGrind">
