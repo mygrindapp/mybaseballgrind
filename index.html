@@ -598,6 +598,15 @@
   }
   .hero-cta.show { animation: fadeUp 0.8s ease-out forwards; }
 
+  /* Hero social proof — first verified parent review (Steven P., public 5.0 Google
+     review). Added above the fold 2026-06-17 to fix cold-ad bounce: a trust signal
+     before the visitor has to scroll. Revealed via the staged reveal() sequence. */
+  .hero-proof { max-width: 520px; margin: 22px auto 0; opacity: 0; }
+  .hero-proof.show { animation: fadeUp 0.8s ease-out forwards; }
+  .hero-stars { color: var(--gold-bright); letter-spacing: 3px; font-size: 15px; margin-bottom: 8px; }
+  .hero-quote { font-style: italic; color: #F5F0EB; font-size: 15px; line-height: 1.5; margin: 0 auto 6px; }
+  .hero-quote-attr { font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold); margin: 0; }
+
   /* ── FORM ── */
   .form-section {
     width: 100%; max-width: 520px;
@@ -1543,43 +1552,25 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="accent-underline" id="underline"></div>
     <div class="sport-chip" id="chip">Baseball &middot; Softball</div>
     <h2 class="subhead" id="subhead">
-      The daily baseball and softball training journal for serious players, and the parents walking the road with them.
+      Finally see what your player is actually working on. Every practice, game, and grade in one daily journal that keeps them on track for the next level.
     </h2>
     <div class="hero-cta" id="hero-cta">
       <a class="primary-cta" href="/signup.html">Start My Free Trial <span class="cta-arrow">&rarr;</span></a>
       <p class="form-trust">14-day free trial &middot; No card required &middot; Cancel anytime</p>
     </div>
-  </section>
-
-  <!-- HOW IT WORKS — Chunk 3 (2026-05-28; moved ahead of SEE THE APP on
-       2026-05-29): 3-step explainer that frames the concept ("more than a
-       tracker") BEFORE the screenshots, so the product grid below reads as
-       proof of the steps the visitor just understood. Explain, then show. -->
-  <section class="how-it-works" id="how">
-    <h2 class="section-title">How it works</h2>
-    <p class="section-sub">More than a tracker. It's how serious players see their work, stay eligible, and earn the next level.</p>
-    <div class="how-grid">
-      <div class="how-step">
-        <div class="step-num">1</div>
-        <h3>Sign up</h3>
-        <p>Pick your sport and plan, then log your daily work. Practice, games, lifts, arm care, rest. The whole grind in one place.</p>
-      </div>
-      <div class="how-step">
-        <div class="step-num">2</div>
-        <h3>Stay eligible</h3>
-        <p>Track classes and grades alongside the training. Always know where you stand for NCAA, NAIA, and JuCo eligibility, before it ever becomes a problem.</p>
-      </div>
-      <div class="how-step">
-        <div class="step-num">3</div>
-        <h3>Reach the next level</h3>
-        <p>When you can see exactly where you stand, you stop guessing and start competing with proof. That's how players earn the next level.</p>
-      </div>
+    <div class="hero-proof" id="hero-proof">
+      <div class="hero-stars" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="hero-quote">"As a parent, I&#39;ve been waiting for a tool like this. No more one-word answers to &#39;what did Coach teach you today?&#39;"</p>
+      <p class="hero-quote-attr">Steven P. &middot; MyGrind parent</p>
     </div>
   </section>
 
   <!-- SEE THE APP — Chunk 2 (2026-05-28; screenshots refreshed 2026-06-12,
-       analytics-driven reorder): product screenshot grid giving cold visitors
-       real product proof. Six real in-app captures at
+       analytics-driven reorder). MOVED AHEAD OF HOW IT WORKS on 2026-06-17:
+       reverses the 2026-05-29 "explain, then show" order. Cold Meta-ad traffic
+       (83% bounce, +324% visitors / 0 new signups since 6/11) wasn't reading
+       the 3-step explainer first; show the real product immediately after the
+       hero, then explain. Six real in-app captures at
        /assets/screenshots/0[1-6]-*.jpg (1080x1440, headless capture with a
        seeded demo player). Order follows what the data says visitors want:
        the daily habit first, then the core action, then NCAA academics (every
@@ -1615,6 +1606,32 @@ fbq('init','326334441984368');fbq('track','PageView');
         <img src="/assets/screenshots/06-softball.jpg" width="1080" height="1440" alt="MyGrind dashboard in softball mode with the softball toggle active, a six-day streak, weekly stats, and the daily check-in" loading="lazy">
         <figcaption>Softball, fully supported. Same grind.</figcaption>
       </figure>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS — Chunk 3 (2026-05-28). MOVED BELOW SEE THE APP on
+       2026-06-17 (was ahead of it since 2026-05-29): show the real product
+       first, then explain the 3 steps as reinforcement. Frames MyGrind as
+       more than a tracker. -->
+  <section class="how-it-works" id="how">
+    <h2 class="section-title">How it works</h2>
+    <p class="section-sub">More than a tracker. It's how serious players see their work, stay eligible, and earn the next level.</p>
+    <div class="how-grid">
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <h3>Sign up</h3>
+        <p>Pick your sport and plan, then log your daily work. Practice, games, lifts, arm care, rest. The whole grind in one place.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <h3>Stay eligible</h3>
+        <p>Track classes and grades alongside the training. Always know where you stand for NCAA, NAIA, and JuCo eligibility, before it ever becomes a problem.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <h3>Reach the next level</h3>
+        <p>When you can see exactly where you stand, you stop guessing and start competing with proof. That's how players earn the next level.</p>
+      </div>
     </div>
   </section>
 
@@ -1821,6 +1838,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     reveal('underline',    'draw', 80);
     reveal('subhead',      'show', 160);
     reveal('hero-cta',     'show', 240);
+    reveal('hero-proof',   'show', 280);
     reveal('founder-note', 'show', 260);
     reveal('footer',       'show', 360);
 
