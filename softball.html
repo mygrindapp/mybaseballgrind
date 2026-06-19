@@ -4790,7 +4790,18 @@ input[type="number"] {
             <option>College Senior</option>
           </select>
         </div>
+        <div>
+          <label>Class of (grad year)</label>
+          <select id="pl-gradyear" onchange="saveProfile()">
+            <option value="">-- Select --</option>
+          </select>
+        </div>
       </div>
+      <!-- Grade auto-advance — Coach Young 2026-06-19: set a graduation year
+           and the Grade above is computed from today's date, so it advances
+           by itself every school year (no manual bumping). Leaving grad year
+           blank keeps the original manual-grade behavior. -->
+      <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); margin:-2px 0 14px; line-height:1.5;">Pick your graduation year and your grade updates automatically every school year.</div>
       <label>School / Team</label>
       <input type="text" id="pl-school" placeholder="e.g. Middle School · High School · College · Travel Team" oninput="saveProfile()" onblur="formatProperNounField(this)" style="max-width:380px; margin-bottom:16px;">
 
@@ -6291,6 +6302,19 @@ input[type="number"] {
         <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6;">Your subscription is active. You have full access to all features.</div>
       </div>
 
+      <!-- Monthly → Annual upsell — Coach Young 2026-06-19. Shown ONLY to
+           monthly subscribers (toggled in updateSubscriptionCard). The button
+           routes through the same Stripe Customer Portal as Manage Subscription,
+           which handles the plan switch + proration. Annual subscribers and
+           lifetime/founder/sponsored accounts never see it. -->
+      <div id="sub-upgrade-annual" style="display:none; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:2px; padding:14px 16px; margin-bottom:16px;">
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">Save With Annual</div>
+        <div id="sub-upgrade-annual-copy" style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:12px;">You're on the monthly plan. Switch to annual and save.</div>
+        <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" id="upgrade-annual-btn" target="_blank" rel="noopener" onclick="return openStripePortal(event)" style="display:flex; align-items:center; justify-content:center; gap:8px; background:var(--gold); color:#0C0A08; font-family:'Barlow Condensed'; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:11px 14px; border-radius:8px; text-decoration:none; text-align:center;">
+          ⚾ Switch to Annual →
+        </a>
+      </div>
+
       <!-- Manage Subscription — 2026-05-18: collapsed from two competing
            buttons (Manage Billing + Email to Cancel) to a single primary
            action. Stripe portal already handles cancel + update card +
@@ -7708,7 +7732,7 @@ const TRIAL_DAYS        = 14;
 // Single Monthly / Single Annual payment links as signup.html (single source of
 // truth). Team Sponsor is a fresh active link for the existing $300 price.
 const STRIPE_MONTHLY_URL = 'https://buy.stripe.com/4gM7sN2rE9jT5OG3YJ4gg06';
-const STRIPE_ANNUAL_URL  = 'https://buy.stripe.com/28EdRb5DQanXfpg0Mx4gg05';
+const STRIPE_ANNUAL_URL  = 'https://buy.stripe.com/fZucN78Q20Nncd4brb4gg0a'; // $99.99/yr on prod_UPIFHJyfyTvBYy (price_1TgoAB). Repointed 2026-06-19 — old link buy.stripe.com/28EdRb… was deactivated in Stripe and broke annual signups.
 const STRIPE_TEAM_SPONSOR_URL = 'https://buy.stripe.com/fZu14peamcw56SK0Mx4gg09';
 const TEAM_SPONSOR_SEATS = 15;
 const TEAM_REMOVAL_GRACE_DAYS = 7;
@@ -12977,6 +13001,7 @@ function updateSubscriptionCard() {
     const planEl      = document.getElementById('sub-plan-display');
     const trialInfo   = document.getElementById('sub-trial-info');
     const paidInfo    = document.getElementById('sub-paid-info');
+    const upgradeAnnual = document.getElementById('sub-upgrade-annual');
     const trialDaysEl = document.getElementById('sub-trial-days');
 
     // Dependents (kids whose parent pays) see the card with the Account
@@ -13002,19 +13027,37 @@ function updateSubscriptionCard() {
       if (planEl)    planEl.textContent  = 'Creator · Full Access';
       if (trialInfo) trialInfo.style.display = 'none';
       if (paidInfo)  paidInfo.style.display  = 'block';
+      if (upgradeAnnual) upgradeAnnual.style.display = 'none';
       return;
     }
 
     if (acc.paid) {
-      if (planEl)    planEl.textContent  = 'Paid Subscription · Full Access';
+      const _plan = String(acc.plan || '');
+      const _isMonthly = _plan.indexOf('monthly') !== -1;
+      const _isAnnual  = _plan.indexOf('annual')  !== -1;
+      const _isFamily  = _plan.indexOf('family')  === 0;
+      if (planEl)    planEl.textContent  = 'Paid Subscription · ' + (_isMonthly ? 'Monthly' : (_isAnnual ? 'Annual' : 'Full Access'));
       if (trialInfo) trialInfo.style.display = 'none';
       if (paidInfo)  paidInfo.style.display  = 'block';
+      // Monthly → Annual upsell: only monthly subscribers see it.
+      if (upgradeAnnual) {
+        if (_isMonthly) {
+          const _copy = document.getElementById('sub-upgrade-annual-copy');
+          if (_copy) _copy.textContent = _isFamily
+            ? "You're on the Family monthly plan ($14.99/mo). Switch to annual ($149.99/yr) and save about $30 a year."
+            : "You're on the monthly plan ($9.99/mo). Switch to annual ($99.99/yr) and save about $20 a year.";
+          upgradeAnnual.style.display = 'block';
+        } else {
+          upgradeAnnual.style.display = 'none';
+        }
+      }
     } else if (acc.trialStart) {
       const elapsed = (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24);
       const daysLeft = Math.max(0, Math.ceil(7 - elapsed));
       if (planEl)    planEl.textContent = `Free Trial · ${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining`;
       if (trialInfo) trialInfo.style.display = 'block';
       if (paidInfo)  paidInfo.style.display  = 'none';
+      if (upgradeAnnual) upgradeAnnual.style.display = 'none';
       if (trialDaysEl) trialDaysEl.textContent =
         daysLeft > 0
           ? `${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining on your free trial. Subscribe now to keep all your progress.`
@@ -13023,6 +13066,7 @@ function updateSubscriptionCard() {
       if (planEl)    planEl.textContent = 'No active subscription';
       if (trialInfo) trialInfo.style.display = 'none';
       if (paidInfo)  paidInfo.style.display  = 'none';
+      if (upgradeAnnual) upgradeAnnual.style.display = 'none';
     }
   } catch(e) {}
 }
@@ -14896,6 +14940,62 @@ function formatProperNounField(el) {
   }
 }
 
+// ─── GRADE AUTO-ADVANCE (Coach Young 2026-06-19) ──────────────
+// A player sets their graduation year ("Class of YYYY") once; their school
+// grade is then COMPUTED from today's date, so it advances on its own every
+// school year and they never bump it manually. Grade is still stored on the
+// profile (state.profile.grade) because the Academics surface keys off it —
+// we just keep it fresh. The school year is treated as flipping in August
+// (month index 7), so a rising sophomore reads "10th Grade" from Aug 1.
+function _mgSchoolYearEnd(now) {
+  now = now || new Date();
+  return (now.getMonth() >= 7) ? now.getFullYear() + 1 : now.getFullYear();
+}
+function gradeFromGradYear(gradYear, now) {
+  const gy = parseInt(gradYear, 10);
+  if (!gy) return '';
+  const diff = gy - _mgSchoolYearEnd(now); // 0 = senior year in progress
+  if (diff >= 4) return 'Middle School';
+  if (diff === 3) return '9th Grade (Freshman)';
+  if (diff === 2) return '10th Grade (Sophomore)';
+  if (diff === 1) return '11th Grade (Junior)';
+  if (diff === 0) return '12th Grade (Senior)';
+  const col = -diff; // graduated → college years
+  if (col === 1) return 'College Freshman';
+  if (col === 2) return 'College Sophomore';
+  if (col === 3) return 'College Junior';
+  return 'College Senior';
+}
+function gradYearFromGrade(grade, now) {
+  // 'Middle School' is intentionally omitted: it spans 6th-8th grade, so we
+  // can't infer a graduation year from it without guessing — and guessing wrong
+  // would auto-advance a 6th/7th grader into high school a year or two early.
+  // MS players keep their manual grade until they explicitly pick a Class-of year.
+  const map = {
+    '9th Grade (Freshman)': 3,
+    '10th Grade (Sophomore)': 2,
+    '11th Grade (Junior)': 1,
+    '12th Grade (Senior)': 0,
+    'College Freshman': -1,
+    'College Sophomore': -2,
+    'College Junior': -3,
+    'College Senior': -4
+  };
+  if (!(grade in map)) return null;
+  return _mgSchoolYearEnd(now) + map[grade];
+}
+function populateGradYearOptions(selectedYear) {
+  const sel = document.getElementById('pl-gradyear');
+  if (!sel) return;
+  const end = _mgSchoolYearEnd();
+  let html = '<option value="">-- Select --</option>';
+  for (let yr = end + 7; yr >= end - 4; yr--) {
+    html += '<option value="' + yr + '">Class of ' + yr + '</option>';
+  }
+  sel.innerHTML = html;
+  if (selectedYear) sel.value = String(selectedYear);
+}
+
 function saveProfile() {
   // Firebase cloud save
   setTimeout(function() {
@@ -14909,6 +15009,7 @@ function saveProfile() {
     pos:    document.getElementById('pl-pos')?.value    || '',
     age:    document.getElementById('pl-age')?.value    || '',
     grade:  document.getElementById('pl-grade')?.value  || '',
+    gradYear: document.getElementById('pl-gradyear')?.value || '',
     school: document.getElementById('pl-school')?.value || '',
     bats:   document.getElementById('pl-bats')?.value   || '',
     gpa:    document.getElementById('pl-gpa')?.value    || '',
@@ -14920,6 +15021,16 @@ function saveProfile() {
     slapper: document.getElementById('pl-slapper')?.checked || false,
     savedAt: new Date().toISOString()
   };
+  // If a graduation year is set, the grade is computed from it so it
+  // auto-advances each school year (Coach Young 2026-06-19).
+  if (profile.gradYear) {
+    const _computedGrade = gradeFromGradYear(profile.gradYear);
+    if (_computedGrade) {
+      profile.grade = _computedGrade;
+      const _gradeSel = document.getElementById('pl-grade');
+      if (_gradeSel) _gradeSel.value = _computedGrade;
+    }
+  }
   try { localStorage.setItem('ybg_softball_profile', JSON.stringify(profile)); } catch(e) {}
   const msg = document.getElementById('profile-saved');
   if (msg) {
@@ -14963,9 +15074,32 @@ function bridgeFromOnboarding() {
 
 function loadProfile() {
   try {
+    populateGradYearOptions();   // ensure the grad-year picker has years even for brand-new players
     const saved = localStorage.getItem('ybg_softball_profile');
     if (!saved) return;
     const p = JSON.parse(saved);
+    // Grade auto-advance (Coach Young 2026-06-19): if a graduation year is on
+    // file — or we can infer one from a previously-set grade — recompute the
+    // player's current grade from today's date so it advances on its own.
+    // Persist back to localStorage because the dashboard + Academics surface
+    // read p.grade directly.
+    try {
+      const _origGrade = p.grade, _origGradYear = p.gradYear;
+      if (!p.gradYear && p.grade) {
+        const _inferred = gradYearFromGrade(p.grade);
+        if (_inferred) p.gradYear = _inferred;
+      }
+      if (p.gradYear) {
+        const _g = gradeFromGradYear(p.gradYear);
+        if (_g) p.grade = _g;
+      }
+      // Persist only if the migration/recompute actually changed something,
+      // so we don't rewrite localStorage (or risk clobbering) on every load.
+      if (p.grade !== _origGrade || p.gradYear !== _origGradYear) {
+        localStorage.setItem('ybg_softball_profile', JSON.stringify(p));
+      }
+      populateGradYearOptions(p.gradYear);
+    } catch (e) {}
     // Load simple text/number fields
     // Note: 'gpa' removed — the Academics card's gpa-current field is now the sole GPA source (see loadGradesUI)
     const fields = ['name','age','grade','school','bats','season','sixty','velo','bio','why'];

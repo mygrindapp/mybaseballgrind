@@ -558,6 +558,7 @@ export const config = {
 const PRICE_TO_PLAN = {
   'price_1TQTekPm4ermqky4w6cqMnzO': 'single_monthly',     // $9.99/mo  (prod_UPIFHJyfyTvBYy)
   'price_1TgoABPm4ermqky4P5gdMAtX': 'single_annual',      // $99.99/yr (prod_UPIFHJyfyTvBYy), created 2026-06
+  'price_1TQTDYPm4ermqky4TXgbfwFT': 'single_annual',      // legacy $99.99/yr (retired "Annual Price" product) — kept 2026-06-19 so any pre-consolidation annual sub still resolves
   'price_1TT69tPm4ermqky4CYkbQcEf': 'family_monthly',     // $14.99/mo (prod_US0A0CbUborFoY)
   'price_1TT68UPm4ermqky47QJZ8SnB': 'family_annual',      // $149.99/yr (prod_US08Tl9LglAWq7)
 };

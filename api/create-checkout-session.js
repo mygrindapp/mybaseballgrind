@@ -56,7 +56,7 @@ const ALLOWED_ORIGINS = new Set([
 // (reverse direction). Keep in sync when prices change in Stripe.
 const PLAN_TO_PRICE = {
   single_monthly: 'price_1TQTekPm4ermqky4w6cqMnzO', // $9.99/mo
-  single_annual:  'price_1TQTDYPm4ermqky4TXgbfwFT', // $99.99/yr
+  single_annual:  'price_1TgoABPm4ermqky4P5gdMAtX', // $99.99/yr (prod_UPIFHJyfyTvBYy — same product as single_monthly; consolidated 2026-06-19, replaced orphaned price_1TQTDY…TXgb on the retired "Annual Price" product)
   family_monthly: 'price_1TT69tPm4ermqky4CYkbQcEf', // $14.99/mo
   family_annual:  'price_1TT68UPm4ermqky47QJZ8SnB', // $149.99/yr
 };
