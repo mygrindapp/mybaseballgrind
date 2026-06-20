@@ -5205,6 +5205,13 @@ input[type="number"] {
            the cumulative final that's saved + counts for NCAA. Q2/Q4 are folded
            into the semester (they're the same cumulative number), so we show
            Q1 → Sem 1 and Q3 → Sem 2 instead of all six. -->
+      <!-- Off-season "start next year" nudge (Coach Young 2026-06-20). Toggled by
+           mgRenderNewYearNudge() — only shows in summer while the grid is parked
+           on the finished year, so players don't think it's frozen until August. -->
+      <div id="acad-newyear-nudge" style="display:none; font-family:'Barlow'; font-size:12.5px; line-height:1.55; color:#A8D97B; background:rgba(168,217,123,0.06); border:1px solid #2F5A1E; border-radius:8px; padding:12px 14px; margin-bottom:16px;">
+        <div id="acad-newyear-nudge-text" style="margin-bottom:10px;"></div>
+        <button onclick="mgManualNewYear()" style="background:rgba(168,217,123,0.12); border:1px solid #2F5A1E; color:#BCEB95; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 14px; border-radius:8px; cursor:pointer; width:100%;">↻ Start Next School Year Now</button>
+      </div>
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Grading Period</div>
       <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px;">
         <button class="acad-term-pill" data-term="Q1" onclick="setAcademicTerm('Q1')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q1</button>
@@ -5337,7 +5344,7 @@ input[type="number"] {
       </div>
 
       <button onclick="mgManualNewYear()" style="margin-top:12px; background:transparent; border:1px dashed var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; width:100%;">↻ Start a New School Year</button>
-      <div style="font-family:'Barlow'; font-size:10px; color:var(--grey); line-height:1.5; margin-top:6px; text-align:center; font-style:italic;">Happens automatically each August — use this only to roll over early.</div>
+      <div style="font-family:'Barlow'; font-size:10px; color:var(--grey); line-height:1.5; margin-top:6px; text-align:center; font-style:italic;">Start your new school year anytime your schedule is set. If you don't, it rolls over automatically each August.</div>
     </div>
 
     <!-- Bottom-of-page "Done" pill — Coach Young 2026-05-17. Mirrors the
@@ -13166,6 +13173,30 @@ function loadAcademicsUI() {
   renderGrades();
   try { renderAcademicHistory(); } catch (e) {}
   try { renderTestPrep(); } catch (e) {}
+  try { mgRenderNewYearNudge(); } catch (e) {}
+}
+
+// Off-season "start next year" nudge (Coach Young 2026-06-20): between school
+// years (June/July, before the August auto-reset) the grid is parked on the
+// finished year, which read as "frozen until August." This surfaces the
+// early-rollover at the top of the grid so players can set up next year now.
+function mgRenderNewYearNudge() {
+  var el = document.getElementById('acad-newyear-nudge');
+  if (!el) return;
+  var a = loadAcademics();
+  var now = new Date();
+  var m = now.getMonth();                       // 0=Jan ... 5=Jun, 6=Jul
+  var curSY = a && a.current && a.current.schoolYear;
+  var offseason = (m === 5 || m === 6);         // summer, school is out
+  var parkedOnFinishedYear = !!curSY && curSY <= _mgSchoolYearEnd(now);
+  if (offseason && parkedOnFinishedYear) {
+    var nextLabel = mgSchoolYearLabel((curSY || _mgSchoolYearEnd(now)) + 1);
+    var txt = document.getElementById('acad-newyear-nudge-text');
+    if (txt) txt.innerHTML = "School's out for the summer. Ready to set up your <strong>" + nextLabel + "</strong> classes? Start the new school year now. It saves this past year to your transcript and opens fresh slots. (It also happens automatically each August.)";
+    el.style.display = 'block';
+  } else {
+    el.style.display = 'none';
+  }
 }
 
 // ── Academic history / transcript ─────────────────────────
