@@ -3665,6 +3665,10 @@ function goNext(from, to) {
 // whether kid(s) use their own phone or parent's phone.
 function selectAudience(which) {
   state.signupFor = which;
+  // GA4 funnel: which path did they pick on Screen 0? (parent vs self).
+  // Fills the Screen 0 blind spot so the 6/24 relaunch shows where cold
+  // ad traffic chooses or stalls. Mirrors the fireBeginCheckout pattern.
+  try { if (typeof gtag === 'function') gtag('event', 'audience_selected', { audience: which }); } catch (e) {}
   if (which === 'self') {
     state.playerCount = 1;          // self path is always single-tier
     state.devicePath = null;        // not collected for self path
@@ -6118,6 +6122,11 @@ function openPlanPicker() {
   const errEl = document.getElementById('plan_picker_error');
   if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
   if (ctaEl) ctaEl.disabled = false;
+
+  // GA4 funnel: the card-on-file plan picker actually rendered. This is the
+  // gate that sits right before begin_checkout — comparing plan_picker_opened
+  // vs begin_checkout tells us whether the card ask itself is the leak.
+  try { if (typeof gtag === 'function') gtag('event', 'plan_picker_opened', { plan: _planPickerSelection, founder: !!isFounder, under_13: hasUnder13 }); } catch (e) {}
 
   overlay.classList.add('shown');
   overlay.setAttribute('aria-hidden', 'false');
