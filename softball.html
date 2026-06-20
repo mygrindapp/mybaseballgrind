@@ -5200,20 +5200,22 @@ input[type="number"] {
            below so a 9th-grader gets the framing without a coach
            explaining. Typography bumped (label 11→13, sub 9→11,
            inputs 13→16) now that Academics owns its own tab. -->
-      <!-- Grading-period selector (Coach Young 2026-06-19). Quarters forecast
-           the semester; the semester grade is the saved year-of-record. The
-           grade boxes below load the selected period; the GPAs recompute live. -->
+      <!-- Grading-period selector (Coach Young 2026-06-19). Cumulative model:
+           the quarter is a mid-semester progress check; the SEMESTER grade is
+           the cumulative final that's saved + counts for NCAA. Q2/Q4 are folded
+           into the semester (they're the same cumulative number), so we show
+           Q1 → Sem 1 and Q3 → Sem 2 instead of all six. -->
       <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Grading Period</div>
       <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px;">
         <button class="acad-term-pill" data-term="Q1" onclick="setAcademicTerm('Q1')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q1</button>
-        <button class="acad-term-pill" data-term="Q2" onclick="setAcademicTerm('Q2')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q2</button>
+        <span style="color:var(--grey); font-size:13px;" aria-hidden="true">→</span>
         <button class="acad-term-pill" data-term="S1" onclick="setAcademicTerm('S1')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Sem 1</button>
-        <span style="width:1px; height:22px; background:var(--border); margin:0 3px;" aria-hidden="true"></span>
+        <span style="width:1px; height:22px; background:var(--border); margin:0 6px;" aria-hidden="true"></span>
         <button class="acad-term-pill" data-term="Q3" onclick="setAcademicTerm('Q3')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q3</button>
-        <button class="acad-term-pill" data-term="Q4" onclick="setAcademicTerm('Q4')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q4</button>
+        <span style="color:var(--grey); font-size:13px;" aria-hidden="true">→</span>
         <button class="acad-term-pill" data-term="S2" onclick="setAcademicTerm('S2')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Sem 2</button>
       </div>
-      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:16px; font-style:italic;">Each quarter builds on the last — Q2 continues Q1 and becomes your Semester 1 grade (Q4 → Semester 2). When the report card posts, enter your real semester grade — that's the one saved for the year.</div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:16px; font-style:italic;">The quarter (Q1 / Q3) is your mid-semester progress check. The <strong>Semester</strong> grade is the cumulative final — that's the one saved for the year and counted for NCAA. Enter it from your report card when it posts.</div>
 
       <div id="acad-section-title" style="font-family:'Barlow Condensed'; font-size:15px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:6px; display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-book-open"/></svg> The 6 Required Core Classes</div>
       <div id="acad-section-sub" style="font-family:'Barlow'; font-size:13px; color:var(--grey); line-height:1.5; margin-bottom:14px; font-style:italic;">These are the NCAA core-course categories. Plug in what your school calls each class and your current grade.</div>
@@ -12584,6 +12586,19 @@ function mgWeightedPts(letter, level)  {
 }
 function mgFmtGPA(v)  { return (v === null || v === undefined || isNaN(v)) ? '—' : v.toFixed(2); }
 function mgSetText(id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; }
+// Fire a GA4/Firebase event at most once per browser session (for adoption
+// signals like "opened academics" / "has grades this session"). Only marks it
+// logged after a successful send, so an init-time call before mgLog exists
+// doesn't burn the once-flag. (Coach Young 2026-06-19 — academics tracking.)
+function mgLogOnce(name, params) {
+  try {
+    if (typeof mgLog !== 'function') return;
+    var k = 'mg_logged_' + name;
+    if (sessionStorage.getItem(k)) return;
+    mgLog(name, params || {});
+    sessionStorage.setItem(k, '1');
+  } catch (e) {}
+}
 function mgTermLabel(t) {
   return ({ Q1:'Quarter 1', Q2:'Quarter 2', S1:'Semester 1', Q3:'Quarter 3', Q4:'Quarter 4', S2:'Semester 2' })[t] || t;
 }
@@ -12592,14 +12607,15 @@ function mgSchoolYearLabel(endYear) {
   return (endYear - 1) + '–' + String(endYear).slice(2);   // 2026 -> "2025–26"
 }
 
-// Which quarter is "current" for a given month — used to seat migrated
-// legacy grades and to pick the default selected term on a fresh load.
+// Which period is "current" for a given month — used to seat migrated legacy
+// grades and pick the default selected term. Returns one of the 4 VISIBLE
+// periods (Q1 / S1 / Q3 / S2) so the default always lands on a shown pill.
 function mgCurrentTermByMonth(now) {
-  var m = (now || new Date()).getMonth();   // 0=Jan
-  if (m >= 7 && m <= 9)   return 'Q1';       // Aug-Oct
-  if (m === 10 || m === 11) return 'Q2';     // Nov-Dec
-  if (m >= 0 && m <= 2)   return 'Q3';       // Jan-Mar
-  return 'Q4';                               // Apr-Jul
+  var m = (now || new Date()).getMonth();    // 0=Jan
+  if (m >= 7 && m <= 9)   return 'Q1';        // Aug-Oct  → fall progress check
+  if (m === 10 || m === 11 || m === 0) return 'S1'; // Nov-Jan → Semester 1 final
+  if (m === 1 || m === 2) return 'Q3';        // Feb-Mar  → spring progress check
+  return 'S2';                                // Apr-Jul  → Semester 2 final
 }
 
 function mgBlankClasses() {
@@ -12978,6 +12994,7 @@ window.mgSaveNextTest = function() {
   tp.nextDate = (document.getElementById('tp-next-date') || {}).value || '';
   saveTestPrep(tp); renderTestPrep();
   try { renderJournalReminders(); } catch (e) {}
+  try { if (typeof mgLog === 'function') mgLog('academic_test_date_set', { test_type: tp.nextType || '' }); } catch (e) {}
   try { if (typeof showShareToast === 'function') showShareToast('✅ Test date saved'); } catch (e) {}
 };
 window.mgAddTestScore = function() {
@@ -12992,6 +13009,7 @@ window.mgAddTestScore = function() {
   saveTestPrep(tp);
   var totEl = document.getElementById('tp-score-total'); if (totEl) totEl.value = '';
   renderTestPrep();
+  try { if (typeof mgLog === 'function') mgLog('test_score_added', { test_type: type, total: total }); } catch (e) {}
   try { if (typeof showShareToast === 'function') showShareToast('✅ ' + type + ' score added'); } catch (e) {}
 };
 window.mgDeleteTestScore = function(id) {
@@ -13004,6 +13022,7 @@ window.mgSaveTestTargets = function() {
   tp.targetSAT = (document.getElementById('tp-target-sat') || {}).value || '';
   tp.targetACT = (document.getElementById('tp-target-act') || {}).value || '';
   saveTestPrep(tp); renderTestPrep();
+  try { if (typeof mgLog === 'function') mgLog('academic_target_set', { kind: 'sat_act' }); } catch (e) {}
   try { if (typeof showShareToast === 'function') showShareToast('✅ Test targets saved'); } catch (e) {}
 };
 
@@ -13376,6 +13395,7 @@ window.mgSavePastYear = function() {
   saveAcademics(a);
   mgClosePastYearEditor();
   try { loadAcademicsUI(); } catch (e) {}
+  try { if (typeof mgLog === 'function') mgLog('academic_year_backfilled', { school_year: sy }); } catch (e) {}
   try { if (typeof showShareToast === 'function') showShareToast('✅ ' + mgSchoolYearLabel(sy) + ' saved to your transcript'); } catch (e) {}
 };
 window.mgDeletePastYear = function() {
@@ -13455,6 +13475,11 @@ function renderGrades() {
   var _coach = mgTargetCoachLine(a);
   var _coachEl = document.getElementById('acad-target-coach');
   if (_coachEl) { _coachEl.textContent = _coach; _coachEl.style.display = _coach ? 'block' : 'none'; }
+
+  // Adoption signal (once/session): the player has academic grades entered.
+  try {
+    if (a.current.classes.some(function(c){ return c.grades && Object.keys(c.grades).some(function(k){ return c.grades[k]; }); })) mgLogOnce('academic_grade_saved');
+  } catch (e) {}
 
   try { renderEligibility(); } catch (e) {}
   try { renderDashAcademics(); } catch (e) {}
@@ -14427,6 +14452,7 @@ function saveGPA() {
   } catch(e) {}
   // Toast-only confirmation (Coach Young 2026-05-17 iteration 2) —
   // matches Save Entry / Comment / Goal pattern.
+  try { if (typeof mgLog === 'function') mgLog('academic_target_set', { kind: 'gpa' }); } catch (e) {}
   try { if (typeof showShareToast === 'function') showShareToast('✅ Target GPA saved'); } catch (e) {}
 }
 
@@ -21599,6 +21625,8 @@ function mgBack(fallbackPanel, fallbackTab) {
 }
 
 function mgTab(panel, tabId) {
+  // Academics adoption signal — fire once per session when the player opens it.
+  if (panel === 'academics') { try { mgLogOnce('academics_opened'); } catch (e) {} }
   // Record where the player came from for mgBack() smart returns.
   if (!_mgNavCur || _mgNavCur.panel !== panel) { _mgNavPrev = _mgNavCur; _mgNavCur = { panel: panel, tab: tabId }; }
   // History push for browser/device back-button support — Coach Young
