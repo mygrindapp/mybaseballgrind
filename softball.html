@@ -5139,27 +5139,50 @@ input[type="number"] {
            Target stays editable (it's a goal, not a fact).
            pl-gpa-current is hidden (kept as the state-write target so
            computeEligibility / dashboard render keep working). -->
-      <div class="grid-2" style="margin-bottom:18px;">
-        <div style="text-align:center; padding:14px 10px; background:var(--card2); border-radius:3px; border-top:2px solid #2A3A2A;">
-          <div class="gpa-num" id="gpa-display" style="font-size:38px;">—</div>
-          <div class="gpa-label" style="margin-top:4px;">Current GPA · Target: <span id="gpa-target-display">—</span></div>
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:6px; line-height:1.4; font-style:italic;">Auto-calculated from your grades below</div>
+      <!-- GPA hero — Year + Cumulative (Coach Young 2026-06-19 transcript model).
+           gpa-display keeps its id (now = Cumulative, unweighted) so the
+           dashboard card + NCAA eligibility readers keep working. Each tile
+           shows the unweighted number big + a weighted (AP/Honors 5.0) sub. -->
+      <div class="grid-2" style="margin-bottom:12px; gap:10px;">
+        <div style="text-align:center; padding:14px 10px; background:var(--card2); border-radius:3px; border-top:2px solid #5A8A3A;">
+          <div class="gpa-num" id="acad-year-gpa" style="font-size:38px;">—</div>
+          <div class="gpa-label" style="margin-top:4px;">This Year</div>
+          <div id="acad-year-gpa-w" style="font-family:'Barlow'; font-size:11px; color:var(--gold,#C9A84C); margin-top:3px; letter-spacing:0.5px;">wt —</div>
         </div>
-        <div>
-          <input type="hidden" id="gpa-current">
-          <label>Target GPA</label>
-          <input type="number" id="gpa-target" step="0.1" min="0" max="4.0" placeholder="e.g. 3.5" style="width:90px;">
-          <button class="btn btn-gold btn-sm" onclick="saveGPA()" style="margin-top:4px;">Save Target</button>
-          <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); margin-top:10px; line-height:1.5;">Set the GPA you're chasing. We'll auto-compute your current GPA from the class grades below. No manual override.</div>
+        <div style="text-align:center; padding:14px 10px; background:var(--card2); border-radius:3px; border-top:2px solid #C9A84C;">
+          <div class="gpa-num" id="gpa-display" style="font-size:38px;">—</div>
+          <div class="gpa-label" style="margin-top:4px;">Cumulative</div>
+          <div id="acad-cum-gpa-w" style="font-family:'Barlow'; font-size:11px; color:var(--gold,#C9A84C); margin-top:3px; letter-spacing:0.5px;">wt —</div>
         </div>
       </div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); text-align:center; margin-bottom:14px; line-height:1.5;">
+        <span id="acad-term-gpa-label">Quarter 1 GPA</span>: <strong id="acad-term-gpa" style="color:var(--light);">—</strong>
+        <span style="display:block; font-style:italic; margin-top:2px;">Unweighted drives NCAA eligibility · weighted (wt) counts AP / Honors</span>
+      </div>
+
+      <!-- Target GPA row -->
+      <div style="display:flex; align-items:flex-end; gap:10px; flex-wrap:wrap; margin-bottom:18px;">
+        <input type="hidden" id="gpa-current">
+        <div>
+          <label>Target GPA</label>
+          <input type="number" id="gpa-target" step="0.1" min="0" max="5.0" placeholder="e.g. 3.5" style="width:90px;">
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="saveGPA()">Save Target</button>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.4; flex:1; min-width:160px;">GPA is auto-calculated from your class grades below — no manual override. Target: <span id="gpa-target-display">—</span></div>
+      </div>
+      <!-- Target-GPA coaching line — turns the goal into a next action
+           (gap + whether this year is closing it). Coach Young 2026-06-19. -->
+      <div id="acad-target-coach" style="display:none; font-family:'Barlow'; font-size:12px; line-height:1.5; color:#A8D97B; background:rgba(168,217,123,0.06); border:1px solid #2A3A2A; border-radius:3px; padding:10px 12px; margin:-6px 0 18px;"></div>
 
       <!-- College Eligibility Status — NCAA D1/D2/D3, NAIA, JUCO.
            Updated live from current GPA. Sources cited at bottom. -->
-      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg> College Eligibility Status</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg> College Eligibility Status</div>
+        <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey);">NCAA Core GPA: <span id="acad-core-gpa" style="font-family:'Bebas Neue'; font-size:18px; color:var(--gold,#C9A84C); letter-spacing:1px;">—</span></div>
+      </div>
       <div id="elig-grid" style="display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; margin-bottom:8px;"></div>
       <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:18px; font-style:italic;">
-        Note: NCAA uses a CORE-COURSE GPA (only specific classes count), not your overall school GPA. The status above is a quick read using your overall GPA. The full core-course tracker is part of MyGrind Pro.
+        Note: NCAA counts only your CORE courses — English, Math, Science, Social Studies, Foreign Language — not electives or PE. The status above now uses your <strong>core-course GPA</strong> across every year you've logged (your overall GPA still shows up top).
         <a href="https://www.ncsasports.org/ncaa-eligibility-center/gpa-requirements" target="_blank" rel="noopener" style="color:#A8D97B;">Source</a>
       </div>
 
@@ -5177,48 +5200,105 @@ input[type="number"] {
            below so a 9th-grader gets the framing without a coach
            explaining. Typography bumped (label 11→13, sub 9→11,
            inputs 13→16) now that Academics owns its own tab. -->
+      <!-- Grading-period selector (Coach Young 2026-06-19). Quarters forecast
+           the semester; the semester grade is the saved year-of-record. The
+           grade boxes below load the selected period; the GPAs recompute live. -->
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Grading Period</div>
+      <div style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; margin-bottom:8px;">
+        <button class="acad-term-pill" data-term="Q1" onclick="setAcademicTerm('Q1')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q1</button>
+        <button class="acad-term-pill" data-term="Q2" onclick="setAcademicTerm('Q2')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q2</button>
+        <button class="acad-term-pill" data-term="S1" onclick="setAcademicTerm('S1')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Sem 1</button>
+        <span style="width:1px; height:22px; background:var(--border); margin:0 3px;" aria-hidden="true"></span>
+        <button class="acad-term-pill" data-term="Q3" onclick="setAcademicTerm('Q3')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q3</button>
+        <button class="acad-term-pill" data-term="Q4" onclick="setAcademicTerm('Q4')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Q4</button>
+        <button class="acad-term-pill" data-term="S2" onclick="setAcademicTerm('S2')" style="background:rgba(168,217,123,0.06); color:var(--light); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; cursor:pointer; transition:all 0.12s;">Sem 2</button>
+      </div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:16px; font-style:italic;">Each quarter builds on the last — Q2 continues Q1 and becomes your Semester 1 grade (Q4 → Semester 2). When the report card posts, enter your real semester grade — that's the one saved for the year.</div>
+
       <div id="acad-section-title" style="font-family:'Barlow Condensed'; font-size:15px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:6px; display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-book-open"/></svg> The 6 Required Core Classes</div>
       <div id="acad-section-sub" style="font-family:'Barlow'; font-size:13px; color:var(--grey); line-height:1.5; margin-bottom:14px; font-style:italic;">These are the NCAA core-course categories. Plug in what your school calls each class and your current grade.</div>
       <div id="grade-checks">
-        <div class="grade-row" data-category="english" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-0">English</span><br><span id="acad-slot-sub-0" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 4 yr</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. AP English Lit" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <!-- Each class: name on the top line; course level + the selected
+             grading period's grade on the second line; a semester forecast
+             hint below. .subject-name / .subject-grade / data-category / the
+             slot-name ids are all preserved so updateGradeDisabledStates(),
+             renderCoreAlerts(), and renderAcademicsContext() keep working.
+             .subject-level drives the weighted GPA (Coach Young 2026-06-19). -->
+        <div class="grade-row" data-category="english" style="display:block; padding:12px 0;">
+          <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:8px; align-items:center;">
+            <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-0">English</span><br><span id="acad-slot-sub-0" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 4 yr</span></div>
+            <input type="text" class="subject-name" placeholder="e.g. AP English Lit" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <select class="subject-level" style="margin-bottom:0; flex:1; font-size:13px;" onchange="renderGrades()"><option value="regular">Regular</option><option value="honors">Honors</option><option value="ap">AP</option></select>
+            <select class="subject-grade" style="margin-bottom:0; width:80px;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          </div>
+          <div class="subject-forecast" style="display:none; font-family:'Barlow'; font-size:11px; color:#A8D97B; margin-top:4px; letter-spacing:0.5px; font-style:italic;"></div>
         </div>
         <div class="subject-warn" data-for="english" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
-        <div class="grade-row" data-category="math" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-1">Math</span><br><span id="acad-slot-sub-1" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 3 yr (Alg 1+)</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Algebra 2" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" data-category="math" style="display:block; padding:12px 0;">
+          <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:8px; align-items:center;">
+            <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-1">Math</span><br><span id="acad-slot-sub-1" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 3 yr (Alg 1+)</span></div>
+            <input type="text" class="subject-name" placeholder="e.g. Algebra 2" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <select class="subject-level" style="margin-bottom:0; flex:1; font-size:13px;" onchange="renderGrades()"><option value="regular">Regular</option><option value="honors">Honors</option><option value="ap">AP</option></select>
+            <select class="subject-grade" style="margin-bottom:0; width:80px;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          </div>
+          <div class="subject-forecast" style="display:none; font-family:'Barlow'; font-size:11px; color:#A8D97B; margin-top:4px; letter-spacing:0.5px; font-style:italic;"></div>
         </div>
         <div class="subject-warn" data-for="math" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
-        <div class="grade-row" data-category="science" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-2">Natural Science</span><br><span id="acad-slot-sub-2" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr (1 lab)</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Biology" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" data-category="science" style="display:block; padding:12px 0;">
+          <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:8px; align-items:center;">
+            <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-2">Natural Science</span><br><span id="acad-slot-sub-2" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr (1 lab)</span></div>
+            <input type="text" class="subject-name" placeholder="e.g. Biology" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <select class="subject-level" style="margin-bottom:0; flex:1; font-size:13px;" onchange="renderGrades()"><option value="regular">Regular</option><option value="honors">Honors</option><option value="ap">AP</option></select>
+            <select class="subject-grade" style="margin-bottom:0; width:80px;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          </div>
+          <div class="subject-forecast" style="display:none; font-family:'Barlow'; font-size:11px; color:#A8D97B; margin-top:4px; letter-spacing:0.5px; font-style:italic;"></div>
         </div>
         <div class="subject-warn" data-for="science" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
-        <div class="grade-row" data-category="social" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-3">Social Studies</span><br><span id="acad-slot-sub-3" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. US History" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" data-category="social" style="display:block; padding:12px 0;">
+          <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:8px; align-items:center;">
+            <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-3">Social Studies</span><br><span id="acad-slot-sub-3" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · 2 yr</span></div>
+            <input type="text" class="subject-name" placeholder="e.g. US History" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <select class="subject-level" style="margin-bottom:0; flex:1; font-size:13px;" onchange="renderGrades()"><option value="regular">Regular</option><option value="honors">Honors</option><option value="ap">AP</option></select>
+            <select class="subject-grade" style="margin-bottom:0; width:80px;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          </div>
+          <div class="subject-forecast" style="display:none; font-family:'Barlow'; font-size:11px; color:#A8D97B; margin-top:4px; letter-spacing:0.5px; font-style:italic;"></div>
         </div>
         <div class="subject-warn" data-for="social" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
-        <div class="grade-row" data-category="language" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-4">Foreign Language</span><br><span id="acad-slot-sub-4" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · additional</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Spanish 2" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" data-category="language" style="display:block; padding:12px 0;">
+          <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:8px; align-items:center;">
+            <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-4">Foreign Language</span><br><span id="acad-slot-sub-4" style="font-size:11px; color:var(--grey); letter-spacing:1px;">NCAA · additional</span></div>
+            <input type="text" class="subject-name" placeholder="e.g. Spanish 2" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <select class="subject-level" style="margin-bottom:0; flex:1; font-size:13px;" onchange="renderGrades()"><option value="regular">Regular</option><option value="honors">Honors</option><option value="ap">AP</option></select>
+            <select class="subject-grade" style="margin-bottom:0; width:80px;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          </div>
+          <div class="subject-forecast" style="display:none; font-family:'Barlow'; font-size:11px; color:#A8D97B; margin-top:4px; letter-spacing:0.5px; font-style:italic;"></div>
         </div>
         <div class="subject-warn" data-for="language" style="display:none; font-family:'Barlow'; font-size:11px; line-height:1.5; color:#E8A93A; margin:-2px 0 10px 0; padding:0 2px;"></div>
 
-        <div class="grade-row" data-category="elective" style="display:grid; grid-template-columns:1fr 1.5fr 80px; gap:8px; align-items:center; margin-bottom:4px;">
-          <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-5">Elective</span><br><span id="acad-slot-sub-5" style="font-size:11px; color:var(--grey); letter-spacing:1px;">PE / Arts / Other</span></div>
-          <input type="text" class="subject-name" placeholder="e.g. Weight Training" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
-          <select class="subject-grade" style="margin-bottom:0;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+        <div class="grade-row" data-category="elective" style="display:block; padding:12px 0;">
+          <div style="display:grid; grid-template-columns:1fr 1.6fr; gap:8px; align-items:center;">
+            <div class="grade-label" style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; color:#A8D97B; text-transform:uppercase;"><span id="acad-slot-name-5">Elective</span><br><span id="acad-slot-sub-5" style="font-size:11px; color:var(--grey); letter-spacing:1px;">PE / Arts / Other</span></div>
+            <input type="text" class="subject-name" placeholder="e.g. Weight Training" style="margin-bottom:0; font-size:16px;" oninput="renderGrades()">
+          </div>
+          <div style="display:flex; gap:8px; align-items:center; margin-top:6px;">
+            <select class="subject-level" style="margin-bottom:0; flex:1; font-size:13px;" onchange="renderGrades()"><option value="regular">Regular</option><option value="honors">Honors</option><option value="ap">AP</option></select>
+            <select class="subject-grade" style="margin-bottom:0; width:80px;" onchange="renderGrades()"><option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option></select>
+          </div>
+          <div class="subject-forecast" style="display:none; font-family:'Barlow'; font-size:11px; color:#A8D97B; margin-top:4px; letter-spacing:0.5px; font-style:italic;"></div>
         </div>
         <!-- Elective slot is the catch-all — anything goes here, no warning. -->
 
@@ -5237,6 +5317,99 @@ input[type="number"] {
           </div>
         </div>
       </div>
+    </div>
+
+    <!-- ── ACT / SAT Test Tracker (Coach Young 2026-06-19) ──
+         Recruiting/admissions tool, NOT an eligibility gate (NCAA dropped the
+         test-score requirement Jan 2023). Rendered by renderTestPrep(). -->
+    <div class="card" id="acad-testprep-card" style="margin-bottom:16px;">
+      <div class="card-title" style="color:#A8D97B; margin:0 0 6px;">📝 Test Scores · SAT / ACT</div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:12px; font-style:italic;">NCAA no longer requires a test score for eligibility (changed Jan 2023) — but most colleges still want one for admissions, scholarships, and recruiting. <a href="https://www.ncsasports.org/ncaa-eligibility-center/ncaa-sliding-scale" target="_blank" rel="noopener" style="color:#A8D97B;">Source</a></div>
+
+      <div id="tp-countdown" style="display:none; font-family:'Barlow'; font-size:13px; color:#A8D97B; background:rgba(168,217,123,0.06); border:1px solid #2A3A2A; border-radius:3px; padding:10px 12px; margin-bottom:14px; line-height:1.5;"></div>
+
+      <div class="grid-2" style="margin-bottom:12px; gap:10px;">
+        <div style="text-align:center; padding:12px 8px; background:var(--card2); border-radius:3px; border-top:2px solid #5A8A3A;">
+          <div class="gpa-num" id="tp-best-sat" style="font-size:30px;">—</div>
+          <div class="gpa-label" style="margin-top:3px;">Best SAT</div>
+        </div>
+        <div style="text-align:center; padding:12px 8px; background:var(--card2); border-radius:3px; border-top:2px solid #C9A84C;">
+          <div class="gpa-num" id="tp-best-act" style="font-size:30px;">—</div>
+          <div class="gpa-label" style="margin-top:3px;">Best ACT</div>
+        </div>
+      </div>
+      <div id="tp-target-gap" style="display:none; font-family:'Barlow'; font-size:12px; line-height:1.7; color:#A8D97B; margin-bottom:14px;"></div>
+
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Next Test Date</div>
+      <div style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; margin-bottom:18px;">
+        <select id="tp-next-type" style="margin-bottom:0; width:88px;"><option value="">—</option><option>SAT</option><option>ACT</option></select>
+        <input type="date" id="tp-next-date" style="margin-bottom:0;">
+        <button class="btn btn-gold btn-sm" onclick="mgSaveNextTest()">Save Date</button>
+      </div>
+
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Log a Score</div>
+      <div style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; margin-bottom:6px;">
+        <select id="tp-score-type" style="margin-bottom:0; width:80px;"><option>SAT</option><option>ACT</option></select>
+        <input type="date" id="tp-score-date" style="margin-bottom:0;">
+        <input type="number" id="tp-score-total" placeholder="Score" style="margin-bottom:0; width:90px;">
+        <button class="btn btn-gold btn-sm" onclick="mgAddTestScore()">Add</button>
+      </div>
+      <div style="font-family:'Barlow'; font-size:10px; color:var(--grey); margin-bottom:12px; font-style:italic;">SAT 400–1600 · ACT 1–36. Log each sitting — we keep your best.</div>
+      <div id="tp-scores-list"></div>
+
+      <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin:16px 0 8px;">Target Scores</div>
+      <div style="display:flex; gap:10px; align-items:flex-end; flex-wrap:wrap;">
+        <div><label style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:var(--grey);">SAT</label><input type="number" id="tp-target-sat" placeholder="e.g. 1200" min="400" max="1600" style="margin-bottom:0; width:90px; display:block;"></div>
+        <div><label style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; color:var(--grey);">ACT</label><input type="number" id="tp-target-act" placeholder="e.g. 25" min="1" max="36" style="margin-bottom:0; width:80px; display:block;"></div>
+        <button class="btn btn-gold btn-sm" onclick="mgSaveTestTargets()">Save Targets</button>
+      </div>
+    </div>
+
+    <!-- ── Academic History / Transcript (Coach Young 2026-06-19) ──
+         The multi-year record: every school year (current + archived), each
+         year's quarter + semester grades, year GPA (unweighted + weighted),
+         and a running cumulative across all years. Each August the finishing
+         year is archived here automatically and the slots above clear for the
+         new year. Rendered by renderAcademicHistory(). -->
+    <div class="card" id="acad-history-card" style="margin-bottom:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap; margin-bottom:6px;">
+        <div class="card-title" style="color:#A8D97B; margin:0; display:inline-flex; align-items:center; gap:8px;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-graduation-cap"/></svg> Academic History</div>
+        <div style="text-align:right;">
+          <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; color:var(--grey); text-transform:uppercase;">Cumulative GPA</div>
+          <div id="acad-history-cum" style="font-family:'Bebas Neue'; font-size:22px; color:var(--gold,#C9A84C); line-height:1;">—</div>
+        </div>
+      </div>
+      <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:14px; font-style:italic;">Your full transcript as you move through school. Tap a year to see every quarter and semester grade.</div>
+
+      <!-- Backfill awareness nudge — shown when prior HS years are missing
+           (mgRenderBackfillNudge). Coach Young 2026-06-19. -->
+      <div id="acad-backfill-nudge" style="display:none; font-family:'Barlow'; font-size:12px; line-height:1.55; color:#E8A93A; background:rgba(232,169,58,0.08); border:1px solid #6B4A1E; border-radius:3px; padding:11px 13px; margin-bottom:14px;"></div>
+
+      <!-- Semester-GPA trend sparkline (mgRenderTrend). -->
+      <div id="acad-trend" style="display:none; margin-bottom:14px;"></div>
+
+      <div id="acad-history-body"></div>
+
+      <!-- Add / edit a past year — backfill prior years so cumulative + core
+           GPA are accurate for players who joined mid-high-school. -->
+      <button onclick="mgOpenPastYearEditor()" style="margin-top:12px; background:rgba(168,217,123,0.06); border:1px solid #2F5A1E; color:#A8D97B; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 14px; border-radius:8px; cursor:pointer; width:100%;">➕ Add / Edit a Past Year</button>
+
+      <!-- Past-year editor (hidden until opened by mgOpenPastYearEditor). -->
+      <div id="acad-pastyear-editor" style="display:none; margin-top:12px; padding:14px; background:var(--card2); border:1px solid var(--border); border-radius:6px;">
+        <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Add / Edit a Past Year</div>
+        <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; margin-bottom:10px; font-style:italic;">Enter the semester (final) grades from your report card or transcript — that's what counts toward your cumulative + NCAA core GPA.</div>
+        <label style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1px; color:var(--grey); text-transform:uppercase;">School Year</label>
+        <select id="acad-py-year" onchange="mgPastYearYearChanged()" style="width:100%; margin:4px 0 14px; font-size:15px;"></select>
+        <div id="acad-py-rows"></div>
+        <div style="display:flex; gap:8px; align-items:center; margin-top:12px; flex-wrap:wrap;">
+          <button class="btn btn-gold btn-sm" onclick="mgSavePastYear()">Save Year</button>
+          <button onclick="mgClosePastYearEditor()" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:9px 14px; border-radius:8px; cursor:pointer;">Cancel</button>
+          <button id="acad-py-delete" onclick="mgDeletePastYear()" style="display:none; margin-left:auto; background:transparent; border:1px solid #8B4513; color:#E0A080; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase; padding:9px 14px; border-radius:8px; cursor:pointer;">Delete</button>
+        </div>
+      </div>
+
+      <button onclick="mgManualNewYear()" style="margin-top:12px; background:transparent; border:1px dashed var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; width:100%;">↻ Start a New School Year</button>
+      <div style="font-family:'Barlow'; font-size:10px; color:var(--grey); line-height:1.5; margin-top:6px; text-align:center; font-style:italic;">Happens automatically each August — use this only to roll over early.</div>
     </div>
 
     <!-- Bottom-of-page "Done" pill — Coach Young 2026-05-17. Mirrors the
@@ -12383,53 +12556,910 @@ function updateGradeDisabledStates() {
   });
 }
 
-function renderGrades() {
-  // Apply the enable/disable gate first so the rest of this function
-  // computes GPA against the post-gating state (a freshly cleared
-  // grade from an emptied class name won't count toward GPA).
-  updateGradeDisabledStates();
+// ════════════════════════════════════════════════════════════════════
+// ACADEMICS — term-aware transcript model (Coach Young 2026-06-19)
+// ════════════════════════════════════════════════════════════════════
+// The original Academics surface stored ONE letter grade per class. Coach
+// wanted it to behave like a real transcript: quarter grades (Q1-Q4) that
+// forecast the semester, semester grades (S1/S2) that are the official
+// saved grades, a Year GPA + a running Cumulative GPA, and an automatic
+// school-year reset every August that archives the finishing year before
+// clearing the slots (pairs with the grade auto-advance that already flips
+// the grade level in August via _mgSchoolYearEnd()).
+//
+// Canonical store: localStorage 'ybg_academics' (see mgDefaultAcademics()).
+// The legacy 'ybg_subject_grades' / 'ybg_subject_names' keys are still
+// mirrored (active term) so the dashboard card, the filled-count, and the
+// existing cloud restore keep working unchanged.
+const MG_GRADE_PTS   = { 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0 };
+const MG_LEVEL_BONUS = { regular: 0, honors: 0.5, ap: 1.0 };
+const MG_TERMS       = ['Q1','Q2','S1','Q3','Q4','S2'];
+const MG_CATEGORIES  = ['english','math','science','social','language','elective'];
 
-  // Save all subject grades + custom class names to localStorage.
-  // Coach Young 2026-05-11: expanded to 6 NCAA-mapped subjects with
-  // custom class names per slot.
-  const grades = [...document.querySelectorAll('.subject-grade')].map(s => s.value);
-  const names  = [...document.querySelectorAll('.subject-name')].map(s => s.value);
-  try { localStorage.setItem('ybg_subject_grades', JSON.stringify(grades)); } catch(e) {}
-  try { localStorage.setItem('ybg_subject_names',  JSON.stringify(names)); } catch(e) {}
-  // Auto-backup academics to cloud (signed-in only; additive merge).
-  try { if (typeof fbSaveMisc === 'function') fbSaveMisc({ academics: { grades: grades, names: names } }); } catch(e) {}
+function mgGradePts(letter)            { return MG_GRADE_PTS[letter]; } // undefined if blank/unknown
+function mgWeightedPts(letter, level)  {
+  var p = MG_GRADE_PTS[letter];
+  if (p === undefined) return undefined;
+  return p > 0 ? p + (MG_LEVEL_BONUS[level] || 0) : p;                  // no honors/AP bump on an F
+}
+function mgFmtGPA(v)  { return (v === null || v === undefined || isNaN(v)) ? '—' : v.toFixed(2); }
+function mgSetText(id, txt) { var el = document.getElementById(id); if (el) el.textContent = txt; }
+function mgTermLabel(t) {
+  return ({ Q1:'Quarter 1', Q2:'Quarter 2', S1:'Semester 1', Q3:'Quarter 3', Q4:'Quarter 4', S2:'Semester 2' })[t] || t;
+}
+function mgSchoolYearLabel(endYear) {
+  if (!endYear) return '';
+  return (endYear - 1) + '–' + String(endYear).slice(2);   // 2026 -> "2025–26"
+}
 
-  // Auto-compute Current GPA from the subject grades (Coach Young
-  // 2026-05-11 iteration 3: "The GPA shouldn't be editable. It should
-  // come from the grades they input. Honest path with no manipulation.")
-  // Standard unweighted 4.0 scale. Empty/unselected subjects skipped so
-  // a partially-filled term doesn't penalize the player.
-  const gradePoints = { 'A': 4, 'B': 3, 'C': 2, 'D': 1, 'F': 0 };
-  let total = 0, count = 0;
-  grades.forEach(function(g) {
-    if (gradePoints[g] !== undefined) { total += gradePoints[g]; count++; }
+// Which quarter is "current" for a given month — used to seat migrated
+// legacy grades and to pick the default selected term on a fresh load.
+function mgCurrentTermByMonth(now) {
+  var m = (now || new Date()).getMonth();   // 0=Jan
+  if (m >= 7 && m <= 9)   return 'Q1';       // Aug-Oct
+  if (m === 10 || m === 11) return 'Q2';     // Nov-Dec
+  if (m >= 0 && m <= 2)   return 'Q3';       // Jan-Mar
+  return 'Q4';                               // Apr-Jul
+}
+
+function mgBlankClasses() {
+  var out = [];
+  for (var i = 0; i < 6; i++) {
+    out.push({ name:'', category: MG_CATEGORIES[i] || 'elective', level:'regular',
+               grades:{ Q1:'', Q2:'', S1:'', Q3:'', Q4:'', S2:'' } });
+  }
+  return out;
+}
+
+function mgDefaultAcademics() {
+  var sy = _mgSchoolYearEnd();
+  return { schemaVersion:2, lastSchoolYear:sy, activeTerm: mgCurrentTermByMonth(), target:'',
+           current:{ schoolYear:sy, classes: mgBlankClasses() }, history:[] };
+}
+
+function loadAcademics() {
+  try {
+    var a = JSON.parse(localStorage.getItem('ybg_academics') || 'null');
+    if (a && a.current && Array.isArray(a.current.classes)) {
+      while (a.current.classes.length < 6) a.current.classes.push(mgBlankClasses()[a.current.classes.length]);
+      a.current.classes.forEach(function(c) {
+        if (!c.grades) c.grades = { Q1:'', Q2:'', S1:'', Q3:'', Q4:'', S2:'' };
+        if (!c.level)  c.level  = 'regular';
+      });
+      if (!Array.isArray(a.history)) a.history = [];
+      if (!a.activeTerm) a.activeTerm = mgCurrentTermByMonth();
+      return a;
+    }
+  } catch (e) {}
+  return null;
+}
+
+// Cloud write is DEBOUNCED (Coach Young 2026-06-19): grade fields fire
+// renderGrades()→saveAcademics() on every keystroke, so writing to Firestore
+// each time would burn writes during active typing. localStorage stays
+// immediate (no local data loss); the cloud backup coalesces to one write
+// ~900ms after the player stops editing. A pagehide flush covers the rare
+// case of closing the tab mid-edit.
+var _mgAcadCloudTimer = null;
+function mgFlushAcademicsCloud() {
+  if (_mgAcadCloudTimer) { clearTimeout(_mgAcadCloudTimer); _mgAcadCloudTimer = null; }
+  try {
+    if (typeof fbSaveMisc !== 'function') return;
+    var a = loadAcademics();
+    if (a) fbSaveMisc({ academics2: a });
+  } catch (e) {}
+}
+function saveAcademics(a) {
+  try { localStorage.setItem('ybg_academics', JSON.stringify(a)); } catch (e) {}
+  // Debounced cloud backup under 'academics2' (legacy 'academics' field left
+  // intact for older clients / the existing restore).
+  if (typeof fbSaveMisc === 'function') {
+    if (_mgAcadCloudTimer) clearTimeout(_mgAcadCloudTimer);
+    _mgAcadCloudTimer = setTimeout(function () {
+      _mgAcadCloudTimer = null;
+      try { var latest = loadAcademics() || a; fbSaveMisc({ academics2: latest }); } catch (e) {}
+    }, 900);
+  }
+}
+try { window.addEventListener('pagehide', mgFlushAcademicsCloud); } catch (e) {}
+
+// ── GPA math ──────────────────────────────────────────────
+// Per-class YEAR standing: prefer the entered semester grade, fall back to a
+// quarter-based forecast. Returns points (number) or null if nothing graded.
+function mgClassYear(cls, weighted) {
+  function termPts(t) {
+    var g = cls.grades ? cls.grades[t] : '';
+    if (g === undefined || g === '') return null;
+    var p = weighted ? mgWeightedPts(g, cls.level) : mgGradePts(g);
+    return (p === undefined) ? null : p;
+  }
+  function semPts(semTerm, qa, qb) {
+    var s = termPts(semTerm);
+    if (s !== null) return s;                 // a real semester grade always wins
+    // Cumulative / "rolling gradebook" model (verified 2026 vs Fairfax County
+    // Public Schools + CollegeVine): the later quarter CONTINUES the earlier one
+    // and stands in for the running semester grade — so we track the LATEST
+    // entered quarter, not an average of the two. Once the player enters the
+    // actual semester grade above, that wins regardless of school method.
+    var a = termPts(qa), b = termPts(qb);
+    if (b !== null) return b;                 // Q2 (or Q4) carries Q1 (or Q3) forward
+    if (a !== null) return a;
+    return null;
+  }
+  var s1 = semPts('S1', 'Q1', 'Q2');
+  var s2 = semPts('S2', 'Q3', 'Q4');
+  if (s1 !== null && s2 !== null) return (s1 + s2) / 2;
+  if (s1 !== null) return s1;
+  if (s2 !== null) return s2;
+  return null;
+}
+
+function mgYearGPA(yearObj) {
+  if (!yearObj || !Array.isArray(yearObj.classes)) return { unweighted:null, weighted:null };
+  var su=0, cu=0, sw=0, cw=0;
+  yearObj.classes.forEach(function(c) {
+    var u = mgClassYear(c, false); if (u !== null) { su += u; cu++; }
+    var w = mgClassYear(c, true);  if (w !== null) { sw += w; cw++; }
   });
-  if (count > 0) {
-    const computed = (total / count).toFixed(2);
-    if (state && state.gpa) state.gpa.current = computed;
-    const hidden  = document.getElementById('gpa-current');
-    const display = document.getElementById('gpa-display');
-    if (hidden)  hidden.value = computed;
-    if (display) display.textContent = computed;
-    try { saveState(); } catch(e) {}
-  } else {
-    // No grades entered yet — clear the display so we don't show a stale value.
-    if (state && state.gpa) state.gpa.current = '';
-    const hidden  = document.getElementById('gpa-current');
-    const display = document.getElementById('gpa-display');
-    if (hidden)  hidden.value = '';
-    if (display) display.textContent = '—';
-    try { saveState(); } catch(e) {}
+  return { unweighted: cu ? su/cu : null, weighted: cw ? sw/cw : null };
+}
+
+// Cumulative across every graded class-year (history + current). Each
+// class-year counts as one equal unit (no credit-hour weighting yet).
+function mgCumulativeGPA(a) {
+  var su=0, cu=0, sw=0, cw=0;
+  function tally(y) {
+    if (!y || !Array.isArray(y.classes)) return;
+    y.classes.forEach(function(c) {
+      var u = mgClassYear(c, false); if (u !== null) { su += u; cu++; }
+      var w = mgClassYear(c, true);  if (w !== null) { sw += w; cw++; }
+    });
+  }
+  (a.history || []).forEach(tally);
+  tally(a.current);
+  return { unweighted: cu ? su/cu : null, weighted: cw ? sw/cw : null };
+}
+
+// GPA for a single selected term across the current year's classes.
+function mgTermGPA(a, term, weighted) {
+  var s=0, c=0;
+  (a.current.classes || []).forEach(function(cl) {
+    var g = cl.grades ? cl.grades[term] : '';
+    if (g === undefined || g === '') return;
+    var p = weighted ? mgWeightedPts(g, cl.level) : mgGradePts(g);
+    if (p !== undefined && p !== null) { s += p; c++; }
+  });
+  return c ? s/c : null;
+}
+
+// NCAA CORE-COURSE GPA (Coach Young 2026-06-19). NCAA eligibility is judged on
+// the CORE courses only — not your overall GPA (which includes PE / electives).
+// This averages every graded core-category class-year across all years
+// (English, Math, Science, Social Studies, Foreign Language) and EXCLUDES the
+// elective slot. Unweighted, matching how the NCAA core GPA is scaled. This is
+// what the eligibility tiles now read, instead of the overall GPA.
+var MG_CORE_CATEGORIES = { english:1, math:1, science:1, social:1, language:1 };
+function mgCoreGPA(a) {
+  if (!a) return null;
+  var s=0, c=0;
+  function tally(y) {
+    if (!y || !Array.isArray(y.classes)) return;
+    y.classes.forEach(function(cl) {
+      if (!cl || !MG_CORE_CATEGORIES[cl.category]) return;   // core categories only
+      var u = mgClassYear(cl, false);
+      if (u !== null) { s += u; c++; }
+    });
+  }
+  (a.history || []).forEach(tally);
+  tally(a.current);
+  return c ? s/c : null;
+}
+function mgCurrentCoreGPA() {
+  try { return mgCoreGPA(loadAcademics()); } catch (e) { return null; }
+}
+
+// Target-GPA coaching line (Coach Young 2026-06-19): turn the target into a
+// next action — show the gap and whether this year is closing it.
+function mgTargetCoachLine(a) {
+  var t = parseFloat((state && state.gpa && state.gpa.target) || '');
+  if (!t || isNaN(t)) return '';
+  var cum = mgCumulativeGPA(a).unweighted;
+  if (cum === null) return 'Target ' + t.toFixed(1) + ' set — log your grades and we\'ll track the gap.';
+  if (cum >= t) return '✅ ' + cum.toFixed(2) + ' cumulative — at or above your ' + t.toFixed(1) + ' target. Hold the line.';
+  var gap = (t - cum);
+  var thisYear = mgYearGPA(a.current).unweighted;
+  var tail = (thisYear !== null && thisYear >= t)
+    ? ' This year (' + thisYear.toFixed(2) + ') is pulling it up.'
+    : ' Aim above ' + t.toFixed(1) + ' this semester to close it.';
+  return '📈 ' + gap.toFixed(2) + ' below your ' + t.toFixed(1) + ' target.' + tail;
+}
+
+// ── Single-semester points for one class (Coach Young 2026-06-19) ──
+// Used by the trend sparkline. Prefers the entered semester grade, else the
+// cumulative latest-quarter read for that semester (same rule as the year calc).
+function mgClassSemester(cls, sem, weighted) {
+  var qa = (sem === 'S1') ? 'Q1' : 'Q3';
+  var qb = (sem === 'S1') ? 'Q2' : 'Q4';
+  function pts(t) {
+    var g = cls.grades ? cls.grades[t] : '';
+    if (g === undefined || g === '') return null;
+    var p = weighted ? mgWeightedPts(g, cls.level) : mgGradePts(g);
+    return (p === undefined) ? null : p;
+  }
+  var s = pts(sem); if (s !== null) return s;
+  var b = pts(qb);  if (b !== null) return b;   // latest quarter continues the semester
+  var a = pts(qa);  if (a !== null) return a;
+  return null;
+}
+function mgSemesterGPA(yearObj, sem, weighted) {
+  if (!yearObj || !Array.isArray(yearObj.classes)) return null;
+  var s = 0, c = 0;
+  yearObj.classes.forEach(function(cl) {
+    var p = mgClassSemester(cl, sem, weighted);
+    if (p !== null) { s += p; c++; }
+  });
+  return c ? s/c : null;
+}
+// Chronological semester-GPA series across every logged year (oldest → newest)
+// for the trend sparkline. Each point = one semester's GPA.
+function mgGpaTrendSeries(a) {
+  var years = (a.history || []).slice().sort(function(x, y){ return (x.schoolYear || 0) - (y.schoolYear || 0); });
+  years.push(a.current);
+  var pts = [];
+  years.forEach(function(y) {
+    if (!y) return;
+    ['S1', 'S2'].forEach(function(sem) {
+      var g = mgSemesterGPA(y, sem, false);
+      if (g !== null) pts.push({ label: mgSchoolYearLabel(y.schoolYear) + ' ' + sem, gpa: g });
+    });
+  });
+  return pts;
+}
+
+// ── Backfill awareness (Coach Young 2026-06-19) ──
+// A player who joins mid-high-school must log prior years or their cumulative +
+// NCAA core GPA are wrong. Derive the completed HS years they should have on
+// file from their graduation year, and flag any not yet in history.
+function mgExpectedPriorYears() {
+  var prof = {};
+  try { prof = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); } catch (e) {}
+  var gradYear = parseInt(prof.gradYear, 10);
+  if (!gradYear) return [];
+  var curSY = _mgSchoolYearEnd();
+  var out = [];
+  for (var sy = gradYear - 3; sy < curSY; sy++) {   // freshman-end … just before the current year
+    var diff = gradYear - sy;                        // 3=Fresh, 2=Soph, 1=Junior, 0=Senior
+    if (diff >= 1 && diff <= 3) out.push({ schoolYear: sy, gradeLabel: gradeFromGradYear(gradYear, new Date(sy, 0, 1)) });
+  }
+  return out;
+}
+function mgMissingPriorYears(a) {
+  if (!a) return [];
+  var have = {};
+  (a.history || []).forEach(function(h){ if (h && h.schoolYear != null) have[h.schoolYear] = 1; });
+  if (a.current && a.current.schoolYear != null) have[a.current.schoolYear] = 1;
+  return mgExpectedPriorYears().filter(function(y){ return !have[y.schoolYear]; });
+}
+
+// ── Term-aware report-card reminder calendar (Coach Young 2026-06-19) ──
+// When each grading period's report cards typically post. Drives the on-load
+// reminder banner AND the dashboard academics card. Defined here (same block as
+// renderDashAcademics) so it's available at first paint. Generalizes the old
+// June-only finals treatment to all four windows, and is state-aware (stops
+// nagging once that period's grades are in).
+function mgGradeWindow(now) {
+  now = now || new Date();
+  var m = now.getMonth(), d = now.getDate();   // 0 = Jan
+  var test = function(sm, sd, em, ed) {
+    var after  = (m > sm) || (m === sm && d >= sd);
+    var before = (m < em) || (m === em && d <= ed);
+    return after && before;
+  };
+  if (test(9, 25, 10, 15)) return 'q1';   // ~Oct 25 – Nov 15
+  if (test(0,  5,  0, 25)) return 'q2';    // ~Jan 5 – Jan 25 (Semester 1)
+  if (test(2, 20,  3, 10)) return 'q3';    // ~Mar 20 – Apr 10
+  if (test(4, 25,  5, 20)) return 'q4';    // ~May 25 – Jun 20 (Semester 2)
+  return null;
+}
+function mgWindowTerm(win)  { return ({ q1:'Q1', q2:'S1', q3:'Q3', q4:'S2' })[win] || ''; }
+function mgWindowLabel(win) { return ({ q1:'Quarter 1', q2:'Semester 1', q3:'Quarter 3', q4:'Semester 2' })[win] || 'grades'; }
+// True once the window's term grade is entered for ALL named current-year
+// classes — so the reminder stops once the player is caught up.
+function mgWindowFilled(win) {
+  try {
+    var term = mgWindowTerm(win);
+    if (!term) return false;
+    var a = loadAcademics();
+    if (!a || !a.current || !Array.isArray(a.current.classes)) return false;
+    var named = a.current.classes.filter(function(c){ return c && c.name && c.name.trim(); });
+    if (!named.length) return false;
+    return named.every(function(c){ return c.grades && c.grades[term]; });
+  } catch (e) { return false; }
+}
+// Deep-link: open Academics and jump straight to the period that's due.
+window.mgOpenAcademicsAtTerm = function(term) {
+  try { mgTab('academics', 'tab-develop'); } catch (e) {}
+  try { if (term) setAcademicTerm(term); } catch (e) {}
+};
+
+// ════════════════════════════════════════════════════════════
+// ACT / SAT TEST TRACKER (Coach Young 2026-06-19)
+// NCAA eliminated the SAT/ACT requirement for INITIAL ELIGIBILITY in Jan 2023
+// (verified vs NCSA / NCAA Eligibility Center) — but most colleges still want a
+// score for admissions + academic scholarships, and coaches ask in recruiting.
+// So this is a recruiting/admissions tool, NOT an eligibility gate. Stored in
+// ybg_academics.testPrep so it rides the same cloud backup (academics2).
+function loadTestPrep() {
+  var a = loadAcademics() || mgDefaultAcademics();
+  if (!a.testPrep || typeof a.testPrep !== 'object') a.testPrep = {};
+  if (!Array.isArray(a.testPrep.scores)) a.testPrep.scores = [];
+  ['targetSAT', 'targetACT', 'nextType', 'nextDate'].forEach(function(f){ if (a.testPrep[f] == null) a.testPrep[f] = ''; });
+  return a.testPrep;
+}
+function saveTestPrep(tp) {
+  var a = loadAcademics() || mgDefaultAcademics();
+  a.testPrep = tp;
+  saveAcademics(a);
+}
+function mgBestScore(tp, type) {
+  var best = null;
+  (tp.scores || []).forEach(function(s){ if (s.type === type) { var v = parseInt(s.total, 10); if (!isNaN(v) && (best === null || v > best)) best = v; } });
+  return best;
+}
+function mgDaysUntil(dateStr) {
+  if (!dateStr) return null;
+  var d = new Date(dateStr + 'T00:00:00'); if (isNaN(d.getTime())) return null;
+  var t = new Date(); t.setHours(0, 0, 0, 0);
+  return Math.round((d.getTime() - t.getTime()) / 86400000);
+}
+function mgFmtDate(s) {
+  if (!s) return '';
+  var p = String(s).split('-'); if (p.length !== 3) return s;
+  var mo = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(p[1], 10) - 1] || '';
+  return mo + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+}
+function mgTestGapLine(tp, type) {
+  var t = parseInt(type === 'SAT' ? tp.targetSAT : tp.targetACT, 10);
+  if (!t || isNaN(t)) return '';
+  var best = mgBestScore(tp, type);
+  if (best === null) return type + ' target ' + t + ' set — log a score to track it.';
+  if (best >= t) return '✅ Best ' + type + ' ' + best + ' — at/above your ' + t + ' target.';
+  return '📈 ' + (t - best) + ' below your ' + type + ' target (' + t + ').';
+}
+function mgSetVal(id, v) { var el = document.getElementById(id); if (el && v != null) el.value = v; }
+
+function renderTestPrep() {
+  var card = document.getElementById('acad-testprep-card');
+  if (!card) return;
+  var tp = loadTestPrep();
+  mgSetVal('tp-next-type', tp.nextType); mgSetVal('tp-next-date', tp.nextDate);
+  mgSetVal('tp-target-sat', tp.targetSAT); mgSetVal('tp-target-act', tp.targetACT);
+
+  var cd = document.getElementById('tp-countdown');
+  if (cd) {
+    var days = mgDaysUntil(tp.nextDate);
+    if (tp.nextDate && days !== null && days >= 0) {
+      cd.style.display = 'block';
+      cd.innerHTML = '⏳ <strong>' + (tp.nextType || 'Test') + (days === 0 ? ' is today!' : days === 1 ? ' is tomorrow' : ' in ' + days + ' days') + '</strong> · ' + mgFmtDate(tp.nextDate);
+    } else if (tp.nextDate && days !== null && days < 0) {
+      cd.style.display = 'block';
+      cd.innerHTML = 'Your ' + (tp.nextType || 'test') + ' on ' + mgFmtDate(tp.nextDate) + ' has passed — log your score below or set the next date.';
+    } else { cd.style.display = 'none'; cd.innerHTML = ''; }
   }
 
-  try { renderEligibility(); } catch(e) {}
-  try { renderDashAcademics(); } catch(e) {}
-  try { renderCoreAlerts(); } catch(e) {}
+  mgSetText('tp-best-sat', mgBestScore(tp, 'SAT') !== null ? String(mgBestScore(tp, 'SAT')) : '—');
+  mgSetText('tp-best-act', mgBestScore(tp, 'ACT') !== null ? String(mgBestScore(tp, 'ACT')) : '—');
+
+  var gapEl = document.getElementById('tp-target-gap');
+  if (gapEl) {
+    var lines = [mgTestGapLine(tp, 'SAT'), mgTestGapLine(tp, 'ACT')].filter(Boolean);
+    gapEl.innerHTML = lines.join('<br>');
+    gapEl.style.display = lines.length ? 'block' : 'none';
+  }
+
+  var list = document.getElementById('tp-scores-list');
+  if (list) {
+    var sorted = (tp.scores || []).slice().sort(function(a, b){ return (b.date || '') < (a.date || '') ? -1 : 1; });
+    list.innerHTML = sorted.length ? sorted.map(function(s){
+      var color = s.type === 'SAT' ? '#A8D97B' : '#C9A84C';
+      return '<div style="display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 10px; background:var(--card2); border:1px solid var(--border); border-radius:4px; margin-bottom:6px;">' +
+        '<div><span style="font-family:\'Barlow Condensed\'; font-weight:800; letter-spacing:1px; color:' + color + ';">' + s.type + '</span>' +
+        '<span style="font-family:\'Bebas Neue\'; font-size:20px; color:var(--white); margin:0 8px;">' + s.total + '</span>' +
+        '<span style="font-family:\'Barlow\'; font-size:11px; color:var(--grey);">' + mgFmtDate(s.date) + '</span></div>' +
+        '<span onclick="mgDeleteTestScore(' + JSON.stringify(s.id) + ')" style="color:#E0A080; cursor:pointer; font-size:13px; padding:2px 8px;" aria-label="Delete score">✕</span>' +
+      '</div>';
+    }).join('') : '<div style="font-family:\'Barlow\'; font-size:12px; color:var(--grey); font-style:italic; padding:2px;">No scores logged yet. Add your first SAT or ACT above.</div>';
+  }
+}
+
+window.mgSaveNextTest = function() {
+  var tp = loadTestPrep();
+  tp.nextType = (document.getElementById('tp-next-type') || {}).value || '';
+  tp.nextDate = (document.getElementById('tp-next-date') || {}).value || '';
+  saveTestPrep(tp); renderTestPrep();
+  try { renderJournalReminders(); } catch (e) {}
+  try { if (typeof showShareToast === 'function') showShareToast('✅ Test date saved'); } catch (e) {}
+};
+window.mgAddTestScore = function() {
+  var type = (document.getElementById('tp-score-type') || {}).value || 'SAT';
+  var date = (document.getElementById('tp-score-date') || {}).value || '';
+  var total = parseInt((document.getElementById('tp-score-total') || {}).value, 10);
+  if (isNaN(total)) { alert('Enter your score first.'); return; }
+  if (type === 'SAT' && (total < 400 || total > 1600)) { alert('SAT scores range 400–1600.'); return; }
+  if (type === 'ACT' && (total < 1 || total > 36)) { alert('ACT scores range 1–36.'); return; }
+  var tp = loadTestPrep();
+  tp.scores.push({ id: Date.now(), type: type, date: date, total: total });
+  saveTestPrep(tp);
+  var totEl = document.getElementById('tp-score-total'); if (totEl) totEl.value = '';
+  renderTestPrep();
+  try { if (typeof showShareToast === 'function') showShareToast('✅ ' + type + ' score added'); } catch (e) {}
+};
+window.mgDeleteTestScore = function(id) {
+  var tp = loadTestPrep();
+  tp.scores = (tp.scores || []).filter(function(s){ return s.id !== id; });
+  saveTestPrep(tp); renderTestPrep();
+};
+window.mgSaveTestTargets = function() {
+  var tp = loadTestPrep();
+  tp.targetSAT = (document.getElementById('tp-target-sat') || {}).value || '';
+  tp.targetACT = (document.getElementById('tp-target-act') || {}).value || '';
+  saveTestPrep(tp); renderTestPrep();
+  try { if (typeof showShareToast === 'function') showShareToast('✅ Test targets saved'); } catch (e) {}
+};
+
+// ── Rollover + migration (runs once at load, before loadGradesUI) ──
+// Archive the finishing year's classes/grades into history, then clear the
+// slots for the new year. Shared by the August auto-reset and the manual
+// "start a new school year" control. Returns true if anything was archived.
+function mgArchiveCurrent(a) {
+  var hasAny = false;
+  (a.current.classes || []).forEach(function(c) {
+    if (c.name) hasAny = true;
+    Object.keys(c.grades || {}).forEach(function(k) { if (c.grades[k]) hasAny = true; });
+  });
+  if (!hasAny) return false;
+  var label = '';
+  try {
+    var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    // Grade label AS OF the finishing school year (Jan of its end-year resolves
+    // to that year's grade via _mgSchoolYearEnd()).
+    if (p.gradYear) label = gradeFromGradYear(p.gradYear, new Date((a.current.schoolYear || _mgSchoolYearEnd()), 0, 1));
+    if (!label) label = p.grade || '';
+  } catch (e) {}
+  a.history.unshift({
+    schoolYear: a.current.schoolYear || a.lastSchoolYear,
+    gradeLabel: label,
+    classes: a.current.classes,
+    yearGPA: mgYearGPA(a.current)
+  });
+  return true;
+}
+
+function mgAcademicsRollover() {
+  var a = loadAcademics();
+  var nowSY = _mgSchoolYearEnd();
+
+  if (!a) {
+    // First run: migrate the legacy single-grade model so nothing is lost.
+    a = mgDefaultAcademics();
+    try {
+      var lg = JSON.parse(localStorage.getItem('ybg_subject_grades') || '[]');
+      var ln = JSON.parse(localStorage.getItem('ybg_subject_names')  || '[]');
+      var hasLegacy = (Array.isArray(lg) && lg.some(function(x){return x;})) ||
+                      (Array.isArray(ln) && ln.some(function(x){return x;}));
+      if (hasLegacy) {
+        var seat = mgCurrentTermByMonth();   // seat the old single grade in the month's quarter
+        a.activeTerm = seat;
+        for (var i = 0; i < 6; i++) {
+          if (ln && ln[i]) a.current.classes[i].name = ln[i];
+          if (lg && lg[i]) a.current.classes[i].grades[seat] = lg[i];
+        }
+      }
+    } catch (e) {}
+    a.lastSchoolYear = nowSY;
+    saveAcademics(a);
+    return a;
+  }
+
+  // August boundary: gate on the stamp so this runs exactly once and never
+  // double-clears. Archive ALWAYS happens before the clear.
+  if (typeof a.lastSchoolYear === 'number' && a.lastSchoolYear < nowSY) {
+    mgArchiveCurrent(a);
+    a.current   = { schoolYear: nowSY, classes: mgBlankClasses() };
+    a.activeTerm = 'Q1';
+    a.lastSchoolYear = nowSY;
+    saveAcademics(a);
+  }
+  return a;
+}
+
+// Manual "start a new school year" — same archive→clear path, confirm-gated.
+window.mgManualNewYear = function() {
+  if (!confirm('Start a new school year now?\n\nThis saves your current classes and grades to your transcript, then clears the slots so you can enter the new year. This cannot be undone.')) return;
+  var a = loadAcademics() || mgDefaultAcademics();
+  var nextSY = (a.current.schoolYear || _mgSchoolYearEnd()) + 1;
+  mgArchiveCurrent(a);
+  a.current   = { schoolYear: nextSY, classes: mgBlankClasses() };
+  a.activeTerm = 'Q1';
+  // Bump the stamp to at least this year so the auto-reset won't re-fire on top.
+  a.lastSchoolYear = Math.max(a.lastSchoolYear || 0, nextSY);
+  saveAcademics(a);
+  try { loadAcademicsUI(); } catch (e) {}
+  try { if (typeof showShareToast === 'function') showShareToast('✅ New school year started — last year saved to your transcript'); } catch (e) {}
+};
+
+// ── Term selector + grid binding ──────────────────────────
+function mgPaintTermPills(active) {
+  document.querySelectorAll('.acad-term-pill').forEach(function(b) {
+    var on = b.getAttribute('data-term') === active;
+    b.style.background  = on ? 'var(--gold, #C9A84C)' : 'rgba(168,217,123,0.06)';
+    b.style.color       = on ? '#16110A' : 'var(--light)';
+    b.style.borderColor = on ? 'var(--gold, #C9A84C)' : 'var(--border)';
+    b.style.fontWeight  = on ? '800' : '700';
+  });
+}
+
+function mgBindTermToGrid(a) {
+  var term = a.activeTerm;
+  document.querySelectorAll('#grade-checks .grade-row').forEach(function(row, i) {
+    var cls = a.current.classes[i] || mgBlankClasses()[i];
+    var nameEl  = row.querySelector('.subject-name');
+    var gradeEl = row.querySelector('.subject-grade');
+    var lvlEl   = row.querySelector('.subject-level');
+    if (nameEl)  nameEl.value  = cls.name || '';
+    if (lvlEl)   lvlEl.value   = cls.level || 'regular';
+    if (gradeEl) gradeEl.value = cls.grades[term] || '';
+  });
+  updateGradeDisabledStates();
+}
+
+window.setAcademicTerm = function(term) {
+  if (MG_TERMS.indexOf(term) === -1) return;
+  var a = loadAcademics() || mgDefaultAcademics();
+  a.activeTerm = term;
+  saveAcademics(a);
+  mgBindTermToGrid(a);
+  mgPaintTermPills(term);
+  renderGrades();
+  try { ybgHaptic && ybgHaptic(10); } catch (e) {}
+};
+
+// Semester forecast hints — only shown on a semester term, and only when the
+// semester grade itself is still blank (the quarters are previewing it).
+function mgRenderForecasts(a, term) {
+  var isSem = (term === 'S1' || term === 'S2');
+  var qa = (term === 'S1') ? 'Q1' : 'Q3';
+  var qb = (term === 'S1') ? 'Q2' : 'Q4';
+  document.querySelectorAll('#grade-checks .grade-row').forEach(function(row, i) {
+    var fc = row.querySelector('.subject-forecast');
+    if (!fc) return;
+    var cls = a.current.classes[i];
+    var hide = function() { fc.style.display = 'none'; fc.textContent = ''; };
+    if (!isSem || !cls || cls.grades[term]) return hide();
+    // Cumulative model: the latest entered quarter is the running semester grade
+    // (Q2 continues Q1). Show that quarter's actual letter, not an average.
+    var src = cls.grades[qb] ? qb : (cls.grades[qa] ? qa : '');
+    if (!src) return hide();
+    fc.textContent = 'Semester so far: ' + cls.grades[src] + ' (from ' + src + ')';
+    fc.style.display = 'block';
+  });
+}
+
+// Populate the whole Academics surface from the saved model (called on load
+// and after a cloud restore / manual new year).
+function loadAcademicsUI() {
+  var a = loadAcademics();
+  if (!a) { a = mgDefaultAcademics(); saveAcademics(a); }
+  mgPaintTermPills(a.activeTerm);
+  mgBindTermToGrid(a);
+  var tInput = document.getElementById('gpa-target');
+  if (tInput && !tInput.value && a.target) tInput.value = a.target;
+  renderGrades();
+  try { renderAcademicHistory(); } catch (e) {}
+  try { renderTestPrep(); } catch (e) {}
+}
+
+// ── Academic history / transcript ─────────────────────────
+function mgCurrentGradeLabel() {
+  try { return (JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}').grade) || ''; } catch (e) { return ''; }
+}
+
+function mgHistoryYearHTML(y) {
+  var graded = (y.classes || []).some(function(c) {
+    return c && c.grades && Object.keys(c.grades).some(function(k){ return c.grades[k]; });
+  });
+  var hasNames = (y.classes || []).some(function(c){ return c && c.name; });
+  if (!graded && !(y.inProgress && hasNames)) return '';   // nothing worth showing yet
+
+  var yg = y.yearGPA || mgYearGPA(y);
+  var gpaStr = (yg.unweighted !== null && yg.unweighted !== undefined ? yg.unweighted.toFixed(2) : '—') +
+               (yg.weighted   !== null && yg.weighted   !== undefined ? ' · wt ' + yg.weighted.toFixed(2) : '');
+  var cellStyle = 'text-align:center; padding:5px 4px; font-family:\'Barlow Condensed\'; font-size:13px; font-weight:700; border-bottom:1px solid rgba(255,255,255,0.04);';
+  var headStyle = 'text-align:center; padding:5px 4px; font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase;';
+
+  function gColor(g){ return (g==='A')?'#58D68D':(g==='B')?'#A8D97B':(g==='C')?'#E67E22':(g==='D'||g==='F')?'#E57373':'var(--grey)'; }
+  function cell(c, t){ var g = (c.grades && c.grades[t]) || '—'; return '<td style="' + cellStyle + ' color:' + gColor(g) + ';">' + g + '</td>'; }
+
+  var rows = (y.classes || []).map(function(c) {
+    if (!c || (!c.name && !(c.grades && Object.keys(c.grades).some(function(k){ return c.grades[k]; })))) return '';
+    var nm = (c.name || '(unnamed)').replace(/[<>]/g, '');
+    var lvl = (c.level && c.level !== 'regular')
+      ? ' <span style="font-size:9px; letter-spacing:1px; color:var(--gold,#C9A84C); border:1px solid var(--gold-dark,#8F7A36); border-radius:3px; padding:0 4px; margin-left:4px;">' + (c.level === 'ap' ? 'AP' : 'HON') + '</span>'
+      : '';
+    return '<tr><td style="text-align:left; padding:5px 6px; font-family:\'Barlow\'; font-size:12px; color:var(--light); border-bottom:1px solid rgba(255,255,255,0.04);">' + nm + lvl + '</td>' +
+           cell(c,'Q1') + cell(c,'Q2') + cell(c,'S1') + cell(c,'Q3') + cell(c,'Q4') + cell(c,'S2') + '</tr>';
+  }).join('');
+
+  return '<details' + (y.inProgress ? ' open' : '') + ' style="background:var(--card2); border:1px solid var(--border); border-radius:4px; margin-bottom:8px; padding:0 12px;">' +
+    '<summary style="cursor:pointer; list-style:none; display:flex; justify-content:space-between; align-items:center; gap:10px; padding:11px 2px; font-family:\'Barlow Condensed\'; font-weight:700;">' +
+      '<span style="font-size:14px; letter-spacing:0.5px; color:var(--light);">' + mgSchoolYearLabel(y.schoolYear) +
+        (y.gradeLabel ? ' · <span style="color:var(--grey); font-weight:600;">' + String(y.gradeLabel).replace(/[<>]/g,'') + '</span>' : '') +
+        (y.inProgress ? ' <span style="color:#A8D97B; font-size:10px; letter-spacing:1.5px;">· IN PROGRESS</span>' : '') + '</span>' +
+      '<span style="font-size:14px; color:var(--gold,#C9A84C); white-space:nowrap;">' + gpaStr + '</span>' +
+    '</summary>' +
+    '<div style="overflow-x:auto; padding-bottom:10px;"><table style="width:100%; border-collapse:collapse; min-width:340px;">' +
+      '<thead><tr><th style="text-align:left; padding:5px 6px; font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase;">Class</th>' +
+        '<th style="' + headStyle + '">Q1</th><th style="' + headStyle + '">Q2</th><th style="' + headStyle + ' color:#A8D97B;">S1</th>' +
+        '<th style="' + headStyle + '">Q3</th><th style="' + headStyle + '">Q4</th><th style="' + headStyle + ' color:#A8D97B;">S2</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table></div>' +
+  '</details>';
+}
+
+function renderAcademicHistory() {
+  var body = document.getElementById('acad-history-body');
+  if (!body) return;
+  var a = loadAcademics();
+  if (!a) { body.innerHTML = ''; return; }
+
+  var cum = mgCumulativeGPA(a);
+  mgSetText('acad-history-cum', (cum.unweighted !== null ? cum.unweighted.toFixed(2) : '—') +
+            (cum.weighted !== null ? '   ·   wt ' + cum.weighted.toFixed(2) : ''));
+
+  var years = [{ inProgress:true, schoolYear:a.current.schoolYear, gradeLabel: mgCurrentGradeLabel(),
+                 classes:a.current.classes, yearGPA: mgYearGPA(a.current) }];
+  (a.history || []).slice().sort(function(x, y){ return (y.schoolYear || 0) - (x.schoolYear || 0); })
+    .forEach(function(h){ years.push({ inProgress:false, schoolYear:h.schoolYear, gradeLabel:h.gradeLabel, classes:h.classes, yearGPA: h.yearGPA || mgYearGPA(h) }); });
+
+  var html = years.map(mgHistoryYearHTML).filter(Boolean).join('');
+  body.innerHTML = html || '<div style="font-family:\'Barlow\'; font-size:12px; color:var(--grey); line-height:1.6; font-style:italic; padding:4px 2px;">Your transcript builds here as you enter grades. Each August your finishing year is saved automatically and the slots clear for the new year.</div>';
+
+  try { mgRenderTrend(); } catch (e) {}
+  try { mgRenderBackfillNudge(); } catch (e) {}
+}
+
+// ── Semester-GPA trend sparkline (Coach Young 2026-06-19) ──
+function mgRenderTrend() {
+  var el = document.getElementById('acad-trend');
+  if (!el) return;
+  var a = loadAcademics();
+  var series = a ? mgGpaTrendSeries(a) : [];
+  if (series.length < 2) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'block';
+  var W = 260, H = 46, pad = 6;
+  var gpas = series.map(function(p){ return p.gpa; });
+  var min = Math.min.apply(null, gpas), max = Math.max.apply(null, gpas);
+  if (max - min < 0.5) { var mid = (max + min) / 2; min = Math.max(0, mid - 0.5); max = Math.min(4, mid + 0.5); }
+  var span = (max - min) || 1;
+  function px(i){ return pad + (series.length === 1 ? 0 : (i * (W - 2 * pad) / (series.length - 1))); }
+  function py(g){ return pad + (H - 2 * pad) * (1 - (g - min) / span); }
+  var line = series.map(function(p, i){ return px(i).toFixed(1) + ',' + py(p.gpa).toFixed(1); }).join(' ');
+  var dots = series.map(function(p, i){ return '<circle cx="' + px(i).toFixed(1) + '" cy="' + py(p.gpa).toFixed(1) + '" r="2.4" fill="#A8D97B"/>'; }).join('');
+  var first = series[0].gpa, last = series[series.length - 1].gpa, d = last - first;
+  var arrow = d > 0.001 ? '↑' : (d < -0.001 ? '↓' : '→');
+  var dColor = d > 0.001 ? '#58D68D' : (d < -0.001 ? '#E57373' : 'var(--grey)');
+  el.innerHTML =
+    '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-bottom:4px;">Semester GPA Trend</div>' +
+    '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="46" preserveAspectRatio="none" aria-hidden="true">' +
+      '<polyline points="' + line + '" fill="none" stroke="#5A8A3A" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>' + dots +
+    '</svg>' +
+    '<div style="font-family:\'Barlow\'; font-size:11px; color:var(--grey); margin-top:2px;">' +
+      first.toFixed(2) + ' → <strong style="color:var(--light);">' + last.toFixed(2) + '</strong> ' +
+      '<span style="color:' + dColor + '; font-weight:700;">' + arrow + ' ' + Math.abs(d).toFixed(2) + '</span> across ' + series.length + ' semesters' +
+    '</div>';
+}
+
+// ── Backfill awareness nudge (Coach Young 2026-06-19) ──
+// If the player's graduation year implies completed HS years they haven't
+// logged, their cumulative + NCAA core GPA are understated — prompt them.
+function mgRenderBackfillNudge() {
+  var el = document.getElementById('acad-backfill-nudge');
+  if (!el) return;
+  var a = loadAcademics();
+  var missing = a ? mgMissingPriorYears(a) : [];
+  if (!missing.length) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  var labels = missing.map(function(y){ return y.gradeLabel || mgSchoolYearLabel(y.schoolYear); });
+  el.style.display = 'block';
+  el.innerHTML =
+    '⚠️ <strong>Add your past years so your standing is accurate.</strong> Your cumulative + NCAA core GPA count every high-school year — we\'re missing ' +
+    labels.join(' & ') + '. ' +
+    '<span onclick="mgOpenPastYearEditor()" style="color:#A8D97B; text-decoration:underline; cursor:pointer; white-space:nowrap;">Add past years →</span>';
+}
+
+// ── Past-year backfill editor (Coach Young 2026-06-19) ──
+// Lets a mid-high-school joiner enter prior years (semester grades — what's on
+// the transcript) so cumulative + core GPA + eligibility are real. Upserts by
+// school year; also edits/deletes an existing year.
+window.mgOpenPastYearEditor = function(schoolYear) {
+  var editor = document.getElementById('acad-pastyear-editor');
+  if (!editor) return;
+  editor.style.display = 'block';
+  mgPopulatePastYearOptions(schoolYear);
+  mgRenderPastYearRows();
+  try { editor.scrollIntoView({ block: 'center' }); } catch (e) {}
+};
+window.mgClosePastYearEditor = function() {
+  var editor = document.getElementById('acad-pastyear-editor');
+  if (editor) editor.style.display = 'none';
+};
+function mgPopulatePastYearOptions(preselect) {
+  var sel = document.getElementById('acad-py-year');
+  if (!sel) return;
+  var a = loadAcademics() || mgDefaultAcademics();
+  var curSY = (a.current && a.current.schoolYear) || _mgSchoolYearEnd();
+  var map = {};
+  mgExpectedPriorYears().forEach(function(y){ map[y.schoolYear] = y.gradeLabel; });
+  (a.history || []).forEach(function(h){ if (h.schoolYear < curSY) map[h.schoolYear] = h.gradeLabel || map[h.schoolYear] || ''; });
+  if (!Object.keys(map).length) { for (var sy = curSY - 1; sy >= curSY - 4; sy--) map[sy] = ''; }
+  var years = Object.keys(map).map(Number).sort(function(x, y){ return y - x; });
+  sel.innerHTML = years.map(function(sy){
+    var lbl = mgSchoolYearLabel(sy) + (map[sy] ? ' · ' + map[sy] : '');
+    return '<option value="' + sy + '">' + lbl + '</option>';
+  }).join('');
+  if (preselect != null && map[preselect] != null) sel.value = String(preselect);
+}
+window.mgPastYearYearChanged = function() { mgRenderPastYearRows(); };
+function mgRenderPastYearRows() {
+  var wrap = document.getElementById('acad-py-rows');
+  var sel = document.getElementById('acad-py-year');
+  if (!wrap || !sel) return;
+  var sy = parseInt(sel.value, 10);
+  var a = loadAcademics() || mgDefaultAcademics();
+  var existing = (a.history || []).filter(function(h){ return h.schoolYear === sy; })[0];
+  var ctx = (typeof getAcademicContext === 'function') ? getAcademicContext() : { slots: [] };
+  var gradeOpts = '<option value="">—</option><option>A</option><option>B</option><option>C</option><option>D</option><option>F</option>';
+  var lvlOpts = '<option value="regular">Regular</option><option value="honors">Honors</option><option value="ap">AP</option>';
+  var rows = '';
+  for (var i = 0; i < 6; i++) {
+    var cls = (existing && existing.classes && existing.classes[i]) ? existing.classes[i] : { name: '', level: 'regular', grades: {} };
+    var label = (ctx.slots[i] && ctx.slots[i].name) ? ctx.slots[i].name : ('Class ' + (i + 1));
+    var nm = (cls.name || '').replace(/"/g, '&quot;');
+    rows +=
+      '<div style="margin-bottom:10px;">' +
+        '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:1px; color:#A8D97B; text-transform:uppercase; margin-bottom:3px;">' + label + '</div>' +
+        '<input type="text" class="py-name" placeholder="Class name" value="' + nm + '" style="width:100%; margin-bottom:5px; font-size:15px;">' +
+        '<div style="display:flex; gap:6px; align-items:center;">' +
+          '<select class="py-level" style="flex:1; margin-bottom:0; font-size:13px;">' + lvlOpts + '</select>' +
+          '<select class="py-s1" style="width:84px; margin-bottom:0;" aria-label="Semester 1 grade">' + gradeOpts + '</select>' +
+          '<select class="py-s2" style="width:84px; margin-bottom:0;" aria-label="Semester 2 grade">' + gradeOpts + '</select>' +
+        '</div>' +
+      '</div>';
+  }
+  wrap.innerHTML =
+    '<div style="display:flex; gap:6px; font-family:\'Barlow Condensed\'; font-size:10px; letter-spacing:1px; color:var(--grey); text-transform:uppercase; justify-content:flex-end; margin-bottom:4px;"><span style="width:84px; text-align:center;">Sem 1</span><span style="width:84px; text-align:center;">Sem 2</span></div>' +
+    rows;
+  var lvlEls = wrap.querySelectorAll('.py-level'), s1Els = wrap.querySelectorAll('.py-s1'), s2Els = wrap.querySelectorAll('.py-s2');
+  for (var j = 0; j < 6; j++) {
+    var c = (existing && existing.classes && existing.classes[j]) ? existing.classes[j] : null;
+    if (c) {
+      if (lvlEls[j]) lvlEls[j].value = c.level || 'regular';
+      if (s1Els[j] && c.grades) s1Els[j].value = c.grades.S1 || '';
+      if (s2Els[j] && c.grades) s2Els[j].value = c.grades.S2 || '';
+    }
+  }
+  var del = document.getElementById('acad-py-delete');
+  if (del) del.style.display = existing ? 'inline-block' : 'none';
+}
+window.mgSavePastYear = function() {
+  var sel = document.getElementById('acad-py-year');
+  var wrap = document.getElementById('acad-py-rows');
+  if (!sel || !wrap) return;
+  var sy = parseInt(sel.value, 10);
+  if (!sy) return;
+  var a = loadAcademics() || mgDefaultAcademics();
+  var prof = {}; try { prof = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}'); } catch (e) {}
+  var label = prof.gradYear ? gradeFromGradYear(prof.gradYear, new Date(sy, 0, 1)) : '';
+  var names = wrap.querySelectorAll('.py-name'), lvls = wrap.querySelectorAll('.py-level'),
+      s1s = wrap.querySelectorAll('.py-s1'), s2s = wrap.querySelectorAll('.py-s2');
+  var classes = [];
+  for (var i = 0; i < 6; i++) {
+    classes.push({
+      name:    (names[i] ? names[i].value : '') || '',
+      category: MG_CATEGORIES[i] || 'elective',
+      level:   (lvls[i] ? lvls[i].value : 'regular') || 'regular',
+      grades:  { Q1:'', Q2:'', S1:(s1s[i] ? s1s[i].value : '') || '', Q3:'', Q4:'', S2:(s2s[i] ? s2s[i].value : '') || '' }
+    });
+  }
+  var yearObj = { schoolYear: sy, gradeLabel: label, classes: classes, yearGPA: mgYearGPA({ classes: classes }) };
+  if (!Array.isArray(a.history)) a.history = [];
+  a.history = a.history.filter(function(h){ return h.schoolYear !== sy; });   // upsert
+  a.history.unshift(yearObj);
+  saveAcademics(a);
+  mgClosePastYearEditor();
+  try { loadAcademicsUI(); } catch (e) {}
+  try { if (typeof showShareToast === 'function') showShareToast('✅ ' + mgSchoolYearLabel(sy) + ' saved to your transcript'); } catch (e) {}
+};
+window.mgDeletePastYear = function() {
+  var sel = document.getElementById('acad-py-year');
+  if (!sel) return;
+  var sy = parseInt(sel.value, 10);
+  if (!sy) return;
+  if (!confirm('Remove ' + mgSchoolYearLabel(sy) + ' from your transcript?')) return;
+  var a = loadAcademics(); if (!a) return;
+  a.history = (a.history || []).filter(function(h){ return h.schoolYear !== sy; });
+  saveAcademics(a);
+  mgClosePastYearEditor();
+  try { loadAcademicsUI(); } catch (e) {}
+};
+
+function renderGrades() {
+  // Apply the enable/disable gate first (a freshly cleared class name blanks
+  // its grade so it won't count toward GPA).
+  updateGradeDisabledStates();
+
+  var a = loadAcademics() || mgDefaultAcademics();
+  var term = a.activeTerm || mgCurrentTermByMonth();
+
+  // Read the grid into the model: class name + level are per-class for the
+  // year; only the grade belongs to the selected term.
+  document.querySelectorAll('#grade-checks .grade-row').forEach(function(row, i) {
+    if (!a.current.classes[i]) a.current.classes[i] = mgBlankClasses()[i];
+    var nameEl  = row.querySelector('.subject-name');
+    var gradeEl = row.querySelector('.subject-grade');
+    var lvlEl   = row.querySelector('.subject-level');
+    if (nameEl)  a.current.classes[i].name  = nameEl.value || '';
+    if (lvlEl)   a.current.classes[i].level = lvlEl.value || 'regular';
+    if (gradeEl) a.current.classes[i].grades[term] = gradeEl.value || '';
+  });
+  saveAcademics(a);
+
+  // Mirror a term into the legacy keys (local only) so the dashboard card /
+  // filled-count / pills keep working. Cloud canonical is academics2. Prefer
+  // the active term, but if it has no grades yet (e.g. the player navigated to
+  // an upcoming empty semester) fall back to the most-filled term so the
+  // dashboard snapshot never looks empty while real grades exist.
+  var mirrorTerm = term;
+  if (a.current.classes.filter(function(c){ return c.grades[term]; }).length === 0) {
+    var bestN = 0;
+    MG_TERMS.forEach(function(t){
+      var n = a.current.classes.filter(function(c){ return c.grades[t]; }).length;
+      if (n > bestN) { bestN = n; mirrorTerm = t; }
+    });
+  }
+  var legacyGrades = a.current.classes.map(function(c){ return c.grades[mirrorTerm] || ''; });
+  var legacyNames  = a.current.classes.map(function(c){ return c.name || ''; });
+  try { localStorage.setItem('ybg_subject_grades', JSON.stringify(legacyGrades)); } catch (e) {}
+  try { localStorage.setItem('ybg_subject_names',  JSON.stringify(legacyNames));  } catch (e) {}
+
+  // Compute the three GPAs. Cumulative unweighted is the headline + the
+  // eligibility driver (NCAA core is unweighted), preserving existing behavior.
+  var termU = mgTermGPA(a, term, false);
+  var year  = mgYearGPA(a.current);
+  var cum   = mgCumulativeGPA(a);
+
+  var headline = (cum.unweighted !== null) ? cum.unweighted.toFixed(2) : '';
+  if (state && state.gpa) state.gpa.current = headline;
+  var hidden = document.getElementById('gpa-current');
+  if (hidden) hidden.value = headline;
+  try { saveState(); } catch (e) {}
+
+  mgSetText('gpa-display', headline || '—');                                        // legacy id = cumulative (unweighted)
+  mgSetText('acad-cum-gpa-w',  cum.weighted  !== null ? 'wt ' + cum.weighted.toFixed(2)  : 'wt —');
+  mgSetText('acad-year-gpa',   mgFmtGPA(year.unweighted));
+  mgSetText('acad-year-gpa-w', year.weighted !== null ? 'wt ' + year.weighted.toFixed(2) : 'wt —');
+  mgSetText('acad-term-gpa',   mgFmtGPA(termU));
+  mgSetText('acad-term-gpa-label', mgTermLabel(term) + ' GPA');
+
+  mgRenderForecasts(a, term);
+
+  // Target-GPA coaching line (gap + whether this year is closing it).
+  var _coach = mgTargetCoachLine(a);
+  var _coachEl = document.getElementById('acad-target-coach');
+  if (_coachEl) { _coachEl.textContent = _coach; _coachEl.style.display = _coach ? 'block' : 'none'; }
+
+  try { renderEligibility(); } catch (e) {}
+  try { renderDashAcademics(); } catch (e) {}
+  try { renderCoreAlerts(); } catch (e) {}
+  try { renderAcademicHistory(); } catch (e) {}
 }
 
 // ─── NCAA CORE-COURSE ALERTS ──────────────────────────────
@@ -12810,7 +13840,15 @@ function _dashStandingHTML(elig) {
 function renderEligibility() {
   const grid = document.getElementById('elig-grid');
   if (!grid) return;
-  const gpa = (state && state.gpa && state.gpa.current) || document.getElementById('gpa-current')?.value || '';
+  // NCAA judges eligibility on the CORE-course GPA, not the overall GPA. Use the
+  // real core GPA (English/Math/Science/Social/Foreign Lang, electives excluded);
+  // fall back to overall only if there's no academics data yet. (Coach Young 2026-06-19)
+  const core = mgCurrentCoreGPA();
+  const gpa = (core !== null)
+    ? core.toFixed(2)
+    : ((state && state.gpa && state.gpa.current) || document.getElementById('gpa-current')?.value || '');
+  const coreEl = document.getElementById('acad-core-gpa');
+  if (coreEl) coreEl.textContent = (core !== null) ? core.toFixed(2) : '—';
   const e = computeEligibility(gpa);
   // Coach Young 2026-05-17: column count flexes per mode so the layout
   // always lands on a clean row count — HS has 5 tiles (2-col → 2+2+1),
@@ -12901,24 +13939,26 @@ function renderDashAcademics() {
   const badgeTxt  = document.getElementById('dash-academics-summer-badge-text');
   const _yr = new Date().getFullYear();
   const _month = new Date().getMonth();                    // 0=Jan ... 5=Jun, 6=Jul, 7=Aug
-  const _isFinalsWindow = (_month === 5);                  // June
-  const _isSummerBreak  = (_month === 6 || _month === 7);  // Jul-Aug
+  // Aug (month 7) is the NEW school year — the rollover cleared the slots — so
+  // it falls through to the in-session branch. Summer = July only.
+  const _isSummerBreak  = (_month === 6);                  // Jul
+  // Term-aware report-card window (Coach Young 2026-06-19): if a grading
+  // period's cards are out and that period's grades aren't all in, prompt for
+  // exactly that period. Generalizes the old June-only finals treatment.
+  const _win = (typeof mgGradeWindow === 'function') ? mgGradeWindow() : null;
+  const _winFilled = (_win && typeof mgWindowFilled === 'function') ? mgWindowFilled(_win) : true;
+  const _winLabel = (_win && typeof mgWindowLabel === 'function') ? mgWindowLabel(_win) : '';
   let _filled = 0;
   try { _filled = (JSON.parse(localStorage.getItem('ybg_subject_grades') || '[]')).filter(function (g) { return g && g.length > 0; }).length; } catch (e) {}
-  const _allGradesIn = _filled >= 6;
 
-  if (_isFinalsWindow || (_isSummerBreak && !_allGradesIn)) {
-    // FINALS / NEEDS-GRADES — remind the player to enter final spring grades.
-    // Gold "action needed" treatment, not a lock.
+  if (_win && !_winFilled) {
+    // ACTION NEEDED — this period's report cards are out and its grades aren't
+    // all in yet. Gold treatment naming the exact period.
     if (badgeEl)   badgeEl.style.display = 'block';
-    if (badgeTxt)  badgeTxt.textContent  = 'Spring ' + _yr + ' · Final Grades';
-    if (titleEl)   titleEl.textContent   = '📚 Academics · Final Grades';
+    if (badgeTxt)  badgeTxt.textContent  = _winLabel + ' Grades · Update Now';
+    if (titleEl)   titleEl.textContent   = '📚 Academics · ' + _winLabel + ' Grades';
     if (manageEl)  manageEl.textContent  = 'Update Grades →';
-    if (taglineEl) {
-      taglineEl.textContent = _allGradesIn
-        ? "Spring grades are in. We'll lock them in for the summer once school is fully out."
-        : (_filled > 0 ? _filled + ' of 6 spring grades in. ' : '') + 'Finals are wrapping up. Add your final spring grades as report cards post (often by end of June) so your standing is current for fall.';
-    }
+    if (taglineEl) taglineEl.textContent = 'Report cards come out around now — add your ' + _winLabel + ' grades so your GPA + NCAA eligibility stay accurate.';
     card.style.borderLeftColor = '#C9A84C';
   } else if (_isSummerBreak) {
     // SUMMER BREAK + grades entered — locked in, nothing to do until fall.
@@ -12958,7 +13998,10 @@ function renderDashAcademics() {
   // Standing line (2026-06-03 redesign): the dashboard now shows the player's
   // standing in one plain-language line instead of five reference tiles. The
   // full per-division grid lives in the Academics tab (renderEligibility()).
-  const elig = computeEligibility(gpaCur);
+  // Standing reflects NCAA eligibility, which uses the CORE-course GPA — match
+  // the Academics tab (fall back to overall only if no academics data yet).
+  const _coreForStanding = mgCurrentCoreGPA();
+  const elig = computeEligibility(_coreForStanding !== null ? _coreForStanding.toFixed(2) : gpaCur);
   const standing = document.getElementById('dash-standing');
   if (standing) standing.innerHTML = _dashStandingHTML(elig);
 
@@ -13370,9 +14413,18 @@ function saveGPA() {
   document.getElementById('gpa-target-display').textContent = tgt || '—';
   // Persist to localStorage so it survives reloads
   try { saveState(); } catch(e) {}
+  // Mirror the target into the academics model so it rides along with the
+  // cloud transcript backup (Coach Young 2026-06-19).
+  try { var _a = loadAcademics(); if (_a) { _a.target = tgt; saveAcademics(_a); } } catch(e) {}
   // Refresh eligibility tiles + dashboard summary card.
   try { renderEligibility(); } catch(e) {}
   try { renderDashAcademics(); } catch(e) {}
+  // Refresh the target coaching line for the new target.
+  try {
+    var _ca = loadAcademics(); var _c = _ca ? mgTargetCoachLine(_ca) : '';
+    var _ce = document.getElementById('acad-target-coach');
+    if (_ce) { _ce.textContent = _c; _ce.style.display = _c ? 'block' : 'none'; }
+  } catch(e) {}
   // Toast-only confirmation (Coach Young 2026-05-17 iteration 2) —
   // matches Save Entry / Comment / Goal pattern.
   try { if (typeof showShareToast === 'function') showShareToast('✅ Target GPA saved'); } catch (e) {}
@@ -13391,40 +14443,11 @@ function loadGradesUI() {
     if (curDisplay) curDisplay.textContent = state.gpa.current || '—';
     if (tgtDisplay) tgtDisplay.textContent = state.gpa.target || '—';
 
-    // Restore subject grade selections if saved
-    try {
-      const saved = localStorage.getItem('ybg_subject_grades');
-      if (saved) {
-        const arr = JSON.parse(saved);
-        if (Array.isArray(arr)) {
-          const selects = document.querySelectorAll('.subject-grade');
-          selects.forEach(function(sel, i) {
-            if (arr[i]) sel.value = arr[i];
-          });
-        }
-      }
-    } catch(e) {}
-    // Restore custom class names (Coach Young 2026-05-11 — 6 NCAA-mapped
-    // subjects per term, each with a free-form class name).
-    try {
-      const savedNames = localStorage.getItem('ybg_subject_names');
-      if (savedNames) {
-        const arr = JSON.parse(savedNames);
-        if (Array.isArray(arr)) {
-          const inputs = document.querySelectorAll('.subject-name');
-          inputs.forEach(function(inp, i) {
-            if (arr[i]) inp.value = arr[i];
-          });
-        }
-      }
-    } catch(e) {}
-    // Auto-compute Current GPA from the restored subject grades. Coach
-    // Young 2026-05-11: current GPA is no longer manually editable —
-    // renderGrades() handles the compute + state write + display update.
-    try { renderGrades(); } catch(e) {}
-    // Paint the eligibility + dashboard tiles with current state.
-    try { renderEligibility(); } catch(e) {}
-    try { renderDashAcademics(); } catch(e) {}
+    // Restore the term-aware academics model into the grid (term selector,
+    // per-class names + level + the active term's grades), then recompute the
+    // term/year/cumulative GPAs and repaint eligibility + dashboard. Replaces
+    // the old single-grade restore (Coach Young 2026-06-19 transcript model).
+    try { loadAcademicsUI(); } catch(e) {}
   } catch(e) { try { console.warn('[YBG] loadGradesUI failed:', e); } catch(_) {} }
 }
 
@@ -15055,6 +16078,21 @@ function saveProfile() {
 // into the softball profile shape on first run. Without this, a player who
 // just completed onboarding sees an empty Profile tab even though the parent
 // already provided their name, age, team, and position.
+// Coach Young 2026-06-19 bugfix: onboarding stores age as a descriptive
+// bracket ("15–16 · High School", "13–14 · Middle School", "College"), but the
+// app's age field is <input type="number">, which silently blanks any value it
+// can't parse as a number. So a bridged/cloud-restored bracket age vanished —
+// and because bridgeFromOnboarding runs BEFORE the local-wins cloud merge, the
+// bad bracket value overwrote a clean numeric age on every fresh-device sign-in,
+// forcing players to re-type their age each time. Normalize any age to the
+// first 1–2 digit number the input accepts ("15–16 · High School" → "15";
+// "College" → "" so the player just enters their own).
+function mgNormalizeAge(raw) {
+  if (raw == null) return '';
+  var m = String(raw).match(/\d{1,2}/);
+  return m ? m[0] : '';
+}
+
 function bridgeFromOnboarding() {
   try {
     if (localStorage.getItem('ybg_softball_profile')) return;
@@ -15064,7 +16102,7 @@ function bridgeFromOnboarding() {
     if (!ob || !ob.name) return;
     const bridged = {
       name:   ob.name || '',
-      age:    ob.age || '',
+      age:    mgNormalizeAge(ob.age),
       school: ob.team || '',
       pos:    Array.isArray(ob.position) ? ob.position.join(' / ') : ''
     };
@@ -15084,7 +16122,7 @@ function loadProfile() {
     // Persist back to localStorage because the dashboard + Academics surface
     // read p.grade directly.
     try {
-      const _origGrade = p.grade, _origGradYear = p.gradYear;
+      const _origGrade = p.grade, _origGradYear = p.gradYear, _origAge = p.age;
       if (!p.gradYear && p.grade) {
         const _inferred = gradYearFromGrade(p.grade);
         if (_inferred) p.gradYear = _inferred;
@@ -15093,9 +16131,12 @@ function loadProfile() {
         const _g = gradeFromGradYear(p.gradYear);
         if (_g) p.grade = _g;
       }
+      // Heal a non-numeric age (e.g. an onboarding bracket like "15–16 · High
+      // School") so the number input can show it instead of silently dropping it.
+      if (p.age) p.age = mgNormalizeAge(p.age);
       // Persist only if the migration/recompute actually changed something,
       // so we don't rewrite localStorage (or risk clobbering) on every load.
-      if (p.grade !== _origGrade || p.gradYear !== _origGradYear) {
+      if (p.grade !== _origGrade || p.gradYear !== _origGradYear || p.age !== _origAge) {
         localStorage.setItem('ybg_softball_profile', JSON.stringify(p));
       }
       populateGradYearOptions(p.gradYear);
@@ -15590,6 +16631,11 @@ initStats();
 bridgeFromOnboarding();
 loadProfile();
 loadProfilePic();
+// Academics school-year rollover + legacy migration (Coach Young 2026-06-19).
+// Runs once, before the grid loads: migrates the old single-grade model on
+// first run, and each August archives the finishing year → clears the slots.
+// Placed after loadProfile() so the archived year can label itself by grade.
+try { mgAcademicsRollover(); } catch (e) { console.warn('[MG] academics rollover:', e); }
 loadGradesUI();
 loadGrades();
 renderHWTracker();
@@ -20644,28 +21690,10 @@ function mgTab(panel, tabId) {
 // burying them on Profile. Each banner is dismissable per-window so it
 // doesn't nag forever.
 //
-// GRADE WINDOWS (researched US HS quarter/semester schedules — varies
-// by district but clusters around these dates):
-//   Q1:     Oct 25 – Nov 15  (id 'q1')
-//   Q2/S1:  Jan 05 – Jan 25  (id 'q2')   ← mid-year report cards
-//   Q3:     Mar 20 – Apr 10  (id 'q3')
-//   Q4/S2:  May 25 – Jun 20  (id 'q4')   ← end-of-year final grades
-// Each window keyed by year+id so it re-fires next school year.
-function _currentGradeWindow() {
-  const now = new Date();
-  const m = now.getMonth(); // 0=Jan
-  const d = now.getDate();
-  const test = function(sm, sd, em, ed) {
-    const after  = (m > sm) || (m === sm && d >= sd);
-    const before = (m < em) || (m === em && d <= ed);
-    return after && before;
-  };
-  if (test(9, 25, 10, 15)) return 'q1';
-  if (test(0,  5,  0, 25)) return 'q2';
-  if (test(2, 20,  3, 10)) return 'q3';
-  if (test(4, 25,  5, 20)) return 'q4';
-  return null;
-}
+// GRADE WINDOWS: the report-card calendar now lives in mgGradeWindow() (defined
+// in the main app block so the dashboard card can use it at first paint). This
+// banner + the dashboard card both call mgGradeWindow()/mgWindowFilled() — the
+// reminder is now state-aware (suppresses once that period's grades are in).
 
 // Reads the H/W history from localStorage to detect an overdue check-in.
 // Returns { type, daysOverdue } or null. Uses the SAME 3-month threshold
@@ -20704,13 +21732,17 @@ function renderJournalReminders() {
   const now = new Date();
   const banners = [];
 
-  // 1) GRADE-UPDATE reminder — fires during the 4 grade-card windows
-  //    per school year. Keyed by year+window so it re-nags next year.
-  const win = _currentGradeWindow();
-  if (win) {
+  // 1) GRADE-UPDATE reminder — fires during the 4 grade-card windows per school
+  //    year, but ONLY if that period's grades aren't already in (state-aware,
+  //    Coach Young 2026-06-19). Keyed by year+window so it re-nags next year;
+  //    deep-links straight to the period that's due.
+  const win = (typeof mgGradeWindow === 'function') ? mgGradeWindow() : null;
+  if (win && !(typeof mgWindowFilled === 'function' && mgWindowFilled(win))) {
     const key = 'grade_' + now.getFullYear() + '_' + win;
     if (!_reminderDismissed(key)) {
       const labels = { q1: 'Q1 report cards', q2: 'mid-year (Q2 / Semester 1) report cards', q3: 'Q3 report cards', q4: 'year-end (Q4 / Semester 2) report cards' };
+      const term = (typeof mgWindowTerm === 'function') ? mgWindowTerm(win) : '';
+      const periodLabel = (typeof mgWindowLabel === 'function') ? mgWindowLabel(win) : 'grades';
       banners.push({
         key: key,
         bg: 'rgba(168,217,123,0.10)',
@@ -20718,9 +21750,9 @@ function renderJournalReminders() {
         accent: '#A8D97B',
         icon: '📚',
         title: 'Time to update your grades',
-        body: 'Around now is when ' + labels[win] + ' come out. Pull every grade in your 6 classes and update them in Academics so your GPA and eligibility stay accurate.',
-        cta: 'Open Academics →',
-        action: "mgTab('academics','tab-develop')"
+        body: 'Around now is when ' + labels[win] + ' come out. Add your ' + periodLabel + ' grades so your GPA + NCAA core eligibility stay accurate.',
+        cta: 'Update ' + periodLabel + ' →',
+        action: "mgOpenAcademicsAtTerm('" + term + "')"
       });
     }
   }
@@ -20754,6 +21786,27 @@ function renderJournalReminders() {
       });
     }
   }
+
+  // 3) TEST-DAY reminder — fires within 14 days of a set SAT/ACT date.
+  try {
+    const tp3 = (typeof loadTestPrep === 'function') ? loadTestPrep() : null;
+    if (tp3 && tp3.nextDate) {
+      const dd = (typeof mgDaysUntil === 'function') ? mgDaysUntil(tp3.nextDate) : null;
+      if (dd !== null && dd >= 0 && dd <= 14) {
+        const tkey = 'test_' + tp3.nextDate;
+        if (!_reminderDismissed(tkey)) {
+          banners.push({
+            key: tkey,
+            bg: 'rgba(201,168,76,0.10)', border: '#8F7A36', accent: '#C9A84C', icon: '📝',
+            title: 'Test day is coming',
+            body: 'Your ' + (tp3.nextType || 'SAT/ACT') + ' is ' + (dd === 0 ? 'today' : dd === 1 ? 'tomorrow' : 'in ' + dd + ' days') + '. Lock in a study plan now and get a good night\'s sleep before test day.',
+            cta: 'Open Academics →',
+            action: "mgTab('academics','tab-develop')"
+          });
+        }
+      }
+    }
+  } catch (e) {}
 
   // Render
   if (banners.length === 0) {
@@ -21558,6 +22611,39 @@ async function syncFromCloud(uid) {
       if (!localStorage.getItem('ybg_subject_names') && Array.isArray(data.academics.names)) {
         localStorage.setItem('ybg_subject_names', JSON.stringify(data.academics.names));
       }
+    }
+    // ── Term-aware academics transcript (academics2) — Coach Young 2026-06-19.
+    //    current = local-wins (never clobber in-progress edits); history =
+    //    merged union by schoolYear so the multi-year transcript survives a
+    //    device change (same treatment as hwLog/entries). ──
+    if (data.academics2 && typeof data.academics2 === 'object' && data.academics2.current) {
+      try {
+        var cloudAc = data.academics2;
+        var localAc = null;
+        try { localAc = JSON.parse(localStorage.getItem('ybg_academics') || 'null'); } catch (e) { localAc = null; }
+        if (!localAc) {
+          localStorage.setItem('ybg_academics', JSON.stringify(cloudAc));
+        } else {
+          var hmap = {};
+          (Array.isArray(cloudAc.history) ? cloudAc.history : []).forEach(function(h){ if (h && h.schoolYear != null) hmap[h.schoolYear] = h; });
+          (Array.isArray(localAc.history) ? localAc.history : []).forEach(function(h){ if (h && h.schoolYear != null) hmap[h.schoolYear] = h; }); // local wins on conflict
+          localAc.history = Object.keys(hmap).map(function(k){ return hmap[k]; }).sort(function(x, y){ return (y.schoolYear||0) - (x.schoolYear||0); });
+          // Test prep: union scores by id (survive a device change); keep local
+          // target/next-date settings, filling any blanks from cloud.
+          if (cloudAc.testPrep) {
+            if (!localAc.testPrep) { localAc.testPrep = cloudAc.testPrep; }
+            else {
+              var smap = {};
+              (Array.isArray(cloudAc.testPrep.scores) ? cloudAc.testPrep.scores : []).forEach(function(s){ if (s && s.id != null) smap[s.id] = s; });
+              (Array.isArray(localAc.testPrep.scores) ? localAc.testPrep.scores : []).forEach(function(s){ if (s && s.id != null) smap[s.id] = s; });
+              localAc.testPrep.scores = Object.keys(smap).map(function(k){ return smap[k]; });
+              ['targetSAT','targetACT','nextType','nextDate'].forEach(function(f){ if (!localAc.testPrep[f] && cloudAc.testPrep[f]) localAc.testPrep[f] = cloudAc.testPrep[f]; });
+            }
+          }
+          localStorage.setItem('ybg_academics', JSON.stringify(localAc));
+        }
+        try { if (typeof loadAcademicsUI === 'function') loadAcademicsUI(); } catch (e) {}
+      } catch (e) { console.warn('[FB] academics2 restore:', e); }
     }
     if (data.settings && !localStorage.getItem('ybg_settings')) {
       localStorage.setItem('ybg_settings', JSON.stringify(data.settings));
