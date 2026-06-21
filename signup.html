@@ -1767,8 +1767,13 @@ select.field-input {
   inset: 0;
   background: rgba(0, 0, 0, 0.82);
   display: none;
-  align-items: center;
+  /* flex-start + overflow-y:auto so a modal taller than the viewport (e.g. the
+     plan picker on an iPhone SE) stays fully scrollable and its CTA is always
+     reachable. The modal's own margin:auto still centers it when it fits. */
+  align-items: flex-start;
   justify-content: center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   z-index: 9999;
   padding: 20px;
   -webkit-backdrop-filter: blur(4px);
@@ -1783,6 +1788,7 @@ select.field-input {
   border-radius: 4px;
   max-width: 380px;
   width: 100%;
+  margin: auto;
   padding: 28px 24px 22px 24px;
   box-shadow: 0 12px 40px rgba(0,0,0,0.6);
   text-align: center;
@@ -3324,7 +3330,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="phone-confirm-eyebrow" id="plan_picker_eyebrow">Pick your plan</div>
     <h2 class="phone-confirm-title" id="plan_picker_title">Start your 14-day free trial</h2>
     <p class="phone-confirm-sub" id="plan_picker_sub" style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin:8px 0 18px;">
-      We hold your card so we can charge automatically when your trial ends. Nothing happens until <strong id="plan_picker_charge_date">day 14</strong>. Cancel anytime from your dashboard.
+      Free now. No charge until <strong id="plan_picker_charge_date">day 14</strong>. We just hold your card so it can renew automatically. Cancel anytime from your dashboard.
     </p>
 
     <div id="plan_picker_promo_banner" style="display:none; background:rgba(232,201,122,0.08); border:1px solid var(--gold-dark); border-radius:8px; padding:10px 14px; margin:0 0 16px; font-family:'Barlow',sans-serif; font-size:13px; color:var(--gold); line-height:1.5;"></div>
@@ -6114,7 +6120,7 @@ function openPlanPicker() {
     }
   } else {
     if (titleEl) titleEl.textContent = 'Start your 14-day free trial';
-    if (subEl)   subEl.innerHTML = 'We hold your card so we can charge automatically when your trial ends. Nothing happens until <strong>' + chargeLabel + '</strong>. Cancel anytime from your dashboard.';
+    if (subEl)   subEl.innerHTML = 'Free now. No charge until <strong>' + chargeLabel + '</strong>. We just hold your card so it can renew automatically. Cancel anytime from your dashboard.';
     if (ctaEl)   ctaEl.textContent = 'Start My 14-Day Trial →';
     if (promoBannerEl) promoBannerEl.style.display = 'none';
   }
