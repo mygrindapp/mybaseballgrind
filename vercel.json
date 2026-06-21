@@ -10,6 +10,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/links", "destination": "/links.html" },
     { "source": "/foundermygrind", "destination": "/foundermygrind.html" },
     { "source": "/newsletter", "destination": "/newsletter.html" },
     { "source": "/qotd-story", "destination": "/qotd-story.html" },

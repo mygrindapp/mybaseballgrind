@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Analytics GA4 (G-5HLS0F06CQ): same property as the homepage so bio-hub
+     visits and outbound clicks land in the unified funnel. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5HLS0F06CQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5HLS0F06CQ');
+</script>
+<title>MyGrind | Start here</title>
+<meta name="description" content="Get the free weekly email, start the app, or read Coach's Playbook. The training journal for baseball and softball families.">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://www.mygrindapp.com/links">
+<meta property="og:type" content="website">
+<meta property="og:title" content="MyGrind | Start here">
+<meta property="og:description" content="The training journal for baseball and softball families. Free weekly email, the app, and Coach's Playbook.">
+<meta property="og:url" content="https://www.mygrindapp.com/links">
+<meta property="og:image" content="https://www.mygrindapp.com/assets/logo-web.png">
+<link rel="icon" type="image/png" href="/assets/favicon.png">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0B08;
+    --gold: #C9A84C;
+    --gold-bright: #E4C76A;
+    --cream: #F5F0EB;
+    --muted: #A89880;
+    --line: rgba(201,168,76,0.28);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  body {
+    font-family: 'Barlow', system-ui, -apple-system, Arial, sans-serif;
+    color: var(--cream);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 48px 22px 36px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { width: 100%; max-width: 460px; margin: 0 auto; text-align: center; }
+  .glow {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 360px; height: 360px; pointer-events: none; z-index: 0;
+    background: radial-gradient(circle, rgba(201,168,76,0.14) 0%, rgba(14,11,8,0) 68%);
+  }
+  .logo { position: relative; z-index: 1; width: 132px; height: auto; margin: 4px auto 18px; display: block; }
+  .tagline {
+    position: relative; z-index: 1;
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 500;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: var(--muted); font-size: 14px; line-height: 1.5; margin: 0 0 30px;
+  }
+  .links { display: flex; flex-direction: column; gap: 14px; position: relative; z-index: 1; }
+  .link {
+    display: block; text-decoration: none; text-align: center;
+    border-radius: 14px; padding: 15px 18px;
+    transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+  }
+  .link:active { transform: translateY(1px); }
+  .link:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+  .link .lbl { font-size: 17px; font-weight: 500; letter-spacing: 0.2px; display: block; }
+  .link .sub { font-size: 12.5px; letter-spacing: 0.3px; display: block; margin-top: 3px; opacity: 0.85; }
+  /* Primary: the free email is the lowest-friction yes, so it leads. */
+  .link.primary { background: var(--gold); color: #1A1407; }
+  .link.primary:hover { background: var(--gold-bright); }
+  .link.primary .sub { color: #3A2E10; opacity: 0.9; }
+  /* Secondary: the app trial. */
+  .link.secondary { background: transparent; color: var(--cream); border: 1.5px solid var(--gold); }
+  .link.secondary:hover { background: rgba(201,168,76,0.10); }
+  .link.secondary .lbl { color: var(--gold-bright); }
+  .link.secondary .sub { color: var(--muted); }
+  /* Tertiary: the blog. */
+  .link.tertiary { background: rgba(255,255,255,0.04); color: var(--cream); border: 1px solid rgba(245,240,235,0.14); }
+  .link.tertiary:hover { background: rgba(255,255,255,0.07); }
+  .link.tertiary .sub { color: var(--muted); }
+  .foot {
+    position: relative; z-index: 1;
+    margin-top: 30px; font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+    color: rgba(168,152,128,0.65);
+  }
+  .foot a { color: rgba(168,152,128,0.8); text-decoration: none; }
+  @media (max-width: 360px) {
+    body { padding: 36px 16px 28px; }
+    .link .lbl { font-size: 16px; }
+  }
+</style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"></div>
+  <main class="wrap">
+    <img class="logo" src="/assets/img/mg-f153679d.png" alt="MyGrind">
+    <p class="tagline">The training journal for<br>baseball &amp; softball families</p>
+
+    <nav class="links" aria-label="MyGrind links">
+      <a class="link primary" data-track="newsletter" href="https://mailchi.mp/c67ef509e691/myweeklygrind?utm_source=bio&utm_medium=hub&utm_campaign=evergreen">
+        <span class="lbl">Get the free weekly email</span>
+        <span class="sub">MyGrind Weekly &middot; every Tuesday</span>
+      </a>
+      <a class="link secondary" data-track="app" href="/signup.html?utm_source=bio&utm_medium=hub&utm_campaign=evergreen">
+        <span class="lbl">Start the app free</span>
+        <span class="sub">14-day trial &middot; no card required</span>
+      </a>
+      <a class="link tertiary" data-track="blog" href="/blog/?utm_source=bio&utm_medium=hub&utm_campaign=evergreen">
+        <span class="lbl">Read the Playbook</span>
+        <span class="sub">Coach on stats, eligibility, and development</span>
+      </a>
+    </nav>
+
+    <p class="foot">A product of <a href="/">My Grind Sports LLC</a></p>
+  </main>
+  <script>
+    document.querySelectorAll('a[data-track]').forEach(function(a){
+      a.addEventListener('click', function(){
+        try { gtag('event', 'bio_hub_click', { target: a.getAttribute('data-track') }); } catch (_) {}
+      });
+    });
+  </script>
+</body>
+</html>
