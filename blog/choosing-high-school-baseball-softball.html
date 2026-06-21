@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google Analytics GA4 (G-5HLS0F06CQ): added 2026-06-21 so blog/SEO + campaign UTM traffic and newsletter_signup land in the same property as the homepage. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-5HLS0F06CQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-5HLS0F06CQ');
+</script>
 <title>Private vs Public School for Baseball &amp; Softball: How to Choose a High School | MyGrind</title>
 <meta name="description" content="Private vs public school for baseball or softball? A clear-eyed guide for parents on choosing a high school, transfers, sections and divisions, and why playing time matters more than the school's name.">
 <meta name="keywords" content="private vs public school baseball, best high school for baseball, best high school for softball, should my kid transfer high schools for sports, high school sports transfer rules, does high school matter for college baseball recruiting, choosing a high school for athletics, playing time vs school name, varsity bench or JV">
@@ -187,8 +195,53 @@
   <aside class="article-cta newsletter-cta">
     <h2>Get MyGrind Weekly, free</h2>
     <p>One short email every Tuesday with something you can use for your player, for baseball and softball families. No spam, unsubscribe anytime.</p>
-    <a class="cta-button" href="/newsletter">Sign up for the newsletter &rarr;</a>
+    <form id="mc-blog-form" novalidate style="display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:420px; margin:6px auto 0;">
+      <input type="email" id="mc-blog-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email" style="flex:1 1 200px; min-width:0; padding:11px 14px; border-radius:10px; border:1px solid rgba(0,0,0,0.2); font-size:15px;">
+      <button type="submit" class="cta-button" style="cursor:pointer; border:none;">Subscribe &rarr;</button>
+      <div aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
+    </form>
+    <p id="mc-blog-msg" role="status" aria-live="polite" style="font-size:13px; min-height:18px; margin:8px 0 0;"></p>
   </aside>
+  <script>
+  (function(){
+    var form = document.getElementById('mc-blog-form');
+    if (!form) return;
+    var emailEl = document.getElementById('mc-blog-email');
+    var msgEl   = document.getElementById('mc-blog-msg');
+    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      var email = (emailEl.value || '').trim();
+      if (!EMAIL_RE.test(email)) { msgEl.textContent = 'Please enter a valid email address.'; return; }
+      msgEl.textContent = 'Adding you...';
+      var cb = 'mcBlogCb' + Date.now() + Math.floor(Math.random()*1000);
+      var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
+        + '?u=73280b4c02e9bc56c7e633892&id=a7d801599a&f_id=0089ace1f0'
+        + '&EMAIL=' + encodeURIComponent(email)
+        + '&tags=2216797'
+        + '&b_73280b4c02e9bc56c7e633892_a7d801599a='
+        + '&c=' + cb;
+      var s = document.createElement('script');
+      var settled = false;
+      var to = setTimeout(function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; }, 10000);
+      function cleanup(){ try{delete window[cb];}catch(_){window[cb]=undefined;} if(s.parentNode)s.parentNode.removeChild(s); clearTimeout(to); }
+      window[cb] = function(data){
+        if(settled)return; settled=true; cleanup();
+        var m = (data && data.msg ? String(data.msg) : '').replace(/<[^>]+>/g,'').trim();
+        if ((data && data.result==='success') || /already subscribed/i.test(m)) {
+          form.style.display='none';
+          msgEl.textContent = "You're on the list. Talk Tuesday.";
+          try { gtag('event','newsletter_signup',{ method:'blog_choosing_hs' }); } catch(_){}
+        } else {
+          msgEl.textContent = m || "We couldn't add that email. Please try again.";
+        }
+      };
+      s.onerror = function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; };
+      s.src = url;
+      document.head.appendChild(s);
+    });
+  })();
+  </script>
 
   <section class="related">
     <h2>Keep reading</h2>
