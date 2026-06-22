@@ -7014,7 +7014,7 @@ input[type="number"] {
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">JuCo is a real path. Plenty of D1 starters spent two years here first.</div>
         </a>
 
-        <a href="https://www.ncaa.org/sports/recruiting-calendars" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+        <a href="https://www.ncsasports.org/baseball/recruiting-rules-calendar" target="_blank" rel="noopener" onclick="return mgOpenRecruitingCal(event)" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Recruiting Calendar &rarr;</div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Reference</div>
@@ -19274,6 +19274,18 @@ function openExerciseVideo(lift) {
     url = 'https://www.youtube.com/results?search_query=' + query;
   }
   window.open(url, '_blank', 'noopener');
+}
+
+// Recruiting calendar link — sport-aware (2026-06-22). The old link went to
+// NCAA's generic all-sports landing ("generic screen"); this opens the NCSA
+// sport-specific recruiting rules + calendar for the player's active sport.
+// The href stays as a baseball fallback for the no-JS case.
+function mgOpenRecruitingCal(e) {
+  var sport = (window.mgSport === 'softball') ? 'softball' : 'baseball';
+  var url = 'https://www.ncsasports.org/' + sport + '/recruiting-rules-calendar';
+  try { if (e) e.preventDefault(); } catch (_) {}
+  window.open(url, '_blank', 'noopener');
+  return false;
 }
 
 function selectWoFocus(focus) {
