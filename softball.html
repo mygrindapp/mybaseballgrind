@@ -19240,16 +19240,27 @@ const EXERCISE_VIDEOS = {
   // Curated form-demo videos (verified live via YouTube oEmbed). Keys are the
   // canonical exercise name (_canonicalExerciseName strips emoji + rep scheme).
   // Anything not listed falls back to a YouTube "<exercise> form tutorial" search.
+  // Lower body
   'trap bar deadlift':            '5BpuTmfQjro',
+  'conventional deadlift':        'cclUh49qOww',
   'back squat':                   'CWl0apMgshk',
+  'front squat':                  'wyDbagKS7Rg',
+  'goblet squat':                 'BR4tlEE_A98',
   'romanian deadlift':            '_oyxCn2iSjU',
-  'bench press':                  'rT7DgCr-3pg',
-  'overhead press':               'nNMR9fRGRjQ',
   'hip thrust':                   'pF17m_CXfL0',
   'bulgarian split squat':        'DeCnHqrN22U',
+  // Rotational power + core (most sport-specific for baseball/softball)
   'med ball rotational throw':    'GTK8P0IOCTI',
   'med ball scoop toss':          'mxf1D3NtxMo',
-  'med ball shotput throw':       'GTK8P0IOCTI'
+  'med ball shotput throw':       'GTK8P0IOCTI',
+  'med ball overhead slam':       'uuIJroNfvdQ',
+  'cable wood chopper':           'Gwcf4TOj1hc',
+  'half-kneeling pallof press':   'dBAmQ9bx3JA',
+  // Upper body (pull-dominant for shoulder health)
+  'bench press':                  'rT7DgCr-3pg',
+  'overhead press':               'nNMR9fRGRjQ',
+  'single-arm db row':            'fURsHPHgssI',
+  'pull-ups':                     'MhokcbRLP5w'
 };
 
 // Strip emoji prefix + rep scheme so "🔻 Trap Bar Deadlift 3x5" becomes
@@ -19258,7 +19269,7 @@ const EXERCISE_VIDEOS = {
 function _canonicalExerciseName(lift) {
   return lift
     .replace(/^[^\w]+/, '')                   // leading emoji/spaces
-    .replace(/\s+\d+x[\w/]+.*$/i, '')         // "3x5", "3x8/side", "3x AMRAP", etc.
+    .replace(/\s+\d+x.*$/i, '')               // "3x5", "3x8/side", "3x AMRAP", etc.
     .replace(/\s+\d+ (reps|min|sec|s|yd).*$/i, '') // "6 reps", "5 min"
     .trim()
     .toLowerCase();
