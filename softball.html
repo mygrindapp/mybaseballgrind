@@ -4246,6 +4246,7 @@ input[type="number"] {
           <button type="button" class="wo-focus-chip" data-focus="lower-power" onclick="selectWoFocus('lower-power')">Lower Power</button>
           <button type="button" class="wo-focus-chip" data-focus="rotational"  onclick="selectWoFocus('rotational')">Rotational</button>
           <button type="button" class="wo-focus-chip" data-focus="upper"       onclick="selectWoFocus('upper')">Upper Body</button>
+          <button type="button" class="wo-focus-chip" data-focus="arm-care"    onclick="selectWoFocus('arm-care')">Arm Care / Bands</button>
           <button type="button" class="wo-focus-chip" data-focus="core"        onclick="selectWoFocus('core')">Core / Anti-Rotation</button>
           <button type="button" class="wo-focus-chip" data-focus="speed-plyo"  onclick="selectWoFocus('speed-plyo')">Speed / Plyo</button>
           <button type="button" class="wo-focus-chip" data-focus="mobility"    onclick="selectWoFocus('mobility')">Mobility</button>
@@ -19160,6 +19161,22 @@ const WORKOUT_FOCI = {
       'Dips 3x8'
     ]
   },
+  'arm-care': {
+    label: '🩹 Arm Care / Bands',
+    tip: 'The most important work a throwing athlete does, and the most skipped. Band work keeps the rotator cuff and shoulder healthy so the arm answers the bell all season. A few minutes most days beats one big day a week. Softball windmill arms need it just as much.',
+    lifts: [
+      'Band Pull-Apart 3x15',
+      'Band External Rotation 3x12/side',
+      'Band External Rotation at 90° 3x12/side',
+      'Band Internal Rotation 3x12/side',
+      'Band Y Raise 3x12',
+      'Band T Raise 3x12',
+      'Band W Raise 3x12',
+      'Band Face Pull 3x15',
+      'Band Diagonal (PNF) 3x10/side',
+      'Band Forward Punch 3x12'
+    ]
+  },
   'core': {
     label: '🤸 Core / Anti-Rotation',
     tip: 'A stable core transfers force from legs to arms. Without it the kinetic chain leaks power before it reaches the ball.',
@@ -19260,7 +19277,17 @@ const EXERCISE_VIDEOS = {
   'bench press':                  'rT7DgCr-3pg',
   'overhead press':               'nNMR9fRGRjQ',
   'single-arm db row':            'fURsHPHgssI',
-  'pull-ups':                     'MhokcbRLP5w'
+  'pull-ups':                     'MhokcbRLP5w',
+  'lat pulldown':                 'SALxEARiMkw',
+  'cable row':                    '7BkgqzC6WsM',
+  'face pulls':                   'AlTGQrDOd98',
+  // Arm care / bands (throwing-shoulder health)
+  'band pull-apart':              'WqdNDTTe-9g',
+  'band external rotation':       'ybNV36DoRfY',
+  'band face pull':               'AlTGQrDOd98',
+  // Power / conditioning
+  'box jump':                     'G-bxQY57mKc',
+  'kb swing':                     'kuZPzr_eldA'
 };
 
 // Strip emoji prefix + rep scheme so "🔻 Trap Bar Deadlift 3x5" becomes
