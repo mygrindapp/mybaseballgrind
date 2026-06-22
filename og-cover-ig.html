@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  MyGrind Instagram card TEMPLATE (1080x1350 = the 4:5 portrait IG feed size).
+  Same brand system as og-cover.html, arranged vertically for IG. Reusable:
+    /og-cover-ig.html?eyebrow=...&title=...
+  Rendered to PNG by scripts/build_ig_card.py. Only eyebrow + title change.
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1080px; height: 1350px; }
+  body {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(820px 620px at 80% -8%, rgba(201,168,76,0.20), transparent 60%),
+      linear-gradient(165deg, #100d09 0%, #050505 62%);
+    font-family: 'Barlow', sans-serif; color: #F5F0EB;
+  }
+  .frame { position: absolute; inset: 30px; border: 1px solid rgba(201,168,76,0.30); border-radius: 14px; }
+  .pad { position: absolute; inset: 0; padding: 96px 88px; display: flex; flex-direction: column; }
+  .logo { height: 78px; display: block; }
+  .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 34px; letter-spacing: 6px; text-transform: uppercase;
+    color: #C9A84C; margin-top: 120px;
+  }
+  .title {
+    font-family: 'Bebas Neue', sans-serif; font-weight: 400;
+    color: #F5F0EB; line-height: 0.97; letter-spacing: 1px;
+    margin-top: 22px;
+    font-size: 132px;
+  }
+  .title.long { font-size: 108px; }
+  .title.xlong { font-size: 88px; }
+  .spacer { flex: 1; }
+  .rule { height: 4px; width: 150px; background: #C9A84C; border-radius: 2px; margin-bottom: 26px; }
+  .url { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 40px; letter-spacing: 2px; color: #C9A84C; text-transform: lowercase; }
+  .tag { font-family: 'Barlow', sans-serif; font-weight: 500; font-size: 30px; color: #A89880; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="pad">
+    <img class="logo" src="/assets/mygrind-logo-email.png" alt="MyGrind"
+         onerror="this.onerror=null;this.src='/assets/mark-on-dark.png';">
+    <div class="eyebrow" id="eyebrow">MyGrind</div>
+    <h1 class="title" id="title">Baseball &amp; Softball Training Journal</h1>
+    <div class="spacer"></div>
+    <div class="rule"></div>
+    <div class="url">mygrindapp.com</div>
+    <div class="tag">Track the grind. Earn the game.</div>
+  </div>
+  <script>
+    var p = new URLSearchParams(location.search);
+    var eyebrow = p.get('eyebrow'); var title = p.get('title');
+    if (eyebrow) document.getElementById('eyebrow').textContent = eyebrow;
+    if (title) {
+      var t = document.getElementById('title'); t.textContent = title;
+      var len = title.length;
+      if (len > 52) t.classList.add('xlong');
+      else if (len > 30) t.classList.add('long');
+    }
+  </script>
+</body>
+</html>
