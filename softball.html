@@ -22049,31 +22049,28 @@ var YBG_QOTD = [
 ];
 
 function showQotd() {
-  // Pick quote based on day of year — same quote all day, rotates tomorrow
+  // Quote of the day: stable all day, rotates to a new one tomorrow.
+  // Fixed 2026-06-22: the old logic indexed the FULL 63-quote array by
+  // day-of-year and then stepped forward past wrong-sport quotes, which
+  // clustered several consecutive days onto the same quote and caused the
+  // same line to recur within a few days. We now index into the
+  // sport-eligible list directly, so each eligible quote shows exactly once
+  // per full cycle (~all eligible quotes) before any repeat — a clean
+  // rotation with the longest possible gap before a quote comes back.
   var now   = new Date();
   var start = new Date(now.getFullYear(), 0, 0);
   var day   = Math.floor((now - start) / (1000 * 60 * 60 * 24));
-  var len   = YBG_QOTD.length;
-
-  // Sport-aware rotation (Decision #42 follow-up, 2026-05-18): a quote
-  // with a `sport` field only plays when that sport is active. Untagged
-  // quotes are sport-agnostic and play in both modes. If the day-of-year
-  // index lands on a wrong-sport quote, step forward through the array
-  // to the next eligible quote — keeps rotation deterministic per-day
-  // per-sport without dropping coverage.
   var activeSport = (function () {
     try { return window.mgSport || localStorage.getItem('mg_sport') || 'baseball'; }
     catch (e) { return 'baseball'; }
   })();
-  var q = null;
-  for (var step = 0; step < len; step++) {
-    var candidate = YBG_QOTD[(day + step) % len];
-    if (!candidate || !candidate.sport || candidate.sport === activeSport) {
-      q = candidate;
-      break;
-    }
+  var eligible = [];
+  for (var i = 0; i < YBG_QOTD.length; i++) {
+    var c = YBG_QOTD[i];
+    if (c && (!c.sport || c.sport === activeSport)) eligible.push(c);
   }
-  if (!q) q = YBG_QOTD[day % len]; // safety: should be unreachable
+  if (!eligible.length) eligible = YBG_QOTD.slice();
+  var q = eligible[day % eligible.length];
 
   var textEl   = document.getElementById('qotd-text');
   var authorEl = document.getElementById('qotd-author');
