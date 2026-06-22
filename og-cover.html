@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  MyGrind social cover TEMPLATE (1200x630 = the standard og:image / share-card size).
+  Reusable + consistent: fill it per page via query string, then render to PNG.
+
+  Usage:
+    /og-cover.html?eyebrow=Coach's%20Picks&title=Best%20Baseball%20%26%20Softball%20Books%20%26%20Gear
+
+  Render to a real PNG the same way the QOTD cards are built (headless Chrome,
+  see scripts/build_qotd.py), at exactly 1200x630, and save to:
+    /assets/og/<page-slug>.png
+  Then point that page's og:image + twitter:image at https://www.mygrindapp.com/assets/og/<page-slug>.png
+
+  Until a custom cover is rendered, pages keep the shared default og-card.png so social shares never break.
+-->
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500&display=swap');
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { width: 1200px; height: 630px; }
+  body {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(900px 500px at 78% -10%, rgba(201,168,76,0.18), transparent 60%),
+      linear-gradient(160deg, #100d09 0%, #050505 60%);
+    font-family: 'Barlow', sans-serif; color: #F5F0EB;
+  }
+  /* thin gold frame for polish */
+  .frame { position: absolute; inset: 22px; border: 1px solid rgba(201,168,76,0.30); border-radius: 10px; }
+  .pad { position: absolute; inset: 0; padding: 72px 80px; display: flex; flex-direction: column; }
+  .top { display: flex; align-items: center; gap: 18px; }
+  .logo { height: 60px; display: block; }
+  .eyebrow {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 700;
+    font-size: 26px; letter-spacing: 5px; text-transform: uppercase;
+    color: #C9A84C; margin-top: 64px;
+  }
+  .title {
+    font-family: 'Bebas Neue', sans-serif; font-weight: 400;
+    color: #F5F0EB; line-height: 0.98; letter-spacing: 1px;
+    margin-top: 14px; max-width: 1000px;
+    font-size: 92px;
+  }
+  .title.long { font-size: 74px; }
+  .title.xlong { font-size: 60px; }
+  .spacer { flex: 1; }
+  .rule { height: 3px; width: 120px; background: #C9A84C; border-radius: 2px; margin-bottom: 20px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; }
+  .url { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 28px; letter-spacing: 2px; color: #C9A84C; text-transform: lowercase; }
+  .tag { font-family: 'Barlow', sans-serif; font-weight: 500; font-size: 22px; color: #A89880; }
+</style>
+</head>
+<body>
+  <div class="frame"></div>
+  <div class="pad">
+    <div class="top">
+      <img class="logo" src="/assets/mygrind-logo-email.png" alt="MyGrind"
+           onerror="this.onerror=null;this.src='/assets/mark-on-dark.png';">
+    </div>
+    <div class="eyebrow" id="eyebrow">MyGrind</div>
+    <h1 class="title" id="title">Baseball &amp; Softball Training Journal</h1>
+    <div class="spacer"></div>
+    <div class="rule"></div>
+    <div class="foot">
+      <div class="url">mygrindapp.com</div>
+      <div class="tag">Track the grind. Earn the game.</div>
+    </div>
+  </div>
+
+  <script>
+    // Fill from query string so one template serves every page consistently.
+    var p = new URLSearchParams(location.search);
+    var eyebrow = p.get('eyebrow');
+    var title = p.get('title');
+    if (eyebrow) document.getElementById('eyebrow').textContent = eyebrow;
+    if (title) {
+      var t = document.getElementById('title');
+      t.textContent = title;
+      // auto-fit: shrink the headline for longer titles so it never overflows the card
+      var len = title.length;
+      if (len > 64) t.classList.add('xlong');
+      else if (len > 40) t.classList.add('long');
+    }
+  </script>
+</body>
+</html>
