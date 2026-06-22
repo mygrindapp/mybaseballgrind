@@ -19163,7 +19163,13 @@ const WORKOUT_FOCI = {
   },
   'arm-care': {
     label: '🩹 Arm Care / Bands',
-    tip: 'The most important work a throwing athlete does, and the most skipped. Band work keeps the rotator cuff and shoulder healthy so the arm answers the bell all season. A few minutes most days beats one big day a week. Softball windmill arms need it just as much. A lot of players run the J-Bands routine, log the whole thing as one entry.',
+    tip: 'The most important work a throwing athlete does, and the most skipped. Band work keeps the rotator cuff and shoulder healthy so the arm answers the bell all season. A few minutes most days beats one big day a week. Softball windmill arms need it just as much. A lot of players run the J-Bands routine, log the whole thing as one entry. Plyo balls and weighted balls live here too, lightest to heaviest. Read the note before the weighted work.',
+    // Safety gate for the weighted-ball drills below (Coach Young 2026-06-22).
+    // Rendered as a caution callout by selectWoFocus(). Plyo (soft PlyoCare)
+    // balls are arm care for most ages; weighted baseballs load the elbow and
+    // are gated to HS+ with gradual build and a coach.
+    note: 'Plyo balls (the soft PlyoCare set) are arm care. They are fine for most ages as warmup, feel work, and recovery. Weighted baseballs are a different tool. They build velocity but they load the elbow, so save them for high-school age and up, build the weight up slowly over weeks, and run the plan past a coach first. Keep the off-season throwing shutdowns either way. Softball pitchers: do windmill-specific weighted work with your pitching coach, not the overhand drills.',
+    gear: { label: 'Plyo + weighted ball sets · Coach\'s Picks', url: 'https://www.mygrindapp.com/picks' },
     lifts: [
       'J-Bands Routine',
       'Band Pull-Apart 3x15',
@@ -19175,7 +19181,17 @@ const WORKOUT_FOCI = {
       'Band W Raise 3x12',
       'Band Face Pull 3x15',
       'Band Diagonal (PNF) 3x10/side',
-      'Band Forward Punch 3x12'
+      'Band Forward Punch 3x12',
+      // Plyo (PlyoCare) balls — lower-risk arm care / feel / recovery.
+      'Plyo Ball Reverse Throws 2x10',
+      'Plyo Ball Pivot Pickoffs 2x10',
+      'Plyo Ball Roll-Ins 2x8',
+      'Plyo Ball Wall Dribbles 2x20',
+      // Weighted baseballs — advanced. See the safety note above (HS+, gradual, with a coach).
+      'Weighted Ball Reverse Throws 3x8',
+      'Weighted Ball Holds 3x6',
+      'Weighted Ball Catch Play 2x15',
+      'Weighted Ball Pulldowns 3x5'
     ]
   },
   'core': {
@@ -19362,7 +19378,19 @@ function selectWoFocus(focus) {
     return;
   }
   if (tip) {
-    tip.innerHTML = '<strong style="color:#E67E22;">Why this matters:</strong> ' + data.tip;
+    let tipHTML = '<strong style="color:#E67E22;">Why this matters:</strong> ' + data.tip;
+    // Optional safety callout (currently arm-care's weighted-ball gate).
+    if (data.note) {
+      tipHTML += '<div style="margin-top:10px; padding:9px 11px; background:rgba(212,160,23,0.10); border-left:2px solid var(--gold); border-radius:2px; font-family:\'Barlow\'; font-size:11.5px; color:var(--light); line-height:1.55;">' +
+                 '<strong style="color:var(--gold);">⚠️ Before the weighted work:</strong> ' + data.note + '</div>';
+    }
+    // Optional gear link → Coach's Picks (opens in a new tab).
+    if (data.gear && data.gear.url) {
+      tipHTML += '<div style="margin-top:9px;"><a href="' + data.gear.url + '" target="_blank" rel="noopener" ' +
+                 'style="font-family:\'Barlow Condensed\',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.2px; text-transform:uppercase; color:var(--gold); text-decoration:none;">🛒 ' +
+                 (data.gear.label || 'Coach\'s Picks') + ' &rarr;</a></div>';
+    }
+    tip.innerHTML = tipHTML;
     tip.style.display = 'block';
   }
   // Empty lifts array = "Other / Custom" — show tip only, no suggestion chips.
