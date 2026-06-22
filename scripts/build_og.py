@@ -38,7 +38,7 @@ CARDS = [
      "title": "Baseball & Softball Training Journal"},
     {"slug": "picks",
      "eyebrow": "Coach's Picks",
-     "title": "Best Baseball & Softball Books & Gear"},
+     "title": "The books & gear I recommend"},
     {"slug": "ncaa-eligibility-gpa-guide",
      "eyebrow": "The Playbook · Recruiting",
      "title": "Your kid's 3.7 might be a 2.9 to the NCAA"},
