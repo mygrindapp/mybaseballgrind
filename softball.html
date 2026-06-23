@@ -1068,8 +1068,8 @@
   /* ── JOURNAL ENTRIES ── */
   .entry-card {
     background: var(--card);
-    border: 1px solid #3D3530;
-    border-radius: 4px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
     padding: 0;
     margin-bottom: 8px;
     position: relative;
@@ -1181,7 +1181,7 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     padding: 3px 8px;
-    border-radius: 2px;
+    border-radius: 6px;
   }
 
   .type-game { background: rgba(39,174,96,0.15); color: var(--green); }
@@ -2392,7 +2392,7 @@ fbq('init','326334441984368');fbq('track','PageView');
            to text their parent with a pre-filled message. Shown only when
            getBillingRole().role === 'dependent'. -->
       <div id="removed-dependent-cta" style="display:none;">
-        <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px; margin-bottom:16px; font-family:'Barlow'; font-size:13px; color:#C6B59B; line-height:1.7; text-align:center;">
+        <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:8px; padding:14px 16px; margin-bottom:16px; font-family:'Barlow'; font-size:13px; color:#C6B59B; line-height:1.7; text-align:center;">
           Your parent set up your MyGrind account. Tap below to send them a quick text. Your account stays paused until they get you back on a plan.
         </div>
         <button onclick="textParentForBilling('removed')" style="width:100%; background:var(--gold); color:#0C0A08; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:14px; border:none; border-radius:8px; cursor:pointer; margin-bottom:10px;">📱 &nbsp;Text My Parent</button>
@@ -4567,7 +4567,7 @@ input[type="number"] {
     </div>
 
     <!-- Entries filter chips — Coach Young 2026-05-11 walkthrough.
-         Default = Today so the journal isn't a noisy scroll-fest. Player
+         Default = 7 Days (Coach 2026-06-23) so the log opens to the week's work, not an empty 'today'. Player
          can widen the window via chip taps. Past entries >24h are
          already PIN-gated for edit/delete (Decision #25), so "view but
          can't edit" is enforced regardless of filter. -->
@@ -4582,7 +4582,7 @@ input[type="number"] {
         letter-spacing: 1px;
         text-transform: uppercase;
         padding: 8px 14px;
-        border-radius: 3px;
+        border-radius: 8px;
         cursor: pointer;
         transition: all 0.15s;
       }
@@ -4594,8 +4594,8 @@ input[type="number"] {
       }
     </style>
     <div id="entries-filter-row" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
-      <button type="button" class="entries-filter-chip selected" data-entries-filter="today" onclick="setEntriesFilter('today')">📅 Today</button>
-      <button type="button" class="entries-filter-chip"          data-entries-filter="7d"    onclick="setEntriesFilter('7d')">7 Days</button>
+      <button type="button" class="entries-filter-chip" data-entries-filter="today" onclick="setEntriesFilter('today')">📅 Today</button>
+      <button type="button" class="entries-filter-chip selected" data-entries-filter="7d"    onclick="setEntriesFilter('7d')">7 Days</button>
       <button type="button" class="entries-filter-chip"          data-entries-filter="30d"   onclick="setEntriesFilter('30d')">30 Days</button>
       <button type="button" class="entries-filter-chip"          data-entries-filter="all"   onclick="setEntriesFilter('all')">All</button>
       <!-- "Pick Date" chip — Coach Young 2026-05-11. Triggers the
@@ -4870,7 +4870,7 @@ input[type="number"] {
 
       <!-- Per-tier recommendation. Updates from updateArmStrengthTip()
            when the player picks a tier. Hidden until something is chosen. -->
-      <div id="pl-arm-tip" style="display:none; margin-bottom:18px; padding:10px 12px; background:rgba(39,174,96,0.06); border-left:2px solid #5A8A3A; border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.5;"></div>
+      <div id="pl-arm-tip" style="display:none; margin-bottom:18px; padding:10px 12px; background:rgba(39,174,96,0.06); border-left:2px solid #5A8A3A; border-radius:6px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.5;"></div>
 
       <!-- GROUP 3: New check-in form. Collapsed by default (Coach Young
            2026-05-17 walkthrough): the form was always-on, which made the
@@ -5907,7 +5907,7 @@ input[type="number"] {
       <div id="stats-journal-notice" style="display:none; background:rgba(39,174,96,0.08); border:1px solid #27AE60; border-radius:3px; padding:14px 16px; margin-bottom:16px; font-family:'Barlow'; font-size:13px; color:#58D68D; line-height:1.6;"></div>
 
       <!-- Stats source note -->
-      <div style="background:rgba(var(--accent-rgb), 0.05); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px; margin-bottom:16px; display:flex; align-items:flex-start; gap:10px;">
+      <div style="background:rgba(var(--accent-rgb), 0.05); border:1px solid var(--gold-dark); border-radius:8px; padding:14px 16px; margin-bottom:16px; display:flex; align-items:flex-start; gap:10px;">
         <span style="font-size:18px; flex-shrink:0; color:var(--gold); display:inline-flex; align-items:center;"><svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-book-open"/></svg></span>
         <div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.7;">
           <strong style="color:var(--gold);">Your stats are sourced from your Daily Journal.</strong><br>
@@ -5955,7 +5955,7 @@ input[type="number"] {
         <div>• <strong>40–79 AB</strong> — meaningful HS sample (~half a season).</div>
         <div>• <strong>80+ AB</strong> — solid HS workload. The number is real.</div>
       </div>
-      <div style="margin-top:14px; padding:10px 12px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:2px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
+      <div style="margin-top:14px; padding:10px 12px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:6px; font-family:'Barlow'; font-size:12px; color:var(--light); line-height:1.6;">
         <strong style="color:var(--gold);">Example:</strong> .340 after 10 at-bats means almost nothing. .340 after 50 at-bats — now you're talking.
       </div>
       <div style="margin-top:10px; font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5; font-style:italic;">
@@ -6456,7 +6456,7 @@ input[type="number"] {
            preserved for 90 days — if the player re-subscribes within
            that window, everything restores: entries, stats, goals,
            grades, photos. Past 90 days, account data is purged. -->
-      <div style="background:rgba(var(--accent-rgb), 0.04); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px; margin-bottom:16px;">
+      <div style="background:rgba(var(--accent-rgb), 0.04); border:1px solid var(--gold-dark); border-radius:8px; padding:14px 16px; margin-bottom:16px;">
         <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:800; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-clipboard-list"/></svg> Cancellation Policy</div>
         <div style="font-family:'Barlow'; font-size:13px; color:var(--light); line-height:1.7; margin-bottom:10px;">
           <strong style="color:var(--gold);">Cancel anytime.</strong> No penalties, no fees. You keep access until the end of your current billing period.
@@ -11701,7 +11701,7 @@ const GRADE_COLORS = {
   F: { fg: 'var(--red)',   bg: 'rgba(192,57,43,0.3)' }
 };
 function _metaPill(letter, label, c) {
-  return '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:' + c.fg + '; background:' + c.bg + '; padding:5px 10px; border-radius:3px; display:inline-flex; align-items:center; gap:6px; line-height:1;">' +
+  return '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; color:' + c.fg + '; background:' + c.bg + '; padding:5px 10px; border-radius:6px; display:inline-flex; align-items:center; gap:6px; line-height:1;">' +
            '<span style="font-family:\'Bebas Neue\'; font-size:15px; letter-spacing:1px;">' + letter + '</span>' +
            '<span>' + label + '</span>' +
          '</div>';
@@ -11764,8 +11764,11 @@ function formatEditedDate(ts) {
 // still accessible via the [7 Days / 30 Days / All] chips above the
 // list. Past entries >24h old are PIN-gated for edit/delete (Decision
 // #25), so "view but can't edit" is enforced regardless of filter.
-// Module-level (not persisted) — resets to 'today' on each page load.
-let _entriesFilter = 'today';
+// Module-level (not persisted) — resets to '7d' on each page load. Coach
+// 2026-06-23: 'today' opened the log empty for returning players before
+// they'd logged; the 7-day window shows the week's work on open without
+// being a noisy scroll-fest. Widen/narrow via the chips as before.
+let _entriesFilter = '7d';
 // Entry-type filter (Coach Young 2026-05-17). Independent of date window —
 // AND-combined inside _filteredEntries so "7d + game" returns games in
 // the last 7 days. Resets to 'all' on page load so the journal opens
@@ -12205,15 +12208,15 @@ function renderEntries() {
       return parts.length ? parts.join(' · ') : '—';
     };
     const todayTotalsCard = (isLastTodayEntry && repStats && repStats.todayTotal > 0) ? (
-      '<div style="margin:14px 0 24px; padding:16px 18px; border:1px solid var(--gold-dark); border-radius:3px; background:linear-gradient(135deg,#1A0012,#0E0006);">' +
+      '<div style="margin:14px 0 24px; padding:16px 18px; border:1px solid var(--gold-dark); border-radius:8px; background:linear-gradient(135deg,#1A0012,#0E0006);">' +
         '<div style="font-family:\'Barlow Condensed\'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px; display:inline-flex; align-items:center; gap:6px;">' + mgIcon('bar-chart-3', {size:14}) + ' Today\'s Grind · Training Volume</div>' +
         '<div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">' +
-          '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:3px;">' +
+          '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:6px;">' +
             '<div style="font-family:\'Bebas Neue\'; font-size:32px; line-height:1; color:var(--white);">' + repStats.todayTotal.toLocaleString() + '</div>' +
             '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Total Training Reps · Today</div>' +
             '<div style="font-family:\'Barlow Condensed\'; font-size:11px; letter-spacing:1px; color:var(--light); margin-top:6px;">' + _breakdown(_t) + '</div>' +
           '</div>' +
-          '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:3px;">' +
+          '<div style="text-align:center; padding:14px 8px; background:var(--card2); border-radius:6px;">' +
             '<div style="font-family:\'Bebas Neue\'; font-size:32px; line-height:1; color:var(--gold);">' + week7Total.toLocaleString() + '</div>' +
             '<div style="font-family:\'Barlow Condensed\'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:4px;">Total Training Reps · Last 7 Days</div>' +
             '<div style="font-family:\'Barlow Condensed\'; font-size:11px; letter-spacing:1px; color:var(--light); margin-top:6px;">' + _breakdown(_w) + '</div>' +
@@ -12253,7 +12256,7 @@ function renderEntries() {
       <!-- META ACTIONS — edited badge, edit, delete -->
       <div class="entry-meta" style="justify-content:flex-end;">
         <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; justify-content:flex-end;">
-          ${e.editedAt ? `<div title="This entry was edited after the original day" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey); background:rgba(100,100,100,0.12); padding:4px 8px; border-radius:3px;">✏️ edited ${formatEditedDate(e.editedAt)}</div>` : ''}
+          ${e.editedAt ? `<div title="This entry was edited after the original day" style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey); background:rgba(100,100,100,0.12); padding:4px 8px; border-radius:6px;">✏️ edited ${formatEditedDate(e.editedAt)}</div>` : ''}
           <button onclick="editEntry(${e.id})" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); width:30px; height:30px; border-radius:8px; font-size:13px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0;" title="${isEntryProtected(e) && !isCreator() ? 'Edit this entry. PIN required' : 'Edit this entry'}">✏️</button>
           <button class="btn btn-danger btn-sm" onclick="deleteEntry(${e.id})" title="${isEntryProtected(e) && !isCreator() ? 'Delete. PIN required' : 'Delete'}">✕</button>
         </div>
@@ -12261,7 +12264,7 @@ function renderEntries() {
 
       <!-- GAME STATS BOX -->
       ${e.gameStats ? `
-        <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px;">
+        <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:8px; padding:14px 16px;">
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:10px;">⚾ Game Stats</div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:3px; margin-bottom:${e.gameStats.ip ? '8px' : '0'};">
             ${[
@@ -12274,7 +12277,7 @@ function renderEntries() {
               ['K',  e.gameStats.k],
               ['SB', e.gameStats.sb]
             ].map(([label, val]) => `
-              <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
+              <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:6px;">
                 <div style="font-family:'Bebas Neue'; font-size:22px; color:${val > 0 ? 'var(--white)' : 'var(--border)'}; line-height:1;">${val !== null && val !== undefined ? val : '-'}</div>
                 <div style="font-family:'Barlow Condensed'; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">${label}</div>
               </div>
@@ -12282,9 +12285,9 @@ function renderEntries() {
           </div>
           ${e.gameStats.avg || e.gameStats.obp || e.gameStats.slg ? `
             <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:3px; margin-top:4px;">
-              ${e.gameStats.avg ? `<div style="background:var(--card2); padding:6px 4px; text-align:center; border-radius:2px;"><div style="font-family:'Bebas Neue'; font-size:18px; color:var(--gold); line-height:1;">${e.gameStats.avg}</div><div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">AVG</div></div>` : ''}
-              ${e.gameStats.obp ? `<div style="background:var(--card2); padding:6px 4px; text-align:center; border-radius:2px;"><div style="font-family:'Bebas Neue'; font-size:18px; color:var(--gold); line-height:1;">${e.gameStats.obp}</div><div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">OBP</div></div>` : ''}
-              ${e.gameStats.slg ? `<div style="background:var(--card2); padding:6px 4px; text-align:center; border-radius:2px;"><div style="font-family:'Bebas Neue'; font-size:18px; color:var(--gold); line-height:1;">${e.gameStats.slg}</div><div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">SLG</div></div>` : ''}
+              ${e.gameStats.avg ? `<div style="background:var(--card2); padding:6px 4px; text-align:center; border-radius:6px;"><div style="font-family:'Bebas Neue'; font-size:18px; color:var(--gold); line-height:1;">${e.gameStats.avg}</div><div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">AVG</div></div>` : ''}
+              ${e.gameStats.obp ? `<div style="background:var(--card2); padding:6px 4px; text-align:center; border-radius:6px;"><div style="font-family:'Bebas Neue'; font-size:18px; color:var(--gold); line-height:1;">${e.gameStats.obp}</div><div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">OBP</div></div>` : ''}
+              ${e.gameStats.slg ? `<div style="background:var(--card2); padding:6px 4px; text-align:center; border-radius:6px;"><div style="font-family:'Bebas Neue'; font-size:18px; color:var(--gold); line-height:1;">${e.gameStats.slg}</div><div style="font-family:'Barlow Condensed'; font-size:9px; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">SLG</div></div>` : ''}
             </div>
           ` : ''}
           ${e.gameStats.ip ? `
@@ -12292,7 +12295,7 @@ function renderEntries() {
               <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:6px;">Pitching</div>
               <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:3px;">
                 ${[['IP',e.gameStats.ip],['ER',e.gameStats.er],['K',e.gameStats.pk],['BB',e.gameStats.pbb]].map(([l,v]) => `
-                  <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:2px;">
+                  <div style="background:var(--card2); padding:8px 4px; text-align:center; border-radius:6px;">
                     <div style="font-family:'Bebas Neue'; font-size:22px; color:${v > 0 ? '#5DADE2' : 'var(--border)'}; line-height:1;">${v || '-'}</div>
                     <div style="font-family:'Barlow Condensed'; font-size:9px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:var(--grey);">${l}</div>
                   </div>
@@ -12311,7 +12314,7 @@ function renderEntries() {
            runs once on DOMContentLoaded — anything injected by renderAll()
            after that needs to read sport state itself. (Coach Young 2026-05-08.) -->
       ${e.reps ? (() => { const _ball = getBallEmoji(); const _repsHeader = e.instructor ? '🔢 Lesson Reps' : (e.practiceMode === 'solo' ? '🔢 Solo Practice Reps' : '🔢 Practice Reps'); return `
-        <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:3px; padding:14px 16px;">
+        <div style="margin:12px 0; background:linear-gradient(135deg,#1A0012,#140008); border:1px solid var(--gold-dark); border-radius:8px; padding:14px 16px;">
           <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:12px;">${_repsHeader}</div>
           <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:6px;">
             ${[
@@ -12320,7 +12323,7 @@ function renderEntries() {
               ['🎯 THROWS',           e.reps.throwsLabel  || e.reps.throws,  e.reps.throws],
               [_ball + ' PITCHES',    e.reps.pitchesLabel || e.reps.pitches, e.reps.pitches]
             ].map(([label, display, val]) => `
-              <div style="background:var(--card2); padding:12px 6px; text-align:center; border-radius:3px;">
+              <div style="background:var(--card2); padding:12px 6px; text-align:center; border-radius:6px;">
                 <div style="font-family:'Bebas Neue'; font-size:${String(display).length > 4 ? '22px' : '28px'}; color:${val > 0 ? 'var(--white)' : '#62584C'}; line-height:1;">${val > 0 ? display : '—'}</div>
                 <div style="font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; color:${val > 0 ? '#C6B59B' : 'var(--grey)'}; margin-top:6px; line-height:1.2;">${label}</div>
               </div>
@@ -12331,7 +12334,7 @@ function renderEntries() {
 
       <!-- WORKOUT / WEIGHT ROOM BOX -->
       ${e.workout ? `
-        <div style="margin:12px 0; background:rgba(230,126,34,0.06); border:1px solid #3A2008; border-radius:3px; padding:14px 16px;">
+        <div style="margin:12px 0; background:rgba(230,126,34,0.06); border:1px solid #3A2008; border-radius:8px; padding:14px 16px;">
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#E67E22; margin-bottom:10px;">🏋️ Gym</div>
           ${e.workout.focus || e.workout.intensity ? `
             <div style="display:flex; gap:14px; flex-wrap:wrap; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#E67E22; margin-bottom:10px;">
@@ -12339,10 +12342,10 @@ function renderEntries() {
               ${e.workout.intensity ? `<div>Intensity: <span style="color:var(--light);">${e.workout.intensity}</span></div>` : ''}
             </div>
           ` : ''}
-          ${e.workout.lifts ? `<div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #B95E15; border-radius:2px; margin-bottom:8px; white-space:pre-wrap;">${e.workout.lifts}</div>` : ''}
+          ${e.workout.lifts ? `<div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #B95E15; border-radius:6px; margin-bottom:8px; white-space:pre-wrap;">${e.workout.lifts}</div>` : ''}
           ${e.workout.reflection ? `
             <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#E67E22; margin-bottom:4px;">💭 How It Felt</div>
-            <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #8B6F47; border-radius:2px; margin-bottom:8px; white-space:pre-wrap; font-style:italic;">${e.workout.reflection}</div>
+            <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #8B6F47; border-radius:6px; margin-bottom:8px; white-space:pre-wrap; font-style:italic;">${e.workout.reflection}</div>
           ` : ''}
           ${parseInt(e.workout.duration) > 0 ? `
             <div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); padding-top:8px; border-top:1px solid var(--border);">
@@ -12354,13 +12357,13 @@ function renderEntries() {
 
       <!-- INSTRUCTOR SESSION BOX -->
       ${e.instructor ? `
-        <div style="margin:12px 0; background:rgba(168,217,123,0.05); border:1px solid #2A3A2A; border-radius:3px; padding:14px 16px;">
+        <div style="margin:12px 0; background:rgba(168,217,123,0.05); border:1px solid #2A3A2A; border-radius:8px; padding:14px 16px;">
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A8D97B; margin-bottom:10px;">🎓 Instructor Session</div>
           ${e.instructor.name ? `<div style="font-family:'Barlow'; font-size:14px; color:var(--white); font-weight:600; margin-bottom:6px;">${e.instructor.name}</div>` : ''}
           ${e.instructor.focus ? `<div style="font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:8px;">Focus: ${e.instructor.focus}</div>` : ''}
-          ${e.instructor.notes ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:4px;">What We Worked On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #5A8A3A; border-radius:2px;">${e.instructor.notes}</div>` : ''}
-          ${e.instructor.takeaway ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">What I Need to Work On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dark); border-radius:2px;">${e.instructor.takeaway}</div>` : ''}
-          ${e.instructor.noteForCoach ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:4px;">📝 Note for Instructor</div><div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(168,217,123,0.06); border-left:2px solid #5A8A3A; border-radius:2px;">${e.instructor.noteForCoach}</div>` : ''}
+          ${e.instructor.notes ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:4px;">What We Worked On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid #5A8A3A; border-radius:6px;">${e.instructor.notes}</div>` : ''}
+          ${e.instructor.takeaway ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">What I Need to Work On</div><div style="font-family:'Barlow'; font-size:15px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(0,0,0,0.2); border-left:2px solid var(--gold-dark); border-radius:6px;">${e.instructor.takeaway}</div>` : ''}
+          ${e.instructor.noteForCoach ? `<div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:4px;">📝 Note for Instructor</div><div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:10px; padding:8px 10px; background:rgba(168,217,123,0.06); border-left:2px solid #5A8A3A; border-radius:6px;">${e.instructor.noteForCoach}</div>` : ''}
           ${((parseInt(e.instructor.duration) > 0) || e.instructor.next) ? `
             <div style="display:flex; gap:14px; flex-wrap:wrap; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--grey); padding-top:8px; border-top:1px solid var(--border);">
               ${parseInt(e.instructor.duration) > 0 ? `<div>⏱ <span style="color:var(--light);">${parseInt(e.instructor.duration)} min</span></div>` : ''}
@@ -12372,7 +12375,7 @@ function renderEntries() {
 
       <!-- BODY TEXT -->
       ${e.what ? `<div class="entry-text">${e.what}</div>` : ''}
-      ${e.teamRole ? `<div class="entry-text" style="margin-top:10px; padding:8px 10px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:2px;"><div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">My Role</div>${e.teamRole}</div>` : ''}
+      ${e.teamRole ? `<div class="entry-text" style="margin-top:10px; padding:8px 10px; background:rgba(var(--accent-rgb), 0.06); border-left:2px solid var(--gold-dark); border-radius:6px;"><div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">My Role</div>${e.teamRole}</div>` : ''}
       ${e.tomorrow ? `<div class="entry-text" style="margin-top:10px; color:var(--gold-light);"><em>Tomorrow → ${e.tomorrow}</em></div>` : ''}
       ${e.prepare  ? `<div class="entry-text" style="margin-top:10px; color:#5DADE2;"><em>My Preparation Plan → ${e.prepare}</em></div>` : ''}
 
@@ -12382,7 +12385,7 @@ function renderEntries() {
            until August, so players send notes manually via text/email/
            AirDrop using the device share sheet. -->
       ${e.coachNote ? `
-        <div style="margin-top:14px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:3px;">
+        <div style="margin-top:14px; padding:10px 14px; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:8px;">
           <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">📝 Note for Coach</div>
           <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:10px;">${e.coachNote}</div>
           <button onclick="shareCoachNote(${e.id}); event.stopPropagation();" style="background:var(--gold); border:none; color:#0C0A08; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer;">📤 &nbsp;Send to Coach</button>
@@ -12413,7 +12416,7 @@ function renderEntries() {
           </button>
         </div>
         ${e.comments.map(c => `
-          <div style="background:var(--card2); border-left:3px solid ${roleColors[c.role] || 'var(--gold)'}; border-radius:0 3px 3px 0; padding:12px 14px; margin-bottom:8px;">
+          <div style="background:var(--card2); border-left:3px solid ${roleColors[c.role] || 'var(--gold)'}; border-radius:0 8px 8px 0; padding:12px 14px; margin-bottom:8px;">
             <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
               <span style="font-size:14px;">${roleIcons[c.role] || '⚾'}</span>
               <span style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1px; color:${roleColors[c.role] || 'var(--gold)'};">${c.name}</span>
@@ -17903,7 +17906,7 @@ function renderYourWeek() {
     entriesThisWeek++;
     loggedDays[d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate()] = true;
     if (e.reps) {
-      ['swings', 'gb', 'throws'].forEach(function (f) {
+      ['swings', 'gb', 'throws', 'pitches'].forEach(function (f) {
         var v = parseInt(e.reps[f], 10);
         if (!isNaN(v)) repsThisWeek += v;
       });
