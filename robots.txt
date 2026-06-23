@@ -15,4 +15,27 @@ Disallow: /foundermygrind
 Disallow: /foundermygrind.html
 Disallow: /api/
 
+# AI / answer-engine crawlers are explicitly welcome on public content (GEO).
+# Same private-path rules as above so the app, signup, and API stay closed.
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Claude-Web
+User-agent: PerplexityBot
+User-agent: Google-Extended
+User-agent: CCBot
+Disallow: /signup.html
+Disallow: /onboarding.html
+Disallow: /softball.html
+Disallow: /checkin.html
+Disallow: /legacy-app.html
+Disallow: /signin.html
+Disallow: /coach-reply.html
+Disallow: /foundermygrind
+Disallow: /foundermygrind.html
+Disallow: /api/
+
+# Point AI + search crawlers at the site map for AI engines.
 Sitemap: https://www.mygrindapp.com/sitemap.xml

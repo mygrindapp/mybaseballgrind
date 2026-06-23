@@ -1,0 +1,28 @@
+# MyGrind
+
+> MyGrind is a training journal app for youth baseball and softball players (ages 13-18). Players log practices, games, stats, arm care, and academics (NCAA core-course GPA + eligibility), so they develop on purpose and have a record when it is time to get recruited. Built by Coach Mike Young, who has spent 35 years in the game as a coach, trainer, and mentor. Baseball and softball, players and parents.
+
+Brand: MyGrind (My Grind Sports LLC). Voice: a real coach talking straight to families. The athlete is always "your player." MyGrind covers both baseball and softball, boys and girls.
+
+## App
+- [MyGrind](https://www.mygrindapp.com/): The training journal app for baseball and softball players. Tracks practice, games, stats, arm care, and academics/NCAA eligibility.
+- [MyGrind Weekly (free newsletter)](https://www.mygrindapp.com/newsletter): A free weekly email for players and parents on development, recruiting, and the realities of youth ball.
+
+## Free guides (blog)
+- [Private vs Public School: How to Choose a High School](https://www.mygrindapp.com/blog/choosing-high-school-baseball-softball.html): Private vs public, transfers, sections and divisions, and why playing time matters more than the name on the jersey.
+- [When Should You Switch Travel Teams?](https://www.mygrindapp.com/blog/when-to-switch-travel-teams.html): Good reasons vs bad reasons to switch teams, and how to tell a player problem from a parent problem.
+- [NCAA Eligibility and GPA](https://www.mygrindapp.com/blog/ncaa-eligibility-gpa-guide.html): How NCAA core-course GPA works, the sliding scale, and what actually counts toward eligibility.
+- [Youth Baseball & Softball Training Calendar](https://www.mygrindapp.com/blog/youth-baseball-softball-training-calendar.html): A month-by-month training calendar with rest windows, the strength-building months, and tryout season.
+- [Baseball & Softball Stats Worth Tracking](https://www.mygrindapp.com/blog/baseball-softball-stats-to-track.html): Which stats actually matter at each age, and which ones create false anxiety.
+- [After 12U: Travel Ball or Patience](https://www.mygrindapp.com/blog/after-12u-travel-ball-or-patience.html): The jump to the bigger field and the decisions families face after 12U.
+- [What Is a Training Journal](https://www.mygrindapp.com/blog/what-is-a-baseball-training-journal.html): What a baseball/softball training journal is and why it speeds development.
+- [Softball Training Journal](https://www.mygrindapp.com/blog/softball-training-journal.html): Keeping a training journal for fastpitch softball.
+- [How to Keep a Training Journal](https://www.mygrindapp.com/blog/how-to-keep-a-training-journal.html): A simple habit for logging practices, games, and reps.
+
+## Resources
+- [Coach's Picks: Books & Gear](https://www.mygrindapp.com/picks): The baseball and softball books and training gear Coach actually recommends for players and parents.
+- [Blog index](https://www.mygrindapp.com/blog/): All free guides in one place.
+
+## About
+- Built by Coach Mike Young, 35 years in baseball as a coach, trainer, and mentor. MyGrind serves youth baseball and softball families nationally, including girls in baseball.
+- Contact: coach@mygrindapp.com
