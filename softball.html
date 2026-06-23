@@ -4566,6 +4566,31 @@ input[type="number"] {
       <div style="font-family:'Barlow Condensed', sans-serif; font-size:11px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); text-align:right;">Newest first<br>Tap to expand</div>
     </div>
 
+    <!-- 7-day recap strip (Tier 2, Coach 2026-06-23). Mirrors the Dashboard
+         "Your Week" card so the player sees week context right where they
+         review the log. Filled by renderJournalWeekStrip() from the shared
+         _mgWeekStats(); hidden until there is at least one entry. -->
+    <div id="journal-week-strip" style="display:none; margin-bottom:16px; padding:12px 14px; background:var(--card); border:1px solid var(--border); border-radius:10px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;">
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold);">Your Last 7 Days</div>
+        <div id="jws-streak" style="font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:0.5px; color:var(--grey); white-space:nowrap;"></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:8px;">
+        <div style="text-align:center;">
+          <div id="jws-days" style="font-family:'Bebas Neue',cursive; font-size:26px; line-height:1; color:var(--white);">0/7</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Days Logged</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="jws-entries" style="font-family:'Bebas Neue',cursive; font-size:26px; line-height:1; color:var(--white);">0</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Entries</div>
+        </div>
+        <div style="text-align:center;">
+          <div id="jws-reps" style="font-family:'Bebas Neue',cursive; font-size:26px; line-height:1; color:var(--gold);">0</div>
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--grey); margin-top:3px;">Reps</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Entries filter chips — Coach Young 2026-05-11 walkthrough.
          Default = 7 Days (Coach 2026-06-23) so the log opens to the week's work, not an empty 'today'. Player
          can widen the window via chip taps. Past entries >24h are
@@ -12085,6 +12110,7 @@ function dismissFirstOpenWelcome() {
 
 function renderEntries() {
   const container = document.getElementById('entries-list');
+  try { renderJournalWeekStrip(); } catch (_) {}
   if (!state.entries.length) {
     container.innerHTML = `<div class="empty-state"><div class="empty-icon">📓</div><h3>No Entries Yet</h3><p style="font-size:15px;">Start logging your games, practices, workouts, instructor sessions, reflections, or off days above.<br>Close the book on every day. Learn from it and move on.</p><button type="button" onclick="mgScrollToEntryForm()" style="margin-top:14px; background:var(--gold); color:var(--black); font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:none; border-radius:8px; cursor:pointer;">📓 Log Your First Entry</button></div>`;
     return;
@@ -17886,29 +17912,28 @@ function updateStreakDisplay() {
 // player already logs (entries, reps, check-in days, goals, streak) and reflects
 // it back as a visible weekly story, so logging feels rewarding instead of like
 // a notepad. All client-side; no new storage.
-function renderYourWeek() {
-  var card = document.getElementById('your-week-card');
-  if (!card) return;
+// Shared 7-day rollup — single source of truth for BOTH the Dashboard
+// "Your Week" card and the Journal "Your Last 7 Days" strip, so the two
+// surfaces can never disagree on the numbers. (Reps once diverged: pitches
+// were excluded in one place, included in the other — Coach 2026-06-23.)
+function _mgWeekStats() {
   var streak = 0;
   try { streak = calculateStreak(); } catch (e) {}
-
   var now = new Date();
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   var weekStart = new Date(today); weekStart.setDate(today.getDate() - 6); // last 7 days incl. today
-
-  var entriesThisWeek = 0, repsThisWeek = 0;
-  var loggedDays = {};
+  var entries = 0, reps = 0, loggedDays = {};
   ((state && state.entries) || []).forEach(function (e) {
     if (!e || !e.date) return;
     var d = null;
     try { d = parseEntryDate(e.date); } catch (err) {}
     if (!d || d < weekStart || d > today) return;
-    entriesThisWeek++;
+    entries++;
     loggedDays[d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate()] = true;
     if (e.reps) {
       ['swings', 'gb', 'throws', 'pitches'].forEach(function (f) {
         var v = parseInt(e.reps[f], 10);
-        if (!isNaN(v)) repsThisWeek += v;
+        if (!isNaN(v)) reps += v;
       });
     }
   });
@@ -17923,7 +17948,37 @@ function renderYourWeek() {
       }
     });
   } catch (e) {}
-  var daysLogged = Math.min(Object.keys(loggedDays).length, 7);
+  return { streak: streak, daysLogged: Math.min(Object.keys(loggedDays).length, 7), entries: entries, reps: reps };
+}
+
+// Journal "Your Last 7 Days" strip (Tier 2, Coach 2026-06-23) — mirrors the
+// Dashboard Your Week card so the player gets week context right where they
+// review the log, no tab-hop to Home. Hidden until there's at least one entry.
+function renderJournalWeekStrip() {
+  var strip = document.getElementById('journal-week-strip');
+  if (!strip) return;
+  if (!state || !state.entries || !state.entries.length) { strip.style.display = 'none'; return; }
+  var s = _mgWeekStats();
+  var emoji = '🧊';
+  if (s.streak >= 7) emoji = '💎';
+  else if (s.streak >= 1 || s.entries >= 3) emoji = '🔥';
+  var streakTxt = (s.streak >= 1) ? (emoji + ' ' + s.streak + ' day streak') : (emoji + ' Log today to start a streak');
+  var set = function (id, val) { var el = document.getElementById(id); if (el) el.textContent = val; };
+  set('jws-streak', streakTxt);
+  set('jws-days', s.daysLogged + '/7');
+  set('jws-entries', s.entries);
+  set('jws-reps', (s.reps || 0).toLocaleString());
+  strip.style.display = 'block';
+}
+
+function renderYourWeek() {
+  var card = document.getElementById('your-week-card');
+  if (!card) return;
+  var s = _mgWeekStats();
+  var streak = s.streak;
+  var entriesThisWeek = s.entries;
+  var repsThisWeek = s.reps;
+  var daysLogged = s.daysLogged;
 
   // Streak emoji tier (mirrors updateStreakDisplay): cold / flame / diamond.
   var emoji = '🧊';
