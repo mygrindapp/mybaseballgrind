@@ -892,8 +892,8 @@
   @media (max-width: 600px) {
     main { padding: 14px 18px 16px; }
     .eyebrow { margin-top: 8px; margin-bottom: 14px; }
-    .logo-wrap { margin-top: 0; margin-bottom: 16px; }
-    .logo-wrap img { width: 220px; max-width: 60vw; }
+    .logo-wrap { margin-top: 0; margin-bottom: 10px; }
+    .logo-wrap img { width: 168px; max-width: 46vw; }
     .form-section { margin-top: 28px; max-width: 280px; }
     .form-card { padding: 12px 14px; }
     .form-pre { margin-bottom: 10px; font-size: 13px; }
@@ -903,7 +903,7 @@
     .form-trust { margin-top: 10px; font-size: 11px; }
     .form-row { flex-direction: column; }
     .form-row button { width: 100%; }
-    .eyebrow { letter-spacing: 4px; margin-top: 12px; margin-bottom: 20px; }
+    .eyebrow { letter-spacing: 4px; margin-top: 10px; margin-bottom: 12px; }
     .eyebrow::before, .eyebrow::after { width: 18px; }
   }
 
@@ -1563,19 +1563,27 @@ fbq('init','326334441984368');fbq('track','PageView');
 
   <section class="hero">
     <h1>
-      <span class="line l1"><span class="text">The Player&#39;s Journey.</span><span class="cursor c1"></span></span>
-      <span class="line l2"><span class="text">The Parent&#39;s Journey.</span><span class="cursor c2"></span></span>
-      <span class="line l3 gold"><span class="text">One Journal.</span><span class="cursor c3"></span></span>
+      <span class="line l1"><span class="text">Track Your Grind.</span><span class="cursor c1"></span></span>
+      <span class="line l2"><span class="text">Earn</span><span class="cursor c2"></span></span>
+      <span class="line l3 gold"><span class="text">The Next Level.</span><span class="cursor c3"></span></span>
     </h1>
     <div class="accent-underline" id="underline"></div>
     <div class="sport-chip" id="chip">Baseball &middot; Softball</div>
     <h2 class="subhead" id="subhead">
-      Finally see what your player is actually working on. Every practice, game, and grade in one daily journal that keeps them on track for the next level.
+      The daily journal where serious players log every practice, game, and grade, and parents finally see the work behind it.
     </h2>
     <div class="hero-cta" id="hero-cta">
       <a class="primary-cta" href="/signup.html">Start My Free Trial <span class="cta-arrow">&rarr;</span></a>
       <p class="form-trust">14-day free trial &middot; No card required &middot; Cancel anytime</p>
-      <p class="hero-alt" style="margin:14px 0 0;"><a href="#newsletter-signup" style="color:#C9A84C; font-size:14px; text-decoration:underline; text-underline-offset:3px;">Not ready to start? Get the free Tuesday email &rarr;</a></p>
+      <div class="hero-capture" id="hero-capture" style="max-width:380px; margin:18px auto 0;">
+        <p style="font-family:'Barlow',sans-serif; font-size:13px; color:#A89880; margin:0 0 8px;">Not ready to start a trial? Get one useful email every Tuesday.</p>
+        <form id="mc-hero-form" class="form-row" novalidate>
+          <input type="email" id="mc-hero-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email">
+          <button type="submit" style="background:transparent; color:#C9A84C; border:1px solid rgba(201,168,76,0.5); box-shadow:none; animation:none;">Free Weekly Newsletter</button>
+          <div class="hp" aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
+        </form>
+        <p id="mc-hero-msg" role="status" aria-live="polite" style="font-size:13px; color:#A89880; min-height:18px; margin:8px 0 0;"></p>
+      </div>
     </div>
     <div class="hero-proof" id="hero-proof">
       <div class="hero-stars" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
@@ -1774,50 +1782,58 @@ fbq('init','326334441984368');fbq('track','PageView');
     <a class="primary-cta fn-cta" href="/signup.html">
       Start My Free Trial <span class="cta-arrow">&rarr;</span>
     </a>
-    <p class="form-trust">14-day free trial &middot; Card on file &middot; Cancel anytime</p>
+    <p class="form-trust">14-day free trial &middot; No card required &middot; Cancel anytime</p>
   </aside>
 
   <script>
   (function(){
-    var form = document.getElementById('mc-home-form');
-    if (!form) return;
-    var emailEl = document.getElementById('mc-home-email');
-    var msgEl   = document.getElementById('mc-home-msg');
-    var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
-    form.addEventListener('submit', function(e){
-      e.preventDefault();
-      var email = (emailEl.value || '').trim();
-      if (!EMAIL_RE.test(email)) { msgEl.textContent = 'Please enter a valid email address.'; return; }
-      var hp = form.querySelector('.hp input');
-      if (hp && hp.value) { msgEl.textContent = "You're on the list."; return; }
-      msgEl.textContent = 'Adding you...';
-      var cb = 'mcHomeCb' + Date.now() + Math.floor(Math.random()*1000);
-      var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
-        + '?u=73280b4c02e9bc56c7e633892&id=a7d801599a&f_id=0089ace1f0'
-        + '&EMAIL=' + encodeURIComponent(email)
-        + '&tags=2216797'
-        + '&b_73280b4c02e9bc56c7e633892_a7d801599a='
-        + '&c=' + cb;
-      var s = document.createElement('script');
-      var settled = false;
-      var to = setTimeout(function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; }, 10000);
-      function cleanup(){ try{delete window[cb];}catch(_){window[cb]=undefined;} if(s.parentNode)s.parentNode.removeChild(s); clearTimeout(to); }
-      window[cb] = function(data){
-        if(settled)return; settled=true; cleanup();
-        var m = (data && data.msg ? String(data.msg) : '').replace(/<[^>]+>/g,'').trim();
-        if ((data && data.result==='success') || /already subscribed/i.test(m)) {
-          form.style.display='none';
-          msgEl.style.color='#C9A84C';
-          msgEl.textContent = "You're on the list. Talk Tuesday.";
-          try { gtag('event','newsletter_signup',{ method:'home_page' }); } catch(_){}
-        } else {
-          msgEl.textContent = m || "We couldn't add that email. Please try again.";
-        }
-      };
-      s.onerror = function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; };
-      s.src = url;
-      document.head.appendChild(s);
-    });
+    // Shared Mailchimp JSONP subscribe. Wired to BOTH the hero inline capture
+    // and the lower newsletter section so a bounce-intent visitor can convert
+    // to the list from the first screen. `method` tags the GA4 event so we can
+    // tell hero captures from newsletter-section captures.
+    function wireMC(formId, emailId, msgId, method){
+      var form = document.getElementById(formId);
+      if (!form) return;
+      var emailEl = document.getElementById(emailId);
+      var msgEl   = document.getElementById(msgId);
+      var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        var email = (emailEl.value || '').trim();
+        if (!EMAIL_RE.test(email)) { msgEl.textContent = 'Please enter a valid email address.'; return; }
+        var hp = form.querySelector('.hp input');
+        if (hp && hp.value) { msgEl.textContent = "You're on the list."; return; }
+        msgEl.textContent = 'Adding you...';
+        var cb = 'mcCb' + Date.now() + Math.floor(Math.random()*1000);
+        var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
+          + '?u=73280b4c02e9bc56c7e633892&id=a7d801599a&f_id=0089ace1f0'
+          + '&EMAIL=' + encodeURIComponent(email)
+          + '&tags=2216797'
+          + '&b_73280b4c02e9bc56c7e633892_a7d801599a='
+          + '&c=' + cb;
+        var s = document.createElement('script');
+        var settled = false;
+        var to = setTimeout(function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; }, 10000);
+        function cleanup(){ try{delete window[cb];}catch(_){window[cb]=undefined;} if(s.parentNode)s.parentNode.removeChild(s); clearTimeout(to); }
+        window[cb] = function(data){
+          if(settled)return; settled=true; cleanup();
+          var m = (data && data.msg ? String(data.msg) : '').replace(/<[^>]+>/g,'').trim();
+          if ((data && data.result==='success') || /already subscribed/i.test(m)) {
+            form.style.display='none';
+            msgEl.style.color='#C9A84C';
+            msgEl.textContent = "You're on the list. Talk Tuesday.";
+            try { gtag('event','newsletter_signup',{ method: method }); } catch(_){}
+          } else {
+            msgEl.textContent = m || "We couldn't add that email. Please try again.";
+          }
+        };
+        s.onerror = function(){ if(settled)return; settled=true; cleanup(); msgEl.textContent="Couldn't reach the signup server. Please try again."; };
+        s.src = url;
+        document.head.appendChild(s);
+      });
+    }
+    wireMC('mc-hero-form', 'mc-hero-email', 'mc-hero-msg', 'hero');
+    wireMC('mc-home-form', 'mc-home-email', 'mc-home-msg', 'home_page');
   })();
   </script>
 
