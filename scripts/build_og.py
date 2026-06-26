@@ -47,7 +47,7 @@ CARDS = [
      "title": "Private vs public: the playing-time math"},
     {"slug": "ncaa-eligibility-rule-change-2026",
      "eyebrow": "The Playbook · Recruiting",
-     "title": "The new NCAA age-based clock, explained"},
+     "title": "New NCAA eligibility rules: a parent's guide"},
 ]
 
 
