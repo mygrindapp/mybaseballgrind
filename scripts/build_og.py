@@ -45,6 +45,9 @@ CARDS = [
     {"slug": "choosing-high-school-baseball-softball",
      "eyebrow": "The Playbook · High School",
      "title": "Private vs public: the playing-time math"},
+    {"slug": "ncaa-eligibility-rule-change-2026",
+     "eyebrow": "The Playbook · Recruiting",
+     "title": "The new NCAA age-based clock, explained"},
 ]
 
 

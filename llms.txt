@@ -9,6 +9,7 @@ Brand: MyGrind (My Grind Sports LLC). Voice: a real coach talking straight to fa
 - [MyGrind Weekly (free newsletter)](https://www.mygrindapp.com/newsletter): A free weekly email for players and parents on development, recruiting, and the realities of youth ball.
 
 ## Free guides (blog)
+- [New NCAA Eligibility Rules 2026: The Age-Based Clock](https://www.mygrindapp.com/blog/ncaa-eligibility-rule-change-2026.html): The NCAA replaced five-years-to-play-four with an age-based eligibility clock on June 23, 2026. Division I only; clock starts at the earlier of full-time enrollment or the academic year after the athlete turns 19; medical redshirt removed; transition period through fall 2027 enrollees; core-course GPA and academic eligibility unchanged.
 - [Private vs Public School: How to Choose a High School](https://www.mygrindapp.com/blog/choosing-high-school-baseball-softball.html): Private vs public, transfers, sections and divisions, and why playing time matters more than the name on the jersey.
 - [When Should You Switch Travel Teams?](https://www.mygrindapp.com/blog/when-to-switch-travel-teams.html): Good reasons vs bad reasons to switch teams, and how to tell a player problem from a parent problem.
 - [NCAA Eligibility and GPA](https://www.mygrindapp.com/blog/ncaa-eligibility-gpa-guide.html): How NCAA core-course GPA works, the sliding scale, and what actually counts toward eligibility.
