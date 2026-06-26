@@ -38,3 +38,20 @@ python3 scripts/build_qotd.py --categories baseball softball --limit 2  # sample
 The builder renders each quote through **`qotd-story.html`** (repo root) with
 headless Chrome over `file://`, downscales to exact size with Pillow, and rewrites
 the folders above + their `INDEX.md`. No static server needed.
+
+## "Today's Grind" card style (Coach's preferred QOTD look)
+
+The cards above use a plain Barlow-Condensed quote. Coach's preferred QOTD social
+card is the **editorial "Today's Grind" style**: the gold compass mark on a
+near-black warm-glow background, "TODAY'S GRIND" eyebrow + "MYGRIND" footer in
+Barlow Condensed (gold), and the quote in **Playfair Display italic** (cream).
+Build one for any quote at all posting sizes (Story 1080x1920 / Feed 1080x1350 /
+Square 1080x1080):
+
+```bash
+python3 scripts/build_todays_grind_card.py --quote "Mental reps count. Visualize before every at-bat, every pitch, every play." --slug mental-reps
+```
+
+Output: `media/qotd/todays-grind/<slug>/`. The logo is embedded as base64 so no
+server is needed. Style locked 2026-06-26.
+
