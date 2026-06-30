@@ -2,6 +2,22 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- THEME EXPERIMENT (branch theme/light-premium): set data-theme before paint. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('mg_theme');
+    if (t !== 'light' && t !== 'dark') t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', t);
+  } catch(e) { document.documentElement.setAttribute('data-theme','dark'); }
+  window.mgToggleTheme = function(){
+    var next = (document.documentElement.getAttribute('data-theme')==='light') ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('mg_theme', next); } catch(e){}
+    var b=document.getElementById('mg-theme-toggle'); if(b) b.textContent = next==='light'?'☾':'☀';
+  };
+})();
+</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <!-- Shared press-feedback + motion layer (assets/interactions.css). -->
 <link rel="stylesheet" href="/assets/interactions.css">
@@ -88,7 +104,35 @@
   --card:       #231F1C;
   --card2:      #2A2622;
   --border:     #3D3530;
+  --bg:         #181614;
 }
+
+/* ════════ LIGHT-PREMIUM THEME — REVERSIBLE EXPERIMENT ════════
+   (branch theme/light-premium). Dark is default and untouched;
+   html[data-theme="light"] remaps the design tokens. */
+html[data-theme="light"] {
+  --bg:#F7F4EF; --black:#14120F; --dark:#FFFFFF; --card:#FFFFFF; --card2:#F1ECE4;
+  --border:#E2DACC; --grey:#6B6459; --light:#3A352E; --white:#14120F;
+  --gold:#A8873A; --gold-light:#C5A572; --gold-dark:#7A6224;
+}
+html[data-theme="light"], html[data-theme="light"] body { background: var(--bg); color: var(--white); }
+html[data-theme="light"] .logo-mark { color: var(--gold); }
+html[data-theme="light"] .logo-mark .sm { color: var(--grey); }
+.logo-mark .logo-light-lockup { display:none; }
+html[data-theme="light"] .logo-mark img { display:none; }
+html[data-theme="light"] .logo-mark .logo-light-lockup { display:block; font-family:'Bebas Neue', cursive; font-size:60px; line-height:0.9; letter-spacing:2px; color:var(--white); }
+html[data-theme="light"] .logo-mark .logo-light-lockup span { color: var(--gold); }
+html[data-theme="light"] [style*="color:#F5F0EB"] { color: var(--white) !important; }
+html[data-theme="light"] [style*="color:#A89880"] { color: var(--grey) !important; }
+html[data-theme="light"] [style*="color:#D4C8BC"] { color: var(--light) !important; }
+html[data-theme="light"] [style*="color:#C9A84C"] { color: var(--gold) !important; }
+html[data-theme="light"] [style*="background:#1E1A17"],
+html[data-theme="light"] [style*="background:#231F1C"],
+html[data-theme="light"] [style*="background:#1A1410"] { background: var(--card) !important; }
+html[data-theme="light"] [style*="background:#2A2622"] { background: var(--card2) !important; }
+html[data-theme="light"] [style*="#3D3530"] { border-color: var(--border) !important; }
+html[data-theme="light"] .card[style*="gradient"] { background: var(--card) !important; }
+#mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card,var(--card)); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; }
 
 /* ═══════════════════════════════════════════════════════════
    RESET + BASE
@@ -96,8 +140,8 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 html, body {
-  background: #181614;
-  color: #F5F0EB;
+  background: var(--bg);
+  color: var(--white);
   font-family: 'Barlow', -apple-system, BlinkMacSystemFont, sans-serif;
   min-height: 100vh;
   overflow-x: hidden;
@@ -120,7 +164,7 @@ body {
   padding: 0;
   background:
     radial-gradient(ellipse at top, rgba(201,168,76,0.04) 0%, transparent 50%),
-    #181614;
+    var(--bg);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -130,7 +174,7 @@ body {
   width: 100%;
   max-width: 480px;
   min-height: 100vh;
-  background: #181614;
+  background: var(--bg);
   position: relative;
   display: flex;
   flex-direction: column;
@@ -174,17 +218,17 @@ body {
    ═══════════════════════════════════════════════════════════ */
 .prog-wrap {
   padding: 18px 24px 0 24px;
-  background: #181614;
+  background: var(--bg);
 }
 .prog-track {
   height: 3px;
-  background: #231F1C;
+  background: var(--card);
   border-radius: 2px;
   overflow: hidden;
 }
 .prog-fill {
   height: 100%;
-  background: linear-gradient(90deg, #C9A84C, #E8C766);
+  background: linear-gradient(90deg, var(--gold), #E8C766);
   border-radius: 2px;
   transition: width 0.4s ease;
 }
@@ -212,7 +256,7 @@ body {
   display: inline-block;
   background: rgba(201,168,76,0.08);
   border: 1px solid rgba(201,168,76,0.25);
-  color: #C9A84C;
+  color: var(--gold);
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 11px;
   font-weight: 600;
@@ -231,7 +275,7 @@ body {
   font-family: 'Bebas Neue', cursive;
   font-size: 26px;
   letter-spacing: 4px;
-  color: #C9A84C;
+  color: var(--gold);
   text-transform: uppercase;
   margin-bottom: 18px;
   text-shadow: 0 1px 2px rgba(0,0,0,0.4);
@@ -242,18 +286,18 @@ h1 {
   font-size: 46px;
   letter-spacing: 1px;
   line-height: 1.05;
-  color: #F5F0EB;
+  color: var(--white);
   margin-bottom: 14px;
 }
 h1 span {
-  color: #C9A84C;
+  color: var(--gold);
   display: block;
 }
 
 .gold-bar {
   width: 56px;
   height: 3px;
-  background: #C9A84C;
+  background: var(--gold);
   margin: 0 auto 18px auto;
   border-radius: 2px;
 }
@@ -280,8 +324,8 @@ h1 span {
   display: flex;
   gap: 14px;
   align-items: flex-start;
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 4px;
   padding: 16px 18px;
   margin-bottom: 10px;
@@ -298,7 +342,7 @@ h1 span {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #C9A84C;
+  color: var(--gold);
   font-family: 'Bebas Neue', cursive;
   font-size: 16px;
   letter-spacing: 0;
@@ -309,7 +353,7 @@ h1 span {
   color: #D4C8B8;
   padding-top: 2px;
 }
-.step-text strong { color: #F5F0EB; font-weight: 600; }
+.step-text strong { color: var(--white); font-weight: 600; }
 
 /* ═══════════════════════════════════════════════════════════
    TRUST STRIP
@@ -324,7 +368,7 @@ h1 span {
   color: #5C544A;
   line-height: 1.8;
 }
-.trust-strip span { color: #C9A84C; margin: 0 6px; }
+.trust-strip span { color: var(--gold); margin: 0 6px; }
 
 /* ═══════════════════════════════════════════════════════════
    FORM FIELDS (Screen 2 onward)
@@ -348,15 +392,15 @@ h1 span {
   margin-bottom: 8px;
 }
 .field-label .req {
-  color: #C9A84C;
+  color: var(--gold);
   margin-left: 2px;
 }
 .field-input {
   width: 100%;
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 3px;
-  color: #F5F0EB;
+  color: var(--white);
   font-family: 'Barlow', sans-serif;
   font-size: 16px;             /* 16px prevents iOS zoom on focus */
   font-weight: 400;
@@ -371,8 +415,8 @@ h1 span {
 }
 .field-input:focus {
   outline: none;
-  border-color: #C9A84C;
-  background: #1E1A17;
+  border-color: var(--gold);
+  background: var(--card);
 }
 .field-input.invalid {
   border-color: #8B3A33;
@@ -421,7 +465,7 @@ h1 span {
   color: #E8DCC4;
 }
 .email-feedback.suggesting .ef-prompt {
-  color: #C9A84C;
+  color: var(--gold);
   font-weight: 600;
   margin-right: 4px;
 }
@@ -434,7 +478,7 @@ h1 span {
   font-family: inherit;
   font-size: inherit;
   font-weight: 600;
-  color: #C9A84C;
+  color: var(--gold);
   text-decoration: underline;
   text-decoration-color: rgba(201,168,76,0.55);
   text-underline-offset: 3px;
@@ -446,7 +490,7 @@ h1 span {
 }
 .email-feedback.suggesting .ef-suggested {
   font-weight: 700;
-  color: #F5F0EB;
+  color: var(--white);
 }
 
 /* Confirmation state — restructured April 28 (round 2) per Coach Young.
@@ -473,7 +517,7 @@ h1 span {
   position: absolute;
   top: 12px;
   right: 14px;
-  color: #C9A84C;
+  color: var(--gold);
   font-weight: 700;
   font-size: 16px;
   line-height: 1;
@@ -484,14 +528,14 @@ h1 span {
   font-weight: 700;
   letter-spacing: 1.4px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
   margin-bottom: 4px;
 }
 .email-feedback.confirming .ef-confirmed-email {
   font-family: 'Barlow', sans-serif;
   font-size: 16px;
   font-weight: 700;
-  color: #F5F0EB;
+  color: var(--white);
   letter-spacing: 0.2px;
   word-break: break-all;
 }
@@ -513,8 +557,8 @@ h1 span {
   width: 100%;
   max-width: 360px;
   margin: 0 auto 10px auto;
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 4px;
   padding: 18px 20px;
   cursor: pointer;
@@ -525,11 +569,11 @@ h1 span {
 }
 .tap-card:hover {
   border-color: #3A3024;
-  background: #1E1A17;
+  background: var(--card);
 }
 .tap-card:active { transform: scale(0.99); }
 .tap-card.selected {
-  border-color: #C9A84C;
+  border-color: var(--gold);
   background: rgba(201,168,76,0.06);
   box-shadow: 0 0 0 1px rgba(201,168,76,0.4);
 }
@@ -541,7 +585,7 @@ h1 span {
   text-align: center;
   /* Lucide icons inside .tap-card-emoji inherit currentColor — brand gold
      by default, matches the title accent when selected. 2026-05-18. */
-  color: #C9A84C;
+  color: var(--gold);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -554,11 +598,11 @@ h1 span {
   font-family: 'Bebas Neue', cursive;
   font-size: 20px;
   letter-spacing: 1.5px;
-  color: #F5F0EB;
+  color: var(--white);
   margin-bottom: 2px;
   line-height: 1.1;
 }
-.tap-card.selected .tap-card-title { color: #C9A84C; }
+.tap-card.selected .tap-card-title { color: var(--gold); }
 .tap-card-desc {
   font-size: 13px;
   color: #8A7E70;
@@ -585,9 +629,9 @@ h1 span {
   transition: all 0.2s ease;
 }
 .tap-card.selected .tap-card-check {
-  background: #C9A84C;
-  border-color: #C9A84C;
-  color: #181614;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
 }
 
 /* Footnote / sub-message under tap-cards */
@@ -599,7 +643,7 @@ h1 span {
   line-height: 1.5;
   text-align: center;
 }
-.footnote strong { color: #C9A84C; font-weight: 600; }
+.footnote strong { color: var(--gold); font-weight: 600; }
 
 /* ═══════════════════════════════════════════════════════════
    SCREEN 0 ENHANCEMENT — payment clarity + no-card promise
@@ -623,7 +667,7 @@ h1 span {
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
 }
 .pay-chip {
   display: inline-flex;
@@ -639,7 +683,7 @@ h1 span {
   font-weight: 700;
   letter-spacing: 1.1px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
 }
 .under18-callout {
   margin: 18px auto 0 auto;
@@ -649,12 +693,12 @@ h1 span {
   border-radius: 6px;
   font-family: 'Barlow', sans-serif;
   font-size: 12.5px;
-  color: #A89880;
+  color: var(--grey);
   line-height: 1.55;
   text-align: left;
 }
 .under18-callout strong { color: #E8DCC4; font-weight: 600; }
-.under18-callout em { color: #C9A84C; font-style: normal; font-weight: 600; }
+.under18-callout em { color: var(--gold); font-style: normal; font-weight: 600; }
 
 /* ═══════════════════════════════════════════════════════════
    SPORT TILES (Screen 3 family-level sport selector)
@@ -671,7 +715,7 @@ h1 span {
   font-weight: 700;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: #A89880;
+  color: var(--grey);
   text-align: left;
 }
 
@@ -683,8 +727,8 @@ h1 span {
   margin: 0 auto 24px auto;
 }
 .sport-tile {
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 4px;
   padding: 14px 8px;
   cursor: pointer;
@@ -699,11 +743,11 @@ h1 span {
 }
 .sport-tile:hover {
   border-color: #3A3024;
-  background: #1E1A17;
+  background: var(--card);
 }
 .sport-tile:active { transform: scale(0.98); }
 .sport-tile.selected {
-  border-color: #C9A84C;
+  border-color: var(--gold);
   background: rgba(201,168,76,0.06);
   box-shadow: 0 0 0 1px rgba(201,168,76,0.4);
 }
@@ -717,14 +761,14 @@ h1 span {
   letter-spacing: 1.2px;
   color: #D4C8B8;
 }
-.sport-tile.selected .sport-tile-name { color: #C9A84C; }
+.sport-tile.selected .sport-tile-name { color: var(--gold); }
 
 /* Subtle visual divider between the two question groups on Screen 3 */
 .section-divider {
   max-width: 360px;
   margin: 6px auto 18px auto;
   height: 1px;
-  background: #231F1C;
+  background: var(--card);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -737,15 +781,15 @@ h1 span {
    ═══════════════════════════════════════════════════════════ */
 .multi-select-hint {
   display: inline-block;
-  background: #231F1C;
-  border: 1px solid #3D3530;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 4px 12px;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 10px;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #A89880;
+  color: var(--grey);
   margin-bottom: 16px;
 }
 
@@ -756,8 +800,8 @@ h1 span {
   width: 100%;
   max-width: 360px;
   margin: 0 auto 8px auto;
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 4px;
   padding: 14px 18px;
   cursor: pointer;
@@ -768,11 +812,11 @@ h1 span {
 }
 .goal-toggle:hover {
   border-color: #3A3024;
-  background: #1E1A17;
+  background: var(--card);
 }
 .goal-toggle:active { transform: scale(0.99); }
 .goal-toggle.selected {
-  border-color: #C9A84C;
+  border-color: var(--gold);
   background: rgba(201,168,76,0.06);
 }
 .goal-toggle-emoji {
@@ -781,7 +825,7 @@ h1 span {
   line-height: 1;
   width: 32px;
   text-align: center;
-  color: #C9A84C;
+  color: var(--gold);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -796,7 +840,7 @@ h1 span {
   color: #D4C8B8;
 }
 .goal-toggle.selected .goal-toggle-text {
-  color: #F5F0EB;
+  color: var(--white);
 }
 
 /* Checkbox-style indicator (square, not circle — to differentiate from
@@ -816,9 +860,9 @@ h1 span {
   transition: all 0.2s ease;
 }
 .goal-toggle.selected .goal-toggle-check {
-  background: #C9A84C;
-  border-color: #C9A84C;
-  color: #181614;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -837,8 +881,8 @@ h1 span {
   position: relative;
   display: block;
   width: 100%;
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 4px;
   padding: 22px 20px;
   margin-bottom: 12px;
@@ -850,12 +894,12 @@ h1 span {
 }
 .price-card:hover {
   border-color: #3A3024;
-  background: #1E1A17;
+  background: var(--card);
 }
 .price-card:active { transform: scale(0.99); }
 .price-card.selected {
-  border: 1.5px solid #C9A84C;
-  background: linear-gradient(180deg, rgba(201,168,76,0.08) 0%, #181614 100%);
+  border: 1.5px solid var(--gold);
+  background: linear-gradient(180deg, rgba(201,168,76,0.08) 0%, var(--bg) 100%);
   box-shadow: 0 0 0 1px rgba(201,168,76,0.4);
 }
 .price-card-pill {
@@ -863,8 +907,8 @@ h1 span {
   top: -10px;
   left: 50%;
   transform: translateX(-50%);
-  background: #C9A84C;
-  color: #181614;
+  background: var(--gold);
+  color: var(--bg);
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 10px;
   font-weight: 700;
@@ -878,17 +922,17 @@ h1 span {
   font-family: 'Bebas Neue', cursive;
   font-size: 22px;
   letter-spacing: 2px;
-  color: #F5F0EB;
+  color: var(--white);
   margin-bottom: 8px;
 }
 .price-card.selected .price-card-name {
-  color: #C9A84C;
+  color: var(--gold);
 }
 .price-card-amount {
   font-family: 'Bebas Neue', cursive;
   font-size: 36px;
   letter-spacing: 1px;
-  color: #C9A84C;
+  color: var(--gold);
   line-height: 1;
   margin-bottom: 4px;
 }
@@ -896,7 +940,7 @@ h1 span {
   font-family: 'Barlow', sans-serif;
   font-size: 14px;
   letter-spacing: 0;
-  color: #A89880;
+  color: var(--grey);
   font-weight: 400;
 }
 .price-card-equiv {
@@ -936,24 +980,24 @@ h1 span {
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
   margin-bottom: 4px;
 }
 .price-card-total .total-amount {
   font-family: 'Bebas Neue', cursive;
   font-size: 24px;
   letter-spacing: 0.5px;
-  color: #F5F0EB;
+  color: var(--white);
   line-height: 1;
 }
 .price-card-total .total-context {
   font-size: 13px;
-  color: #A89880;
+  color: var(--grey);
   margin-left: 4px;
 }
 .price-card-tag {
   font-size: 13px;
-  color: #A89880;
+  color: var(--grey);
   font-style: italic;
 }
 
@@ -975,9 +1019,9 @@ h1 span {
   transition: all 0.2s ease;
 }
 .price-card.selected .price-card-check {
-  background: #C9A84C;
-  border-color: #C9A84C;
-  color: #181614;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
 }
 
 /* Switch hint copy — just below pricing cards */
@@ -1013,7 +1057,7 @@ h1 span {
   justify-content: center;
   gap: 8px;
   cursor: pointer;
-  color: #C9A84C;
+  color: var(--gold);
   background: rgba(201,168,76,0.08);
   border: 1px solid rgba(201,168,76,0.45);
   font-family: 'Barlow Condensed', sans-serif;
@@ -1035,19 +1079,19 @@ h1 span {
 }
 .promo-summary::after {
   content: "+";
-  color: #C9A84C;
+  color: var(--gold);
   font-size: 18px;
   font-weight: 400;
   margin-left: 4px;
 }
 .promo-details[open] .promo-summary {
   background: rgba(201,168,76,0.16);
-  border-color: #C9A84C;
+  border-color: var(--gold);
 }
 .promo-details[open] .promo-summary::after { content: "−"; }
 .promo-summary:hover {
   background: rgba(201,168,76,0.16);
-  border-color: #C9A84C;
+  border-color: var(--gold);
 }
 .promo-body {
   margin-top: 10px;
@@ -1058,9 +1102,9 @@ h1 span {
   letter-spacing: 1px;
 }
 .promo-input.promo-applied {
-  border-color: #C9A84C;
+  border-color: var(--gold);
   background: rgba(201,168,76,0.06);
-  color: #F5F0EB;
+  color: var(--white);
 }
 .promo-helper {
   margin-top: 6px;
@@ -1069,7 +1113,7 @@ h1 span {
   color: #8A7E70;
 }
 .promo-helper.promo-helper-applied {
-  color: #C9A84C;
+  color: var(--gold);
 }
 
 .skip-trial-link {
@@ -1098,13 +1142,13 @@ h1 span {
   font-family: 'Barlow', sans-serif;
   font-size: 14px;
   font-weight: 500;
-  color: #C9A84C;
+  color: var(--gold);
 }
 .skip-trial-link:hover .skip-line-action {
   color: #D4B85A;
 }
 .skip-trial-link:hover .skip-line-question {
-  color: #A89880;
+  color: var(--grey);
 }
 .skip-trial-link u {
   text-decoration-color: rgba(201,168,76,0.5);
@@ -1136,7 +1180,7 @@ h1 span {
   font-family: 'Bebas Neue', cursive;
   font-size: 18px;
   letter-spacing: 1.5px;
-  color: #C9A84C;
+  color: var(--gold);
   margin-bottom: 12px;
 }
 .promise-block-line {
@@ -1150,11 +1194,11 @@ h1 span {
 .promise-block-line:last-child { margin-bottom: 0; }
 .promise-block-line .bullet {
   flex-shrink: 0;
-  color: #C9A84C;
+  color: var(--gold);
   font-weight: 700;
   width: 14px;
 }
-.promise-block-line strong { color: #F5F0EB; }
+.promise-block-line strong { color: var(--white); }
 
 /* ═══════════════════════════════════════════════════════════
    PLAYER SLOT INDICATOR (Screen 6 — for multi-player flows)
@@ -1165,7 +1209,7 @@ h1 span {
 .slot-indicator {
   display: inline-block;
   margin-left: 8px;
-  background: #231F1C;
+  background: var(--card);
   border: 1px solid #3A3024;
   border-radius: 2px;
   padding: 5px 10px;
@@ -1174,7 +1218,7 @@ h1 span {
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
   vertical-align: middle;
 }
 
@@ -1199,7 +1243,7 @@ h1 span {
   flex-shrink: 0;
   width: 18px;
   height: 18px;
-  border: 1.5px solid #2A2622;
+  border: 1.5px solid var(--card2);
   border-radius: 3px;
   display: flex;
   align-items: center;
@@ -1207,19 +1251,19 @@ h1 span {
   font-family: 'Bebas Neue', cursive;
   font-size: 12px;
   color: transparent;
-  background: #181614;
+  background: var(--bg);
   transition: all 0.2s ease;
   margin-top: 1px;
 }
 .fallback-row.checked .fallback-checkbox {
-  background: #C9A84C;
-  border-color: #C9A84C;
-  color: #181614;
+  background: var(--gold);
+  border-color: var(--gold);
+  color: var(--bg);
 }
 .fallback-label {
   font-size: 13px;
   line-height: 1.4;
-  color: #A89880;
+  color: var(--grey);
   text-align: left;
 }
 .fallback-row.checked .fallback-label {
@@ -1241,7 +1285,7 @@ h1 span {
   text-align: left;
 }
 .fallback-reassure.shown { display: block; animation: fadeIn 0.3s ease; }
-.fallback-reassure strong { color: #C9A84C; }
+.fallback-reassure strong { color: var(--gold); }
 
 /* Privacy note for the phone field — small reassurance */
 .privacy-note {
@@ -1277,8 +1321,8 @@ select.field-input {
 .status-card {
   max-width: 360px;
   margin: 0 auto 16px auto;
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 4px;
   padding: 18px 20px;
   text-align: left;
@@ -1293,7 +1337,7 @@ select.field-input {
   font-family: 'Bebas Neue', cursive;
   font-size: 18px;
   letter-spacing: 1.5px;
-  color: #F5F0EB;
+  color: var(--white);
   flex: 1;
 }
 .status-card-icon {
@@ -1316,7 +1360,7 @@ select.field-input {
 .status-pill.pending {
   background: rgba(201,168,76,0.10);
   border-color: rgba(201,168,76,0.4);
-  color: #C9A84C;
+  color: var(--gold);
 }
 .status-meta {
   font-size: 12px;
@@ -1329,7 +1373,7 @@ select.field-input {
 .status-body {
   font-size: 13px;
   line-height: 1.5;
-  color: #A89880;
+  color: var(--grey);
   margin-bottom: 12px;
 }
 
@@ -1380,7 +1424,7 @@ select.field-input {
   font-family: 'Bebas Neue', cursive;
   font-size: 18px;
   letter-spacing: 2px;
-  color: #C9A84C;
+  color: var(--gold);
   margin-bottom: 12px;
   text-transform: uppercase;
 }
@@ -1390,7 +1434,7 @@ select.field-input {
   color: #D4C4A8;
   margin-bottom: 8px;
 }
-.next-block-line strong { color: #F5F0EB; }
+.next-block-line strong { color: var(--white); }
 .next-block-line:last-child { margin-bottom: 0; }
 .next-block-line strong { color: #D4C8B8; }
 
@@ -1400,13 +1444,13 @@ select.field-input {
   margin: 0 auto 14px auto;
   padding: 12px 16px;
   background: rgba(201,168,76,0.06);
-  border-left: 3px solid #C9A84C;
+  border-left: 3px solid var(--gold);
   border-radius: 2px;
   font-size: 13px;
   line-height: 1.5;
   color: #D4C8B8;
 }
-.setup-required strong { color: #C9A84C; }
+.setup-required strong { color: var(--gold); }
 
 /* ═══════════════════════════════════════════════════════════
    SCREEN 8 — PARENT DASHBOARD (first visit empty state)
@@ -1439,7 +1483,7 @@ select.field-input {
   color: #D4C8B8;
 }
 .trial-banner-text strong {
-  color: #C9A84C;
+  color: var(--gold);
   font-family: 'Bebas Neue', cursive;
   font-size: 16px;
   letter-spacing: 1px;
@@ -1451,8 +1495,8 @@ select.field-input {
 .dash-player-card {
   max-width: 360px;
   margin: 0 auto 16px auto;
-  background: #181614;
-  border: 1px solid #2A2622;
+  background: var(--bg);
+  border: 1px solid var(--card2);
   border-radius: 4px;
   padding: 18px 20px;
   text-align: left;
@@ -1463,7 +1507,7 @@ select.field-input {
   gap: 10px;
   margin-bottom: 14px;
   padding-bottom: 14px;
-  border-bottom: 1px solid #2A2622;
+  border-bottom: 1px solid var(--card2);
 }
 .dash-player-icon {
   font-size: 18px;
@@ -1473,7 +1517,7 @@ select.field-input {
   font-family: 'Bebas Neue', cursive;
   font-size: 20px;
   letter-spacing: 1.5px;
-  color: #F5F0EB;
+  color: var(--white);
   flex: 1;
 }
 .dash-player-status {
@@ -1487,7 +1531,7 @@ select.field-input {
   font-weight: 700;
   letter-spacing: 1.3px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
 }
 
 /* Placeholder sections inside the player card. Opacity + colors tuned so
@@ -1499,7 +1543,7 @@ select.field-input {
   align-items: center;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #231F1C;
+  border-bottom: 1px solid var(--card);
   opacity: 0.78;
 }
 .dash-section:last-child { border-bottom: none; }
@@ -1507,7 +1551,7 @@ select.field-input {
   flex-shrink: 0;
   width: 28px;
   height: 28px;
-  background: #2A2622;
+  background: var(--card2);
   border-radius: 4px;
   display: flex;
   align-items: center;
@@ -1534,7 +1578,7 @@ select.field-input {
 .dash-section-lock {
   flex-shrink: 0;
   font-size: 14px;
-  color: #C9A84C;
+  color: var(--gold);
   filter: drop-shadow(0 0 4px rgba(201,168,76,0.25));
 }
 
@@ -1550,7 +1594,7 @@ select.field-input {
   color: #C5B59A;
   text-align: center;
 }
-.dash-waiting-msg strong { color: #C9A84C; }
+.dash-waiting-msg strong { color: var(--gold); }
 
 /* Resend invite small action button */
 .dash-resend {
@@ -1564,13 +1608,13 @@ select.field-input {
   font-weight: 700;
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 .dash-resend:hover {
   background: rgba(201,168,76,0.06);
-  border-color: #C9A84C;
+  border-color: var(--gold);
 }
 
 /* (April 27 PM): .pay-now-btn and .pay-now-sub CSS removed — the gold
@@ -1586,7 +1630,7 @@ select.field-input {
   max-width: 380px;
   margin: 0 auto 0 auto;
   padding-top: 18px;
-  border-top: 1px solid #231F1C;
+  border-top: 1px solid var(--card);
   display: flex;
   justify-content: center;
   gap: 24px;
@@ -1602,7 +1646,7 @@ select.field-input {
   transition: color 0.2s ease;
   padding: 8px 4px;
 }
-.dash-footer a:hover { color: #C9A84C; }
+.dash-footer a:hover { color: var(--gold); }
 
 /* Dashboard finishes the flow — no traditional bnav, hide the dots since
    this is the destination, not a step */
@@ -1616,7 +1660,7 @@ select.field-input {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(180deg, transparent 0%, #181614 30%);
+  background: linear-gradient(180deg, transparent 0%, var(--bg) 30%);
   padding: 16px 24px 24px 24px;
   display: flex;
   align-items: center;
@@ -1648,12 +1692,12 @@ select.field-input {
   color: #8A7E70;
   min-width: 80px;
 }
-.back-btn:hover { color: #C9A84C; }
+.back-btn:hover { color: var(--gold); }
 .back-btn:active { opacity: 0.7; }
 
 .next-btn {
-  background: linear-gradient(135deg, #C9A84C, #B89740);
-  color: #181614;
+  background: linear-gradient(135deg, var(--gold), #B89740);
+  color: var(--bg);
   min-width: 100px;
   box-shadow: 0 2px 12px rgba(201,168,76,0.2);
 }
@@ -1671,8 +1715,8 @@ select.field-input {
   width: 100%;
   max-width: 320px;
   margin: 0 auto 16px auto;
-  background: linear-gradient(135deg, #C9A84C, #B89740);
-  color: #181614;
+  background: linear-gradient(135deg, var(--gold), #B89740);
+  color: var(--bg);
   font-family: 'Bebas Neue', cursive;
   font-size: 22px;
   letter-spacing: 2.5px;
@@ -1705,10 +1749,10 @@ select.field-input {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #2A2622;
+  background: var(--card2);
   transition: all 0.3s ease;
 }
-.dot.active { background: #C9A84C; width: 18px; border-radius: 3px; }
+.dot.active { background: var(--gold); width: 18px; border-radius: 3px; }
 .dot.done { background: #6B5630; }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1742,7 +1786,7 @@ select.field-input {
   font-family: 'Bebas Neue', cursive;
   font-size: 20px;
   letter-spacing: 4px;
-  color: #C9A84C;
+  color: var(--gold);
 }
 .logo-mark .sm {
   display: block;
@@ -1783,7 +1827,7 @@ select.field-input {
   display: flex;
 }
 .phone-confirm-modal {
-  background: #181614;
+  background: var(--bg);
   border: 1px solid rgba(201,168,76,0.35);
   border-radius: 4px;
   max-width: 380px;
@@ -1798,14 +1842,14 @@ select.field-input {
   font-size: 11px;
   letter-spacing: 1.8px;
   text-transform: uppercase;
-  color: #C9A84C;
+  color: var(--gold);
   margin-bottom: 8px;
 }
 .phone-confirm-title {
   font-family: 'Bebas Neue', cursive;
   font-size: 28px;
   letter-spacing: 1px;
-  color: #F5F0EB;
+  color: var(--white);
   margin: 0 0 14px 0;
   line-height: 1.1;
 }
@@ -1841,7 +1885,7 @@ select.field-input {
 .phone-confirm-row .pcr-phone {
   font-family: 'Barlow', sans-serif;
   font-size: 14px;
-  color: #F5F0EB;
+  color: var(--white);
   font-weight: 600;
   letter-spacing: 0.3px;
 }
@@ -1863,7 +1907,7 @@ select.field-input {
   margin: 0 0 18px 0;
   padding: 13px;
   background: rgba(201,168,76,0.05);
-  border: 1px solid #3D3530;
+  border: 1px solid var(--border);
   border-radius: 10px;
   cursor: pointer;
 }
@@ -1876,14 +1920,14 @@ select.field-input {
   margin-top: 1px;
   border: 2px solid #8F7A36;
   border-radius: 6px;
-  background: #1E1A17;
+  background: var(--card);
   cursor: pointer;
   position: relative;
   transition: 0.15s;
 }
 .phone-confirm-consent input[type="checkbox"]:checked {
-  background: #C9A84C;
-  border-color: #C9A84C;
+  background: var(--gold);
+  border-color: var(--gold);
 }
 .phone-confirm-consent input[type="checkbox"]:checked::after {
   content: "";
@@ -1892,18 +1936,18 @@ select.field-input {
   top: 2px;
   width: 6px;
   height: 11px;
-  border: solid #181614;
+  border: solid var(--bg);
   border-width: 0 2.5px 2.5px 0;
   transform: rotate(45deg);
 }
 .phone-confirm-consent .pcc-text {
   font-family: 'Barlow', sans-serif;
   font-size: 12px;
-  color: #A89880;
+  color: var(--grey);
   line-height: 1.5;
 }
 .phone-confirm-consent .pcc-text strong {
-  color: #C9A84C;
+  color: var(--gold);
 }
 .phone-confirm-consent .pcc-text a {
   color: var(--gold-light, #E0BC60);
@@ -1942,15 +1986,15 @@ select.field-input {
 .phone-confirm-edit {
   background: transparent;
   border: 1px solid #3A332A;
-  color: #A89880;
+  color: var(--grey);
 }
 .phone-confirm-edit:hover {
   border-color: #6B5E52;
   color: #E8DCC4;
 }
 .phone-confirm-send {
-  background: #C9A84C;
-  color: #181614;
+  background: var(--gold);
+  color: var(--bg);
 }
 .phone-confirm-send:hover {
   background: #D4B85A;
@@ -1985,7 +2029,7 @@ select.field-input {
   width: 100%;
   transition: all 0.15s ease;
 }
-.modal-close-btn:hover { border-color: #6B5E52; color: #F5F0EB; }
+.modal-close-btn:hover { border-color: #6B5E52; color: var(--white); }
 
 .share-link-row {
   display: flex;
@@ -2000,11 +2044,11 @@ select.field-input {
   padding: 12px 14px;
   font-family: 'Barlow', sans-serif;
   font-size: 15px;
-  color: #F5F0EB;
+  color: var(--white);
   text-align: left;
   min-width: 0;
 }
-.share-link-input:focus { outline: none; border-color: #C9A84C; }
+.share-link-input:focus { outline: none; border-color: var(--gold); }
 .share-actions { display: flex; gap: 10px; }
 .share-action-btn {
   flex: 1;
@@ -2017,7 +2061,7 @@ select.field-input {
   border: none;
   transition: all 0.15s ease;
 }
-.share-action-btn.primary { background: #C9A84C; color: #181614; }
+.share-action-btn.primary { background: var(--gold); color: var(--bg); }
 .share-action-btn.primary:hover { background: #D4B85A; }
 .share-action-btn.secondary {
   background: transparent;
@@ -2030,7 +2074,7 @@ select.field-input {
   width: 100%;
   background: transparent;
   border: 1px solid rgba(201,168,76,0.45);
-  color: #C9A84C;
+  color: var(--gold);
 }
 .share-action-btn.qr:hover { background: rgba(201,168,76,0.08); }
 .share-toast {
@@ -2048,7 +2092,7 @@ select.field-input {
   display: none;
   margin: 14px auto 0 auto;
   padding: 16px;
-  background: #F5F0EB;
+  background: var(--white);
   border-radius: 6px;
   max-width: 240px;
   text-align: center;
@@ -2096,7 +2140,7 @@ select.field-input {
 .settings-row-value {
   font-family: 'Barlow', sans-serif;
   font-size: 16px;
-  color: #F5F0EB;
+  color: var(--white);
   text-align: right;
   word-break: break-all;
 }
@@ -2107,7 +2151,7 @@ select.field-input {
   line-height: 1.55;
   margin: 14px 0;
 }
-.settings-support-line a { color: #C9A84C; text-decoration: none; font-weight: 600; }
+.settings-support-line a { color: var(--gold); text-decoration: none; font-weight: 600; }
 .settings-support-line a:hover { text-decoration: underline; }
 </style>
 <!-- Meta Pixel (My Pixel · 326334441984368) -->
@@ -2123,6 +2167,8 @@ fbq('init','326334441984368');fbq('track','PageView');
 <!-- End Meta Pixel -->
 </head>
 <body>
+<!-- Theme toggle (experiment only — branch theme/light-premium). -->
+<button id="mg-theme-toggle" onclick="mgToggleTheme()" aria-label="Toggle light or dark theme" title="Toggle light/dark">◐</button>
 
 <!-- ═══════════════════════════════════════════════════════════
      LUCIDE ICON SPRITE — 2026-05-18 Coach Young north-star pass.
@@ -2184,6 +2230,7 @@ fbq('init','326334441984368');fbq('track','PageView');
      ═══════════════════════════════════════════════════════════ -->
 <div class="logo-mark">
   <img data-mg-img="logo" alt="MyGrind" style="height:140px; width:auto; max-width:90vw;">
+  <div class="logo-light-lockup" aria-hidden="true">My<span>Grind</span></div>
 </div>
 
 <!-- ═══════════════════════════════════════════════════════════
@@ -3411,14 +3458,14 @@ fbq('init','326334441984368');fbq('track','PageView');
   }
   .plan-picker-card:hover { border-color: #8F7A36; }
   .plan-picker-card.selected {
-    border-color: #C9A84C;
+    border-color: var(--gold);
     background: rgba(232,201,122,0.08);
   }
   .plan-picker-pill {
     position: absolute;
     top: -10px;
     right: 12px;
-    background: #C9A84C;
+    background: var(--gold);
     color: #0C0A08;
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 11px;
@@ -3440,7 +3487,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 22px;
     font-weight: 800;
-    color: #F5F0EB;
+    color: var(--white);
   }
   .plan-picker-price span {
     font-size: 14px;
