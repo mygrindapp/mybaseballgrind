@@ -333,6 +333,13 @@
   html[data-theme="light"] .hero-quote { color: var(--light); }
   html[data-theme="light"] .form-row input[type="email"] { background: var(--dark); color: var(--white); }
   html[data-theme="light"] .form-row input[type="email"]::placeholder { color: var(--grey); }
+  /* Content boxes use dark rgba backgrounds in CSS classes (not inline), so
+     they render grey on white. Flip them to light surfaces so copy reads. */
+  html[data-theme="light"] .founder-note,
+  html[data-theme="light"] .how-step,
+  html[data-theme="light"] .form-card,
+  html[data-theme="light"] .pricing .plan-includes,
+  html[data-theme="light"] .testimonial-card { background: var(--card); }
   #mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card,#231F1C); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1677,7 +1684,7 @@ fbq('init','326334441984368');fbq('track','PageView');
        more than a tracker. -->
   <section class="how-it-works" id="how">
     <h2 class="section-title">How it works</h2>
-    <p class="section-sub">More than a tracker. It's how serious players see their work, stay eligible, and earn the next level.</p>
+    <p class="section-sub">More than a tracker. It's how serious players see their work, stay eligible, and stay accountable for the journey.</p>
     <div class="how-grid">
       <div class="how-step">
         <div class="step-num">1</div>
@@ -1691,8 +1698,8 @@ fbq('init','326334441984368');fbq('track','PageView');
       </div>
       <div class="how-step">
         <div class="step-num">3</div>
-        <h3>Reach the next level</h3>
-        <p>When you can see exactly where you stand, you stop guessing and start competing with proof. That's how players earn the next level.</p>
+        <h3>Own your journey</h3>
+        <p>When you can see exactly where you stand, you stop guessing and start competing with proof. That's how players own their development.</p>
       </div>
     </div>
   </section>
