@@ -557,6 +557,16 @@
   /* Typewriter pen cursors — retired with the typewriter (2026-05-29). */
   .cursor { display: none; }
 
+  /* Hero slogan — the MyGrind tagline under the heading (Coach 2026-06-30). */
+  .hero-slogan {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(24px, 6vw, 40px);
+    letter-spacing: 2px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: 8px;
+  }
+
   /* Gold treatment + shimmer for "ONE JOURNAL." */
   .hero h1 .gold {
     background: linear-gradient(
@@ -1606,9 +1616,8 @@ fbq('init','326334441984368');fbq('track','PageView');
   <section class="hero">
     <h1>
       <span class="line l1"><span class="text">Track Your Grind.</span><span class="cursor c1"></span></span>
-      <span class="line l2"><span class="text">Own</span><span class="cursor c2"></span></span>
-      <span class="line l3 gold"><span class="text">Your Journey.</span><span class="cursor c3"></span></span>
     </h1>
+    <p class="hero-slogan">Log it. Own it.</p>
     <div class="accent-underline" id="underline"></div>
     <div class="sport-chip" id="chip">Baseball &middot; Softball</div>
     <h2 class="subhead" id="subhead">
