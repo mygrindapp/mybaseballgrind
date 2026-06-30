@@ -844,6 +844,27 @@
     background-color: rgba(0,0,0,0.2);
   }
 
+  /* Start Today chooser — Coach Young 2026-06-30: the journal opens on an
+     intentional "what are you logging today?" pick instead of dropping the
+     player into a pre-set form. Big tap targets so logging reads as an
+     action, not a form to fill. */
+  .start-choice {
+    display: flex; flex-direction: column; align-items: flex-start; gap: 5px;
+    text-align: left; background: var(--card2); border: 1px solid var(--border);
+    border-radius: 8px; padding: 14px; cursor: pointer; min-height: 98px;
+    transition: border-color 0.15s, transform 0.05s;
+  }
+  .start-choice:hover { border-color: var(--gold); }
+  .start-choice:active { transform: scale(0.98); }
+  .start-choice .sc-emoji { font-size: 24px; line-height: 1; }
+  .start-choice .sc-label {
+    font-family: 'Barlow Condensed', sans-serif; font-weight: 800;
+    letter-spacing: 1px; text-transform: uppercase; font-size: 16px; color: var(--gold);
+  }
+  .start-choice .sc-sub {
+    font-family: 'Barlow', sans-serif; font-size: 11px; color: var(--grey); line-height: 1.35;
+  }
+
   /* Custom select chevron — Coach Young 2026-05-17 walkthrough: default
      browser chevron renders dark on a dark background and disappears.
      Strip the native chevron and paint a gold one in its place. Encoded
@@ -3518,6 +3539,43 @@ input[type="number"] {
            The gold bar didn't carry any meaning. -->
     </div>
 
+    <!-- ── START TODAY CHOOSER ── Coach Young 2026-06-30: the journal used
+         to drop the player straight into a pre-set form (defaulted to
+         Practice, or forced Reflection on an off-day lock). It now opens on
+         an intentional "what are you logging today?" pick, so logging reads
+         as a decision/action. chooseEntryType() sets #j-type and reuses the
+         existing toggleGameStats() engine — no new form logic. -->
+    <div class="card" id="j-start-chooser" style="border-left:3px solid var(--gold);">
+      <div class="card-title" style="font-size:22px;">Start Today</div>
+      <div style="font-family:'Barlow'; font-size:14px; color:var(--grey); margin:-2px 0 16px; line-height:1.5;">What are you logging today? Pick one to begin.</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+        <button type="button" class="start-choice" onclick="chooseEntryType('game')">
+          <span class="sc-emoji">⚾</span><span class="sc-label">Game</span>
+          <span class="sc-sub">Stats, result, how you competed</span>
+        </button>
+        <button type="button" class="start-choice" onclick="chooseEntryType('practice')">
+          <span class="sc-emoji">🧤</span><span class="sc-label">Practice</span>
+          <span class="sc-sub">Drills, reps, what you worked on</span>
+        </button>
+        <button type="button" class="start-choice" onclick="chooseEntryType('workout')">
+          <span class="sc-emoji">💪</span><span class="sc-label">Workout</span>
+          <span class="sc-sub">Lifts, conditioning, PRs</span>
+        </button>
+        <button type="button" class="start-choice" onclick="chooseEntryType('instructor')">
+          <span class="sc-emoji">🎓</span><span class="sc-label">Instructor</span>
+          <span class="sc-sub">A lesson with a coach or trainer</span>
+        </button>
+        <button type="button" class="start-choice" onclick="chooseEntryType('reflection')">
+          <span class="sc-emoji">🪞</span><span class="sc-label">Reflection</span>
+          <span class="sc-sub">Where your head is at</span>
+        </button>
+        <button type="button" class="start-choice" onclick="chooseEntryType('offday')">
+          <span class="sc-emoji">😴</span><span class="sc-label">Off Day</span>
+          <span class="sc-sub">Full rest and recovery</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Reminder banners + daily quote moved BELOW the entry form
          2026-06-09 flow audit: during grade windows a quarterly task
          (the grades nag) and a second quote moment (the QOTD already gets
@@ -3529,7 +3587,8 @@ input[type="number"] {
          panel banner ("DAILY JOURNAL") and the obvious form below
          already communicate "this is where you log a new entry." The
          eyebrow stamp was redundant after the 22px display-heading bump. -->
-    <div class="card">
+    <div class="card" id="j-entry-form-card" style="display:none;">
+      <button type="button" onclick="journalStartOver()" style="background:transparent; border:none; color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:0 0 12px; cursor:pointer;">&larr; Change entry type</button>
       <!-- Date picker — Coach Young 2026-05-11 walkthrough iteration 2.
            Tried locking to today (commit 061641b), but back-dating is
            still needed for the "forgot to log yesterday" case. Keeping
@@ -3862,7 +3921,7 @@ input[type="number"] {
         <textarea id="j-team-role-text" inputmode="text" placeholder="The reps you got, what coach pointed out, what felt sharp or sloppy."></textarea>
       </div>
       <label id="j-tomorrow-label">What am I taking into the next practice or game?</label>
-      <textarea id="j-tomorrow" inputmode="text" placeholder="What is one thing I want to carry forward and keep working on?"></textarea>
+      <textarea id="j-tomorrow" inputmode="text" placeholder="One drill or cue to keep sharpening next time."></textarea>
       <!-- Reflection-only third prompt — Coach Young 2026-05-12 v2:
            timeframe opened up beyond "tomorrow" so a player reflecting
            on a tough week or a hot stretch can carry the takeaway into
@@ -4266,7 +4325,7 @@ input[type="number"] {
 
         <div style="margin-top:18px;">
           <label class="wo-section-label">Main Lifts <span class="wo-section-hint">(what you actually worked on)</span></label>
-          <textarea id="j-wo-lifts" oninput="_refreshWoLiftChips()" placeholder="e.g. Trap Bar DL 3x5 @ 225 · Med Ball Rotational Throw 3x8 · Bench 3x5 @ 155 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
+          <textarea id="j-wo-lifts" oninput="_refreshWoLiftChips()" placeholder="e.g. Trap Bar DL 3x5 @ 225 · Bench 3x5 @ 155 · Pull-ups 3x8" style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
 
         <!-- Top Set (2026-06-11): the one structured number per session.
@@ -4376,7 +4435,7 @@ input[type="number"] {
         </div>
         <div style="margin-top:12px;">
           <label>What We Worked On</label>
-          <textarea id="j-inst-notes" placeholder="e.g. Tee work on back side, 50 swings. Then flips focusing on loading earlier..." style="min-height:80px; margin-bottom:0;"></textarea>
+          <textarea id="j-inst-notes" placeholder="e.g. Tee work, back side. 50 swings, then flips." style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
         <!-- "What I Need to Work On" — forward-looking takeaway from the
              lesson. Coach Young 2026-05-10 walkthrough: the entry already
@@ -4385,7 +4444,7 @@ input[type="number"] {
              Coach" message below so the coach sees the player's plan. -->
         <div style="margin-top:12px;">
           <label>What I Need to Work On</label>
-          <textarea id="j-inst-takeaway" placeholder="e.g. Stay back on off-speed. 50 tee swings every day this week. Film my Wednesday session and send to coach." style="min-height:70px; margin-bottom:0;"></textarea>
+          <textarea id="j-inst-takeaway" placeholder="e.g. 50 tee swings a day. Film Wednesday's session." style="min-height:70px; margin-bottom:0;"></textarea>
         </div>
         <!-- "Note for My Instructor" — replaces the original SMS button
              (Coach Young 2026-05-10 walkthrough: open SMS to any contact
@@ -4397,8 +4456,8 @@ input[type="number"] {
              too easy to miss). -->
         <div style="margin-top:14px; padding:14px 16px; background:rgba(168,217,123,0.05); border:1px solid #2A3A2A; border-radius:3px;">
           <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:#A8D97B; margin-bottom:6px; display:inline-flex; align-items:center; gap:6px;"><svg class="mg-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-pencil"/></svg> Save Note for Instructor</div>
-          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:10px; line-height:1.5;">Anything you want your instructor to see. Questions, what felt different today, what you want to work on next session.</div>
-          <textarea id="j-inst-note" placeholder="e.g. My back leg felt weak in the front-toss reps. Can we work on that next time?" style="min-height:70px; margin-bottom:6px;"></textarea>
+          <div style="font-family:'Barlow'; font-size:13px; color:var(--grey); margin-bottom:10px; line-height:1.5;">A question, or something you want them to know before the next lesson.</div>
+          <textarea id="j-inst-note" placeholder="e.g. Can we work on my back leg next time?" style="min-height:70px; margin-bottom:6px;"></textarea>
           <div style="font-family:'Barlow'; font-size:11px; color:var(--grey); line-height:1.5;">
             Saved with this entry. Your instructor will see it in the <strong style="color:#A8D97B;">Coach Portal</strong>. Coming with MyGrind Pro.
           </div>
@@ -4438,7 +4497,7 @@ input[type="number"] {
         </div>
         <div style="margin-top:12px;">
           <label>What did they tell me?</label>
-          <textarea id="j-comment-text" placeholder="e.g. Coach told me to stay back on off-speed pitches. Mom said she was proud of how I handled the strikeout..." style="min-height:80px; margin-bottom:0;"></textarea>
+          <textarea id="j-comment-text" placeholder="e.g. Stay back on off-speed pitches." style="min-height:80px; margin-bottom:0;"></textarea>
         </div>
       </div>
 
@@ -4519,7 +4578,7 @@ input[type="number"] {
         </div>
       </div>
       <label>What did they tell me?</label>
-      <textarea id="ac-text" placeholder="e.g. Coach said my first step to the bag was late. Dad said keep my head up after errors..."></textarea>
+      <textarea id="ac-text" placeholder="e.g. First step to the bag was late."></textarea>
       <div style="display:flex; gap:10px;">
         <button class="btn btn-gold" onclick="submitComment()"><svg class="mg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-message-circle"/></svg>&nbsp;Save Feedback</button>
         <button class="btn btn-outline" onclick="cancelComment()">Cancel</button>
@@ -9997,8 +10056,10 @@ function _doEditEntry(id) {
   if (banner)    banner.style.display = 'block';
   if (bannerDate) bannerDate.textContent = entry.date || 'this entry';
 
-  // Scroll to the New Entry card so the user sees the form
-  const card = document.querySelector('#panel-journal .card');
+  // Reveal the entry form (the journal now opens on the Start Today
+  // chooser) and scroll to it so the user sees the populated form.
+  try { showEntryForm(); } catch (e) {}
+  const card = document.getElementById('j-entry-form-card');
   if (card) card.scrollIntoView({ behavior: 'smooth', block: 'start' });
   ybgHaptic(15);
 }
@@ -10033,6 +10094,39 @@ function cancelEdit() {
   if (saveBtn)   saveBtn.innerHTML = '<svg class="mg-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg>&nbsp;Save Entry';
   if (cancelBtn) cancelBtn.style.display = 'none';
   if (banner)    banner.style.display = 'none';
+}
+
+// ── START TODAY CHOOSER ───────────────────────────────
+// Coach Young 2026-06-30: the journal opens on an intentional entry-type
+// pick instead of a pre-set form. These helpers toggle the chooser vs the
+// form; chooseEntryType() drives the existing toggleGameStats() engine.
+function showStartChooser() {
+  var chooser  = document.getElementById('j-start-chooser');
+  var formCard = document.getElementById('j-entry-form-card');
+  if (chooser)  chooser.style.display  = 'block';
+  if (formCard) formCard.style.display = 'none';
+}
+function showEntryForm() {
+  var chooser  = document.getElementById('j-start-chooser');
+  var formCard = document.getElementById('j-entry-form-card');
+  if (chooser)  chooser.style.display  = 'none';
+  if (formCard) formCard.style.display = 'block';
+}
+function chooseEntryType(type) {
+  var typeEl = document.getElementById('j-type');
+  if (typeEl) typeEl.value = type;
+  // Off-day lock + per-type field/label setup all run inside toggleGameStats.
+  try { toggleGameStats(); } catch (e) {}
+  showEntryForm();
+  var formCard = document.getElementById('j-entry-form-card');
+  if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  try { ybgHaptic(12); } catch (e) {}
+}
+// "← Change entry type" — clears any in-progress new entry and returns to
+// the chooser (explicit start-over, so wiping the draft is expected here).
+function journalStartOver() {
+  try { cancelEdit(); } catch (e) {}
+  showStartChooser();
 }
 
 // ── SAVE ENTRY ────────────────────────────────────────
@@ -11006,12 +11100,12 @@ function toggleGameStats() {
     // forward-looking prompt should point at the NEXT game specifically,
     // not "tomorrow" (which might be a practice / rest day / nothing).
     if (tmrwLb)  tmrwLb.textContent  = "What's the goal for next game?";
-    if (tmrwEl)  tmrwEl.placeholder  = 'One adjustment, one mindset, one specific stat to push. Make it real.';
+    if (tmrwEl)  tmrwEl.placeholder  = 'One specific thing to lock in for next game. A pitch to lay off, a better jump, a count to win.';
   } else if (isPrac) {
     if (whatLb)  whatLb.textContent  = 'What did I work on today?';
     if (whatEl)  whatEl.placeholder  = 'What drills, reps, or skills did I focus on? What felt good?';
     if (tmrwLb)  tmrwLb.textContent  = 'What am I taking into the next practice or game?';
-    if (tmrwEl)  tmrwEl.placeholder  = 'What is one thing I want to carry forward and keep working on?';
+    if (tmrwEl)  tmrwEl.placeholder  = 'One drill or cue to keep sharpening next time.';
   } else if (isReflect) {
     // Reflection — open-ended timeframe (Coach Young 2026-05-12 v2):
     // "The questions about reflection shouldn't be about today or
@@ -21847,6 +21941,8 @@ function mgTab(panel, tabId) {
   // (Coach Young 2026-05-11). Cheap to call; no-op when panel isn't journal.
   if (panel === 'journal') {
     try { renderJournalReminders(); } catch (e) {}
+    // Default the journal to the Start Today chooser unless mid-edit.
+    try { if (!editingEntryId) showStartChooser(); } catch (e) {}
   }
   // Scroll the main container to top on tab switch — Coach Young 2026-05-17.
   // The "← Back to Dashboard" pills used to leave the player wherever the
