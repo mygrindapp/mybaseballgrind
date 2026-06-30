@@ -2,22 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- THEME EXPERIMENT (branch theme/light-premium): set data-theme before paint. -->
-<script>
-(function(){
-  try {
-    var t = localStorage.getItem('mg_theme');
-    if (t !== 'light' && t !== 'dark') t = 'light';   // default-light (Coach 2026-06-30)
-    document.documentElement.setAttribute('data-theme', t);
-  } catch(e) { document.documentElement.setAttribute('data-theme','dark'); }
-  window.mgToggleTheme = function(){
-    var next = (document.documentElement.getAttribute('data-theme')==='light') ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('mg_theme', next); } catch(e){}
-    var b=document.getElementById('mg-theme-toggle'); if(b) b.textContent = next==='light'?'☾':'☀';
-  };
-})();
-</script>
+<!-- Signup funnel is ALWAYS light/white (Coach 2026-06-30). The light/dark
+     toggle lives inside the app only. -->
+<script>document.documentElement.setAttribute('data-theme','light');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <!-- Shared press-feedback + motion layer (assets/interactions.css). -->
 <link rel="stylesheet" href="/assets/interactions.css">
@@ -2167,8 +2154,6 @@ fbq('init','326334441984368');fbq('track','PageView');
 <!-- End Meta Pixel -->
 </head>
 <body>
-<!-- Theme toggle (experiment only — branch theme/light-premium). -->
-<button id="mg-theme-toggle" onclick="mgToggleTheme()" aria-label="Toggle light or dark theme" title="Toggle light/dark">◐</button>
 
 <!-- ═══════════════════════════════════════════════════════════
      LUCIDE ICON SPRITE — 2026-05-18 Coach Young north-star pass.

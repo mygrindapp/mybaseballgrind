@@ -2,22 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- THEME EXPERIMENT (branch theme/light-premium): set data-theme before paint. -->
-<script>
-(function(){
-  try {
-    var t = localStorage.getItem('mg_theme');
-    if (t !== 'light' && t !== 'dark') t = 'light';   // default-light (Coach 2026-06-30)
-    document.documentElement.setAttribute('data-theme', t);
-  } catch(e) { document.documentElement.setAttribute('data-theme','dark'); }
-  window.mgToggleTheme = function(){
-    var next = (document.documentElement.getAttribute('data-theme')==='light') ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', next);
-    try { localStorage.setItem('mg_theme', next); } catch(e){}
-    var b=document.getElementById('mg-theme-toggle'); if(b) b.textContent = next==='light'?'☾':'☀';
-  };
-})();
-</script>
+<!-- Landing page is ALWAYS light/white (Coach 2026-06-30). The light/dark
+     toggle lives inside the app only, so there is no dark landing page. -->
+<script>document.documentElement.setAttribute('data-theme','light');</script>
 <meta name="p:domain_verify" content="5260e0fca4a2edad0e0f8751a7459bb2"/>
 <!-- ── Returning-user routing (2026-06-09) ── Runs before anything else so a
      recognized returner is sent into the app router (softball.html) instead
@@ -1591,8 +1578,6 @@ fbq('init','326334441984368');fbq('track','PageView');
 </head>
 
 <body>
-<!-- Theme toggle (experiment only — branch theme/light-premium). -->
-<button id="mg-theme-toggle" onclick="mgToggleTheme()" aria-label="Toggle light or dark theme" title="Toggle light/dark">◐</button>
 
 <div class="bg-diamond"></div>
 <div class="bg-streaks"></div>
@@ -1614,8 +1599,8 @@ fbq('init','326334441984368');fbq('track','PageView');
   <section class="hero">
     <h1>
       <span class="line l1"><span class="text">Track Your Grind.</span><span class="cursor c1"></span></span>
-      <span class="line l2"><span class="text">Earn</span><span class="cursor c2"></span></span>
-      <span class="line l3 gold"><span class="text">The Next Level.</span><span class="cursor c3"></span></span>
+      <span class="line l2"><span class="text">Own</span><span class="cursor c2"></span></span>
+      <span class="line l3 gold"><span class="text">Your Journey.</span><span class="cursor c3"></span></span>
     </h1>
     <div class="accent-underline" id="underline"></div>
     <div class="sport-chip" id="chip">Baseball &middot; Softball</div>
@@ -1657,7 +1642,7 @@ fbq('init','326334441984368');fbq('track','PageView');
        object-position:top so every screen's header shows. -->
   <section class="see-the-app" id="see">
     <h2 class="section-title">See what your player opens every day</h2>
-    <p class="section-sub">A real product, built by a real coach. Not a Notion template.</p>
+    <p class="section-sub">A real product, built by a real coach.</p>
     <div class="app-grid">
       <figure>
         <img src="/assets/screenshots/01-dashboard.jpg" width="1080" height="1440" alt="MyGrind dashboard with a six-day streak, days logged this week, total reps, a completed daily check-in, and a GPA card clearing NCAA eligibility" loading="lazy">
