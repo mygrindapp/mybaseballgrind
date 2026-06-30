@@ -2700,14 +2700,14 @@ fbq('init','326334441984368');fbq('track','PageView');
 
   <div class="screen-body">
     <h1>
-      Straight up.
-      <span>here's what it costs.</span>
+      Nothing's due today.
+      <span>Here's your plan for after.</span>
     </h1>
 
     <div class="gold-bar"></div>
 
     <p class="sub" id="s5_sub">
-      Not today. Not for 14 days. But you should know before we start.
+      You will not be charged today, or anytime during your 14-day free trial. This is just so you can have a plan in mind for when it ends.
     </p>
 
     <!-- Pricing cards (selectable per Decision #8 v2 — Annual pre-selected) -->
@@ -6454,7 +6454,7 @@ function applyPromoMessaging() {
 
   if (!info) {
     // No (recognized) promo — restore the default 14-day trial copy.
-    if (s5Sub)      s5Sub.textContent      = 'Not today. Not for 14 days. But you should know before we start.';
+    if (s5Sub)      s5Sub.textContent      = 'You will not be charged today, or anytime during your 14-day free trial. This is just so you can have a plan in mind for when it ends.';
     if (s5Title)    s5Title.textContent    = 'What happens at day 14?';
     if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Twice</strong>: on day 12, and again on day 14.";
     if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
@@ -6475,7 +6475,7 @@ function applyPromoMessaging() {
 
   if (info.kind === 'months') {
     const dur = info.durationLabel;        // e.g. "6 months"
-    if (s5Sub)      s5Sub.textContent      = "Not today. Not for " + dur + ". But you should know before we start.";
+    if (s5Sub)      s5Sub.textContent      = "You will not be charged today, or anytime during your " + dur + " free trial. This is just so you can have a plan in mind for when it ends.";
     if (s5Title)    s5Title.textContent    = "What happens after your free " + dur + "?";
     if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Two weeks before</strong> your free " + dur + " ends.";
     if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
