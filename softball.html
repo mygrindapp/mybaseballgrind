@@ -3,6 +3,25 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- THEME EXPERIMENT (branch theme/light-premium): set data-theme before
+     paint to avoid a flash. Default = stored choice, else prefers-color-scheme.
+     Reversible; does not touch the service worker, GA4, or sport logic. -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('mg_theme');
+    if (t !== 'light' && t !== 'dark') t = 'light';   // default-light (Coach 2026-06-30); toggle persists choice
+    document.documentElement.setAttribute('data-theme', t);
+  } catch(e) { document.documentElement.setAttribute('data-theme','dark'); }
+  window.mgToggleTheme = function(){
+    var cur = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    var next = cur === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('mg_theme', next); } catch(e){}
+    var b = document.getElementById('mg-theme-toggle'); if (b) b.textContent = next === 'light' ? '☾' : '☀';
+  };
+})();
+</script>
 <!-- Shared press-feedback + motion layer (assets/interactions.css). -->
 <link rel="stylesheet" href="/assets/interactions.css">
 <title>MyGrind · Players Journal</title>
@@ -347,6 +366,7 @@
     --gold-light: #E0BC60;
     --gold-dark: #8F7A36;
     --accent-rgb: 201, 168, 76;
+    --bg: #181614;
     --black: #181614;
     --dark: #1E1A17;
     --card: #231F1C;
@@ -358,6 +378,102 @@
     --red: #C0392B;
     --green: #27AE60;
   }
+
+  /* ════════════════════════════════════════════════════════════════════
+     LIGHT-PREMIUM THEME — REVERSIBLE EXPERIMENT (branch theme/light-premium,
+     Coach 2026-06-30). Activated ONLY by html[data-theme="light"]. Dark is
+     the default and is left byte-for-byte unchanged. Remaps the existing
+     design tokens so every var(--*) surface flips at once. The QOTD card
+     output keeps its own dark treatment (handled in qotd.js / card render).
+     ════════════════════════════════════════════════════════════════════ */
+  html[data-theme="light"] {
+    --bg:         #F7F4EF;   /* page background */
+    --black:      #14120F;   /* darkest ink — text on gold buttons stays dark */
+    --dark:       #FFFFFF;   /* input / control surface */
+    --card:       #FFFFFF;   /* primary surface */
+    --card2:      #F1ECE4;   /* secondary surface */
+    --border:     #E2DACC;   /* hairline */
+    --grey:       #6B6459;   /* muted text (spec) */
+    --light:      #3A352E;   /* secondary body text */
+    --white:      #14120F;   /* primary text (token named "white", now ink) */
+    --gold:       #A8873A;   /* deep gold: passes AA for text + icons on light */
+    --gold-light: #C5A572;   /* bright gold: large accents / hover only */
+    --gold-dark:  #7A6224;   /* deepest gold: small gold text */
+  }
+  /* Sport accents deepened on light for AA. More specific than [data-sport],
+     so dark sport behavior is unchanged. */
+  html[data-theme="light"][data-sport="softball"] { --gold:#B03A63; --gold-light:#D4547A; --gold-dark:#8A2A4C; --accent-rgb:176,58,99; }
+  html[data-theme="light"][data-sport="football"] { --gold:#8A5316; --gold-light:#B86F2A; --gold-dark:#5E3A0C; --accent-rgb:138,83,22; }
+  /* Page background + atmospheric layers on light: drop the dark diamond. */
+  html[data-theme="light"] body { background: var(--bg); }
+  html[data-theme="light"] body::before { display: none; }
+  /* Keep the gold/cream brand mark legible on light: small dark chip behind
+     it (never white-on-white). Stopgap until a dedicated light lockup asset
+     is produced. */
+  html[data-theme="light"] .logo-badge { content: url('/assets/img/mg-4ea08e31.png'); }
+  /* Floating theme toggle (experiment only). */
+  #mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card2); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.28); display:flex; align-items:center; justify-content:center; }
+
+  /* ── Light-theme coverage for chrome + inline "shadow literal" surfaces ──
+     CSS-only, reversible, scoped to html[data-theme="light"]. Retro-fits the
+     hex literals that duplicate token values (in inline styles only — JS,
+     canvas, SVG, and meta are never matched) so they flip with the theme. */
+  html[data-theme="light"] .section-title { color: var(--white); }
+  html[data-theme="light"] .section-sub   { color: var(--gold-dark); }
+  html[data-theme="light"] header         { background: rgba(255,255,255,0.92); }
+  html[data-theme="light"] .sport-toggle  { background: #EDE7DD; }
+  html[data-theme="light"] #mg-bottom-nav { background:#FFFFFF !important; border-top-color: var(--border) !important; }
+  /* Dark "hero" gradient cards → flat light surface */
+  html[data-theme="light"] .card[style*="gradient"] { background: var(--card) !important; }
+  /* Dark solid inline surfaces → light surface */
+  html[data-theme="light"] [style*="background:#1A1410"],
+  html[data-theme="light"] [style*="background:#100C08"],
+  html[data-theme="light"] [style*="background:#1E1A17"],
+  html[data-theme="light"] [style*="background:#231F1C"],
+  html[data-theme="light"] [style*="background:#161210"],
+  html[data-theme="light"] [style*="background:#14100D"],
+  html[data-theme="light"] [style*="background:#1A1614"] { background: var(--card) !important; }
+  html[data-theme="light"] [style*="background:#2A2622"] { background: var(--card2) !important; }
+  /* Cream/grey literal text → themed ink/muted */
+  html[data-theme="light"] [style*="color:#F5F0EB"],
+  html[data-theme="light"] [style*="color:#F2EAD9"] { color: var(--white) !important; }
+  html[data-theme="light"] [style*="color:#D4C8BC"],
+  html[data-theme="light"] [style*="color:#D4C4A8"] { color: var(--light) !important; }
+  html[data-theme="light"] [style*="color:#A89880"] { color: var(--grey) !important; }
+  /* Literal bright-gold text → deep gold for AA on white */
+  html[data-theme="light"] [style*="color:#C9A84C"] { color: var(--gold) !important; }
+  /* Literal dark borders → light hairline */
+  html[data-theme="light"] [style*="#3D3530"] { border-color: var(--border) !important; }
+
+  /* ── Green / blue accent text: the light-lime academics green (#A8D97B,
+     1.6:1 on white) and success green / stats blue are unreadable on light.
+     Remap to AA-passing deep tones (only the text color; fills/tints keep
+     their soft wash). Coach 2026-06-30. ── */
+  html[data-theme="light"] [style*="color:#A8D97B"],
+  html[data-theme="light"] [style*="color:#27AE60"],
+  html[data-theme="light"] .type-instructor { color:#276A2B !important; }
+  html[data-theme="light"] [style*="color:#5DADE2"] { color:#1565C0 !important; }
+
+  /* ── Startup splash + daily quote: match the light theme, and keep the
+     compass mark visible (it's a gold/cream mark built for dark, so on light
+     it sits on a small dark chip). Coach 2026-06-30. ── */
+  html[data-theme="light"] #qotd-overlay { background: rgba(247,244,239,0.97) !important; }
+  /* #ybg-splash by ID — JS mutates its .style (fade-out), which re-serializes
+     the inline hex to rgb() and breaks attribute-substring matching. */
+  html[data-theme="light"] #ybg-splash { background: var(--card) !important; }
+  /* Use the light-background mark (dark MG + gold compass) on light — no chip. */
+  html[data-theme="light"] #ybg-splash img[data-mg-img="mark_white"],
+  html[data-theme="light"] #qotd-overlay img[data-mg-img="mark_white"] {
+    content: url('/assets/img/mg-4ea08e31.png');
+  }
+  html[data-theme="light"] #ybg-splash img[data-mg-img="mark_white"] { animation: none; box-shadow: none; }
+  #ybg-splash .logo-light-lockup { display:none; }
+  html[data-theme="light"] #ybg-splash img[data-mg-img="logo"] { display:none; }
+  html[data-theme="light"] #ybg-splash .logo-light-lockup {
+    display:block; font-family:'Bebas Neue', cursive; font-size:46px; letter-spacing:2px;
+    line-height:0.9; color:var(--white); margin-top:24px;
+  }
+  html[data-theme="light"] #ybg-splash .logo-light-lockup span { color: var(--gold); }
 
   /* ── OUTDOOR / HIGH-CONTRAST MODE — Coach 2026-06-12 ──
      Optional Settings toggle (#pref-outdoor) for reading the app at the
@@ -1828,6 +1944,8 @@ fbq('init','326334441984368');fbq('track','PageView');
 <!-- End Meta Pixel -->
 </head>
 <body>
+<!-- Theme toggle (experiment only — branch theme/light-premium). -->
+<button id="mg-theme-toggle" onclick="mgToggleTheme()" aria-label="Toggle light or dark theme" title="Toggle light/dark">◐</button>
 
 <!-- ── LUCIDE ICON SPRITE (Phase 1 of icon system refactor, 2026-05-17) ──
      Inline SVG sprite + mgIcon() helper. Replaces system emojis for UI
@@ -1976,6 +2094,7 @@ fbq('init','326334441984368');fbq('track','PageView');
 <div id="ybg-splash" style="position:fixed; inset:0; z-index:99999; background:#161210; display:flex; flex-direction:column; align-items:center; justify-content:center; transition:opacity 0.5s ease;">
   <img data-mg-img="mark_white" alt="MyGrind" style="width:140px; height:140px; animation:ybgPulse 1.2s ease-in-out infinite;">
   <img data-mg-img="logo" alt="MyGrind" style="height:72px; width:auto; max-width:80vw; margin-top:28px;">
+  <div class="logo-light-lockup" aria-hidden="true">My<span>Grind</span></div>
   <div data-mg-text="Players Journal" style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:3px; color:#6E6457; margin-top:6px; text-transform:uppercase;">Players Journal</div>
 </div>
 <style>

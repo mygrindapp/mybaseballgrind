@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- Landing page is ALWAYS light/white (Coach 2026-06-30). The light/dark
+     toggle lives inside the app only, so there is no dark landing page. -->
+<script>document.documentElement.setAttribute('data-theme','light');</script>
 <meta name="p:domain_verify" content="5260e0fca4a2edad0e0f8751a7459bb2"/>
 <!-- ── Returning-user routing (2026-06-09) ── Runs before anything else so a
      recognized returner is sent into the app router (softball.html) instead
@@ -154,7 +157,7 @@
         "@type": "Audience",
         "audienceType": "Baseball and softball players and their parents and coaches"
       },
-      "description": "MyGrind is a daily training journal for serious baseball and softball players. Log games, practices, and reps; set goals; track stats; receive coach feedback; and build daily accountability streaks.",
+      "description": "MyGrind is a daily training journal for serious baseball and softball players. Log games, practices, and reps; set goals; track stats; and build daily accountability streaks.",
       "publisher": { "@id": "https://www.mygrindapp.com/#organization" },
       "offers": [
         {
@@ -299,7 +302,45 @@
     --grey: #A89880;
     --light: #D4C8BC;
     --white: #F5F0EB;
+    --bg: #181614;
   }
+
+  /* ════════ LIGHT-PREMIUM THEME — REVERSIBLE EXPERIMENT ════════
+     (branch theme/light-premium). Dark is default and untouched;
+     html[data-theme="light"] remaps the design tokens. */
+  html[data-theme="light"] {
+    --bg:#F7F4EF; --black:#14120F; --dark:#FFFFFF; --card:#FFFFFF; --border:#E2DACC;
+    --grey:#6B6459; --light:#3A352E; --white:#14120F;
+    --gold:#A8873A; --gold-light:#C5A572; --gold-bright:#C5A572; --gold-dark:#7A6224;
+  }
+  html[data-theme="light"], html[data-theme="light"] body { background: var(--bg); color: var(--white); }
+  html[data-theme="light"] .bg-diamond,
+  html[data-theme="light"] .bg-streaks,
+  html[data-theme="light"] .bg-glow,
+  html[data-theme="light"] .bg-vignette { display: none; }
+  /* Hero wordmark: the PNG is white-on-dark art, so on light we hide it and
+     show an ink "My" + gold "Grind" text lockup (never white-on-white). */
+  .logo-light-lockup { display:none; }
+  html[data-theme="light"] .logo-wrap img { display:none; }
+  html[data-theme="light"] .logo-light-lockup {
+    display:block; font-family:'Bebas Neue', cursive; font-size:clamp(56px,19vw,104px);
+    line-height:0.9; letter-spacing:3px; color:var(--white); text-align:center;
+  }
+  html[data-theme="light"] .logo-light-lockup span { color: var(--gold); }
+  html[data-theme="light"] [style*="color:#A89880"] { color: var(--grey) !important; }
+  html[data-theme="light"] [style*="color:#C9A84C"] { color: var(--gold) !important; }
+  html[data-theme="light"] [style*="background:#0A0707"] { background: var(--card) !important; }
+  html[data-theme="light"] .hero-quote { color: var(--light); }
+  html[data-theme="light"] .form-row input[type="email"] { background: var(--dark); color: var(--white); }
+  html[data-theme="light"] .form-row input[type="email"]::placeholder { color: var(--grey); }
+  /* Content boxes use dark rgba backgrounds in CSS classes (not inline), so
+     they render grey on white. Flip them to light surfaces so copy reads. */
+  html[data-theme="light"] .founder-note,
+  html[data-theme="light"] .how-step,
+  html[data-theme="light"] .form-card,
+  html[data-theme="light"] .pricing .plan-includes,
+  html[data-theme="light"] .testimonial-card { background: var(--card); }
+  #mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card,#231F1C); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -515,6 +556,16 @@
 
   /* Typewriter pen cursors — retired with the typewriter (2026-05-29). */
   .cursor { display: none; }
+
+  /* Hero slogan — the MyGrind tagline under the heading (Coach 2026-06-30). */
+  .hero-slogan {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(24px, 6vw, 40px);
+    letter-spacing: 2px;
+    color: var(--gold);
+    line-height: 1;
+    margin-top: 8px;
+  }
 
   /* Gold treatment + shimmer for "ONE JOURNAL." */
   .hero h1 .gold {
@@ -1559,14 +1610,14 @@ fbq('init','326334441984368');fbq('track','PageView');
   <div class="logo-wrap" id="logo">
     <div class="logo-burst"></div>
     <img src="/assets/img/mg-f153679d.png" alt="MyGrind" />
+    <div class="logo-light-lockup" aria-hidden="true">My<span>Grind</span></div>
   </div>
 
   <section class="hero">
     <h1>
       <span class="line l1"><span class="text">Track Your Grind.</span><span class="cursor c1"></span></span>
-      <span class="line l2"><span class="text">Earn</span><span class="cursor c2"></span></span>
-      <span class="line l3 gold"><span class="text">The Next Level.</span><span class="cursor c3"></span></span>
     </h1>
+    <p class="hero-slogan">Log it. Own it.</p>
     <div class="accent-underline" id="underline"></div>
     <div class="sport-chip" id="chip">Baseball &middot; Softball</div>
     <h2 class="subhead" id="subhead">
@@ -1575,15 +1626,6 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="hero-cta" id="hero-cta">
       <a class="primary-cta" href="/signup.html">Start My Free Trial <span class="cta-arrow">&rarr;</span></a>
       <p class="form-trust">14-day free trial &middot; No card required &middot; Cancel anytime</p>
-      <div class="hero-capture" id="hero-capture" style="max-width:380px; margin:18px auto 0;">
-        <p style="font-family:'Barlow',sans-serif; font-size:13px; color:#A89880; margin:0 0 8px;">Not ready to start a trial? Get one useful email every Tuesday.</p>
-        <form id="mc-hero-form" class="form-row" novalidate>
-          <input type="email" id="mc-hero-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email">
-          <button type="submit" style="background:transparent; color:#C9A84C; border:1px solid rgba(201,168,76,0.5); box-shadow:none; animation:none;">Free Weekly Newsletter</button>
-          <div class="hp" aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
-        </form>
-        <p id="mc-hero-msg" role="status" aria-live="polite" style="font-size:13px; color:#A89880; min-height:18px; margin:8px 0 0;"></p>
-      </div>
     </div>
     <div class="hero-proof" id="hero-proof">
       <div class="hero-stars" aria-label="Rated 5 out of 5">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
@@ -1607,15 +1649,15 @@ fbq('init','326334441984368');fbq('track','PageView');
        object-position:top so every screen's header shows. -->
   <section class="see-the-app" id="see">
     <h2 class="section-title">See what your player opens every day</h2>
-    <p class="section-sub">A real product, built by a real coach. Not a Notion template.</p>
+    <p class="section-sub">A real product, built by a real coach.</p>
     <div class="app-grid">
       <figure>
         <img src="/assets/screenshots/01-dashboard.jpg" width="1080" height="1440" alt="MyGrind dashboard with a six-day streak, days logged this week, total reps, a completed daily check-in, and a GPA card clearing NCAA eligibility" loading="lazy">
         <figcaption>The streak, the week, the work. One glance.</figcaption>
       </figure>
       <figure>
-        <img src="/assets/screenshots/02-game.jpg" width="1080" height="1440" alt="MyGrind game journal entry with a game stats grid, an honest A self-grade, what happened, and a goal for tomorrow" loading="lazy">
-        <figcaption>Log every game. Stats, plus an honest self-grade.</figcaption>
+        <img src="/assets/screenshots/02-game.jpg" width="1080" height="1440" alt="MyGrind journal Start Today screen: pick what to log today — game, practice, workout, instructor, reflection, or off day" loading="lazy">
+        <figcaption>Start today. Pick what you're logging.</figcaption>
       </figure>
       <figure>
         <img src="/assets/screenshots/03-academics.jpg" width="1080" height="1440" alt="MyGrind academics screen with a 3.67 auto-calculated GPA, a target GPA, and college eligibility status cards for NCAA D1, D2, D3, NAIA, and JUCO" loading="lazy">
@@ -1642,7 +1684,7 @@ fbq('init','326334441984368');fbq('track','PageView');
        more than a tracker. -->
   <section class="how-it-works" id="how">
     <h2 class="section-title">How it works</h2>
-    <p class="section-sub">More than a tracker. It's how serious players see their work, stay eligible, and earn the next level.</p>
+    <p class="section-sub">More than a tracker. It's how serious players see their work, stay eligible, and stay accountable for the journey.</p>
     <div class="how-grid">
       <div class="how-step">
         <div class="step-num">1</div>
@@ -1656,8 +1698,8 @@ fbq('init','326334441984368');fbq('track','PageView');
       </div>
       <div class="how-step">
         <div class="step-num">3</div>
-        <h3>Reach the next level</h3>
-        <p>When you can see exactly where you stand, you stop guessing and start competing with proof. That's how players earn the next level.</p>
+        <h3>Own your journey</h3>
+        <p>When you can see exactly where you stand, you stop guessing and start competing with proof. That's how players own their development.</p>
       </div>
     </div>
   </section>
@@ -1685,32 +1727,17 @@ fbq('init','326334441984368');fbq('track','PageView');
        (peak.app-style). Visitors lead with the free trial; the actual plans
        and amounts are revealed at the signup plan picker (the paywall). Price
        stays findable in the FAQ and the SoftwareApplication JSON-LD for SEO. -->
-  <!-- Newsletter capture (2026-06-06; moved above Pricing 2026-06-21): softer
-       top-of-funnel for visitors not ready for the trial. The submit handler
-       lives in the inline script before the footer. JSONP to the same Mailchimp
-       audience as /newsletter so signups land on the list. -->
-  <section class="newsletter-home" id="newsletter-signup" style="max-width:520px; margin:0 auto 8px; padding:4px 20px 8px; text-align:center;">
-    <h2 style="font-family:'Bebas Neue',Arial,sans-serif; letter-spacing:1px; color:#C9A84C; font-size:26px; margin:0 0 8px;">Not ready to start? Get MyGrind Weekly.</h2>
-    <p style="color:#A89880; font-size:15px; line-height:1.5; margin:0 0 14px;">One free email every Tuesday for baseball and softball families. Something you can actually use for your player. No spam, unsubscribe anytime.</p>
-    <form id="mc-home-form" class="form-row" novalidate>
-      <input type="email" id="mc-home-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email">
-      <button type="submit">Subscribe</button>
-      <div class="hp" aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
-    </form>
-    <p id="mc-home-msg" role="status" aria-live="polite" style="font-size:13px; color:#A89880; min-height:18px; margin:8px 0 0;"></p>
-  </section>
-
   <section class="pricing" id="pricing">
     <h2 class="section-title">Start your 14-day free trial</h2>
     <p class="section-sub">Try everything free for 14 days. No card, no plan to choose now. Pick the plan that fits when your trial ends, or cancel anytime before then.</p>
     <div class="plan-includes">
       <div class="plan-includes-head">Every plan includes</div>
       <ul>
-        <li>Baseball and softball in one journal</li>
+        <li>Baseball and softball, each in its own journal</li>
         <li>Daily journal with auto stats and streaks</li>
         <li>Academics and NCAA eligibility GPA tracking</li>
-        <li>Coach feedback by text</li>
         <li>Cloud sync across devices</li>
+        <li>Free weekly newsletter</li>
         <li>Single player, or family for up to 3 in one household</li>
       </ul>
     </div>
@@ -1756,9 +1783,20 @@ fbq('init','326334441984368');fbq('track','PageView');
     </details>
   </section>
 
-  <!-- FROM THE PLAYBOOK — surfaces the blog near the bottom of the landing
-       (2026-05-29). A natural spot for a curious parent + internal links to
-       /blog for SEO, instead of a top nav that doesn't fit a short page. -->
+  <!-- Public-facing note — rewritten 2026-05-28 to be trial-focused for
+       cold ad traffic. FOUNDERMYGRIND offer + 6-months-free framing
+       preserved at /foundermygrind for handpicked outreach. -->
+  <aside class="founder-note" id="founder-note">
+    <div class="fn-eyebrow">A note from Coach</div>
+    <p>After 35 years of training and coaching kids, I get the same questions from parents and players every year. How are they really doing? What should they be working on? Are they on track for the next level?</p>
+    <p>So I built MyGrind to answer them. Player development is a journey, and I have a clear picture of what that journey should look like. Everything in this app comes from what I have seen work, not theory.</p>
+    <p>Try it for <strong>free</strong>. If it is not a fit, walk away, no questions asked.</p>
+    <p>Own the grind.</p>
+    <div class="fn-signature">Coach</div>
+  </aside>
+
+  <!-- FROM THE PLAYBOOK — under the Coach's note (Coach 2026-06-30). The blog
+       internal-links for SEO + a curious parent, low on the conversion path. -->
   <section class="playbook-band">
     <h2 class="section-title">From the Playbook</h2>
     <p class="section-sub">Straight talk from Coach on stats, eligibility, and building a player.</p>
@@ -1770,21 +1808,18 @@ fbq('init','326334441984368');fbq('track','PageView');
     <a class="playbook-all" href="/blog/">Read the Playbook &rarr;</a>
   </section>
 
-  <!-- Public-facing note — rewritten 2026-05-28 to be trial-focused for
-       cold ad traffic. FOUNDERMYGRIND offer + 6-months-free framing
-       preserved at /foundermygrind for handpicked outreach. -->
-  <aside class="founder-note" id="founder-note">
-    <div class="fn-eyebrow">A note from Coach</div>
-    <p>After 35 years of training and coaching kids, I get the same questions from parents and players every year. How are they really doing? What should they be working on? Are they on track for the next level?</p>
-    <p>So I built MyGrind to answer them. Player development is a journey, and I have a clear picture of what that journey should look like. Everything in this app comes from what I have seen work, not theory.</p>
-    <p>Try it for <strong>free</strong>. If it is not a fit, walk away, no questions asked.</p>
-    <p>Own the grind.</p>
-    <div class="fn-signature">Coach</div>
-    <a class="primary-cta fn-cta" href="/signup.html">
-      Start My Free Trial <span class="cta-arrow">&rarr;</span>
-    </a>
-    <p class="form-trust">14-day free trial &middot; No card required &middot; Cancel anytime</p>
-  </aside>
+  <!-- Newsletter capture — moved to the bottom 2026-06-30 (Coach): the
+       "not ready" catch belongs after the main asks, not before pricing. -->
+  <section class="newsletter-home" id="newsletter-signup" style="max-width:520px; margin:0 auto 8px; padding:4px 20px 8px; text-align:center;">
+    <h2 style="font-family:'Bebas Neue',Arial,sans-serif; letter-spacing:1px; color:#C9A84C; font-size:26px; margin:0 0 8px;">Not ready to start? Get MyGrind Weekly.</h2>
+    <p style="color:#A89880; font-size:15px; line-height:1.5; margin:0 0 14px;">One free email every Tuesday for baseball and softball families. Something you can actually use for your player. No spam, unsubscribe anytime.</p>
+    <form id="mc-home-form" class="form-row" novalidate>
+      <input type="email" id="mc-home-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email">
+      <button type="submit">Subscribe</button>
+      <div class="hp" aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
+    </form>
+    <p id="mc-home-msg" role="status" aria-live="polite" style="font-size:13px; color:#A89880; min-height:18px; margin:8px 0 0;"></p>
+  </section>
 
   <script>
   (function(){
@@ -1833,7 +1868,6 @@ fbq('init','326334441984368');fbq('track','PageView');
         document.head.appendChild(s);
       });
     }
-    wireMC('mc-hero-form', 'mc-hero-email', 'mc-hero-msg', 'hero');
     wireMC('mc-home-form', 'mc-home-email', 'mc-home-msg', 'home_page');
   })();
   </script>
