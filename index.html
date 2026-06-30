@@ -1727,21 +1727,6 @@ fbq('init','326334441984368');fbq('track','PageView');
        (peak.app-style). Visitors lead with the free trial; the actual plans
        and amounts are revealed at the signup plan picker (the paywall). Price
        stays findable in the FAQ and the SoftwareApplication JSON-LD for SEO. -->
-  <!-- Newsletter capture (2026-06-06; moved above Pricing 2026-06-21): softer
-       top-of-funnel for visitors not ready for the trial. The submit handler
-       lives in the inline script before the footer. JSONP to the same Mailchimp
-       audience as /newsletter so signups land on the list. -->
-  <section class="newsletter-home" id="newsletter-signup" style="max-width:520px; margin:0 auto 8px; padding:4px 20px 8px; text-align:center;">
-    <h2 style="font-family:'Bebas Neue',Arial,sans-serif; letter-spacing:1px; color:#C9A84C; font-size:26px; margin:0 0 8px;">Not ready to start? Get MyGrind Weekly.</h2>
-    <p style="color:#A89880; font-size:15px; line-height:1.5; margin:0 0 14px;">One free email every Tuesday for baseball and softball families. Something you can actually use for your player. No spam, unsubscribe anytime.</p>
-    <form id="mc-home-form" class="form-row" novalidate>
-      <input type="email" id="mc-home-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email">
-      <button type="submit">Subscribe</button>
-      <div class="hp" aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
-    </form>
-    <p id="mc-home-msg" role="status" aria-live="polite" style="font-size:13px; color:#A89880; min-height:18px; margin:8px 0 0;"></p>
-  </section>
-
   <section class="pricing" id="pricing">
     <h2 class="section-title">Start your 14-day free trial</h2>
     <p class="section-sub">Try everything free for 14 days. No card, no plan to choose now. Pick the plan that fits when your trial ends, or cancel anytime before then.</p>
@@ -1798,20 +1783,6 @@ fbq('init','326334441984368');fbq('track','PageView');
     </details>
   </section>
 
-  <!-- FROM THE PLAYBOOK — surfaces the blog near the bottom of the landing
-       (2026-05-29). A natural spot for a curious parent + internal links to
-       /blog for SEO, instead of a top nav that doesn't fit a short page. -->
-  <section class="playbook-band">
-    <h2 class="section-title">From the Playbook</h2>
-    <p class="section-sub">Straight talk from Coach on stats, eligibility, and building a player.</p>
-    <ul class="playbook-list">
-      <li><a href="/blog/baseball-softball-stats-to-track.html">Baseball and softball stats worth tracking</a></li>
-      <li><a href="/blog/ncaa-eligibility-gpa-guide.html">NCAA eligibility GPA: a parent's guide</a></li>
-      <li><a href="/blog/how-to-keep-a-training-journal.html">How to keep a training journal that sticks</a></li>
-    </ul>
-    <a class="playbook-all" href="/blog/">Read the Playbook &rarr;</a>
-  </section>
-
   <!-- Public-facing note — rewritten 2026-05-28 to be trial-focused for
        cold ad traffic. FOUNDERMYGRIND offer + 6-months-free framing
        preserved at /foundermygrind for handpicked outreach. -->
@@ -1823,6 +1794,32 @@ fbq('init','326334441984368');fbq('track','PageView');
     <p>Own the grind.</p>
     <div class="fn-signature">Coach</div>
   </aside>
+
+  <!-- FROM THE PLAYBOOK — under the Coach's note (Coach 2026-06-30). The blog
+       internal-links for SEO + a curious parent, low on the conversion path. -->
+  <section class="playbook-band">
+    <h2 class="section-title">From the Playbook</h2>
+    <p class="section-sub">Straight talk from Coach on stats, eligibility, and building a player.</p>
+    <ul class="playbook-list">
+      <li><a href="/blog/baseball-softball-stats-to-track.html">Baseball and softball stats worth tracking</a></li>
+      <li><a href="/blog/ncaa-eligibility-gpa-guide.html">NCAA eligibility GPA: a parent's guide</a></li>
+      <li><a href="/blog/how-to-keep-a-training-journal.html">How to keep a training journal that sticks</a></li>
+    </ul>
+    <a class="playbook-all" href="/blog/">Read the Playbook &rarr;</a>
+  </section>
+
+  <!-- Newsletter capture — moved to the bottom 2026-06-30 (Coach): the
+       "not ready" catch belongs after the main asks, not before pricing. -->
+  <section class="newsletter-home" id="newsletter-signup" style="max-width:520px; margin:0 auto 8px; padding:4px 20px 8px; text-align:center;">
+    <h2 style="font-family:'Bebas Neue',Arial,sans-serif; letter-spacing:1px; color:#C9A84C; font-size:26px; margin:0 0 8px;">Not ready to start? Get MyGrind Weekly.</h2>
+    <p style="color:#A89880; font-size:15px; line-height:1.5; margin:0 0 14px;">One free email every Tuesday for baseball and softball families. Something you can actually use for your player. No spam, unsubscribe anytime.</p>
+    <form id="mc-home-form" class="form-row" novalidate>
+      <input type="email" id="mc-home-email" name="EMAIL" placeholder="your@email.com" required autocomplete="email">
+      <button type="submit">Subscribe</button>
+      <div class="hp" aria-hidden="true" style="position:absolute; left:-9999px;"><input type="text" name="b_73280b4c02e9bc56c7e633892_a7d801599a" tabindex="-1" value="" autocomplete="off"></div>
+    </form>
+    <p id="mc-home-msg" role="status" aria-live="polite" style="font-size:13px; color:#A89880; min-height:18px; margin:8px 0 0;"></p>
+  </section>
 
   <script>
   (function(){
