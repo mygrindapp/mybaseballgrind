@@ -10,9 +10,7 @@
 (function(){
   try {
     var t = localStorage.getItem('mg_theme');
-    if (t !== 'light' && t !== 'dark') {
-      t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
-    }
+    if (t !== 'light' && t !== 'dark') t = 'light';   // default-light (Coach 2026-06-30); toggle persists choice
     document.documentElement.setAttribute('data-theme', t);
   } catch(e) { document.documentElement.setAttribute('data-theme','dark'); }
   window.mgToggleTheme = function(){
@@ -412,7 +410,7 @@
   /* Keep the gold/cream brand mark legible on light: small dark chip behind
      it (never white-on-white). Stopgap until a dedicated light lockup asset
      is produced. */
-  html[data-theme="light"] .logo-badge { background:#14120F; border-radius:12px; padding:6px; box-sizing:border-box; }
+  html[data-theme="light"] .logo-badge { content: url('/assets/img/mg-4ea08e31.png'); }
   /* Floating theme toggle (experiment only). */
   #mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card2); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.28); display:flex; align-items:center; justify-content:center; }
 
@@ -463,10 +461,12 @@
   /* #ybg-splash by ID — JS mutates its .style (fade-out), which re-serializes
      the inline hex to rgb() and breaks attribute-substring matching. */
   html[data-theme="light"] #ybg-splash { background: var(--card) !important; }
+  /* Use the light-background mark (dark MG + gold compass) on light — no chip. */
   html[data-theme="light"] #ybg-splash img[data-mg-img="mark_white"],
   html[data-theme="light"] #qotd-overlay img[data-mg-img="mark_white"] {
-    background:#14120F; border-radius:50%; padding:9px; box-sizing:border-box;
+    content: url('/assets/img/mg-4ea08e31.png');
   }
+  html[data-theme="light"] #ybg-splash img[data-mg-img="mark_white"] { animation: none; box-shadow: none; }
   #ybg-splash .logo-light-lockup { display:none; }
   html[data-theme="light"] #ybg-splash img[data-mg-img="logo"] { display:none; }
   html[data-theme="light"] #ybg-splash .logo-light-lockup {
