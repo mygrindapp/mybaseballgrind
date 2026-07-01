@@ -276,6 +276,8 @@ async function sendPostPaymentWelcomeEmail({ email }) {
     '',
     "Once you're in, head to the players section to add your kid (or kids, if you grabbed a Family plan). Each player gets their own profile, their own journal, their own grind.",
     '',
+    'Tip: open this email on your phone and tap the button there, then add MyGrind to your home screen for one-tap access every day.',
+    '',
     'Questions? Reply to this email or write coach@mygrindapp.com.',
     '',
     'Coach',
@@ -309,6 +311,10 @@ async function sendPostPaymentWelcomeEmail({ email }) {
         Once you're in, head to the <strong style="color:#E8C97A;">players section</strong> to add your kid (or kids, if you grabbed a Family plan). Each player gets their own profile, their own journal, their own grind.
       </p>
     </div>
+
+    <p style="font-size:13px; line-height:1.6; color:#9F9486; margin:0 0 22px;">
+      <strong style="color:#E8C97A;">Tip:</strong> open this email on your phone and tap the button there, then add MyGrind to your home screen for one-tap access every day.
+    </p>
 
     <p style="font-size:13px; line-height:1.6; color:#9F9486; margin:0 0 24px;">
       Questions? Reply to this email or write <a href="mailto:coach@mygrindapp.com" style="color:#E8C97A; text-decoration:none;">coach@mygrindapp.com</a>.
