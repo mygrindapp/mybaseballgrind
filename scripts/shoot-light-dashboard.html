@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!-- ═══════════════════════════════════════════════════════════════════
+     MARKETING SCREENSHOT HARNESS — light-theme dashboard (2026-07-01)
+
+     Seeds a demo player ("Jordan": 6-day streak, 6 entries, 490 reps,
+     4.2 check-in, 3.67 GPA) into localStorage, then renders softball.html
+     in a 540x720 iframe and cleans it for capture (skips the QOTD splash,
+     hides the floating theme toggle). Dates are computed relative to load
+     time, so this works any day.
+
+     Why a separate page: softball.html re-saves its in-memory state on
+     pagehide, which clobbers direct localStorage writes made on that page.
+     Seeding from here (same origin, different page) avoids that. The app
+     also frame-busts, so this page seeds then REDIRECTS (no iframe).
+
+     Capture: serve the repo locally, then drive a 540x720 @2x browser to
+     this page, click the QOTD splash's "Start MyGrind", hide
+     #mg-theme-toggle, and screenshot 1080x1440 (see the session notes or
+     use Playwright/puppeteer against your installed Chrome).
+     ═══════════════════════════════════════════════════════════════════ -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  html, body { margin: 0; padding: 0; overflow: hidden; }
+  iframe { display: block; width: 540px; height: 720px; border: 0; }
+</style>
+</head>
+<body>
+<script>
+(function () {
+  var day = function (offset) {
+    var d = new Date();
+    d.setDate(d.getDate() - offset);
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  };
+
+  localStorage.clear();
+
+  var access = JSON.stringify({ paid: true, plan: 'annual', email: 'demo@mygrindapp.com' });
+  localStorage.setItem('ybg_access', access);
+  localStorage.setItem('ybg_softball_access', access);
+  localStorage.setItem('ybg_softball_profile', JSON.stringify({ firstName: 'Jordan', name: 'Jordan', position: 'SS', level: 'High School' }));
+  localStorage.setItem('mg_sport', 'baseball');
+
+  // 6 entries, two on the same day (game + practice), reps total 490.
+  // Entry dates are 'YYYY-MM-DD' (parsed as UTC by the app, so they render
+  // one local day earlier); with today's check-in stamp in mg_activity_days
+  // the streak lands exactly on 6.
+  var repsPlan = [
+    { swings: 60, gb: 25, throws: 20, pitches: 0 },
+    { swings: 40, gb: 20, throws: 25, pitches: 0 },
+    { swings: 50, gb: 0,  throws: 30, pitches: 0 },
+    { swings: 45, gb: 25, throws: 0,  pitches: 0 },
+    { swings: 40, gb: 20, throws: 20, pitches: 0 },
+    { swings: 40, gb: 10, throws: 20, pitches: 0 }
+  ];
+  var dates = [day(0), day(1), day(2), day(3), day(4), day(4)];
+  var types = ['practice', 'game', 'workout', 'practice', 'practice', 'game'];
+  var entries = repsPlan.map(function (r, i) {
+    var e = { id: 'demo' + i, date: dates[i], type: types[i], reps: r, notes: '', workedOn: 'Situational hitting' };
+    if (types[i] === 'practice') e.practiceMode = 'team';
+    return e;
+  });
+  localStorage.setItem('ybg_softball_state', JSON.stringify({ entries: entries, players: [], goals: [], gpa: { current: null, target: null } }));
+  localStorage.setItem('mg_activity_days', JSON.stringify([day(0)]));
+
+  // Today's check-in: five 1-5 metrics averaging 4.2 -> "Fresh (4.2)"
+  var rl = {};
+  rl[day(0)] = { sleep: 4, energy: 4, soreness: 4, focus: 4, hydration: 5 };
+  localStorage.setItem('mg_readiness_log', JSON.stringify(rl));
+
+  // Academics: 4 A's + 2 B's = 3.67 GPA (shape mirrors mgDefaultAcademics)
+  var G = function (g) { return { Q1: g, Q2: g, S1: g, Q3: g, Q4: g, S2: g }; };
+  localStorage.setItem('ybg_academics', JSON.stringify({
+    schemaVersion: 2, lastSchoolYear: 2026, activeTerm: 'S2', target: '3.5',
+    current: { schoolYear: 2026, classes: [
+      { name: 'English 11',      category: 'english',  level: 'regular', grades: G('A') },
+      { name: 'Algebra II',      category: 'math',     level: 'regular', grades: G('A') },
+      { name: 'US History',      category: 'social',   level: 'regular', grades: G('B') },
+      { name: 'Biology',         category: 'science',  level: 'regular', grades: G('A') },
+      { name: 'Spanish III',     category: 'elective', level: 'regular', grades: G('A') },
+      { name: 'Weight Training', category: 'elective', level: 'regular', grades: G('B') }
+    ] }, history: []
+  }));
+
+  // Suppress every nudge/banner that isn't part of the shot
+  localStorage.setItem('ybg_last_backup', new Date().toISOString());
+  localStorage.setItem('ybg_install_dismissed', '1');
+  localStorage.setItem('ybg_ios_dismissed', '1');
+  localStorage.setItem('ybg_dash_install_dismissed', '1');
+  localStorage.setItem('ybg_notif_asked', '1');
+  localStorage.setItem('mg_review_prompted_google', '1');
+
+  // Hand off to the app (frame-busting rules out an iframe here)
+  location.replace('/softball.html');
+})();
+</script>
+</body>
+</html>
