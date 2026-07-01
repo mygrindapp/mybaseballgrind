@@ -67,7 +67,7 @@ const PLAN_TO_PRICE = {
 // This is what stops a direct POST from minting a long free trial.
 // (FOREVERYOUNG2026 lifetime promos never reach this endpoint — signup.html
 // skips the card picker for them — so only FOUNDERMYGRIND is handled here.)
-const STANDARD_TRIAL_DAYS = 14;
+const STANDARD_TRIAL_DAYS = 30;
 const FOUNDER_CODES = {
   FOUNDERMYGRIND: { days: 180, cap: 100 },
   // D1 Training partner cohort (2026-06-16) — same 180-day free trial, its
