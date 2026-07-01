@@ -119,6 +119,18 @@ html[data-theme="light"] [style*="background:#1A1410"] { background: var(--card)
 html[data-theme="light"] [style*="background:#2A2622"] { background: var(--card2) !important; }
 html[data-theme="light"] [style*="#3D3530"] { border-color: var(--border) !important; }
 html[data-theme="light"] .card[style*="gradient"] { background: var(--card) !important; }
+/* Screen 8 player-card teasers: the dark-theme tans (#9A8A78 / #C5B59A) plus
+   the 0.78 fade are unreadable on the light bg (Coach, 2026-07-01). The gold
+   lock still sells "locked until your player signs up"; the text gets real
+   ink. Gold accents deepen to --gold-dark for small-size contrast. */
+html[data-theme="light"] .dash-section { opacity: 1; }
+html[data-theme="light"] .dash-section-label { color: var(--grey); }
+html[data-theme="light"] .dash-section-value { color: var(--light); }
+html[data-theme="light"] .dash-waiting-msg { color: var(--light); }
+html[data-theme="light"] .dash-waiting-msg strong,
+html[data-theme="light"] .dash-player-status,
+html[data-theme="light"] .dash-resend { color: var(--gold-dark); }
+html[data-theme="light"] .dash-section { border-bottom-color: var(--card2); }
 #mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card,var(--card)); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; }
 
 /* ═══════════════════════════════════════════════════════════
