@@ -42,7 +42,7 @@
       'Not just a notes app — it auto-calculates AVG, OBP, SLG, ERA, ',
       'has a 12-month training plan, goals, arm care, everything.\n\n',
       'Actually changed how I approach every game. I log everything now.\n\n',
-      '14 days free, no card. Download and try it 👇\n',
+      '30 days free. Download and try it 👇\n',
       ONBOARD_URL,
       '\n\nWho needs this? Tag \'em 👇\n\n',
       '#MyGrind #BaseballLife #BaseballTraining #PlayerDevelopment ',
@@ -60,7 +60,7 @@
       'The app has everything a serious player needs — a daily journal, ',
       'automatic stat calculations (AVG, OBP, SLG, ERA), a 12-month training plan, ',
       'goal tracking, arm care, and more.\n\n',
-      '14-day free trial. No credit card. Just let them try it.\n\n',
+      '30-day free trial. Just let them try it.\n\n',
       '👉 ', ONBOARD_URL, '\n\n',
       'Tag a baseball family who\'d use this 👇\n\n',
       '#MyGrind #BaseballParents #BaseballFamily #TravelBall #YouthBaseball ',
@@ -71,7 +71,7 @@
       '.300 hitters journal. .200 hitters guess. ⚾️\n\n',
       'MY GRIND — auto stats, daily journal, 12-month training plan. ',
       'Everything a serious player needs in one app.\n\n',
-      '14 days free 👇\n',
+      '30 days free 👇\n',
       ONBOARD_URL,
       '\n\n#MyGrind #BaseballGrind'
     ].join(''),
@@ -79,7 +79,7 @@
     sms: [
       'Yo you gotta get this. MY GRIND — journal + stats + training plan in one app.\n\n',
       'Been logging every game with it. Download it and let\'s keep each other accountable this season 💯\n\n',
-      '14 days free 👇\n',
+      '30 days free 👇\n',
       ONBOARD_URL
     ].join('')
   };
@@ -190,7 +190,7 @@
   window.shareNative = function() {
     var shareData = {
       title: 'My Grind — Baseball Journal App',
-      text:  '14-Day Free Trial. Baseball journal app for player development. Track stats, log games, and hold yourself accountable every day.',
+      text:  '30-Day Free Trial. Baseball journal app for player development. Track stats, log games, and hold yourself accountable every day.',
       url:   ONBOARD_URL
     };
     if (navigator.share) {

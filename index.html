@@ -27,7 +27,7 @@
   } catch (e) { /* show the marketing page on any unexpected error */ }
 })();
 </script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <!-- Shared press-feedback + motion layer (assets/interactions.css). -->
 <link rel="stylesheet" href="/assets/interactions.css">
 <title>MyGrind: Baseball &amp; Softball Training Journal App</title>
@@ -59,7 +59,7 @@
 <meta name="description" content="MyGrind is a daily training journal app for serious baseball and softball players. Track stats, set goals, log practices and games, and stay accountable to the grind.">
 <meta name="keywords" content="MyGrind, MyGrind app, baseball journal app, softball journal app, baseball training app, softball training app, player development, daily training journal, baseball stats tracker, softball stats tracker">
 <meta name="author" content="MyGrind">
-<meta name="theme-color" content="#181614">
+<meta name="theme-color" content="#F7F4EF">
 <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
 
 <!-- Open Graph (Facebook, LinkedIn, iMessage previews) -->
@@ -163,7 +163,7 @@
         {
           "@type": "Offer",
           "name": "MyGrind Annual",
-          "price": "99.00",
+          "price": "99.99",
           "priceCurrency": "USD",
           "description": "Annual plan, single player. 30-day free trial."
         },
@@ -340,6 +340,12 @@
   html[data-theme="light"] .form-card,
   html[data-theme="light"] .pricing .plan-includes,
   html[data-theme="light"] .testimonial-card { background: var(--card); }
+  /* Section headings: #A8873A reads washed out at Bebas display sizes on the
+     warm off-white (Coach, 2026-07-01) — headings take the deep gold. Small
+     gold accents and labels keep --gold. The [style*] arm catches the
+     inline-styled newsletter h2, hence !important. */
+  html[data-theme="light"] h2.section-title,
+  html[data-theme="light"] h2[style*="color:#C9A84C"] { color: var(--gold-dark) !important; }
   #mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card,#231F1C); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.2); display:flex; align-items:center; justify-content:center; }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }

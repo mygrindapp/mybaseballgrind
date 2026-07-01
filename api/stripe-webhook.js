@@ -270,7 +270,7 @@ async function sendPostPaymentWelcomeEmail({ email }) {
   const text = [
     'Welcome to MyGrind.',
     '',
-    'Payment landed, your account is live. Tap the link below to sign in. It works for 24 hours.',
+    'Your account is live. Tap the link below to sign in. It works for 24 hours.',
     '',
     signinUrl,
     '',
@@ -292,7 +292,7 @@ async function sendPostPaymentWelcomeEmail({ email }) {
     <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 18px;">Welcome to MyGrind.</p>
 
     <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 24px;">
-      Payment landed, your account is live. Tap the button below to sign in. <strong style="color:#E8C97A;">This link works for 24 hours.</strong>
+      Your account is live. Tap the button below to sign in. <strong style="color:#E8C97A;">This link works for 24 hours.</strong>
     </p>
 
     <div style="text-align:center; margin:0 0 28px;">

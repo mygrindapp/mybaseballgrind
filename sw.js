@@ -1,12 +1,24 @@
 // MyGrind service worker
 // Migrated 2026-06-06 from an inline blob registration in softball.html to this
 // real same-origin file, because Web Push requires a stable file-based service
-// worker (a blob: SW can't receive push). Caching behavior is unchanged from the
-// old inline version; cache bumped v326 -> v327. The push/notificationclick
-// handlers below are inert until subscriptions + the send cron ship (Phases B/C).
+// worker (a blob: SW can't receive push).
+// 2026-07-01 (v389): real offline support. Precache the app shell (softball.html
+// + manifest + icons + shared CSS) and runtime-cache successful same-origin GET
+// responses, so the journal opens with no signal. Strategy stays network-first
+// (fresh when online), cache is the fallback. /api/* is never cached.
+// Cache prefix renamed ybg-mygrind → mygrind (activate cleans old caches).
 
-const CACHE = 'ybg-mygrind-v388';
-const ASSETS = ['/'];
+const CACHE = 'mygrind-v389';
+const ASSETS = [
+  '/',
+  '/softball.html',
+  '/manifest.json',
+  '/assets/interactions.css',
+  '/assets/icon-192.png',
+  '/assets/icon-512.png',
+  '/assets/apple-touch-icon.png',
+  '/assets/favicon.png'
+];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS).catch(() => {})));
@@ -21,8 +33,24 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
+  const url = new URL(e.request.url);
+
+  // Only handle same-origin GETs; never cache API calls.
+  if (e.request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) {
+    return;
+  }
+
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+    fetch(e.request)
+      .then(res => {
+        if (res.ok && res.type === 'basic') {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(e.request, copy)).catch(() => {});
+        }
+        return res;
+      })
+      // ignoreSearch so /softball.html?anything still hits the cached shell offline
+      .catch(() => caches.match(e.request, { ignoreSearch: true }))
   );
 });
 

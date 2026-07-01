@@ -68,7 +68,10 @@
 <script defer src="/_vercel/insights/script.js"></script>
 
 <!-- ── PWA MANIFEST ── -->
-<link rel="manifest" href="data:application/json;charset=utf-8,%7B%22name%22%3A%22My%20Grind%22%2C%22short_name%22%3A%22My%20Grind%22%2C%22start_url%22%3A%22/softball.html%22%2C%22display%22%3A%22standalone%22%2C%22orientation%22%3A%22portrait-primary%22%2C%22background_color%22%3A%22%23181614%22%2C%22theme_color%22%3A%22%23C9A84C%22%2C%22icons%22%3A%5B%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/apple-touch-icon.png%22%2C%22sizes%22%3A%22180x180%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-192.png%22%2C%22sizes%22%3A%22192x192%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%2C%7B%22src%22%3A%22https%3A//www.mygrindapp.com/assets/icon-512.png%22%2C%22sizes%22%3A%22512x512%22%2C%22type%22%3A%22image/png%22%2C%22purpose%22%3A%22any%22%7D%5D%7D">
+<!-- Real file (was a data-URI manifest until 2026-07-01; a file can be
+     updated for already-installed users and supports screenshots/shortcuts;
+     splash background now matches the light default theme). -->
+<link rel="manifest" href="/manifest.json">
 
 <!-- ── APP ICONS — embedded as base64 ── -->
 <link rel="apple-touch-icon" sizes="180x180" href="https://www.mygrindapp.com/assets/apple-touch-icon.png">
@@ -18301,7 +18304,7 @@ function shareMilestone() {
     var subj = (nm === 'I') ? 'I just earned' : nm + ' just earned';
     var amsg = subj + ' "' + card.dataset.achTitle + '" on MY GRIND ' + getBallEmoji() + '🔥\n\n' +
       'Journaling every game, tracking every stat. Built for the grind.\n\n' +
-      'Get it free for 14 days 👇\nhttps://www.mygrindapp.com/signup.html?trial=1';
+      'Get it free for 30 days 👇\nhttps://www.mygrindapp.com/signup.html?trial=1';
     if (navigator.share) { navigator.share({ title: 'MyGrind', text: amsg }).catch(function () { fallbackShare(amsg); }); }
     else { fallbackShare(amsg); }
     return;

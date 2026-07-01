@@ -5,7 +5,7 @@
 <!-- Signup funnel is ALWAYS light/white (Coach 2026-06-30). The light/dark
      toggle lives inside the app only. -->
 <script>document.documentElement.setAttribute('data-theme','light');</script>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <!-- Shared press-feedback + motion layer (assets/interactions.css). -->
 <link rel="stylesheet" href="/assets/interactions.css">
 <title>MyGrind: Sign Up</title>
@@ -46,7 +46,7 @@
 <link rel="canonical" href="https://www.mygrindapp.com/signup.html">
 <link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
 <link rel="apple-touch-icon" href="https://www.mygrindapp.com/assets/apple-touch-icon.png">
-<meta name="theme-color" content="#C9A84C">
+<meta name="theme-color" content="#F7F4EF">
 
 <!-- Vercel Web Analytics — funnel conversion tracking. Cookieless,
      privacy-first. Enabled in Vercel project dashboard. -->
@@ -2585,7 +2585,7 @@ fbq('init','326334441984368');fbq('track','PageView');
       </button>
 
       <p class="footnote">
-        <strong>Single $99/yr</strong> for 1 player. <strong>Family $149.99/yr</strong> covers 2 or 3 players in your household. Each player gets their own private journal and progress.
+        <strong>Single $99.99/yr</strong> for 1 player. <strong>Family $149.99/yr</strong> covers 2 or 3 players in your household. Each player gets their own private journal and progress.
       </p>
 
     </div>
@@ -2719,9 +2719,9 @@ fbq('init','326334441984368');fbq('track','PageView');
         <div class="price-card-pill">Best Value</div>
         <div class="price-card-check">✓</div>
         <div class="price-card-name"   id="pc_annual_name">MyGrind Annual</div>
-        <div class="price-card-amount" id="pc_annual_amount">$99<span class="per"> / year per player</span></div>
+        <div class="price-card-amount" id="pc_annual_amount">$99.99<span class="per"> / year per player</span></div>
         <div class="price-card-total"  id="annual_total"></div>
-        <div class="price-card-equiv"  id="pc_annual_equiv">~ $8.25/mo · save 17%</div>
+        <div class="price-card-equiv"  id="pc_annual_equiv">~ $8.33/mo · save 17%</div>
         <div class="price-card-tag"    id="pc_annual_tag">For families committed to the year</div>
       </button>
 
@@ -3410,8 +3410,8 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <!-- No-card skip REMOVED 2026-07-01: MyGrind moved to card-required at
          signup (standard card-on-file trial). Everyone puts a card on file,
-         so every signup is a visible Stripe customer and the 14-day trial
-         still means no charge until day 15. The old 13+ "start without a
+         so every signup is a visible Stripe customer and the 30-day trial
+         still means no charge until day 31. The old 13+ "start without a
          card" opt-out (onPlanPickerSkip) was deleted along with this. -->
 
     <p style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); line-height:1.6; margin:14px 0 0; text-align:center;">
@@ -4280,7 +4280,7 @@ function restorePlanSelection() {
   if (chosen) chosen.classList.add('selected');
 
   // Populate the multi-player total lines.
-  // Per Decision #1: $9.99/mo or $99/yr per player. For 2+ players we show
+  // Per Decision #1: $9.99/mo or $99.99/yr per player. For 2+ players we show
   // the actual total below the per-player rate so parents see what they'll
   // really pay (no surprise at billing time).
   updateMultiPlayerTotals();
@@ -4293,7 +4293,7 @@ function restorePlanSelection() {
 /* Renders Screen 5 pricing cards for either the Single tier (1 player) or
    the Family tier (2-3 players). Pricing decision (locked 2026-05-02):
 
-     Single (1 player):  $99/yr     · $9.99/mo
+     Single (1 player):  $99.99/yr  · $9.99/mo
      Family (2-3 kids):  $149.99/yr · $14.99/mo  flat for the whole household
 
    Family is hard-capped at 3 player slots (per Screen 3) — the price is
@@ -4344,8 +4344,8 @@ function renderPricingCards() {
   } else {
     // Single tier — per-player pricing, no totals shown (1 × rate = total)
     set('pc_annual_name',   'MyGrind Annual');
-    set('pc_annual_amount', '$99<span class="per"> / year per player</span>');
-    set('pc_annual_equiv',  '~ $8.25/mo &middot; save 17%');
+    set('pc_annual_amount', '$99.99<span class="per"> / year per player</span>');
+    set('pc_annual_equiv',  '~ $8.33/mo &middot; save 17%');
     set('pc_annual_tag',    'For families committed to the year');
 
     set('pc_monthly_name',   'MyGrind Monthly');
@@ -5915,7 +5915,7 @@ function renderSubscriptionStatus(isPaid, sub) {
   if (statusLine && sub) {
     const planLabels = {
       single_monthly:  'Single Monthly ($9.99/mo)',
-      single_annual:   'Single Annual ($99/yr)',
+      single_annual:   'Single Annual ($99.99/yr)',
       family_monthly:  'Family Monthly ($14.99/mo)',
       family_annual:   'Family Annual ($149.99/yr)',
       team_coach:      'Team Coach ($29.99/yr)',
@@ -7007,7 +7007,7 @@ function populateSettings() {
     else                        setText('set_plan', '—');
   } else {
     if (plan === 'monthly')     setText('set_plan', 'Monthly · $9.99/mo per player');
-    else if (plan === 'annual') setText('set_plan', 'Annual · $99/yr per player');
+    else if (plan === 'annual') setText('set_plan', 'Annual · $99.99/yr per player');
     else                        setText('set_plan', '—');
   }
 

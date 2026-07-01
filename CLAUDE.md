@@ -51,7 +51,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Phone uniqueness within a plan: no two players can share the same real phone (fallback / parent-device flag exempted)
 
 Both plans:
-- 14-day free trial, no card required
+- 30-day free trial, card on file at signup (no charge until the trial ends; changed from 14-day/no-card on 2026-07-01)
 - Annual pre-selected by default (Decision #8 v2)
 
 ## Brand voice
@@ -66,10 +66,11 @@ All strategic decisions live in **Notion → "MyGrind Worldwide Launch HQ"**. 16
 
 ## Repo shape
 
-Hybrid static-site + Vercel serverless backend. The frontend is large hand-authored HTML files (CSS + vanilla JS inlined, no build step, no framework). The backend is a single Vercel function. There is no test suite, lint config, or build script.
+Hybrid static-site + Vercel serverless backend. The frontend is large hand-authored HTML files (CSS + vanilla JS inlined, no build step, no framework). The backend is a set of Vercel serverless functions under `api/` (auth codes, Stripe checkout + webhook, managed minors, feedback, crons, admin) with shared helpers in `lib/`. There is no test suite, lint config, or build script.
 
 ```
-index.html, legacy-app.html  Redirect shells → signup.html
+index.html                   Marketing landing page (SEO/JSON-LD, pricing, FAQ)
+legacy-app.html              Redirect shell → signup.html
 signup.html                  Parent signup flow (~3700 lines, 7 screens)
 onboarding.html              Player kid-side onboarding (Phase 4, ~1300 lines)
 softball.html                The actual journal app (~9500 lines, the product)
@@ -80,7 +81,7 @@ lib/rate-limit.js            Redis-backed rate limiter used by the API
 package.json                 ESM, Node ≥18, deps: twilio, ioredis
 ```
 
-No `vercel.json`, no `.gitignore`, no `.env*` checked in. Remote: `github.com/youngsbeball/mybaseballgrind`. Production domain: `mygrindapp.com` (Vercel). Legacy app URL: `youngsbaseball.github.io/mybaseballgrind` (still referenced from inside `softball.html`).
+`vercel.json` (headers, rewrites, crons) and `.gitignore` are checked in; no `.env*` is (and none should be). Remote: `github.com/mygrindapp/mybaseballgrind`. Production domain: `mygrindapp.com` (Vercel). Legacy app URL: `youngsbaseball.github.io/mybaseballgrind` (still referenced from inside `softball.html`).
 
 ## Commands
 
@@ -97,7 +98,7 @@ There is no build, lint, or test tooling. Workflow is:
 
 Each HTML file is a self-contained SPA. There is no shared JS module — state is passed between pages via `localStorage` and URL query params. Reading any one file in isolation will miss the cross-file flow:
 
-1. **`index.html` / `legacy-app.html`** — meta-refresh + JS redirect to `signup.html`, preserving query string and hash. Don't add logic here.
+1. **`index.html`** — the full marketing landing page (hero, pricing, FAQ, JSON-LD, newsletter capture); light/white theme is the default. **`legacy-app.html`** — meta-refresh + JS redirect shell to `signup.html` for old bookmarks; don't add logic there.
 2. **`signup.html`** — parent-side signup. 7 screens, navigated via `go(n)` / `goNext()`. State persisted to `localStorage`. Currently labeled "Phase 2" in code: front-end only, no backend calls. Comments throughout reference future phases (Phase 3 = SMS, Phase 5 = Stripe). Treat the `// Phase N will...` comments as load-bearing TODOs, not stale notes.
 3. **`onboarding.html`** — player ("kid") onboarding. Reached via SMS link (`?name=Sofia`) or fallback (`?name=Sofia&fallback=1`). Per the inline header, this file was deliberately stripped of Stripe/Mailchimp/Firebase/trial-state plumbing in Decision #13 (April 27 PM). Do not re-introduce that plumbing without checking with the user.
 4. **`softball.html`** — the real app: journal, stats (AVG/OBP/SLG/ERA), 12-month training plan, goals, arm care, share/QR. Persists everything to `localStorage` via `loadState()` / `saveState()` / `store()` / `retrieve()`. Trial/paywall logic lives in `checkAccess()` → `validateSession()` and a few `show*()` functions around line 3500–3700. Stripe payment URLs (`STRIPE_MONTHLY_URL`, `STRIPE_ANNUAL_URL`, `STRIPE_TEAM_SPONSOR_URL`) are hardcoded `buy.stripe.com` links — these are real production checkouts, treat as sensitive constants.
