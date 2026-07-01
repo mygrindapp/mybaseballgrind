@@ -41,7 +41,7 @@
   })();
 </script>
 
-<meta name="description" content="Sign up for MyGrind. 14 days free, no card required. Cancel anytime before your trial ends.">
+<meta name="description" content="Sign up for MyGrind. Start your 14-day free trial. Cancel anytime before it ends and you won't be charged.">
 <meta name="robots" content="noindex,nofollow">
 <link rel="canonical" href="https://www.mygrindapp.com/signup.html">
 <link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
@@ -1028,7 +1028,7 @@ h1 span {
    Question reads as setup. Action line is the actual click target. Visual
    weight intentionally light — discoverable for the eager, invisible for
    the undecided. Not a button. Doesn't undercut Decision #2 (free trial).
-   Phase 5 will wire this to Stripe. */
+   Stripe checkout shipped in Phase 5 and is live. */
 /* Promo-code <details> dropdown — collapsed by default, expands on tap.
    Sits above the skip-trial-link on Screen 5. Visual weight is intentionally
    quiet so non-promo users don't pause; users with a code see the affordance
@@ -1606,8 +1606,8 @@ select.field-input {
 
 /* (April 27 PM): .pay-now-btn and .pay-now-sub CSS removed — the gold
    "Pay & Continue Anytime" button these styled was retired from Screen 8
-   for trust reasons. Phase 5 will introduce a new pay surface elsewhere
-   (likely tied to day 12/14 reminders per Decision #9). */
+   for trust reasons. The pay surface later shipped as the card-on-file
+   plan picker (2026-05-27), now card-required at signup (2026-07-01). */
 
 /* Dashboard footer — Share / Settings / Pay early.
    Brightened + sized 2026-05-07 (Coach Young walkthrough): the original
@@ -2253,7 +2253,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="gold-bar"></div>
 
     <div style="text-align:center;">
-      <div class="no-card-pill">No card required · Free for 14 days</div>
+      <div class="no-card-pill">14 days free · Cancel anytime</div>
     </div>
 
     <div style="margin-top: 28px;">
@@ -2264,7 +2264,7 @@ fbq('init','326334441984368');fbq('track','PageView');
           <div class="tap-card-title">I'm a parent</div>
           <div class="tap-card-desc">Setting up MyGrind for my child or children. I'll manage the account.</div>
           <div class="pay-chip">Continue →</div>
-          <p style="margin:8px 0 0; font-family:'Barlow',sans-serif; font-size:12px; color:#A89880; letter-spacing:0.2px;">No card needed to start</p>
+          <p style="margin:8px 0 0; font-family:'Barlow',sans-serif; font-size:12px; color:#A89880; letter-spacing:0.2px;">Free for 14 days</p>
         </div>
       </button>
 
@@ -2274,7 +2274,7 @@ fbq('init','326334441984368');fbq('track','PageView');
           <div class="tap-card-title">Just me</div>
           <div class="tap-card-desc">I'm 18 or older. Signing up to track my own training, games, and goals.</div>
           <div class="pay-chip">Continue →</div>
-          <p style="margin:8px 0 0; font-family:'Barlow',sans-serif; font-size:12px; color:#A89880; letter-spacing:0.2px;">No card needed to start</p>
+          <p style="margin:8px 0 0; font-family:'Barlow',sans-serif; font-size:12px; color:#A89880; letter-spacing:0.2px;">Free for 14 days</p>
         </div>
       </button>
 
@@ -2353,7 +2353,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="step-list">
       <div class="step">
         <div class="step-num">1</div>
-        <div class="step-text" id="s1_step1"><strong>You sign up with just your name and email</strong>. No card needed to start. Add one only if you keep MyGrind after 14 days.</div>
+        <div class="step-text" id="s1_step1"><strong>You add your card and start your free trial</strong>. No charge for 14 days. Cancel anytime before then and you won't pay a thing.</div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
@@ -3130,7 +3130,7 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <!-- NOTE (April 27 PM): Voluntary pay button removed per Coach Young.
          Reasoning: Big gold "PAY" button on Day 1 dashboard contradicted the
-         "14 days free, no card required" promise from Screen 5. Cognitive
+         "14 days free" trial framing from Screen 5. Cognitive
          whiplash hurt trust. Day 12/14 reminders (Decision #9) handle the
          pay nudge later. If we want to add an "early pay" option back, do it
          as a small text link, not a primary CTA. -->
@@ -3408,12 +3408,11 @@ fbq('init','326334441984368');fbq('track','PageView');
       Start My 14-Day Trial &rarr;
     </button>
 
-    <!-- Honest opt-out. Shown only when COPPA does not require a card
-         (toggled in openPlanPicker by hasUnder13). Lets a 13+ user start
-         the trial without a card instead of being trapped on the modal. -->
-    <button type="button" id="plan_picker_skip" onclick="onPlanPickerSkip()" style="display:none; margin:14px auto 0; background:none; border:none; color:var(--grey); font-family:'Barlow',sans-serif; font-size:13px; text-decoration:underline; cursor:pointer;">
-      Maybe later. Start my trial without a card.
-    </button>
+    <!-- No-card skip REMOVED 2026-07-01: MyGrind moved to card-required at
+         signup (standard card-on-file trial). Everyone puts a card on file,
+         so every signup is a visible Stripe customer and the 14-day trial
+         still means no charge until day 15. The old 13+ "start without a
+         card" opt-out (onPlanPickerSkip) was deleted along with this. -->
 
     <p style="font-family:'Barlow',sans-serif; font-size:12px; color:var(--grey); line-height:1.6; margin:14px 0 0; text-align:center;">
       Secured by Stripe. We never see your card number. Cancel anytime from your dashboard.
@@ -5463,8 +5462,8 @@ function buildScreen8() {
   // ─── Card-on-file plan picker (2026-05-27; hardened 2026-06-06) ──
   // Industry-standard: collect the card before the dashboard. We mark
   // mg_plan_picker_shown ONLY when the user completes checkout (the
-  // co=success return in softball.html) or explicitly taps "skip for now"
-  // (onPlanPickerSkip) — NEVER when the picker merely opens. So a parent
+  // co=success return in softball.html), NEVER when the picker merely
+  // opens (the no-card skip was removed 2026-07-01). So a parent
   // who reaches Stripe and backs out without paying sees the picker again
   // on return instead of silently slipping past it with no card on file
   // (cancel_url routes them back to Screen 8). The explicit skip avoids a
@@ -6128,11 +6127,10 @@ function openPlanPicker() {
     if (coppaBanner)       coppaBanner.style.display       = 'none';
   }
 
-  // Skip ("maybe later") is offered only when COPPA does not require a card.
-  // Under-13 households must put a card on file (it doubles as verifiable
-  // parental consent), so the opt-out stays hidden for them.
-  const skipBtn = document.getElementById('plan_picker_skip');
-  if (skipBtn) skipBtn.style.display = hasUnder13 ? 'none' : 'block';
+  // Card-required (2026-07-01): there is no "maybe later" skip anymore.
+  // Every household puts a card on file at signup (card-on-file trial), so
+  // there's nothing to toggle here. The skip button + onPlanPickerSkip were
+  // removed with this change.
 
   // Highlight Family as Recommended when this is a parent-path signup.
   const familyPill = document.getElementById('ppc_fa_pill');
@@ -6256,22 +6254,9 @@ async function onPlanPickerContinue() {
   }
 }
 
-function onPlanPickerSkip() {
-  // Explicit, honest opt-out from the card-on-file step. Only reachable
-  // when COPPA does not require a card (the skip button is hidden for
-  // under-13 — see openPlanPicker). Marks the picker satisfied so we don't
-  // re-nag, closes the modal, and renders the dashboard. The user keeps
-  // their trial and can add a card later from the app.
-  try { localStorage.setItem('mg_plan_picker_shown', '1'); } catch (_) {}
-  var overlay = document.getElementById('plan_picker_overlay');
-  if (overlay) {
-    overlay.classList.remove('shown');
-    overlay.setAttribute('aria-hidden', 'true');
-  }
-  // Re-run Screen 8: alreadyShown is now true, so the picker is skipped and
-  // the dashboard (trial recording + sign-in banner + player cards) renders.
-  try { buildScreen8(); } catch (_) {}
-}
+// onPlanPickerSkip() REMOVED 2026-07-01 (card-required). The no-card opt-out
+// no longer exists; the plan picker is now mandatory before the dashboard, so
+// every signup completes Stripe checkout and becomes a visible customer.
 
 // Stripe Payment Links (LIVE mode). One link per (Single|Family) × (Annual|Monthly).
 // Each link is pre-configured in Stripe with the right product, price, and
