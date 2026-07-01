@@ -5383,7 +5383,7 @@ function renderDashPlayerCard(player, index) {
     waitingMsg = 'Hand the phone to <strong>' + escapeHtml(rawName) + '</strong> when ready. Their PIN gets created during their first login.';
   } else if (SMS_LIVE) {
     statusText = 'Invite sent';
-    waitingMsg = 'Once <strong>' + escapeHtml(rawName) + '</strong> taps the link in their text and finishes their setup, their progress starts showing here.';
+    waitingMsg = 'Once <strong>' + escapeHtml(rawName) + '</strong> taps the link in their text and finishes their setup, their progress starts showing here. Text not arriving? <strong>Resend setup link</strong> below shares it by text, AirDrop, or QR code.';
   } else {
     // SMS still in carrier review — be honest. Parent has to deliver the
     // link manually via the share modal (Copy / Messages / QR / Open here).
@@ -5391,9 +5391,12 @@ function renderDashPlayerCard(player, index) {
     waitingMsg = 'SMS verification is in final carrier review. Tap <strong>Send setup link</strong> below to share <strong>' + escapeHtml(rawName) + '</strong>\'s link by text, AirDrop, or QR code. Progress shows here once they finish setup.';
   }
 
-  // Build the resend button only for SMS-invited kids (fallback kids don't have one)
+  // Build the resend button only for SMS-invited kids (fallback kids don't
+  // have one). Label matches the delivery state: after a live SMS invite it
+  // reads as the recovery path ("Resend"), pre-carrier-approval it is the
+  // primary delivery path ("Send").
   const resendButton = player.fallback ? '' :
-    '<button type="button" class="dash-resend" onclick="onResendInvite(' + index + ')">Send setup link</button>';
+    '<button type="button" class="dash-resend" onclick="onResendInvite(' + index + ')">' + (SMS_LIVE ? 'Resend setup link' : 'Send setup link') + '</button>';
 
   return (
     '<div class="dash-player-card">' +
@@ -5431,11 +5434,14 @@ function renderDashPlayerCard(player, index) {
         '</div>' +
         '<div class="dash-section-lock">🔒</div>' +
       '</div>' +
+      // Academics teaser (was "Coach feedback" until 2026-07-01: direct
+      // coach notes are a future Pro feature per Decision #27, so we only
+      // tease what is live today. Academics/NCAA tracking ships free.)
       '<div class="dash-section">' +
-        '<div class="dash-section-icon">💬</div>' +
+        '<div class="dash-section-icon">🎓</div>' +
         '<div class="dash-section-body">' +
-          '<div class="dash-section-label">Coach feedback</div>' +
-          '<div class="dash-section-value">Direct notes from coach + instructor</div>' +
+          '<div class="dash-section-label">Academics &amp; GPA</div>' +
+          '<div class="dash-section-value">NCAA eligibility at a glance</div>' +
         '</div>' +
         '<div class="dash-section-lock">🔒</div>' +
       '</div>' +
