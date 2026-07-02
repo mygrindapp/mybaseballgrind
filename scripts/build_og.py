@@ -41,7 +41,7 @@ CARDS = [
      "title": "The books & gear I recommend"},
     {"slug": "ncaa-eligibility-gpa-guide",
      "eyebrow": "The Playbook · Recruiting",
-     "title": "Your kid's 3.7 might be a 2.9 to the NCAA"},
+     "title": "NCAA GPA requirements: why a 3.7 can read as 2.9"},
     {"slug": "choosing-high-school-baseball-softball",
      "eyebrow": "The Playbook · High School",
      "title": "Private vs public: the playing-time math"},
