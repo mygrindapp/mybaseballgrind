@@ -15,28 +15,8 @@
   gtag('config', 'G-5HLS0F06CQ');
 </script>
 
-<script>
-  // Inline-data logo refs so the preview panel and offline contexts render the
-  // brand correctly without needing an external request to /assets/.
-  (function() {
-    var URIS = {
-      logo: '/assets/img/mg-f153679d.png',
-      mark: '/assets/img/mg-bfaab8e5.png'
-    };
-    function apply() {
-      var nodes = document.querySelectorAll("[data-mg-img]");
-      for (var i = 0; i < nodes.length; i++) {
-        var key = nodes[i].getAttribute("data-mg-img");
-        if (URIS[key]) nodes[i].src = URIS[key];
-      }
-    }
-    if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", apply);
-    } else {
-      apply();
-    }
-  })();
-</script>
+<!-- data-mg-img applier removed 2026-07-02 (audit F10): the light-lockup
+     header uses a direct src and no data-mg-img nodes remain. -->
 
 <meta name="theme-color" content="#F7F4EF">
 <meta name="robots" content="noindex,nofollow">
@@ -211,8 +191,8 @@ h1 span { color: var(--gold); }
   text-align: center;
   font-size: 12px;
   color: #B03A2E;
-  background: rgba(192,57,43,0.1);
-  border: 1px solid rgba(192,57,43,0.3);
+  background: rgba(176,58,46,0.1);
+  border: 1px solid rgba(176,58,46,0.3);
   border-radius: 3px;
   padding: 8px 12px;
   margin: 8px 0;
@@ -303,15 +283,8 @@ h1 span { color: var(--gold); }
   letter-spacing: 4px;
   color: var(--gold);
 }
-.logo-mark .sm {
-  display: block;
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 9px;
-  letter-spacing: 2.5px;
-  color: #5C544A;
-  margin-top: 2px;
-  font-weight: 400;
-}
+/* .logo-mark .sm removed 2026-07-02 (audit F10) — no .sm node exists since
+   the light-lockup header replaced the old image wordmark. */
 
 /* Welcome screen — special styling for the parent-context greeting */
 .parent-context {
@@ -437,7 +410,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="pin-error" id="pinErr">Pick a different PIN: 0000 and 1234 are too easy to guess.</div>
 
     <p class="sub" style="font-size:13px;color:#6B6459;text-align:center;font-style:italic;">
-      You'll use this PIN to log in any time you open MyGrind on this phone.
+      Keep your PIN to yourself. It marks this journal as yours on this phone.
     </p>
   </div>
 
@@ -517,9 +490,9 @@ fbq('init','326334441984368');fbq('track','PageView');
     <h1>How old<br><span>are you?</span></h1>
     <div class="gold-bar"></div>
     <p class="sub">Your training plan is matched to your age and development stage.</p>
-    <button class="opt" onclick="pick(this,'age','13–14 · Middle School')">🎒 &nbsp;13–14 · Middle School</button>
-    <button class="opt" onclick="pick(this,'age','15–16 · High School')">📚 &nbsp;15–16 · High School</button>
-    <button class="opt" onclick="pick(this,'age','17–18 · High School Senior')">🎓 &nbsp;17–18 · High School Senior</button>
+    <button class="opt" onclick="pick(this,'age','13-14 · Middle School')">🎒 &nbsp;13-14 · Middle School</button>
+    <button class="opt" onclick="pick(this,'age','15-16 · High School')">📚 &nbsp;15-16 · High School</button>
+    <button class="opt" onclick="pick(this,'age','17-18 · High School Senior')">🎓 &nbsp;17-18 · High School Senior</button>
     <button class="opt" onclick="pick(this,'age','College')">🏫 &nbsp;College Player</button>
   </div>
 
@@ -737,9 +710,9 @@ fbq('init','326334441984368');fbq('track','PageView');
     <h1>How many days per week<br><span>do you currently train?</span></h1>
     <div class="gold-bar"></div>
     <p class="sub">Be honest. The journal meets you where you are and helps you build from there.</p>
-    <button class="opt" onclick="pick(this,'trainingDays','1–2 days: just getting started')">1–2 days &nbsp;· Just getting started</button>
-    <button class="opt" onclick="pick(this,'trainingDays','3–4 days: building my routine')">3–4 days &nbsp;· Building my routine</button>
-    <button class="opt" onclick="pick(this,'trainingDays','5–6 days: serious about my development')">5–6 days &nbsp;· Serious about my development</button>
+    <button class="opt" onclick="pick(this,'trainingDays','1-2 days: just getting started')">1-2 days &nbsp;· Just getting started</button>
+    <button class="opt" onclick="pick(this,'trainingDays','3-4 days: building my routine')">3-4 days &nbsp;· Building my routine</button>
+    <button class="opt" onclick="pick(this,'trainingDays','5-6 days: serious about my development')">5-6 days &nbsp;· Serious about my development</button>
     <button class="opt" onclick="pick(this,'trainingDays','Every day: fully committed')">Every day &nbsp;· Fully committed to the grind</button>
     <button class="opt" onclick="pick(this,'trainingDays','Game days only right now')">Game days only &nbsp;· In-season focus right now</button>
   </div>
@@ -834,11 +807,11 @@ fbq('init','326334441984368');fbq('track','PageView');
         Nobody can want it more than you do.<br><br>
         The grind starts when you log your first session. Show up to your work, and your work will show up for you.
       </div>
-      <div class="quote-attr">&mdash; MYGRIND</div>
+      <div class="quote-attr">MYGRIND</div>
     </div>
 
     <p class="sub" style="text-align:center;font-size:14px;color:#6B6459;">
-      Every player who logs consistently &mdash; even just a few minutes a day &mdash; eventually outpaces the ones who don't.<br><br>
+      Every player who logs consistently, even just a few minutes a day, eventually outpaces the ones who don't.<br><br>
       <strong style="color:var(--gold);">That's the only secret.</strong>
     </p>
   </div>
@@ -879,14 +852,14 @@ fbq('init','326334441984368');fbq('track','PageView');
       <div class="exit-card-row"><span class="check">&#10003;</span> Coach feedback ready to track</div>
       <div class="exit-card-row"><span class="check">&#10003;</span> Plan calibrated to your training schedule</div>
       <div class="exit-card-row" id="exit_pin_row" style="display:none;">
-        <span class="check">&#10003;</span> PIN set. Log in any time on this phone
+        <span class="check">&#10003;</span> PIN set. This journal is marked as yours
       </div>
     </div>
 
     <div class="exit-coming-soon">
       <strong>Your journal is ready.</strong><br>
       Open it now to log your first session, set your streak, and start tracking.<br><br>
-      Your parent can see your <strong>activity</strong> &mdash; streaks, sessions logged, stats &mdash; from their dashboard. <strong style="color:var(--gold);">What you write in your journal stays private to you.</strong>
+      Your parent can see your <strong>activity</strong> (streaks, sessions logged, stats) from their dashboard. <strong style="color:var(--gold);">What you write in your journal stays private to you.</strong>
     </div>
 
     <button class="cta" onclick="onFinalExit()">Open My Journal &rarr;</button>
@@ -959,11 +932,18 @@ function parseUrlParams() {
     if (sportParam === 'baseball' || sportParam === 'softball' || sportParam === 'both') {
       d.sport = sportParam;
     }
+    // Self users always ride the fallback path under the hood (audit F7 —
+    // the comment promised this but no code set it; live URLs from signup
+    // always pass fallback=1 anyway, this covers hand-typed ?self=1).
+    if (d.self) d.fallback = true;
     // Mirror the audience picker into localStorage so softball.html can read it
-    // after onFinalExit() navigates. signup.html already writes this on Screen 0
-    // for fresh signups, but onboarding may also be entered via fallback URL —
-    // in either case d.self is the source of truth at this point.
-    try { localStorage.setItem('mg_signup_for', d.self ? 'self' : 'kid'); } catch (e) {}
+    // after onFinalExit() navigates. Only when this visit actually carries
+    // identifying params (audit F2): a bare direct visit to onboarding.html
+    // must not clobber the stamp on a shared device — softball reads
+    // mg_signup_for for billing-role gating, not just copy.
+    if (nameParam || d.self || d.fallback) {
+      try { localStorage.setItem('mg_signup_for', d.self ? 'self' : 'kid'); } catch (e) {}
+    }
     // fam=1 = this invite came from a household with a verified subscription
     // (stamped server-side by invite-send from the parent's Stripe record, or
     // by the paid parent's dashboard share). Persist it so softball.html
@@ -1253,7 +1233,7 @@ function buildDots(s) {
     if (s >= 1 && s <= 9) stepIdx = s;
     else if (s === 11) stepIdx = 10;
     else if (s === 13) stepIdx = 11;
-    else if (s === 14) stepIdx = 11; // exit screen — keep all dots filled
+    else if (s === 14) stepIdx = 12; // exit screen — one past the last so all 11 dots fill (audit F9: j < stepIdx never lit the 11th at stepIdx 11)
   }
 
   var dotContainerIds = ['d0', 'd05', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8', 'd9', 'd11', 'd13', 'd14'];
@@ -1289,10 +1269,17 @@ function buildPositions() {
   var positions = d.sport === 'softball' ? sb : bb;
   var grid = document.getElementById('posGrid');
   if (grid) {
+    // Re-apply saved picks on revisit (audit F4): the rebuild wiped the
+    // .selected highlights while d.position kept the data, so returning to
+    // this screen showed nothing selected and a tap on a still-picked
+    // position silently REMOVED it with no visual change.
     grid.innerHTML = positions.map(function(p) {
-      return '<button class="opt" onclick="toggle(this,\'position\',\'' + p.l + '\')">' +
+      var sel = Array.isArray(d.position) && d.position.indexOf(p.l) !== -1;
+      return '<button class="opt' + (sel ? ' selected' : '') + '" onclick="toggle(this,\'position\',\'' + p.l + '\')">' +
              p.e + '&nbsp; ' + p.l + '</button>';
     }).join('');
+    var n3 = document.getElementById('n3');
+    if (n3) n3.disabled = !(Array.isArray(d.position) && d.position.length > 0);
   }
 }
 
@@ -1433,15 +1420,17 @@ function onFinalExit() {
     // 6 months). If either is present, preserve it — never downgrade to the
     // default 30-day trial. Lifetime + founder users finish onboarding
     // straight into the journal with their full grant intact.
-    var trialDays   = acc.trialDurationDays || 30;
-    var elapsedDays = acc.trialStart
-      ? (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24)
-      : null;
-    var trialActive = elapsedDays !== null && elapsedDays <= trialDays;
-    if (!acc.paid && !trialActive) {
+    // Grant ONLY when no trial has ever been stamped on this device
+    // (2026-07-02 audit F1). The old guard granted whenever the trial was
+    // not ACTIVE — so an EXPIRED trial (including an expired 90/180-day
+    // promo grant) could be revived with a fresh full period just by
+    // re-running these screens. Mirrors softball.html's defensive grant:
+    // "re-completing onboarding never refreshes an expired trial." Also
+    // honor the blocked / server-known flags softball checks.
+    if (!acc.paid && !acc.trialStart && !acc.trialBlocked &&
+        !(acc.serverKnown && acc.subStatus)) {
       acc.trialStart = Date.now();
       acc.mode       = acc.mode || 'onboarded';
-      acc.email      = acc.email || (d && d.email ? d.email : '');
       var serialized = JSON.stringify(acc);
       localStorage.setItem(ACCESS_KEY, serialized);
       try { sessionStorage.setItem(ACCESS_KEY, serialized); } catch(_){}
@@ -1463,8 +1452,15 @@ function onFinalExit() {
   // straight to the journal — unchanged.
   var _intentEmail = '';
   try { _intentEmail = (sessionStorage.getItem('mg_signin_intent') || '').trim().toLowerCase(); } catch (_) {}
-  if (d.self && _intentEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_intentEmail)) {
-    window.location.href = '/signin.html?email=' + encodeURIComponent(_intentEmail) + '&auto=1';
+  if (d.self) {
+    if (_intentEmail && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(_intentEmail)) {
+      window.location.href = '/signin.html?email=' + encodeURIComponent(_intentEmail) + '&auto=1';
+      return;
+    }
+    // Intent missing (new tab / cleared session, audit F8): still route the
+    // adult through sign-in so their account gets created — just without
+    // the auto-send; they type their email and get the code.
+    window.location.href = '/signin.html';
     return;
   }
   window.location.href = 'softball.html';

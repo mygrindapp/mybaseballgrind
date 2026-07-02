@@ -16441,7 +16441,11 @@ function bridgeFromOnboarding() {
     const bridged = {
       name:   ob.name || '',
       age:    mgNormalizeAge(ob.age),
-      school: ob.team || '',
+      // ob.team is a team-STATUS answer from onboarding ("Yes: I am
+      // currently on a team"), not a school name (audit F6) — mapping it
+      // rendered that sentence as the player's school. Leave school blank
+      // for the player to fill in on the Profile tab.
+      school: '',
       pos:    Array.isArray(ob.position) ? ob.position.join(' / ') : ''
     };
     localStorage.setItem('ybg_softball_profile', JSON.stringify(bridged));
