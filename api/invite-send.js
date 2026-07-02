@@ -44,6 +44,7 @@ import crypto from 'crypto';
 import { Resend } from 'resend';
 import { checkIpLimit, checkPhoneLimit, recordSend } from '../lib/rate-limit.js';
 import { lookupPhone } from '../lib/lookup.js';
+import { getSubscription } from '../lib/subscription-store.js';
 
 const DRY_RUN = process.env.SMS_DRY_RUN !== 'false';
 
@@ -92,10 +93,16 @@ function trimStr(v, max) {
 // ─── Shared invite URL builder ────────────────────────────
 // Must stay in lockstep with signup.html openInviteShareModal()
 // and api/send-invite.js buildSmsBody().
-function buildInviteUrl(playerName, sport) {
+function buildInviteUrl(playerName, sport, famPaid) {
   return 'https://mygrindapp.com/onboarding.html'
     + '?name='  + encodeURIComponent(playerName)
-    + '&sport=' + encodeURIComponent(sport);
+    + '&sport=' + encodeURIComponent(sport)
+    // fam=1: this invite comes from a household with an active/trialing
+    // subscription (server-verified in the handler). onboarding.html stamps
+    // the kid's device with mg_dep_of_paid so softball.html never shows the
+    // kid a trial countdown or the day-30 lockout — billing pressure
+    // belongs on the payer's surfaces, not a paid family's player.
+    + (famPaid ? '&fam=1' : '');
 }
 
 function sportLabel(sport) {
@@ -107,8 +114,8 @@ function sportLabel(sport) {
 // ─── SMS body ─────────────────────────────────────────────
 // GSM-7 only (plain hyphen, straight apostrophes) so segments
 // stay at 153 chars. Mirrors send-invite.js voice.
-function buildSmsBody({ parentName, playerName, sport }) {
-  const url = buildInviteUrl(playerName, sport);
+function buildSmsBody({ parentName, playerName, sport, famPaid }) {
+  const url = buildInviteUrl(playerName, sport, famPaid);
   return (
     `Hey ${playerName}, ${parentName} signed you up for MyGrind - ` +
     `the ${sportLabel(sport)} journal for tracking your stats, games, and growth.\n\n` +
@@ -119,8 +126,8 @@ function buildSmsBody({ parentName, playerName, sport }) {
 // ─── Email body ───────────────────────────────────────────
 // Warm-dark branded HTML matching api/magic-link-request.js so
 // the brand reads consistent inbox to inbox.
-function buildEmailParts({ parentName, playerName, sport }) {
-  const url   = buildInviteUrl(playerName, sport);
+function buildEmailParts({ parentName, playerName, sport, famPaid }) {
+  const url   = buildInviteUrl(playerName, sport, famPaid);
   const label = sportLabel(sport);
 
   const text = [
@@ -182,7 +189,19 @@ export default async function handler(req, res) {
   const playerName  = trimStr(body.playerName, 60);
   const sportRaw    = trimStr(body.sport, 16).toLowerCase();
   const parentName  = trimStr(body.parentName, 60) || 'Your parent';
-  const parentEmail = trimStr(body.parentEmail, 254); // logging context only
+  const parentEmail = trimStr(body.parentEmail, 254); // logging + family-paid lookup
+
+  // Family-paid stamp: if the parent's email holds an active/trialing
+  // subscription, the invite link carries fam=1 (see buildInviteUrl).
+  // Server-truth read of the existing store; never returned to the caller,
+  // it only rides inside the SMS/email that goes to the family's player.
+  let famPaid = false;
+  if (isValidEmail(parentEmail)) {
+    try {
+      const sub = await getSubscription(parentEmail);
+      famPaid = !!(sub && sub.isPaid);
+    } catch (e) { /* store unavailable — send the plain link */ }
+  }
 
   const sport = (sportRaw === 'softball' || sportRaw === 'both') ? sportRaw : 'baseball';
 
@@ -258,7 +277,7 @@ export default async function handler(req, res) {
     try {
       const resend = new Resend(apiKey);
       const from   = process.env.RESEND_FROM || 'MyGrind <coach@mygrindapp.com>';
-      const parts  = buildEmailParts({ parentName, playerName, sport });
+      const parts  = buildEmailParts({ parentName, playerName, sport, famPaid });
 
       const result = await resend.emails.send({
         from,
@@ -331,7 +350,7 @@ export default async function handler(req, res) {
 
     const client  = twilio(accountSid, authToken);
     const message = await client.messages.create({
-      body: buildSmsBody({ parentName, playerName, sport }),
+      body: buildSmsBody({ parentName, playerName, sport, famPaid }),
       from: fromNumber,
       to:   e164Phone,
     });

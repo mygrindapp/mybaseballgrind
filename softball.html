@@ -1904,6 +1904,7 @@ function signOutAndSwitchAccount() {
     'ybg_softball_access',
     'mg_signup_state',
     'mg_signup_for',
+    'mg_dep_of_paid',
     'mg_player_profile',
     'mg_promo_code',
     'mg_first_journal_open',
@@ -8436,6 +8437,17 @@ async function mgVerifyTrial() {
 // ── VALIDATE ─────────────────────────────────────────
 function validateSession() {
   if (isCreator()) return 'creator';
+  // Dependent on a PAID household: the invite link carried fam=1 (stamped
+  // server-side by invite-send from the parent's live subscription, or by
+  // the paid parent's dashboard share; persisted by onboarding.html). Kids
+  // ride the parent's plan — no trial clock, no day-30 lockout. Billing
+  // pressure stays on the payer's surfaces. Client-trust here is the same
+  // accepted L1 class as the rest of the local-first gating; Stripe truth
+  // still governs the payer's own devices.
+  try {
+    if (localStorage.getItem('mg_dep_of_paid') === '1' &&
+        localStorage.getItem('mg_signup_for') === 'kid') return 'paid';
+  } catch (e) {}
   const state = getAccessState();
   // Email not required to access app
   const fp = getDeviceFingerprint();
@@ -22837,7 +22849,7 @@ function mgClearLocalDataForIdentitySwitch(prevUid) {
       'mg_auth_uid': 1, 'mg_active_minor_id': 1,
       'ybg_access': 1, 'ybg_softball_access': 1, 'ybg_fb_pass': 1,
       'ybg_creator': 1, 'ybg_pin_unlocked': 1,
-      'mg_signup_state': 1, 'mg_signup_for': 1, 'mg_promo_code': 1, 'mg_first_journal_open': 1,
+      'mg_signup_state': 1, 'mg_signup_for': 1, 'mg_dep_of_paid': 1, 'mg_promo_code': 1, 'mg_first_journal_open': 1,
       'ybg_install_dismissed': 1, 'ybg_ios_dismissed': 1,
       'ybg_notif_asked': 1, 'ybg_notif_granted': 1,
       'mg_cloud_backup_dismissed': 1, 'mg_cloud_backup_done': 1,

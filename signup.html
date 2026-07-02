@@ -6797,9 +6797,21 @@ function openInviteShareModal(playerIndex) {
 
   const name  = player.firstName || 'your player';
   const sport = player.sport || state.familySport || 'baseball';
+  // fam=1 when this household has completed checkout (mg_plan_picker_shown
+  // is only ever set on a real Stripe success) or carries a live sub state.
+  // The kid's device reads it in onboarding.html and rides the parent's
+  // plan: no trial countdown, no day-30 lockout. Server-sent invites get
+  // the same stamp from api/invite-send.js via the subscription store.
+  let famPaid = false;
+  try {
+    const a = JSON.parse(localStorage.getItem('ybg_access') || '{}');
+    famPaid = !!(a.paid || a.subStatus === 'active' || a.subStatus === 'trialing' ||
+                 a.subStatus === 'past_due' || localStorage.getItem('mg_plan_picker_shown') === '1');
+  } catch (e) {}
   const url   = 'https://mygrindapp.com/onboarding.html' +
                 '?name='  + encodeURIComponent(name) +
-                '&sport=' + encodeURIComponent(sport);
+                '&sport=' + encodeURIComponent(sport) +
+                (famPaid ? '&fam=1' : '');
 
   _inviteShareCurrentUrl = url;
   _inviteShareCurrentPlayer = { name: name, sport: sport };

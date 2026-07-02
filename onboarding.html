@@ -956,6 +956,15 @@ function parseUrlParams() {
     // for fresh signups, but onboarding may also be entered via fallback URL —
     // in either case d.self is the source of truth at this point.
     try { localStorage.setItem('mg_signup_for', d.self ? 'self' : 'kid'); } catch (e) {}
+    // fam=1 = this invite came from a household with a verified subscription
+    // (stamped server-side by invite-send from the parent's Stripe record, or
+    // by the paid parent's dashboard share). Persist it so softball.html
+    // never shows this player a trial countdown or the day-30 lockout.
+    // Set-only: a later plain link never strips a paid stamp (sign-out does).
+    var famParam = params.get('fam');
+    if (famParam === '1' || famParam === 'true') {
+      try { localStorage.setItem('mg_dep_of_paid', '1'); } catch (e) {}
+    }
   } catch(e) {
     // URLSearchParams not supported (very old browsers) — ignore
   }
