@@ -5336,6 +5336,23 @@ function onScreen7Continue() {
       url += '&self=1';
       if (state.familySport) url += '&sport=' + encodeURIComponent(state.familySport);
     }
+    // ── CARD GATE (2026-07-02) ────────────────────────────────────
+    // The 7/1 card-required ship put the mandatory plan picker in
+    // buildScreen8() — but self and fallback-kid paths exit HERE and never
+    // reach Screen 8, so they slipped past card-required entirely and got
+    // the old invisible no-card trial. Gate this exit with the same picker.
+    // The pending onboarding hand-off is stashed so the ?co=success return
+    // in softball.html can resume it after checkout (see
+    // lockInCardReturnHandler). Promo users are unaffected: openPlanPicker
+    // returns false for lifetime grants, falling through to the redirect.
+    var alreadyPicked = false;
+    try { alreadyPicked = localStorage.getItem('mg_plan_picker_shown') === '1'; } catch (_) {}
+    if (!alreadyPicked) {
+      try { localStorage.setItem('mg_pending_onboarding', url); } catch (_) {}
+      var opened = openPlanPicker();
+      if (opened) return; // picker takes over; checkout success resumes the hand-off
+      try { localStorage.removeItem('mg_pending_onboarding'); } catch (_) {}
+    }
     window.location.href = url;
   } else {
     // No fallback kids — go to parent dashboard (Screen 8)

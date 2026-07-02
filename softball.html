@@ -1905,6 +1905,7 @@ function signOutAndSwitchAccount() {
     'mg_signup_state',
     'mg_signup_for',
     'mg_dep_of_paid',
+    'mg_pending_onboarding',
     'mg_player_profile',
     'mg_promo_code',
     'mg_first_journal_open',
@@ -8755,7 +8756,17 @@ function lockInCardReturnHandler() {
     if (co !== 'success' && co !== 'cancel') return;
     if (co === 'success') {
       const acc = getAccessState();
-      showShareToast && showShareToast('🔐 Card on file. We will charge on day ' + (acc.trialDurationDays || TRIAL_DAYS) + '.');
+      // typeof guard + deferred: showShareToast is declared in a LATER script
+      // block, so a bare reference here is a ReferenceError that killed this
+      // whole handler on every checkout return since 5/27 (flags below never
+      // set). setTimeout(0) runs after all blocks parse, so the toast shows.
+      setTimeout(function () {
+        try {
+          if (typeof showShareToast === 'function') {
+            showShareToast('🔐 Card on file. We will charge on day ' + (acc.trialDurationDays || TRIAL_DAYS) + '.');
+          }
+        } catch (_) {}
+      }, 0);
       // Checkout completed — mark the signup plan picker satisfied so it
       // never re-prompts (signup.html reads this; the flag is intentionally
       // NOT set on mere redirect-to-Stripe, only here on a real success).
@@ -8771,6 +8782,19 @@ function lockInCardReturnHandler() {
         const optimistic = Object.assign({}, acc, { subStatus: acc.subStatus || 'trialing', hasCardOnFile: true });
         saveAccessState(optimistic);
         removeBanner();
+      } catch (_) {}
+      // Self / fallback-kid signups were mid-hand-off to onboarding.html when
+      // the card gate interrupted them (signup.html onScreen7Continue stashes
+      // the URL). Resume that hand-off now so the player still gets their
+      // PIN + profile setup instead of landing in a cold journal.
+      try {
+        const pending = localStorage.getItem('mg_pending_onboarding');
+        if (pending && /^onboarding\.html\?/.test(pending)) {
+          localStorage.removeItem('mg_pending_onboarding');
+          window.location.replace('/' + pending);
+          return;
+        }
+        localStorage.removeItem('mg_pending_onboarding');
       } catch (_) {}
     }
     params.delete('co');
