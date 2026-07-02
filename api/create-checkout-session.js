@@ -74,6 +74,11 @@ const FOUNDER_CODES = {
   // own cap so it never eats into the founder 100. Mirror in lib/founder-
   // cohort-store.js (TRACKED_CODES + CAPS) and the Stripe D1GRIND promo.
   D1GRIND:        { days: 180, cap: 250 },
+  // Brandon Sonnier's AllStars team gift (2026-07-02) — 3 months free,
+  // capped at his 15-player roster. Card-on-file like every signup; Stripe
+  // auto-converts at day 91 unless the family cancels. Mirror in
+  // lib/founder-cohort-store.js and signup.html PROMO_INFO.
+  ALLSTARMYGRIND: { days: 90,  cap: 15 },
 };
 
 function setCors(req, res) {

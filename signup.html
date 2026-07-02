@@ -6324,6 +6324,7 @@ const STRIPE_PAYMENT_LINKS = {
 const PROMO_INFO = {
   'FOUNDERMYGRIND': {
     kind: 'months',
+    days: 180,
     durationLabel: '6 months',
     summary: '✓ Founder code applied — your first 6 months are free. Welcome to the first 100.'
   },
@@ -6333,8 +6334,19 @@ const PROMO_INFO = {
   // facilities via signup.html?team=D1<CITY>&promo=D1GRIND.
   'D1GRIND': {
     kind: 'months',
+    days: 180,
     durationLabel: '6 months',
     summary: '✓ D1 Training partner code applied — your first 6 months are free.'
+  },
+  // AllStars team gift (2026-07-02) — Brandon Sonnier's roster, 3 months
+  // free, server cap 15. Mirror in api/create-checkout-session.js
+  // FOUNDER_CODES and lib/founder-cohort-store.js. Issued via
+  // signup.html?team=ALLSTARS&promo=ALLSTARMYGRIND.
+  'ALLSTARMYGRIND': {
+    kind: 'months',
+    days: 90,
+    durationLabel: '3 months',
+    summary: '✓ AllStars team code applied — your first 3 months are free.'
   },
   'FOREVERYOUNG2026': {
     kind: 'lifetime',
@@ -6433,11 +6445,13 @@ function grantPromoAccess() {
       next.plan = 'lifetime';
       // Lifetime users keep any trialStart (harmless) but never expire.
     } else if (info.kind === 'months') {
-      // 6 months free = 180 days. Preserve trialStart if already set so the
-      // founder cliff doesn't reset on re-entry. trialDurationDays is read by
-      // softball.html's validateSession() to override the default TRIAL_DAYS=14.
+      // N months free = info.days (180 founder/D1, 90 AllStars). Preserve
+      // trialStart if already set so the cliff doesn't reset on re-entry.
+      // trialDurationDays is read by softball.html's validateSession() to
+      // override the default TRIAL_DAYS. Server stays authoritative for the
+      // real Stripe trial_end (FOUNDER_CODES in create-checkout-session.js).
       next.trialStart        = existing.trialStart || Date.now();
-      next.trialDurationDays = Math.max(existing.trialDurationDays || 0, 180);
+      next.trialDurationDays = Math.max(existing.trialDurationDays || 0, info.days || 180);
       next.plan              = next.plan || 'founder';
       next.mode              = next.mode || 'promo_founder';
     }
