@@ -8,9 +8,22 @@
 // push subscription itself is the credential to reach that device. Email is
 // optional metadata. The send step lives in api/cron/daily-reminder.js (Phase C),
 // gated behind PUSH_DRY_RUN until verified on a real device.
+//
+// 2026-07-02 hardening (audit M2): per-IP rate limit (read tier, 60/hr,
+// 600/day) — this was the last unauthenticated endpoint with no limiter, so
+// anyone could flood Firestore with junk subscription docs (write-
+// amplification / cost DoS). Same fail-open-on-Redis-blip behavior as every
+// other public endpoint.
 // ═══════════════════════════════════════════════════════════
 
 import { savePushSubscription, deletePushSubscription } from '../lib/push-store.js';
+import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
+
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return req.headers['x-real-ip'] || null;
+}
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -35,6 +48,14 @@ function readBody(req) {
 export default async function handler(req, res) {
   setCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Per-IP limit on both POST and DELETE (see header comment).
+  const clientIp = getClientIp(req);
+  const ipCheck = await checkIpReadLimit(clientIp);
+  if (!ipCheck.ok) {
+    return res.status(429).json({ ok: false, error: 'rate_limited' });
+  }
+  await recordRead(clientIp);
 
   const body = readBody(req);
 

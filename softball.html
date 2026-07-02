@@ -23712,20 +23712,29 @@ function cfSubmit() {
   var origLabel = submitBtn.textContent;
   submitBtn.textContent = 'Sending…';
 
-  fetch('/api/feedback-request', {
-    method:  'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body:    JSON.stringify({
-      playerName: playerName, playerPhone: playerPhone,
-      parentName: parentName, parentEmail: parentEmail,
-      coachName:  coachName,  coachPhone:  coachPhone, coachEmail: coachEmail,
-      focus: focus, situation: situation, note: note, sport: sport
-    })
+  // Server requires a signed-in session since 2026-07-02 (anyone could
+  // previously make MyGrind deliver attacker-written messages to an
+  // arbitrary coach). Send the Firebase bearer; 401 gets a sign-in prompt.
+  mgIdTokenHeader().then(function (authHeader) {
+    return fetch('/api/feedback-request', {
+      method:  'POST',
+      headers: Object.assign({ 'Content-Type': 'application/json' }, authHeader),
+      body:    JSON.stringify({
+        playerName: playerName, playerPhone: playerPhone,
+        parentName: parentName, parentEmail: parentEmail,
+        coachName:  coachName,  coachPhone:  coachPhone, coachEmail: coachEmail,
+        focus: focus, situation: situation, note: note, sport: sport
+      })
+    });
   })
   .then(function(r) { return r.json().then(function(j) { return { status: r.status, body: j }; }); })
   .then(function(out) {
     submitBtn.disabled = false;
     submitBtn.textContent = origLabel;
+    if (out.status === 401) {
+      cfShowError('Sign in first so your coach knows this request is really from you: Settings, then Sign In. Everything you typed here stays put.');
+      return;
+    }
     if (!out.body.ok) {
       cfShowError('Could not send: ' + (out.body.error || 'unknown error') + '. Try again.');
       return;

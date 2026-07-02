@@ -174,8 +174,10 @@ async function sendCancellationEmail({ email, currentPeriodEndUnix, plan }) {
 // rather than only after they tap the welcome link.
 //
 // sendPostPaymentWelcomeEmail: branded Resend email with a magiclink
-// token (24h TTL, same `magiclink:<token>` shape as magic-link-request.js
-// so magic-link-verify.js consumes it unchanged).
+// token (24h TTL, same `magiclink:<token>` shape the legacy magic-link
+// flow used, so magic-link-verify.js consumes it unchanged; the old
+// self-serve magic-link-request endpoint was removed 2026-07-02 —
+// sign-in is the 6-digit code flow).
 //
 // Both helpers fail soft — Stripe's source-of-truth subscription state
 // must succeed regardless of email or Auth-creation outcomes.

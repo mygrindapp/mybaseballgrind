@@ -10,6 +10,7 @@ import twilio from 'twilio';
 import crypto from 'crypto';
 import { createRequest } from '../lib/feedback-store.js';
 import { checkIpLimit, checkPhoneLimit, recordSend } from '../lib/rate-limit.js';
+import { verifyBearer } from '../lib/firebase-admin.js';
 
 // ─── Extract real client IP from Vercel proxy headers ─────
 function getClientIp(req) {
@@ -90,6 +91,18 @@ export default async function handler(req, res) {
   setCors(req, res);
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST')    return res.status(405).json({ ok: false, error: 'method_not_allowed' });
+
+  // ── Authentication (2026-07-02 hardening, audit M3) ─────────────────
+  // Before this, ANYONE could make MyGrind deliver attacker-written text
+  // (SMS once live, email today) to an arbitrary coach phone/email — an
+  // SMS-injection / harassment vector with MyGrind's name on it. A
+  // feedback request now requires a signed-in account (the parent's
+  // Firebase session). softball.html sends the bearer and shows a
+  // sign-in prompt on 401.
+  const auth = await verifyBearer(req);
+  if (!auth.ok) {
+    return res.status(401).json({ ok: false, error: 'auth_required' });
+  }
 
   const body = req.body || {};
   const { playerName, playerPhone, parentName, parentEmail,
