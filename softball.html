@@ -441,6 +441,18 @@
   html[data-theme="light"] [style*="background:#1A1614"] { background: var(--card) !important; }
   html[data-theme="light"] [style*="background:#2A2622"],
   html[data-theme="light"] [style*="background:#15110E"] { background: var(--card2) !important; }
+  /* The "warm maroon" featured family (Season Goals, Coach card, Why card,
+     share/help modals, install + trial banners, grade nag) kept its own
+     dark hex set that the 6/30 remap never covered — Coach spotted the
+     Season Goals card still dark on light (2026-07-02). Headers/strips go
+     card2, bodies/modals go card; plum borders go the light border. */
+  html[data-theme="light"] [style*="background:#0E0006"],
+  html[data-theme="light"] [style*="linear-gradient(180deg,#180010"] { background: var(--card) !important; }
+  html[data-theme="light"] [style*="background:#1A0010"],
+  html[data-theme="light"] [style*="linear-gradient(135deg,#1F0018"],
+  html[data-theme="light"] [style*="linear-gradient(135deg,#1A0010"],
+  html[data-theme="light"] [style*="linear-gradient(90deg,#1A0010"] { background: var(--card2) !important; }
+  html[data-theme="light"] [style*="#3A0020"] { border-color: var(--border) !important; }
   /* Cream/grey literal text → themed ink/muted */
   html[data-theme="light"] [style*="color:#F5F0EB"],
   html[data-theme="light"] [style*="color:#F2EAD9"] { color: var(--white) !important; }
