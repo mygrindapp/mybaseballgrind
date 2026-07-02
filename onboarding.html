@@ -38,7 +38,7 @@
   })();
 </script>
 
-<meta name="theme-color" content="#181614">
+<meta name="theme-color" content="#F7F4EF">
 <meta name="robots" content="noindex,nofollow">
 <link rel="canonical" href="https://www.mygrindapp.com/onboarding.html">
 <link rel="icon" type="image/png" href="https://www.mygrindapp.com/assets/favicon.png">
@@ -47,6 +47,7 @@
 <!-- Vercel Web Analytics — onboarding funnel tracking. Cookieless. -->
 <script defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@700&family=Barlow:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
 
 <script>
@@ -77,7 +78,9 @@
       localStorage.setItem('mg_sport', sport);
       document.documentElement.setAttribute('data-sport', sport);
       var meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.setAttribute('content', sport === 'softball' ? '#D4547A' : '#C9A84C');
+      // Light page (2026-07-02): browser chrome matches the off-white bg for
+      // both sports; the in-page accent still swaps gold vs softball pink.
+      if (meta) meta.setAttribute('content', '#F7F4EF');
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() { applyBallEmoji(sport); });
       } else {
@@ -106,76 +109,76 @@
 
 :root {
   /* Sport-aware accent: gold = baseball/both default. softball overrides below. */
-  --gold: #C9A84C;
-  --accent-rgb: 201, 168, 76;
+  --gold: #A8873A;
+  --accent-rgb: 168, 135, 58;
 }
 
 [data-sport="softball"] {
-  --gold: #D4547A;
-  --accent-rgb: 212, 84, 122;
+  --gold: #B93A62;
+  --accent-rgb: 185, 58, 98;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-body { background: #181614; color: #F5F0EB; font-family: 'Barlow', Arial, sans-serif; font-size: 16px; min-height: 100vh; }
+body { background: #F7F4EF; color: #14120F; font-family: 'Barlow', Arial, sans-serif; font-size: 16px; min-height: 100vh; }
 .screen { display: none; flex-direction: column; min-height: 100vh; padding: 0 0 100px; max-width: 480px; margin: 0 auto; } /* 80→100px 2026-06-09 cut-off audit: .bnav is ~77px on home-indicator iPhones (10 + 33 button + 34 safe-area), so 80px left 3px of clearance */
 .screen.on { display: flex; }
 .screen-body { padding: 24px 24px 0; flex: 1; }
 
-.prog-wrap { padding: 14px 24px 0; background: #181614; position: sticky; top: 0; z-index: 10; max-width: 480px; margin: 0 auto; }
-.prog-track { height: 3px; background: #2A2622; border-radius: 2px; overflow: hidden; }
+.prog-wrap { padding: 14px 24px 0; background: #F7F4EF; position: sticky; top: 0; z-index: 10; max-width: 480px; margin: 0 auto; }
+.prog-track { height: 3px; background: #F1ECE4; border-radius: 2px; overflow: hidden; }
 .prog-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; }
-.prog-label { display: flex; justify-content: space-between; margin-top: 5px; padding-bottom: 10px; }
-.prog-step { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #6B5E52; }
+.prog-label { display: flex; justify-content: space-between; gap: 8px; margin-top: 5px; padding-bottom: 10px; }
+.prog-step { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: #6B6459; }
 
 .badge { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
-h1 { font-family: 'Bebas Neue', Arial, sans-serif; font-size: 34px; letter-spacing: 1.5px; line-height: 1.1; color: #F5F0EB; margin-bottom: 8px; }
+h1 { font-family: 'Bebas Neue', Arial, sans-serif; font-size: 34px; letter-spacing: 1.5px; line-height: 1.1; color: #14120F; margin-bottom: 8px; }
 h1 span { color: var(--gold); }
-.sub { font-size: 15px; color: #A89880; line-height: 1.7; margin-bottom: 18px; }
+.sub { font-size: 15px; color: #6B6459; line-height: 1.7; margin-bottom: 18px; }
 .gold-bar { width: 36px; height: 3px; background: var(--gold); margin-bottom: 14px; }
 
 /* Option button (used on age, level, team, training-days screens) */
-.opt { display: block; width: 100%; background: #231F1C; border: 1px solid #3D3530; border-radius: 6px; padding: 14px 16px; font-family: 'Barlow', Arial, sans-serif; font-size: 16px; color: #D4C8BC; font-weight: 500; text-align: left; cursor: pointer; margin-bottom: 8px; transition: border-color 0.15s, background 0.15s, color 0.15s; -webkit-user-select: none; user-select: none; }
+.opt { display: block; width: 100%; background: #FFFFFF; border: 1px solid #E2DACC; border-radius: 6px; padding: 14px 16px; font-family: 'Barlow', Arial, sans-serif; font-size: 16px; color: #3A352E; font-weight: 500; text-align: left; cursor: pointer; margin-bottom: 8px; transition: border-color 0.15s, background 0.15s, color 0.15s; -webkit-user-select: none; user-select: none; }
 .opt:active { border-color: var(--gold); background: rgba(var(--accent-rgb),0.1); color: var(--gold); }
 .opt.selected { border-color: var(--gold); background: rgba(var(--accent-rgb),0.1); color: var(--gold); }
 .opt.selected::after { content: ' ✓'; float: right; }
 
 /* Sport card (S1) */
-.sport-card { display: flex; align-items: center; gap: 16px; background: #231F1C; border: 2px solid #3D3530; border-radius: 10px; padding: 18px 20px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; -webkit-user-select: none; user-select: none; }
+.sport-card { display: flex; align-items: center; gap: 16px; background: #FFFFFF; border: 2px solid #E2DACC; border-radius: 10px; padding: 18px 20px; cursor: pointer; margin-bottom: 10px; transition: all 0.2s; -webkit-user-select: none; user-select: none; }
 .sport-card:active { border-color: var(--gold); background: rgba(var(--accent-rgb),0.08); }
 .sport-emoji { font-size: 36px; line-height: 1; flex-shrink: 0; }
-.sport-name { font-family: 'Bebas Neue', Arial, sans-serif; font-size: 26px; letter-spacing: 1.5px; color: #F5F0EB; }
-.sport-desc { font-size: 14px; color: #A89880; margin-top: 2px; }
+.sport-name { font-family: 'Bebas Neue', Arial, sans-serif; font-size: 26px; letter-spacing: 1.5px; color: #14120F; }
+.sport-desc { font-size: 14px; color: #6B6459; margin-top: 2px; }
 
 /* Card containers (used on plan-preview screen) */
-.card { background: #231F1C; border: 1px solid #3D3530; border-radius: 8px; padding: 16px; margin-bottom: 12px; color: #D4C8BC; }
-.card-gold { background: linear-gradient(135deg,#1A1400,#0E0C00); border-color: #8F7A36; }
+.card { background: #FFFFFF; border: 1px solid #E2DACC; border-radius: 8px; padding: 16px; margin-bottom: 12px; color: #3A352E; }
+.card-gold { background: linear-gradient(135deg,#F7EEDA,#F0E4C4); border-color: #C9AE6B; }
 .card-title { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
 
 /* Multi-select hint pill (above goals/struggles/coach-feedback screens) */
-.multi-hint { display: inline-block; background: #231F1C; border: 1px solid #3D3530; border-radius: 20px; padding: 4px 12px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #5C544A; margin-bottom: 12px; }
+.multi-hint { display: inline-block; background: #FFFFFF; border: 1px solid #E2DACC; border-radius: 20px; padding: 4px 12px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #5C544A; margin-bottom: 12px; }
 
 /* Streak preview row (S11 plan preview) */
 .streak-row { display: flex; gap: 6px; justify-content: center; margin: 10px 0 8px; }
 .sday { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Barlow Condensed', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; }
 .sday.done { background: var(--gold); color: #0C0A08; }
 .sday.today { background: rgba(var(--accent-rgb),0.15); border: 1.5px solid var(--gold); color: var(--gold); }
-.sday.empty { background: #231F1C; border: 1px solid #3D3530; color: #4B3E35; }
+.sday.empty { background: #FFFFFF; border: 1px solid #E2DACC; color: #A79B8A; }
 
 .stat-row { display: flex; gap: 10px; margin-top: 10px; }
-.stat-mini { flex: 1; background: #231F1C; border: 1px solid #3D3530; border-radius: 6px; padding: 10px; text-align: center; }
+.stat-mini { flex: 1; background: #FFFFFF; border: 1px solid #E2DACC; border-radius: 6px; padding: 10px; text-align: center; }
 .stat-num { font-family: 'Bebas Neue', Arial, sans-serif; font-size: 22px; color: var(--gold); line-height: 1; }
-.stat-lbl { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #6B5E52; margin-top: 4px; }
+.stat-lbl { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #6B6459; margin-top: 4px; }
 
 /* Big primary CTA (used on welcome + final exit) */
 .cta { display: block; width: 100%; background: var(--gold); color: #0C0A08; border: none; border-radius: 6px; padding: 16px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 17px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: opacity 0.2s; -webkit-user-select: none; user-select: none; }
 .cta:active { opacity: 0.85; }
 
 /* Bottom nav (Back / dots / Next) — fixed at bottom */
-.bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #181614; border-top: 1px solid #2E2824; display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 100; }
-.back-btn { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #6B5E52; background: none; border: none; cursor: pointer; padding: 8px 0; min-width: 60px; }
-.back-btn:active { color: #A89880; }
+.bnav { position: fixed; bottom: 0; left: 0; right: 0; background: #F7F4EF; border-top: 1px solid #F1ECE4; display: flex; align-items: center; justify-content: space-between; padding: 10px 24px; padding-bottom: max(10px, env(safe-area-inset-bottom)); z-index: 100; }
+.back-btn { font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #6B6459; background: none; border: none; cursor: pointer; padding: 8px 0; min-width: 60px; }
+.back-btn:active { color: #6B6459; }
 .dots { display: flex; gap: 5px; align-items: center; }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: #2A2622; transition: background 0.3s; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #F1ECE4; transition: background 0.3s; }
 .dot.on { background: var(--gold); }
 .next-btn { background: var(--gold); color: #0C0A08; border: none; border-radius: 4px; padding: 9px 20px; font-family: 'Barlow Condensed', Arial, sans-serif; font-size: 13px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
 .next-btn[disabled] { opacity: 0.3; cursor: not-allowed; }
@@ -184,8 +187,8 @@ h1 span { color: var(--gold); }
 .pin-row { display: flex; gap: 10px; justify-content: center; margin: 22px 0 18px; }
 .pin-box {
   width: 52px; height: 60px;
-  background: #231F1C;
-  border: 2px solid #3D3530;
+  background: #FFFFFF;
+  border: 2px solid #E2DACC;
   border-radius: 8px;
   font-family: 'Bebas Neue', Arial, sans-serif;
   font-size: 32px;
@@ -195,11 +198,11 @@ h1 span { color: var(--gold); }
   transition: border-color 0.15s;
 }
 .pin-box:focus { border-color: var(--gold); }
-.pin-box.filled { border-color: #8F7A36; }
+.pin-box.filled { border-color: #C9AE6B; }
 .pin-helper {
   text-align: center;
   font-size: 13px;
-  color: #6B5E52;
+  color: #6B6459;
   margin-bottom: 4px;
   font-style: italic;
 }
@@ -207,7 +210,7 @@ h1 span { color: var(--gold); }
   display: none;
   text-align: center;
   font-size: 12px;
-  color: #E57373;
+  color: #B03A2E;
   background: rgba(192,57,43,0.1);
   border: 1px solid rgba(192,57,43,0.3);
   border-radius: 3px;
@@ -218,8 +221,8 @@ h1 span { color: var(--gold); }
 
 /* Promise card (S13 — Coach Young's promise) */
 .promise-card {
-  background: linear-gradient(135deg, #1A1400, #0E0C00);
-  border: 1px solid #8F7A36;
+  background: linear-gradient(135deg, #F7EEDA, #F0E4C4);
+  border: 1px solid #C9AE6B;
   border-radius: 10px;
   padding: 28px 22px;
   text-align: center;
@@ -235,7 +238,7 @@ h1 span { color: var(--gold); }
 .promise-card .quote-body {
   font-size: 17px;
   line-height: 1.6;
-  color: #E0DACB;
+  color: #3A352E;
   font-style: italic;
   margin-bottom: 18px;
 }
@@ -251,7 +254,7 @@ h1 span { color: var(--gold); }
 /* Final exit screen (S14 — placeholder dashboard) */
 .exit-card {
   background: linear-gradient(135deg, rgba(var(--accent-rgb),0.08), rgba(var(--accent-rgb),0.02));
-  border: 1px solid #8F7A36;
+  border: 1px solid #C9AE6B;
   border-radius: 10px;
   padding: 24px 20px;
   margin-bottom: 16px;
@@ -263,7 +266,7 @@ h1 span { color: var(--gold); }
   gap: 12px;
   padding: 8px 0;
   font-size: 14px;
-  color: #D4C8BC;
+  color: #3A352E;
 }
 .exit-card-row .check {
   color: var(--gold);
@@ -279,7 +282,7 @@ h1 span { color: var(--gold); }
   border: 1px dashed rgba(var(--accent-rgb),0.3);
   border-radius: 6px;
   font-size: 13px;
-  color: #A89880;
+  color: #6B6459;
   line-height: 1.6;
   font-style: italic;
 }
@@ -319,7 +322,7 @@ h1 span { color: var(--gold); }
   margin: 16px 0 22px;
   font-size: 14px;
   line-height: 1.5;
-  color: #D4C8BC;
+  color: #3A352E;
 }
 .parent-context strong { color: var(--gold); }
 
@@ -428,7 +431,7 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <div class="pin-error" id="pinErr">Pick a different PIN: 0000 and 1234 are too easy to guess.</div>
 
-    <p class="sub" style="font-size:13px;color:#6B5E52;text-align:center;font-style:italic;">
+    <p class="sub" style="font-size:13px;color:#6B6459;text-align:center;font-style:italic;">
       You'll use this PIN to log in any time you open MyGrind on this phone.
     </p>
   </div>
@@ -764,15 +767,15 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <div class="card card-gold" style="margin-bottom:12px;">
       <div class="card-title" id="planTitle">Your Personalized Plan</div>
-      <div style="font-size:13px;color:#D4C8BC;line-height:2.1;" id="planItems">Loading...</div>
+      <div style="font-size:13px;color:#3A352E;line-height:2.1;" id="planItems">Loading...</div>
     </div>
 
     <div class="card" style="margin-bottom:12px;">
       <div class="card-title">Example Journal Entry</div>
-      <div style="font-size:13px;color:#D4C8BC;line-height:1.8;">
-        <div style="padding:5px 0;border-bottom:1px solid #3D3530;">🟡 <strong style="color:#F5F0EB;">Drill:</strong> <span id="exDrill">Tee work. Inside pitch, 40 reps</span></div>
-        <div style="padding:5px 0;border-bottom:1px solid #3D3530;">🟡 <strong style="color:#F5F0EB;">Feel:</strong> Making contact but pulling off the ball</div>
-        <div style="padding:5px 0;">🟡 <strong style="color:#F5F0EB;">Fix:</strong> Stay back, shoulder level through contact</div>
+      <div style="font-size:13px;color:#3A352E;line-height:1.8;">
+        <div style="padding:5px 0;border-bottom:1px solid #E2DACC;">🟡 <strong style="color:#14120F;">Drill:</strong> <span id="exDrill">Tee work. Inside pitch, 40 reps</span></div>
+        <div style="padding:5px 0;border-bottom:1px solid #E2DACC;">🟡 <strong style="color:#14120F;">Feel:</strong> Making contact but pulling off the ball</div>
+        <div style="padding:5px 0;">🟡 <strong style="color:#14120F;">Fix:</strong> Stay back, shoulder level through contact</div>
       </div>
     </div>
 
@@ -829,7 +832,7 @@ fbq('init','326334441984368');fbq('track','PageView');
       <div class="quote-attr">&mdash; MYGRIND</div>
     </div>
 
-    <p class="sub" style="text-align:center;font-size:14px;color:#A89880;">
+    <p class="sub" style="text-align:center;font-size:14px;color:#6B6459;">
       Every player who logs consistently &mdash; even just a few minutes a day &mdash; eventually outpaces the ones who don't.<br><br>
       <strong style="color:var(--gold);">That's the only secret.</strong>
     </p>
@@ -1129,13 +1132,13 @@ function setSport(s, el) {
     document.documentElement.setAttribute('data-sport', s);
     localStorage.setItem('mg_sport', s);
     var meta = document.querySelector('meta[name="theme-color"]');
-    if (meta) meta.setAttribute('content', s === 'softball' ? '#D4547A' : '#C9A84C');
+    if (meta) meta.setAttribute('content', '#F7F4EF');
   } catch(e) {}
 
   // Visual: clear all sport cards, then highlight chosen
   document.querySelectorAll('.sport-card').forEach(function(c) {
-    c.style.borderColor = '#3D3530';
-    c.style.background = '#231F1C';
+    c.style.borderColor = '#E2DACC';
+    c.style.background = '#FFFFFF';
   });
   el.style.borderColor = 'var(--gold)';
   el.style.background  = 'rgba(var(--accent-rgb), 0.08)';
@@ -1189,7 +1192,7 @@ function enableNext(el) {
   var btn = document.getElementById('n' + n);
   if (btn) {
     btn.disabled = false;
-    var accent = d.sport === 'softball' ? '#D4547A' : 'var(--gold)';
+    var accent = d.sport === 'softball' ? '#B93A62' : 'var(--gold)';
     btn.style.background = accent;
   }
 }
@@ -1211,7 +1214,7 @@ function disableNext(el) {
    ────────────────────────────────────────────────────────── */
 function updateSportLabels() {
   var label = ''; // suppressed (Coach 2026-05-07)
-  var accent = d.sport === 'softball' ? '#D4547A' : 'var(--gold)';
+  var accent = d.sport === 'softball' ? '#B93A62' : 'var(--gold)';
 
   // Update each per-screen sport label
   var screens = [1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 13, 14];
@@ -1236,7 +1239,7 @@ function updateSportLabels() {
    since that's not a content step.
    ────────────────────────────────────────────────────────── */
 function buildDots(s) {
-  var accent = d.sport === 'softball' ? '#D4547A' : 'var(--gold)';
+  var accent = d.sport === 'softball' ? '#B93A62' : 'var(--gold)';
   // Map screen number -> step index for dot counting
   // 0=welcome (no dot fill), 05=PIN (no dot fill)
   // 1-9 = steps 1-9, 11 = step 10, 13 = step 11
