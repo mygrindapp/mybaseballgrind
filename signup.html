@@ -5381,9 +5381,17 @@ function renderDashPlayerCard(player, index) {
   } else if (player.fallback) {
     statusText = 'Awaiting setup';
     waitingMsg = 'Hand the phone to <strong>' + escapeHtml(rawName) + '</strong> when ready. Their PIN gets created during their first login.';
-  } else if (SMS_LIVE) {
+  } else if (SMS_LIVE && player.inviteSentAt) {
+    // Honest pill (2026-07-01): "Invite sent" ONLY when the send API
+    // confirmed a delivery (inviteSentAt is stamped on a 200 in
+    // sendQueuedPlayerInvites / the share modal). Before this, the pill
+    // claimed "Invite sent" for every non-fallback player — including
+    // no-phone players the sender skips and failed sends.
     statusText = 'Invite sent';
     waitingMsg = 'Once <strong>' + escapeHtml(rawName) + '</strong> taps the link in their text and finishes their setup, their progress starts showing here. Text not arriving? <strong>Resend setup link</strong> below shares it by text, AirDrop, or QR code.';
+  } else if (SMS_LIVE) {
+    statusText = 'Setup link ready';
+    waitingMsg = 'Tap <strong>Send setup link</strong> below to text <strong>' + escapeHtml(rawName) + '</strong> their link, or share it by AirDrop or QR code. Progress shows here once they finish setup.';
   } else {
     // SMS still in carrier review — be honest. Parent has to deliver the
     // link manually via the share modal (Copy / Messages / QR / Open here).
@@ -5392,11 +5400,11 @@ function renderDashPlayerCard(player, index) {
   }
 
   // Build the resend button only for SMS-invited kids (fallback kids don't
-  // have one). Label matches the delivery state: after a live SMS invite it
-  // reads as the recovery path ("Resend"), pre-carrier-approval it is the
-  // primary delivery path ("Send").
+  // have one). Label matches the delivery state: after a CONFIRMED send it
+  // reads as the recovery path ("Resend"); otherwise it is the primary
+  // delivery path ("Send").
   const resendButton = player.fallback ? '' :
-    '<button type="button" class="dash-resend" onclick="onResendInvite(' + index + ')">' + (SMS_LIVE ? 'Resend setup link' : 'Send setup link') + '</button>';
+    '<button type="button" class="dash-resend" onclick="onResendInvite(' + index + ')">' + (player.inviteSentAt ? 'Resend setup link' : 'Send setup link') + '</button>';
 
   return (
     '<div class="dash-player-card">' +

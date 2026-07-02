@@ -415,7 +415,10 @@
      is produced. */
   html[data-theme="light"] .logo-badge { content: url('/assets/img/mg-4ea08e31.png'); }
   /* Floating theme toggle (experiment only). */
-  #mg-theme-toggle { position:fixed; top:10px; right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card2); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.28); display:flex; align-items:center; justify-content:center; }
+  /* top offset includes the iOS safe area: in an installed (standalone) app
+     with a translucent status bar, a bare top:10px puts the toggle under the
+     clock/notch — invisible and untappable (Coach report 2026-07-01). */
+  #mg-theme-toggle { position:fixed; top:calc(10px + env(safe-area-inset-top, 0px)); right:10px; z-index:99999; width:40px; height:40px; border-radius:50%; border:1px solid var(--border); background:var(--card2); color:var(--gold); font-size:17px; line-height:1; cursor:pointer; box-shadow:0 2px 10px rgba(0,0,0,0.28); display:flex; align-items:center; justify-content:center; }
 
   /* ── Light-theme coverage for chrome + inline "shadow literal" surfaces ──
      CSS-only, reversible, scoped to html[data-theme="light"]. Retro-fits the
@@ -8706,9 +8709,17 @@ function showTrialBanner() {
   // Lifetime users (paid:true) shouldn't show a banner at all — they reach
   // validateSession()='paid' before this fires, but guard defensively.
   if (state.paid) { removeBanner(); return; }
+  // An active/trialing Stripe subscription also kills the countdown.
+  // subStatus is cached by syncSubscriptionFromServer AND stamped
+  // optimistically on the ?co=success checkout return, so a card-on-file
+  // buyer never sees "X days remaining + Subscribe now" pressure for a
+  // plan they already bought (2026-07-01: annual buyer reported exactly
+  // that — sync needs a signed-in Firebase token, which a fresh buyer who
+  // hasn't tapped the welcome email yet doesn't have).
+  if (state.subStatus === 'active' || state.subStatus === 'trialing' || state.subStatus === 'past_due') { removeBanner(); return; }
   const elapsed = (Date.now() - (state.trialStart || Date.now())) / (1000 * 60 * 60 * 24);
   // Honor the per-user cliff written by a promo grant (FOUNDERMYGRIND=180);
-  // default TRIAL_DAYS=14 for everyone else.
+  // default TRIAL_DAYS=30 for everyone else.
   const cliff = state.trialDurationDays || TRIAL_DAYS;
   const days = Math.max(0, Math.ceil(cliff - elapsed));
   const banner = document.getElementById('trial-banner');
@@ -8737,6 +8748,18 @@ function lockInCardReturnHandler() {
       // never re-prompts (signup.html reads this; the flag is intentionally
       // NOT set on mere redirect-to-Stripe, only here on a real success).
       try { localStorage.setItem('mg_plan_picker_shown', '1'); } catch (_) {}
+      // Optimistic subscription stamp: this device just watched Stripe
+      // Checkout succeed, so hide the trial-countdown banner NOW instead of
+      // waiting for syncSubscriptionFromServer (which needs a signed-in
+      // Firebase token a brand-new buyer doesn't have until they tap the
+      // welcome email). Stripe stays the source of truth — the next
+      // successful sync overwrites this with the real status, and the
+      // canceled/lapsed branch still revokes.
+      try {
+        const optimistic = Object.assign({}, acc, { subStatus: acc.subStatus || 'trialing', hasCardOnFile: true });
+        saveAccessState(optimistic);
+        removeBanner();
+      } catch (_) {}
     }
     params.delete('co');
     const clean = window.location.pathname + (params.toString() ? '?' + params.toString() : '');
