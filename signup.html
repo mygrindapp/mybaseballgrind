@@ -3416,7 +3416,12 @@ fbq('init','326334441984368');fbq('track','PageView');
       </button>
     </div>
 
-    <button type="button" class="cta-primary" id="plan_picker_cta" onclick="onPlanPickerContinue()" style="margin-top:18px; width:100%;">
+    <div style="display:flex; align-items:center; justify-content:center; gap:7px; margin:14px 0 0; font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); text-align:center;">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 auto;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span>No charge for 30 days. Cancel anytime in one tap.</span>
+    </div>
+
+    <button type="button" class="cta-primary" id="plan_picker_cta" onclick="onPlanPickerContinue()" style="margin-top:14px; width:100%;">
       Start My 30-Day Trial &rarr;
     </button>
 
@@ -3486,7 +3491,9 @@ fbq('init','326334441984368');fbq('track','PageView');
     font-family: 'Barlow Condensed', sans-serif;
     font-size: 22px;
     font-weight: 800;
-    color: var(--white);
+    /* Hard-coded like the rest of this dark card. var(--white) remaps to
+       near-black under the light theme and made the price invisible. */
+    color: #F2E9D8;
   }
   .plan-picker-price span {
     font-size: 14px;
