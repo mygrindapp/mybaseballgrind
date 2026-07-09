@@ -1619,59 +1619,6 @@
   .checklist-item.checked { color: #A89880; text-decoration: line-through; }
   input[type="range"] { accent-color: var(--gold); }
 
-/* ── VOICE INPUT ── */
-.voice-field-wrap { position: relative; margin-bottom: 0; }
-.mic-btn {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: rgba(10,10,10,0.85);
-  border: 1px solid #404650;
-  color: #807565;
-  font-size: 16px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s;
-  z-index: 10;
-  backdrop-filter: blur(4px);
-}
-.mic-btn:hover { border-color: var(--gold); color: var(--gold); }
-.mic-btn.listening {
-  background: var(--gold);
-  border-color: var(--gold);
-  color: #0C0A08;
-  animation: micPulse 1s infinite;
-}
-@keyframes micPulse {
-  0%, 100% { box-shadow: 0 0 0 0 var(--gold)44; }
-  50% { box-shadow: 0 0 0 8px var(--gold)00; }
-}
-.voice-toast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(10,10,10,0.95);
-  border: 1px solid var(--gold);
-  color: var(--gold);
-  font-family: 'Barlow Condensed', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 10px 20px;
-  border-radius: 20px;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s;
-}
-.voice-toast.show { opacity: 1; }
 
 </style>
 <script>
@@ -2693,12 +2640,6 @@ fbq('init','326334441984368');fbq('track','PageView');
       </div>
 
       <!-- ── REGISTRATION ── -->
-      <!-- Hidden mode toggle controls — keep IDs so existing setRegistrationMode JS still works -->
-      <div style="display:none;">
-        <button id="mode-self-btn" onclick="setRegistrationMode('self')"></button>
-        <button id="mode-gift-btn" onclick="setRegistrationMode('gift')"></button>
-      </div>
-
       <!-- SELF MODE (default) -->
       <div id="mode-self">
         <label style="display:block; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A89880; margin-bottom:6px;">Your Email Address</label>
@@ -2706,21 +2647,7 @@ fbq('init','326334441984368');fbq('track','PageView');
         <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#4A4239; line-height:1.5; margin-bottom:14px;">This email locks the app to your device.</div>
       </div>
 
-      <!-- GIFT MODE — collapsed by default -->
-      <div id="mode-gift" style="display:none;">
-        <div style="background:rgba(var(--accent-rgb), 0.06); border:1px solid #2A0018; border-radius:2px; padding:12px 14px; margin-bottom:14px; font-size:12px; color:#C6B59B; line-height:1.6;">
-          Enter your email as the <strong style="color:#F5F0EB;">buyer</strong>, and the player's email below.
-        </div>
-        <label style="display:block; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#A89880; margin-bottom:6px;">Your Email <span style="color:#4A4239;">(Buyer)</span></label>
-        <input type="email" id="purchaser-email-input" placeholder="parent@email.com" autocomplete="email" style="width:100%; background:#1E1A17; border:1px solid #3D3530; color:#F5F0EB; font-family:'Barlow',sans-serif; font-size:15px; padding:13px 14px; border-radius:2px; outline:none; margin-bottom:14px; box-sizing:border-box;" onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='#3D3530'">
-        <label style="display:block; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">⚾ Player Email <span style="color:#5C544A; font-weight:400;">(Who Gets Access)</span></label>
-        <div id="gift-players-list">
-          <div class="gift-player-row" data-idx="0" style="display:flex; gap:6px; align-items:flex-start; margin-bottom:8px;">
-            <input type="email" id="player-email-input" class="gift-player-input" placeholder="player@email.com" style="flex:1; background:#1E1A17; border:1px solid var(--gold); color:#F5F0EB; font-family:'Barlow',sans-serif; font-size:15px; padding:13px 14px; border-radius:2px; outline:none; box-sizing:border-box; margin-bottom:0;" onfocus="this.style.borderColor='var(--gold-light)'" onblur="this.style.borderColor='var(--gold)'">
-          </div>
-        </div>
-        <div style="font-family:'Barlow',sans-serif; font-size:12px; color:#4A4239; line-height:1.5; margin:8px 0 14px;">The player's email locks the app to their device.</div>
-      </div>
+      <!-- (Gift mode removed 2026-07-09, audit item 54 — signup.html family plans replaced it.) -->
 
       <div id="trial-email-error" style="display:none; font-family:'Barlow Condensed',sans-serif; font-size:12px; color:#E57373; margin-bottom:12px; padding:10px 12px; background:rgba(192,57,43,0.1); border:1px solid rgba(192,57,43,0.3); border-radius:2px; letter-spacing:1px;"></div>
 
@@ -2729,11 +2656,9 @@ fbq('init','326334441984368');fbq('track','PageView');
         ⚾ &nbsp;Start My 30-Day Free Trial →
       </button>
 
-      <!-- SECONDARY LINKS -->
+      <!-- SECONDARY LINKS — gift toggle removed 2026-07-09 (audit item 54);
+           families sign up on signup.html with the real family plans. -->
       <div style="display:flex; gap:8px; margin-bottom:18px;">
-        <button id="welcome-toggle-gift" onclick="toggleWelcomeMode()" style="flex:1; background:transparent; color:#A89880; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border:1px solid #2A2622; border-radius:8px; cursor:pointer;" onmouseover="this.style.color='var(--gold)'; this.style.borderColor='#3A0020';" onmouseout="this.style.color='#A89880'; this.style.borderColor='#2A2622';">
-          👨‍👩‍👧 &nbsp;Buying for Someone Else?
-        </button>
         <a href="/signin.html" style="flex:1; background:transparent; color:#6E6457; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border:1px solid #2A2622; border-radius:8px; cursor:pointer; text-align:center; text-decoration:none; display:flex; align-items:center; justify-content:center;" onmouseover="this.style.color='var(--gold)'; this.style.borderColor='#3A0020';" onmouseout="this.style.color='#6E6457'; this.style.borderColor='#2A2622';">
           Sign In →
         </a>
@@ -8778,7 +8703,10 @@ function checkAccess() {
   if (localStorage.getItem('ybg_qr_scan') === '1') {
     localStorage.removeItem('ybg_qr_scan');
     // Intentionally do NOT auto-create a trial here. Fall through so
-    // status === 'no_trial' and showTrialWelcome() runs below.
+    // status === 'no_trial' and the anonymous-visitor routing below sends
+    // them to signup.html (or signin.html for a recognized returner).
+    // (Stale-comment fix 2026-07-09: this used to say showTrialWelcome()
+    // runs — it doesn't; that legacy welcome overlay has no callers.)
   }
 
   const status = validateSession();
@@ -9039,41 +8967,9 @@ function unlockCreator() {
 }
 
 // ── REGISTRATION MODE ────────────────────────────────
-let registrationMode = 'self';
-
-function setRegistrationMode(mode) {
-  registrationMode = mode;
-  document.getElementById('mode-self').style.display  = mode === 'self' ? 'block' : 'none';
-  document.getElementById('mode-gift').style.display  = mode === 'gift' ? 'block' : 'none';
-  const selfBtn = document.getElementById('mode-self-btn');
-  const giftBtn = document.getElementById('mode-gift-btn');
-  if (selfBtn) {
-    selfBtn.style.background   = mode === 'self' ? 'rgba(var(--accent-rgb), 0.12)' : 'transparent';
-    selfBtn.style.borderColor  = mode === 'self' ? 'var(--gold)' : '#3D3530';
-    selfBtn.style.color        = mode === 'self' ? 'var(--gold)' : '#6E6457';
-  }
-  if (giftBtn) {
-    giftBtn.style.background   = mode === 'gift' ? 'rgba(var(--accent-rgb), 0.12)' : 'transparent';
-    giftBtn.style.borderColor  = mode === 'gift' ? 'var(--gold)' : '#3D3530';
-    giftBtn.style.color        = mode === 'gift' ? 'var(--gold)' : '#6E6457';
-  }
-  document.getElementById('trial-email-error').style.display = 'none';
-}
-
-// Toggle the welcome screen between self-mode and gift-mode for the
-// simplified trial flow. Updates the toggle button label so the user
-// can switch back. Wraps setRegistrationMode so all the underlying
-// state stays in sync.
-function toggleWelcomeMode() {
-  const newMode = (registrationMode === 'self') ? 'gift' : 'self';
-  setRegistrationMode(newMode);
-  const toggleBtn = document.getElementById('welcome-toggle-gift');
-  if (toggleBtn) {
-    toggleBtn.innerHTML = (newMode === 'gift')
-      ? '⚾ &nbsp;Back. I\'m the Player'
-      : '👨\u200d👩\u200d👧 &nbsp;Buying for Someone Else?';
-  }
-}
+// (setRegistrationMode / toggleWelcomeMode / registrationMode removed
+//  2026-07-09, audit item 54 — the welcome-overlay gift mode is gone;
+//  signup.html family plans are the multi-player path.)
 
 function showEmailError(msg) {
   const el = document.getElementById('trial-email-error');
@@ -9093,18 +8989,10 @@ function beginTrial() {
   const fp = getDeviceFingerprint();
   let accessEmail = '', purchaserEmail = '';
 
-  if (registrationMode === 'self') {
-    const input = normalizeEmail(document.getElementById('user-email-input').value);
-    if (!isValidEmail(input)) { showEmailError('Please enter a valid email address.'); return; }
-    accessEmail = purchaserEmail = input;
-  } else {
-    const purchaser = normalizeEmail(document.getElementById('purchaser-email-input').value);
-    const player    = normalizeEmail(document.getElementById('player-email-input').value);
-    if (!isValidEmail(purchaser)) { showEmailError('Please enter a valid purchaser email.'); return; }
-    if (!isValidEmail(player))    { showEmailError('Please enter a valid player email.'); return; }
-    if (purchaser === player)     { showEmailError('Purchaser and player emails must be different.'); return; }
-    accessEmail = player; purchaserEmail = purchaser;
-  }
+  // Self mode only (gift mode removed 2026-07-09, audit item 54).
+  const input = normalizeEmail(document.getElementById('user-email-input').value);
+  if (!isValidEmail(input)) { showEmailError('Please enter a valid email address.'); return; }
+  accessEmail = purchaserEmail = input;
 
   // Auto-grant creator access if email matches
   if (CREATOR_EMAILS.indexOf(accessEmail) !== -1) {
@@ -9114,7 +9002,7 @@ function beginTrial() {
   saveAccessState({
     email: accessEmail, purchaserEmail, fingerprint: fp,
     trialStart: Date.now(), paid: false,
-    registeredAt: new Date().toISOString(), mode: registrationMode
+    registeredAt: new Date().toISOString(), mode: 'self'
   });
 
   hideOverlay();
@@ -9175,249 +9063,6 @@ function activatePaid(accessEmail, purchaserEmail) {
       }
     } catch(e) { console.warn('Post-activation flow error:', e); }
   }, 600); // small delay so the paid-toast shows first
-}
-
-// ── MULTI-PLAYER GIFT FLOW ───────────────────────────
-// A buyer can purchase for up to 3 players in one session. Because Stripe
-// payment links don't support quantity on subscriptions without a backend,
-// we open Stripe sequentially — one checkout per player, same card pre-fills.
-const GIFT_MAX_PLAYERS = 3;
-const GIFT_UPSELL_AT   = 3; // show Team Sponsor upsell when count >= this
-// Per-player gift prices — MUST match what the Stripe links actually charge
-// (STRIPE_ANNUAL_URL = $99.99/yr, STRIPE_MONTHLY_URL = $9.99/mo). Single source
-// of truth so the displayed total can't drift from the real charge again.
-const GIFT_PRICE_ANNUAL  = 99.99;
-const GIFT_PRICE_MONTHLY = 9.99;
-
-// Render state: how many player rows are currently in the DOM
-function getGiftPlayerCount() {
-  return document.querySelectorAll('#gift-players-list .gift-player-row').length;
-}
-
-function addGiftPlayer() {
-  const list = document.getElementById('gift-players-list');
-  if (!list) return;
-  const count = getGiftPlayerCount();
-  if (count >= GIFT_MAX_PLAYERS) return;
-
-  const idx = count; // next index
-  const row = document.createElement('div');
-  row.className = 'gift-player-row';
-  row.dataset.idx = idx;
-  row.style.cssText = 'display:flex; gap:6px; align-items:flex-start; margin-bottom:8px;';
-  row.innerHTML =
-    '<input type="email" class="gift-player-input" placeholder="player' + (idx + 1) + '@email.com" ' +
-      'style="flex:1; background:#1E1A17; border:1px solid var(--gold); color:#F5F0EB; ' +
-      'font-family:\'Barlow\',sans-serif; font-size:15px; padding:11px 14px; border-radius:2px; ' +
-      'outline:none; box-sizing:border-box; margin-bottom:0;" ' +
-      'onfocus="this.style.borderColor=\'var(--gold-light)\'" onblur="this.style.borderColor=\'var(--gold)\'" ' +
-      'oninput="updateGiftTotal()">' +
-    '<button type="button" onclick="removeGiftPlayer(' + idx + ')" ' +
-      'title="Remove this player" ' +
-      'style="flex-shrink:0; width:42px; height:42px; background:transparent; border:1px solid #3A1010; ' +
-      'color:#E57373; font-family:\'Barlow Condensed\',sans-serif; font-size:18px; font-weight:700; ' +
-      'border-radius:8px; cursor:pointer; padding:0; line-height:1;" ' +
-      'onmouseover="this.style.background=\'rgba(192,57,43,0.08)\'" ' +
-      'onmouseout="this.style.background=\'transparent\'">×</button>';
-  list.appendChild(row);
-  updateGiftTotal();
-  try { row.querySelector('input').focus(); } catch(e) {}
-}
-
-function removeGiftPlayer(idx) {
-  const row = document.querySelector('.gift-player-row[data-idx="' + idx + '"]');
-  if (!row) return;
-  if (row.dataset.idx === '0') return; // never remove the first row
-  row.remove();
-  // Reindex remaining rows so future adds and removes stay in sync
-  document.querySelectorAll('#gift-players-list .gift-player-row').forEach(function(r, i) {
-    r.dataset.idx = i;
-    const btn = r.querySelector('button[onclick^="removeGiftPlayer"]');
-    if (btn) btn.setAttribute('onclick', 'removeGiftPlayer(' + i + ')');
-  });
-  updateGiftTotal();
-}
-
-// Collect all player emails from the form
-function collectGiftPlayerEmails() {
-  const inputs = document.querySelectorAll('#gift-players-list .gift-player-input');
-  const emails = [];
-  inputs.forEach(function(inp) {
-    const v = normalizeEmail(inp.value || '');
-    if (v) emails.push(v);
-  });
-  return emails;
-}
-
-// Live update of running total, add-button state, and sponsor upsell visibility
-function updateGiftTotal() {
-  const count = getGiftPlayerCount();
-  const addBtn = document.getElementById('gift-add-btn');
-  const totalRow = document.getElementById('gift-total-row');
-  const upsell = document.getElementById('gift-sponsor-upsell');
-  const plural = document.getElementById('gift-plural');
-  const countLabel = document.getElementById('gift-count-label');
-  const planLabel = document.getElementById('gift-plan-label');
-  const totalEl = document.getElementById('gift-total-display');
-
-  // Add button: hide at max
-  if (addBtn) {
-    if (count >= GIFT_MAX_PLAYERS) {
-      addBtn.style.display = 'none';
-    } else {
-      addBtn.style.display = 'block';
-      addBtn.innerHTML = count === 1 ? '➕ &nbsp;Add Another Player' : '➕ &nbsp;Add One More Player (' + count + ' of ' + GIFT_MAX_PLAYERS + ')';
-    }
-  }
-
-  // Plural "s" on the label
-  if (plural) plural.textContent = count === 1 ? '' : 's';
-
-  // Total row: only show for 2+ players
-  if (totalRow) {
-    if (count >= 2) {
-      totalRow.style.display = 'flex';
-      if (countLabel) countLabel.textContent = count + ' players';
-      // We can't know which plan until they click — show annual as the visible benchmark
-      // since it's what the "Get Annual" button will charge.
-      if (planLabel) planLabel.textContent = '$' + GIFT_PRICE_ANNUAL.toFixed(2) + '/yr each';
-      if (totalEl) {
-        const total = GIFT_PRICE_ANNUAL * count;
-        totalEl.textContent = '$' + total.toFixed(2);
-      }
-    } else {
-      totalRow.style.display = 'none';
-    }
-  }
-
-  // Sponsor upsell: appears at 3+ (the max, nudging to the $450 option)
-  if (upsell) {
-    upsell.style.display = count >= GIFT_UPSELL_AT ? 'block' : 'none';
-  }
-}
-
-// Smooth-scroll the Sponsor card into view (user clicked "See Team Sponsor")
-function scrollToSponsorCard() {
-  // Find the Team Sponsor button on the signup page and scroll its card into view
-  const sponsorBtn = document.querySelector('button[onclick="goToTeamSponsorPurchase()"]');
-  if (sponsorBtn) {
-    sponsorBtn.closest('div[style*="border:2px solid var(--gold)"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-}
-
-// Sequential Stripe checkout flow for gift-mode multi-player purchases.
-// Opens one Stripe window per player, saving each player's pending access
-// binding before the window opens so activation works when the creator PIN
-// is entered on each player's device later.
-function runMultiPlayerGiftCheckout(plan, purchaserEmail, playerEmails) {
-  const base = plan === 'annual' ? STRIPE_ANNUAL_URL : STRIPE_MONTHLY_URL;
-  const totalPlayers = playerEmails.length;
-
-  // Save a multi-player purchase record so the buyer has a reference
-  try {
-    const record = {
-      purchaserEmail: purchaserEmail,
-      plan: plan,
-      players: playerEmails.slice(),
-      createdAt: new Date().toISOString()
-    };
-    localStorage.setItem('ybg_multi_gift_pending', JSON.stringify(record));
-  } catch(e) {}
-
-  // For the buyer's OWN device, we register the FIRST player's email as the
-  // access email (so if the buyer sets the app up on their kid's phone, that
-  // kid's email is what binds). The remaining players will need to register
-  // on their own devices using the email the parent paid for.
-  try {
-    const fp = getDeviceFingerprint();
-    saveAccessState({
-      email:           playerEmails[0],
-      purchaserEmail:  purchaserEmail,
-      fingerprint:     fp,
-      trialStart:      null,
-      paid:            false,
-      pendingPayment:  true,
-      giftedSiblings:  playerEmails.length > 1 ? playerEmails.slice(1) : [],
-      registeredAt:    new Date().toISOString()
-    });
-  } catch(e) {}
-
-  // Show a progress banner and open checkouts sequentially
-  showGiftProgressBanner(0, totalPlayers, playerEmails, purchaserEmail);
-  openNextGiftCheckout(0, playerEmails, purchaserEmail, base);
-}
-
-// Progress banner shown between sequential checkouts
-function showGiftProgressBanner(currentIdx, total, playerEmails, purchaserEmail) {
-  let banner = document.getElementById('gift-progress-banner');
-  if (!banner) {
-    banner = document.createElement('div');
-    banner.id = 'gift-progress-banner';
-    banner.style.cssText = 'position:fixed; top:0; left:0; right:0; z-index:1100; ' +
-      'background:linear-gradient(135deg,#1A0012,#140008); border-bottom:2px solid var(--gold); ' +
-      'padding:16px 20px; font-family:\'Barlow\',sans-serif; color:#F5F0EB; text-align:center; ' +
-      'box-shadow:0 4px 14px rgba(0,0,0,0.6); animation:fadeIn 0.3s ease;';
-    document.body.appendChild(banner);
-  }
-  const nextIdx = currentIdx; // we display 1-based "player X of Y"
-  const emailDisplay = playerEmails[nextIdx] || '';
-  banner.innerHTML =
-    '<div style="font-family:\'Bebas Neue\',cursive; font-size:18px; letter-spacing:2px; color:var(--gold); margin-bottom:4px;">' +
-      'PLAYER ' + (nextIdx + 1) + ' OF ' + total +
-    '</div>' +
-    '<div style="font-size:13px; color:#C6B59B; margin-bottom:10px;">' +
-      'Checking out for <strong style="color:#F5F0EB;">' + emailDisplay + '</strong>' +
-    '</div>' +
-    '<div style="font-family:\'Barlow Condensed\',sans-serif; font-size:11px; letter-spacing:1.5px; color:#A89880; text-transform:uppercase; margin-bottom:12px;">' +
-      'Stripe opened in a new tab · same card will pre-fill · return here after each payment' +
-    '</div>' +
-    '<button onclick="dismissGiftBanner()" style="background:transparent; color:#A89880; border:1px solid #3D3530; ' +
-      'font-family:\'Barlow Condensed\',sans-serif; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; ' +
-      'padding:7px 14px; border-radius:8px; cursor:pointer;">Close Banner</button>';
-  banner.style.display = 'block';
-}
-
-function dismissGiftBanner() {
-  const banner = document.getElementById('gift-progress-banner');
-  if (banner) banner.style.display = 'none';
-}
-
-// Open each Stripe checkout with a small delay between so popups don't get
-// blocked and the user can read each banner update.
-function openNextGiftCheckout(idx, playerEmails, purchaserEmail, base) {
-  if (idx >= playerEmails.length) {
-    // All done — final banner
-    const banner = document.getElementById('gift-progress-banner');
-    if (banner) {
-      banner.innerHTML =
-        '<div style="font-family:\'Bebas Neue\',cursive; font-size:22px; letter-spacing:2px; color:#27AE60; margin-bottom:6px;">✅ ALL CHECKOUTS OPENED</div>' +
-        '<div style="font-size:13px; color:#C6B59B; margin-bottom:10px;">' +
-          'Complete payment for all ' + playerEmails.length + ' players in the Stripe tabs. ' +
-          '<strong style="color:#F5F0EB;">Same card will pre-fill each time.</strong>' +
-        '</div>' +
-        '<button onclick="dismissGiftBanner()" style="background:#27AE60; color:#0C0A08; border:none; ' +
-          'font-family:\'Barlow Condensed\',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; ' +
-          'padding:10px 18px; border-radius:8px; cursor:pointer;">Got It →</button>';
-    }
-    return;
-  }
-
-  const playerEmail = playerEmails[idx];
-  // Each Stripe URL uses client_reference_id to tag which player this checkout is for,
-  // so downstream reconciliation (manual or via Stripe dashboard) is straightforward.
-  const url = base +
-    '?prefilled_email=' + encodeURIComponent(purchaserEmail) +
-    '&client_reference_id=' + encodeURIComponent('gift:' + playerEmail);
-
-  window.open(url, '_blank');
-
-  // Show banner for THIS checkout, then schedule the next one
-  showGiftProgressBanner(idx, playerEmails.length, playerEmails, purchaserEmail);
-
-  // Delay the next checkout so popups don't get blocked and user sees the banner update
-  setTimeout(function() {
-    openNextGiftCheckout(idx + 1, playerEmails, purchaserEmail, base);
-  }, 1200);
 }
 
 // ── PAYMENT ──────────────────────────────────────────
@@ -9510,68 +9155,11 @@ async function goToPurchase(plan) {
     return;
   }
 
-  // ON WELCOME SCREEN — validate email fields first
+  // ON WELCOME SCREEN — validate email, then route to Stripe.
+  // (Gift mode removed 2026-07-09, audit item 54: signup.html's family
+  // plans replaced the welcome-overlay gift flow.)
   const errEl  = document.getElementById('trial-email-error');
-  const isGift = document.getElementById('mode-gift') &&
-                 document.getElementById('mode-gift').style.display !== 'none';
 
-  if (isGift) {
-    // Multi-player gift flow — can purchase for up to 3 players in one session
-    const purchaser = normalizeEmail(document.getElementById('purchaser-email-input')?.value || '');
-    const players   = collectGiftPlayerEmails();
-
-    if (!purchaser) {
-      if (errEl) { errEl.textContent = 'Please enter your (buyer) email before purchasing.'; errEl.style.display = 'block'; }
-      document.getElementById('purchaser-email-input')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-    if (!isValidEmail(purchaser)) {
-      if (errEl) { errEl.textContent = 'Please enter a valid buyer email.'; errEl.style.display = 'block'; }
-      return;
-    }
-    if (players.length === 0) {
-      if (errEl) { errEl.textContent = 'Please enter at least one player email.'; errEl.style.display = 'block'; }
-      document.getElementById('player-email-input')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-    // Validate each player email
-    for (let i = 0; i < players.length; i++) {
-      if (!isValidEmail(players[i])) {
-        if (errEl) { errEl.textContent = 'Player #' + (i + 1) + ' email is not valid. Please fix it before purchasing.'; errEl.style.display = 'block'; }
-        return;
-      }
-    }
-    // Check for duplicates within the gift list
-    const seen = {};
-    for (let j = 0; j < players.length; j++) {
-      if (seen[players[j]]) {
-        if (errEl) { errEl.textContent = 'Duplicate player email: ' + players[j] + '. Each player needs a unique email.'; errEl.style.display = 'block'; }
-        return;
-      }
-      seen[players[j]] = true;
-    }
-    // Purchaser email cannot also be a player (avoids buyer accidentally binding their own email)
-    if (seen[purchaser]) {
-      if (errEl) { errEl.textContent = 'Your buyer email cannot also be a player email. Use different addresses.'; errEl.style.display = 'block'; }
-      return;
-    }
-
-    if (errEl) errEl.style.display = 'none';
-
-    // Confirm before opening multiple tabs
-    if (players.length > 1) {
-      const ok = confirm('Ready to purchase for ' + players.length + ' players?\n\n' +
-                         'We will open Stripe ' + players.length + ' times. One for each player. ' +
-                         'Your card pre-fills each time. Total: $' + (GIFT_PRICE_ANNUAL * players.length).toFixed(2) +
-                         (plan === 'monthly' ? ' (if you switch to monthly, that becomes $' + (GIFT_PRICE_MONTHLY * players.length).toFixed(2) + '/mo)' : '') + '.\n\nContinue?');
-      if (!ok) return;
-    }
-
-    runMultiPlayerGiftCheckout(plan, purchaser, players);
-    return;
-  }
-
-  // SELF MODE — single-player purchase
   const userEmail = normalizeEmail(document.getElementById('user-email-input')?.value || '');
   if (!userEmail || !isValidEmail(userEmail)) {
     if (errEl) { errEl.textContent = 'Please enter your email address before purchasing.'; errEl.style.display = 'block'; }
@@ -9631,37 +9219,17 @@ async function goToCoachPurchase() {
     return;
   }
 
-  // On welcome screen — validate email, then route to Stripe with coach flag
+  // On welcome screen — validate email, then route to Stripe with coach flag.
+  // (Gift mode removed 2026-07-09, audit item 54 — a coach buys their own account.)
   const errEl  = document.getElementById('trial-email-error');
-  const isGift = document.getElementById('mode-gift') &&
-                 document.getElementById('mode-gift').style.display !== 'none';
-
-  // Coach purchase uses "self" mode only — a coach buys their own account.
-  // Gift mode doesn't apply here (a coach can't gift themselves a coach account).
-  let stripeEmail = '';
-  let accessEmail = '';
-
-  if (isGift) {
-    const purchaser = normalizeEmail(document.getElementById('purchaser-email-input')?.value || '');
-    const player    = normalizeEmail(document.getElementById('player-email-input')?.value || '');
-    if (!purchaser || !isValidEmail(purchaser)) {
-      if (errEl) { errEl.textContent = 'For Team Coach, enter YOUR email as the buyer.'; errEl.style.display = 'block'; }
-      return;
-    }
-    // In gift mode for coach purchase, the player field is ignored —
-    // the coach's own email gets access.
-    stripeEmail = purchaser;
-    accessEmail = purchaser;
-  } else {
-    const userEmail = normalizeEmail(document.getElementById('user-email-input')?.value || '');
-    if (!userEmail || !isValidEmail(userEmail)) {
-      if (errEl) { errEl.textContent = 'Please enter your coach email address before purchasing.'; errEl.style.display = 'block'; }
-      document.getElementById('user-email-input')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    }
-    stripeEmail = userEmail;
-    accessEmail = userEmail;
+  const userEmail = normalizeEmail(document.getElementById('user-email-input')?.value || '');
+  if (!userEmail || !isValidEmail(userEmail)) {
+    if (errEl) { errEl.textContent = 'Please enter your coach email address before purchasing.'; errEl.style.display = 'block'; }
+    document.getElementById('user-email-input')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
   }
+  const stripeEmail = userEmail;
+  const accessEmail = userEmail;
 
   if (errEl) errEl.style.display = 'none';
 
@@ -9684,73 +9252,6 @@ async function goToCoachPurchase() {
   window.open(url, '_blank');
 }
 
-// ── TEAM SPONSOR PURCHASE ($450/yr, 15 seats) ────────
-// Coach buys the annual team sponsorship. Same activation hook as goToCoachPurchase,
-// but tags the access state with pendingTeamSponsor so we open team create modal
-// AFTER payment with seat tracking enabled (15 sponsored seats available).
-async function goToTeamSponsorPurchase() {
-  // Require policy acknowledgment checkbox on the signup page
-  const ack = document.getElementById('team-policy-ack');
-  if (ack && !ack.checked) {
-    alert('Please read and check the "I understand the Team Sponsor policy" box before continuing.');
-    ack.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-
-  const base = STRIPE_TEAM_SPONSOR_URL;
-  const overlay = document.getElementById('trial-overlay');
-  // #trial-overlay hosts welcome, expired, AND blocked screens, so overlay
-  // visibility alone doesn't mean "new user" — check the welcome card itself.
-  const welcomeEl = document.getElementById('trial-screen-welcome');
-  const welcomeVisible = overlay && overlay.style.display === 'flex' &&
-                         welcomeEl && welcomeEl.style.display !== 'none';
-
-  // Already registered → existing Stripe customer → manage via Customer Portal
-  // instead of minting a parallel subscription. Fall through to the Payment Link
-  // only when there's genuinely no customer yet.
-  if (!welcomeVisible) {
-    const saved = getAccessState();
-    const email = saved.purchaserEmail || saved.email || '';
-    try {
-      saveAccessState(Object.assign({}, saved, {
-        pendingCoachSetup: true,
-        pendingTeamSponsor: true
-      }));
-    } catch(e) {}
-    const routed = await routeExistingCustomerToPortal(email);
-    if (routed !== 'new_customer') return; // 'opened' (redirecting) or 'error' (don't risk a dup)
-    const url = email ? base + '?prefilled_email=' + encodeURIComponent(email) : base;
-    window.open(url, '_blank');
-    return;
-  }
-
-  const errEl = document.getElementById('trial-email-error');
-  const userEmail = normalizeEmail(document.getElementById('user-email-input')?.value || '');
-  if (!userEmail || !isValidEmail(userEmail)) {
-    if (errEl) { errEl.textContent = 'Please enter your coach email address before purchasing.'; errEl.style.display = 'block'; }
-    document.getElementById('user-email-input')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    return;
-  }
-  if (errEl) errEl.style.display = 'none';
-
-  try {
-    const fp = getDeviceFingerprint();
-    saveAccessState({
-      email:              userEmail,
-      purchaserEmail:     userEmail,
-      fingerprint:        fp,
-      trialStart:         null,
-      paid:               false,
-      pendingPayment:     true,
-      pendingCoachSetup:  true,
-      pendingTeamSponsor: true,
-      registeredAt:       new Date().toISOString()
-    });
-  } catch(e) {}
-
-  const url = base + '?prefilled_email=' + encodeURIComponent(userEmail);
-  window.open(url, '_blank');
-}
 // Entry point for a player whose coach has already created a team.
 // They still need to pay for their own player subscription, but we collect
 // the team code up-front and save it so after they activate, they're
@@ -11221,7 +10722,7 @@ function showUndoToast() {
   if (!toast) {
     toast = document.createElement('div');
     toast.id = 'undo-toast';
-    toast.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:#1A0010; border:1px solid var(--gold); color:var(--light); font-family:"Barlow Condensed",sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; padding:10px 14px 10px 18px; border-radius:4px; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,0.5); display:flex; align-items:center; gap:14px;';
+    toast.style.cssText = 'position:fixed; bottom:80px; left:50%; transform:translateX(-50%); background:var(--card2); border:1px solid var(--gold); color:var(--light); font-family:"Barlow Condensed",sans-serif; font-size:13px; font-weight:700; letter-spacing:1px; padding:10px 14px 10px 18px; border-radius:4px; z-index:9999; box-shadow:0 8px 24px rgba(0,0,0,0.5); display:flex; align-items:center; gap:14px;';
     document.body.appendChild(toast);
   }
   toast.innerHTML = '<span>🗑 Entry deleted</span><button onclick="undoDelete()" style="background:var(--gold); color:var(--dark); border:none; font-family:\'Barlow Condensed\',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:7px 14px; border-radius:8px; cursor:pointer;">↶ Undo</button>';
@@ -18277,7 +17778,7 @@ function showShareToast(msg) {
   if (!toast) {
     toast = document.createElement('div');
     toast.id = 'share-toast';
-    toast.style.cssText = 'position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:#1A0010; border:1px solid var(--gold); color:var(--gold); font-family:"Barlow Condensed",sans-serif; font-size:15px; font-weight:800; letter-spacing:1px; padding:14px 22px; border-radius:10px; z-index:9999; white-space:nowrap; box-shadow:0 10px 32px rgba(0,0,0,0.6);';
+    toast.style.cssText = 'position:fixed; bottom:90px; left:50%; transform:translateX(-50%); background:var(--card2); border:1px solid var(--gold); color:var(--gold); font-family:"Barlow Condensed",sans-serif; font-size:15px; font-weight:800; letter-spacing:1px; padding:14px 22px; border-radius:10px; z-index:9999; white-space:nowrap; box-shadow:0 10px 32px rgba(0,0,0,0.6);';
     document.body.appendChild(toast);
   }
   toast.textContent = msg;
@@ -23071,7 +22572,6 @@ function hasVisitedAcademics() {
 }
 </script>
 
-<div id="voice-toast" class="voice-toast">🎤 Listening...</div>
 
 <!-- ══ REVIEW PROMPT OVERLAY ══════════════════════════════════════ -->
 <div id="review-overlay" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(14,11,9,0.92);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:24px;">
@@ -23159,100 +22659,9 @@ function submitTestimonial() {
   if (wrap) wrap.innerHTML = '<div style="font-size:13px;color:var(--gold);padding:10px 0;line-height:1.6;text-align:center;">🙏 Thank you. Coach may feature your words on the site.</div>';
 }
 </script>
-<script>
-// ══ VOICE INPUT — Web Speech API ═════════════════════════════════
-var _voiceRecognition = null;
-var _voiceActive      = false;
-var _voiceBtn         = null;
-var _voiceField       = null;
-
-function startVoice(fieldId, btn) {
-  // Stop if already listening
-  if (_voiceActive && _voiceRecognition) {
-    _voiceRecognition.stop();
-    return;
-  }
-
-  // Check browser support
-  var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SpeechRecognition) {
-    showVoiceToast('Voice not supported in this browser');
-    return;
-  }
-
-  _voiceField = document.getElementById(fieldId);
-  _voiceBtn   = btn;
-  if (!_voiceField) return;
-
-  _voiceRecognition = new SpeechRecognition();
-  _voiceRecognition.lang           = 'en-US';
-  _voiceRecognition.continuous     = true;   // keeps listening until stopped
-  _voiceRecognition.interimResults = true;   // shows words as they come in
-
-  var existingText = _voiceField.value;
-  var interim      = '';
-
-  _voiceRecognition.onstart = function() {
-    _voiceActive = true;
-    if (_voiceBtn) _voiceBtn.classList.add('listening');
-    if (_voiceBtn) _voiceBtn.textContent = '⏹';
-    showVoiceToast('🎤 Listening... tap ⏹ to stop');
-  };
-
-  _voiceRecognition.onresult = function(event) {
-    interim = '';
-    var final = '';
-    for (var i = event.resultIndex; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        final += event.results[i][0].transcript;
-      } else {
-        interim += event.results[i][0].transcript;
-      }
-    }
-    // Show interim + final in the field
-    _voiceField.value = existingText + (existingText && final ? ' ' : '') + final + interim;
-    if (final) existingText = _voiceField.value.replace(interim, '');
-  };
-
-  _voiceRecognition.onerror = function(e) {
-    if (e.error === 'not-allowed') {
-      showVoiceToast('Microphone access denied. Check your browser settings');
-    } else if (e.error !== 'aborted') {
-      showVoiceToast('Voice error: ' + e.error);
-    }
-    stopVoice();
-  };
-
-  _voiceRecognition.onend = function() {
-    stopVoice();
-  };
-
-  _voiceRecognition.start();
-}
-
-function stopVoice() {
-  _voiceActive = false;
-  if (_voiceBtn) {
-    _voiceBtn.classList.remove('listening');
-    _voiceBtn.textContent = '🎤';
-  }
-  hideVoiceToast();
-  _voiceRecognition = null;
-  _voiceBtn = null;
-}
-
-function showVoiceToast(msg) {
-  var t = document.getElementById('voice-toast');
-  if (!t) return;
-  t.textContent = msg;
-  t.classList.add('show');
-}
-
-function hideVoiceToast() {
-  var t = document.getElementById('voice-toast');
-  if (t) t.classList.remove('show');
-}
-</script>
+<!-- (Voice-input block removed 2026-07-09, audit orphaned-functions finding:
+     startVoice had zero call sites — no mic button exists. If voice input
+     returns post-launch, rebuild against the current journal form.) -->
 <script>
 // ══ FIREBASE CONFIG & INIT ════════════════════════════════════════
 const firebaseConfig = {

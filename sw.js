@@ -12,8 +12,11 @@
 // 2026-07-09 (v391): audit buckets 3+4 — softball-side fixes (sport-aware
 // resources hrefs, Softball Pathway card, per-sport workout videos, boot
 // follows family sport) + settings switcher, mood-tag edit, outdoor gate.
+// 2026-07-09 (v392): audit bucket 3 tail — dead-code removal (gift/team-
+// sponsor flow, voice-input block, retired signup screens 1/4), tokenized
+// toasts, stale-comment sweep, em-dash copy fixes.
 
-const CACHE = 'mygrind-v391';
+const CACHE = 'mygrind-v392';
 const ASSETS = [
   '/',
   '/softball.html',

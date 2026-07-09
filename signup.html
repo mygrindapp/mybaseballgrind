@@ -2331,74 +2331,9 @@ fbq('init','326334441984368');fbq('track','PageView');
 
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN 1 — WELCOME
-     ═══════════════════════════════════════════════════════════ -->
-<div class="screen" id="s1">
-
-  <div class="prog-wrap">
-    <div class="prog-track">
-      <div class="prog-fill" style="width: 12.5%"></div>
-    </div>
-    <div class="prog-label">
-      <span>Step 1 of 8</span>
-      <span></span>
-    </div>
-  </div>
-
-  <div class="screen-body">
-    <h1>
-      Welcome.
-      <span id="s1_h1_sub">Let's get your player on track.</span>
-    </h1>
-
-    <div class="gold-bar"></div>
-
-    <p class="sub" id="s1_sub">
-      This takes about 3 minutes. We'll set up your account, then send your player an invite by text or email.
-    </p>
-
-    <p class="sub" id="s1_player_guard" style="font-size:13px; opacity:.78; margin-top:6px;">
-      Are you a player joining a parent's plan? Don't sign up here - use the invite link your parent sent you.
-    </p>
-
-    <!-- Three-step explainer -->
-    <div class="step-list">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-text" id="s1_step1"><strong>You add your card and start your free trial</strong>. No charge for 30 days. Cancel anytime before then and you won't pay a thing.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-text" id="s1_step2"><strong>Your player gets a text</strong> with their personal link.</div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-text" id="s1_step3"><strong>They set up their profile and start logging</strong>. You watch their progress.</div>
-      </div>
-    </div>
-
-    <!-- Big CTA -->
-    <button class="cta-primary" onclick="goNext(1, 2)"><span class="cta-icon" style="display:inline-flex; align-items:center; justify-content:center; vertical-align:-2px;"><svg class="mg-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-zap"/></svg></span>Get Started &rarr;</button>
-
-    <!-- Trust strip -->
-    <div class="trust-strip">
-      30 Days Free <span>·</span> Cancel Anytime <span>·</span> No Surprise Charges
-    </div>
-  </div>
-
-  <!-- Bottom nav (no back on screen 1; dots only) -->
-  <div class="bnav">
-    <div style="min-width: 80px;"></div>
-    <div class="dots" id="d1"></div>
-    <div style="min-width: 100px;"></div>
-  </div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     FUTURE SCREENS GO BELOW THIS LINE
-     ═══════════════════════════════════════════════════════════ -->
+<!-- (Screens 1 and 4 removed from the DOM 2026-07-09, audit item 53 —
+     retired from the funnel 2026-06-03: STEP_ORDER has no 1/4 and loadState
+     sanitizes them; they were dead weight shipped to every visitor.) -->
 
 <!-- ═══════════════════════════════════════════════════════════
      SCREEN 2 — ABOUT YOU
@@ -2610,88 +2545,6 @@ fbq('init','326334441984368');fbq('track','PageView');
     <button class="back-btn" onclick="go(2)">&larr; Back</button>
     <div class="dots" id="d3"></div>
     <button class="next-btn" id="n3" onclick="goNext(3, 5)" disabled>Next &rarr;</button>
-  </div>
-
-</div>
-
-<!-- ═══════════════════════════════════════════════════════════
-     SCREEN 4 — WHY MYGRIND? (multi-select goals)
-     ═══════════════════════════════════════════════════════════ -->
-<div class="screen" id="s4">
-
-  <div class="prog-wrap">
-    <div class="prog-track">
-      <div class="prog-fill" style="width: 50%"></div>
-    </div>
-    <div class="prog-label">
-      <span>Step 4 of 8</span>
-      <span></span>
-    </div>
-  </div>
-
-  <div class="screen-body">
-    <h1>
-      What brings you
-      <span>here?</span>
-    </h1>
-
-    <div class="gold-bar"></div>
-
-    <p class="sub">
-      Helps us shape your dashboard. Pick whatever fits. There's no wrong answer.
-    </p>
-
-    <div class="multi-select-hint">✓ Select all that apply</div>
-
-    <button type="button" class="goal-toggle" id="g_see" onclick="toggleGoal('see')">
-      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-target"/></svg></div>
-      <div class="goal-toggle-text" id="g_see_text">I want to see what my player is putting in</div>
-      <div class="goal-toggle-check">✓</div>
-    </button>
-
-    <button type="button" class="goal-toggle" id="g_habits" onclick="toggleGoal('habits')">
-      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg></div>
-      <div class="goal-toggle-text" id="g_habits_text">I want them building better daily habits</div>
-      <div class="goal-toggle-check">✓</div>
-    </button>
-
-    <button type="button" class="goal-toggle" id="g_recruit" onclick="toggleGoal('recruit')">
-      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-trophy"/></svg></div>
-      <div class="goal-toggle-text" id="g_recruit_text">They're trying to make a team or get recruited</div>
-      <div class="goal-toggle-check">✓</div>
-    </button>
-
-    <button type="button" class="goal-toggle" id="g_support" onclick="toggleGoal('support')">
-      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-brain"/></svg></div>
-      <div class="goal-toggle-text" id="g_support_text">I want to support them, not pressure them</div>
-      <div class="goal-toggle-check">✓</div>
-    </button>
-
-    <button type="button" class="goal-toggle" id="g_accountable" onclick="toggleGoal('accountable')">
-      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-clock"/></svg></div>
-      <div class="goal-toggle-text" id="g_accountable_text">I want them more accountable for their own work</div>
-      <div class="goal-toggle-check">✓</div>
-    </button>
-
- <button type="button" class="goal-toggle" id="g_roadmap" onclick="toggleGoal('roadmap')">
-      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-map"/></svg></div>
-      <div class="goal-toggle-text" id="g_roadmap_text">I want guidance on their journey</div>
-      <div class="goal-toggle-check">✓</div>
-    </button>
-
-     <button type="button" class="goal-toggle" id="g_explore" onclick="toggleGoal('explore')">
-      <div class="goal-toggle-emoji"><svg class="mg-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-lightbulb"/></svg></div>
-      <div class="goal-toggle-text">I'm just exploring</div>
-      <div class="goal-toggle-check">✓</div>
-    </button>
-
-  </div>
-
-  <!-- Bottom nav -->
-  <div class="bnav">
-    <button class="back-btn" onclick="go(3)">&larr; Back</button>
-    <div class="dots" id="d4"></div>
-    <button class="next-btn" id="n4" onclick="goNext(4, 5)" disabled>Next &rarr;</button>
   </div>
 
 </div>
@@ -5098,8 +4951,9 @@ function restorePlayerScreen() {
 
 // ─── SMS DELIVERY FLAG ─────────────────────────────────────
 // Twilio toll-free verification is in carrier review. Until it's
-// approved, /api/send-invite runs in DRY_RUN and no SMS actually
-// fires. Set this to true ONLY after TFV is approved AND
+// approved, invite SMS stays in DRY_RUN and nothing actually
+// fires (invites go through /api/invite-send; the old send-invite
+// endpoint was deleted 2026-07-09). Set this to true ONLY after TFV is approved AND
 // SMS_DRY_RUN=false is set in the Vercel env. Flipping this flag
 // changes the Screen 7 status card and dashboard player card copy
 // from honest "Setup link ready, share it now" framing to the
@@ -5555,7 +5409,9 @@ function buildScreen8() {
   // ─── Trial abuse prevention (Tier 1, 2026-05-18) ─────────
   // Fire-and-forget call to /api/start-trial. Records the email/phone
   // pair server-side so a future attempt to re-trial with same email
-  // OR same phone gets blocked at /api/check-trial-eligibility.
+  // OR same phone gets blocked by the eligibility gate inside
+  // /api/create-checkout-session (check-trial-eligibility.js itself
+  // was deleted 2026-07-09 — the check lives server-side now).
   // Idempotent — calling on every Screen 8 entry is safe.
   // On "already used" response: only show the abuse overlay if this
   // browser is FRESH (no state.startedAt yet). A legit returning user
@@ -5723,8 +5579,8 @@ function injectSigninLinkBannerOnScreen8(href, email) {
 // to atomically record the email+phone pair server-side. Prevents
 // the "clear localStorage and get another 14-day trial" attack.
 //
-// Recording happens here AND in stripe-webhook.js on subscription.created
-// AND in send-invite.js on SMS send. All recordings are idempotent
+// Recording happens here AND in stripe-webhook.js on subscription.created.
+// (The third writer, send-invite.js, was deleted 2026-07-09.) All recordings are idempotent
 // via Redis SET NX — calling from multiple flows is safe.
 //
 // The server response tells us if this was a brand-new trial (`started:
@@ -5803,7 +5659,7 @@ function recordTrialStartServerSide() {
       .catch(function (err) {
         // Network blip. Fail-open — let the user use the app. The
         // server already blocks the worst abuse via the eligibility
-        // check at /api/send-invite when SMS is wired. Logging only.
+        // gate in /api/create-checkout-session. Logging only.
         try { console.warn('[start-trial] request failed:', err && err.message); } catch (_) {}
       });
   } catch (_) {
@@ -6805,7 +6661,7 @@ function updateProgressUI(n) {
    ═══════════════════════════════════════════════════════════ */
 
 const SHARE_URL  = 'https://mygrindapp.com/signup.html';
-const SHARE_TEXT = "Found a journal app for serious baseball + softball families. Practice, games, stats, goals — all in one place.";
+const SHARE_TEXT = "Found a journal app for serious baseball + softball families. Practice, games, stats, goals, all in one place.";
 
 function openShareModal() {
   const overlay = document.getElementById('share_modal_overlay');
@@ -6883,7 +6739,7 @@ function onCopyShareLink() {
   }
   function showFail() {
     if (!toast) return;
-    toast.textContent = '⚠️ Could not copy — long-press the link to copy manually.';
+    toast.textContent = '⚠️ Could not copy. Long-press the link to copy manually.';
     toast.classList.add('shown');
   }
 

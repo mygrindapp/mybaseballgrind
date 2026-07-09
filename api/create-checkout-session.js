@@ -156,7 +156,8 @@ export default async function handler(req, res) {
   // ─── Trial eligibility gate (server-side; the client pre-checks too) ──
   // Blocks a previously-trialed email/phone — or an existing customer —
   // from minting another free trial via a direct POST. Mirrors start-trial.js
-  // and check-trial-eligibility.js. Fails OPEN on a Redis blip (eligible),
+  // (check-trial-eligibility.js was deleted 2026-07-09 — this gate is the
+  // live copy of that logic). Fails OPEN on a Redis blip (eligible),
   // matching the rest of the pre-launch stack.
   const elig = await checkTrialEligibility({ email: normEmail, phone });
   if (!elig.eligible) {

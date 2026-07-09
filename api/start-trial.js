@@ -70,7 +70,8 @@ export default async function handler(req, res) {
   }
 
   // ─── Read-tier rate limit ────────────────────────────────
-  // Same limiter as check-trial-eligibility. Defeats bulk abuse
+  // Same read-tier limiter the retired check-trial-eligibility endpoint
+  // used (deleted 2026-07-09). Defeats bulk abuse
   // without rate-limiting legit signups.
   const clientIp = getClientIp(req);
   const ipCheck = await checkIpReadLimit(clientIp);

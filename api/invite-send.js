@@ -11,8 +11,8 @@
 // The server auto-detects the channel from the destination
 // string: contains "@" → email, otherwise phone.
 //
-// WHY A NEW ENDPOINT instead of reusing api/send-invite.js:
-// send-invite.js gates on trial eligibility and 409s when the
+// WHY A NEW ENDPOINT instead of reusing the old api/send-invite.js
+// (since deleted, 2026-07-09): it gated on trial eligibility and 409'd when the
 // parent's email is already recorded as trial-used. That is
 // correct for first-signup, but this endpoint serves PAID
 // parents re-sending or choosing a channel AFTER signup, where

@@ -120,7 +120,7 @@ export default async function handler(req, res) {
   // Per-IP limit (3/hr, 10/day) prevents endpoint flood.
   // Per-coach-phone limit (2/24h) prevents weaponized SMS spam
   // to a single coach number once Twilio TFV approves. Reuses
-  // the same Redis-backed limiter as send-invite.js. Fail-open
+  // the same Redis-backed limiter pattern as invite-send.js. Fail-open
   // on Redis outage by design — legit feedback flow keeps working
   // during a Redis blip rather than blocking everyone.
   const clientIp = getClientIp(req);
@@ -146,7 +146,7 @@ export default async function handler(req, res) {
         return res.status(429).json({ ok: false, error: 'rate_limited' });
       }
       // Record the attempt against IP + coach phone BEFORE we write Redis
-      // or call Twilio. Matches send-invite.js Option C architecture:
+      // or call Twilio. Matches the invite-send.js Option C architecture:
       // protects against bursts even when downstream services misbehave.
       await recordSend(clientIp, coachE164);
     } else {
