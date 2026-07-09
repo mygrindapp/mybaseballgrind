@@ -848,9 +848,8 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <div class="exit-card">
       <div class="exit-card-row"><span class="check">&#10003;</span> Sport &amp; position locked in</div>
-      <div class="exit-card-row"><span class="check">&#10003;</span> Goals set as your first journal entries</div>
-      <div class="exit-card-row"><span class="check">&#10003;</span> Coach feedback ready to track</div>
-      <div class="exit-card-row"><span class="check">&#10003;</span> Plan calibrated to your training schedule</div>
+      <div class="exit-card-row"><span class="check">&#10003;</span> Your goals are loaded into the journal</div>
+      <div class="exit-card-row"><span class="check">&#10003;</span> Your daily journal is ready for entry one</div>
       <div class="exit-card-row" id="exit_pin_row" style="display:none;">
         <span class="check">&#10003;</span> PIN set. This journal is marked as yours
       </div>
@@ -1034,22 +1033,16 @@ function firstFlowScreen() {
 }
 
 function startOnboarding() {
-  if (d.fallback) {
-    go('05');
-    // Auto-focus first PIN box
-    setTimeout(function() {
-      var pin1 = document.getElementById('pin1');
-      if (pin1) pin1.focus();
-    }, 300);
-  } else {
-    go(firstFlowScreen());
-  }
+  // PIN screen cut 7/9 (Coach decision, audit item 43): the 4 digits were
+  // collected, validated, then discarded — nothing ever stored or checked
+  // them. The screen (s05) stays in the DOM for the future real PIN gate;
+  // no path routes to it until that ships.
+  go(firstFlowScreen());
 }
 
-// Back button on S1 — returns to welcome (or PIN setup if fallback)
+// Back button on S1 — returns to welcome
 function onBackFromS1() {
-  if (d.fallback) go('05');
-  else go(0);
+  go(0);
 }
 
 /* ─── PIN SETUP (S0.5) ──────────────────────────────────
@@ -1338,11 +1331,8 @@ function prepFinalExit() {
   var nameSpan = document.getElementById('exit_name');
   if (nameSpan) nameSpan.textContent = d.name || 'Player';
 
-  // Show the PIN confirmation row if fallback
-  if (d.fallback) {
-    var pinRow = document.getElementById('exit_pin_row');
-    if (pinRow) pinRow.style.display = '';
-  }
+  // PIN row stays hidden — the PIN screen was cut 7/9 (audit item 43);
+  // the row returns with the real PIN gate.
 
   // Save profile to localStorage so Phase 7 dashboard can read it
   saveProfile();
@@ -1365,10 +1355,8 @@ function saveProfile() {
       struggle:      Array.isArray(d.struggle) ? d.struggle : [],
       coachFeedback: Array.isArray(d.coachFeedback) ? d.coachFeedback : [],
       trainingDays:  d.trainingDays,
-      hasPin:        d.fallback && d.pin.length === 4,
-      // PIN itself is hashed — never store plain. For now we just store the
-      // length so the future auth flow knows it exists. Phase 5+ properly
-      // hashes and stores via backend.
+      // hasPin removed 7/9 with the PIN screen (audit item 43) — it had
+      // zero consumers. The real PIN gate ships with its own storage.
       onboardedAt:   new Date().toISOString(),
       // Forward-compatible naming (Decision #12) — owner_user_id will be
       // wired up in Phase 5 when backend auth lands

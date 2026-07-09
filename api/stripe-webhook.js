@@ -162,7 +162,102 @@ async function sendCancellationEmail({ email, currentPeriodEndUnix, plan }) {
   }
 }
 
+// ─── TRIAL REMINDER EMAIL ──────────────────────────────────
+// Fires on customer.subscription.trial_will_end (Stripe sends it ~3 days
+// before a trial converts). This makes the reminder promised on signup
+// Screens 5/7 TRUE (audit item 34, Coach decision 2026-07-09: build it).
+// SMS joins when Twilio goes live. Failure to send NEVER fails the webhook.
+// NOTE: the Stripe dashboard webhook endpoint must be subscribed to
+// customer.subscription.trial_will_end for this to fire.
+async function sendTrialReminderEmail({ email, trialEndUnix, plan }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('[stripe-webhook] trial reminder skipped: RESEND_API_KEY not set');
+    return { ok: false, reason: 'no_api_key' };
+  }
+  if (!email) {
+    console.warn('[stripe-webhook] trial reminder skipped: no recipient email');
+    return { ok: false, reason: 'no_email' };
+  }
+
+  const from         = process.env.RESEND_FROM || 'MyGrind <coach@mygrindapp.com>';
+  const testRedirect = process.env.WEEKLY_DIGEST_TEST_EMAIL || '';
+  const to           = testRedirect || email;
+
+  let endStr = '';
+  if (trialEndUnix && Number.isFinite(trialEndUnix)) {
+    try {
+      const d = new Date(trialEndUnix * 1000);
+      if (!isNaN(d.getTime())) {
+        endStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      }
+    } catch (e) {}
+  }
+  const whenLine = endStr
+    ? `Heads up: your MyGrind free trial ends on ${endStr}.`
+    : 'Heads up: your MyGrind free trial ends in a few days.';
+
+  const text = [
+    'Hey there,',
+    '',
+    whenLine + " Your plan starts automatically after that, so your player's journal keeps rolling without a hiccup.",
+    '',
+    "If MyGrind is earning its place in your player's routine, you don't need to do anything.",
+    '',
+    "Not the right time? Cancel before your trial ends and you pay nothing. Open the app, go to Settings, and tap Manage Subscription. One tap, no questions. Your player's entries, stats, and goals stay safe for 90 days in case you come back.",
+    '',
+    'Questions? Just reply to this email.',
+    '',
+    'Coach',
+    'The Grind'
+  ].join('\n');
+
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="margin:0; padding:0; background:#0E0006; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; color:#F2EAD9;">
+  <div style="max-width:560px; margin:0 auto; padding:32px 24px;">
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:#E8C97A; margin-bottom:8px;">MY GRIND</div>
+    <div style="height:2px; background:#B89A4B; width:64px; margin-bottom:24px;"></div>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 16px;">Hey there,</p>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 16px;">
+      <strong style="color:#E8C97A;">${whenLine}</strong> Your plan starts automatically after that, so your player's journal keeps rolling without a hiccup.
+    </p>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 16px;">
+      If MyGrind is earning its place in your player's routine, you don't need to do anything.
+    </p>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 24px;">
+      Not the right time? Cancel before your trial ends and you pay nothing. Open the app, go to <strong style="color:#E8C97A;">Settings &rarr; Manage Subscription</strong>. One tap, no questions. Your player's entries, stats, and goals stay safe for <strong style="color:#E8C97A;">90 days</strong> in case you come back.
+    </p>
+
+    <div style="background:rgba(184,154,75,0.06); border:1px solid #B89A4B; border-radius:6px; padding:14px 16px; margin-bottom:24px;">
+      <p style="font-size:14px; line-height:1.6; color:#F2EAD9; margin:0;">
+        Questions? Just reply to this email, it comes straight to me.
+      </p>
+    </div>
+
+    <p style="font-size:15px; line-height:1.4; color:#F2EAD9; margin:0;">Coach</p>
+    <p style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#B89A4B; margin:4px 0 0;">The Grind</p>
+  </div>
+</body></html>`;
+
+  try {
+    const resend = new Resend(apiKey);
+    const subject = endStr ? `Your MyGrind trial ends ${endStr}` : 'Your MyGrind trial ends soon';
+    const result = await resend.emails.send({ from, to, subject, html, text });
+    console.log('[stripe-webhook] trial reminder sent', { toHash: piiHash(to), plan, redirected: !!testRedirect, resendId: result?.data?.id });
+    return { ok: true, id: result?.data?.id || null };
+  } catch (e) {
+    console.error('[stripe-webhook] trial reminder send failed:', e.message);
+    return { ok: false, reason: 'send_error', error: e.message };
+  }
+}
+
 // ─── POST-PAYMENT DELIVERY ─────────────────────────────────
+
 // Closes the gap between Stripe checkout and the customer actually getting
 // into the app. Before this, paying customers landed in Redis subscription
 // state but never got a sign-in email and never showed up in Firebase Auth.
@@ -723,6 +818,27 @@ export default async function handler(req, res) {
           } catch (e) {
             console.error('[stripe-webhook] trial record failed (non-fatal):', e.message);
           }
+        }
+        break;
+      }
+
+      case 'customer.subscription.trial_will_end': {
+        // ~3 days before conversion. Send the reminder email promised at
+        // signup (audit item 34). Never fails the webhook.
+        const sub = event.data.object;
+        let email = null;
+        try {
+          const customer = await stripe.customers.retrieve(sub.customer);
+          email = customer.email;
+        } catch (e) { /* fall through */ }
+        if (!email) {
+          console.warn('[stripe-webhook] trial_will_end: no email (customer likely deleted)', { customerId: sub.customer, subId: sub.id });
+          break;
+        }
+        try {
+          await sendTrialReminderEmail({ email, trialEndUnix: sub.trial_end || null, plan: planForSubscription(sub) });
+        } catch (e) {
+          console.error('[stripe-webhook] trial reminder failed (non-fatal):', e.message);
         }
         break;
       }

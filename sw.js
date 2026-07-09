@@ -17,6 +17,7 @@ const ASSETS = [
   '/checkin.html',
   '/manifest.json',
   '/assets/interactions.css',
+  '/assets/mg-stripe-links.js',
   '/assets/icon-192.png',
   '/assets/icon-512.png',
   '/assets/apple-touch-icon.png',

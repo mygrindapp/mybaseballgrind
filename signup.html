@@ -8,6 +8,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <!-- Shared press-feedback + motion layer (assets/interactions.css). -->
 <link rel="stylesheet" href="/assets/interactions.css">
+  <script src="assets/mg-stripe-links.js"></script>
 <title>MyGrind: Sign Up</title>
 <!-- Google Analytics GA4 (G-5HLS0F06CQ): added 2026-06-01 for funnel + conversion tracking. Same property as softball.html so the landing-to-app funnel is unified. -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-5HLS0F06CQ"></script>
@@ -2535,7 +2536,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     </p>
 
     <!-- ─── QUESTION 1: Sport ──────────────────────────── -->
-    <div class="section-label" id="s3_sport_label">What sport(s) do you play?</div>
+    <div class="section-label" id="s3_sport_label">What sport(s) does your player play?</div>
     <div class="sport-grid">
       <button type="button" class="sport-tile" id="sp_baseball" onclick="selectFamilySport('baseball')">
         <div class="sport-tile-icon">⚾</div>
@@ -2800,7 +2801,7 @@ fbq('init','326334441984368');fbq('track','PageView');
       <div class="promise-block-title" id="s5_promise_title">What happens at day 30?</div>
       <div class="promise-block-line">
         <span class="bullet">→</span>
-        <div id="s5_promise_notify">We'll text you. We'll email you. <strong>Twice</strong>: on day 28, and again on day 30.</div>
+        <div id="s5_promise_notify">We'll email you a reminder <strong>a few days before day 30</strong>. Nothing renews silently.</div>
       </div>
       <div class="promise-block-line">
         <span class="bullet">→</span>
@@ -2875,7 +2876,7 @@ fbq('init','326334441984368');fbq('track','PageView');
 
       <!-- Relationship -->
       <div class="field-block">
-        <label class="field-label" for="player_rel">Relationship<span class="req">*</span></label>
+        <label class="field-label" for="player_rel">Relationship <span style="font-weight:400; text-transform:none; letter-spacing:0; color:#807565;">(optional)</span></label>
         <select class="field-input" id="player_rel" onchange="onPlayerInput()">
           <option value="">Choose one…</option>
           <option value="Son">Son</option>
@@ -3020,7 +3021,7 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="next-block">
       <div class="next-block-title">What's next</div>
       <div class="next-block-line" id="s7_notify_line">
-        <strong>Days 28 & 30:</strong> we'll text and email a reminder before your trial ends.
+        <strong>Before day 30:</strong> we'll email a reminder, so nothing renews silently.
       </div>
       <div class="next-block-line">
         Starts automatically after your trial. Cancel anytime before then in one tap. <strong>No surprises.</strong>
@@ -4764,7 +4765,9 @@ function refreshPlayerContinue() {
   const player = ensurePlayerSlot(idx);
 
   const firstOk = (player.firstName || '').length >= 1;
-  const relOk   = (player.relationship || '').length > 0;
+  // Relationship is optional (audit 7/8): it was required-gating Continue
+  // but nothing downstream ever consumes it. One less field before the card.
+  const relOk   = true;
   const ageOk   = (typeof player.age === 'number' && player.age >= 4 && player.age <= 22);
   const phoneFormatOk = player.fallback ? true : isValidPhone(player.phone || '');
   const phoneUnique   = player.fallback ? true : !phoneClashesWithOtherSlot(player.phone || '', idx);
@@ -5375,6 +5378,12 @@ function onScreen7Continue() {
 }
 
 function onScreen7Back() {
+  if (typeof isSelfPath === 'function' && isSelfPath()) {
+    // The self funnel has no Screen 6 (player slots) — Back means Screen 5.
+    // The old go(6) bounced self users straight back to 7 (audit 7/8).
+    go(5);
+    return;
+  }
   // Back to Screen 6, last player slot
   state.currentPlayerIndex = Math.max(0, (state.playerCount || 1) - 1);
   saveState();
@@ -5929,7 +5938,33 @@ function showTrialAlreadyUsedOverlay(reason) {
 // from the post-signup dashboard for parents who decide mid-trial they
 // are ready to subscribe. Per April 27 note this is a small text link,
 // NOT a primary CTA — the trial promise stands.
-function onDashboardPayClicked() {
+async function onDashboardPayClicked() {
+  // Existing-customer guards (audit 7/8): since card-required (7/1), anyone
+  // who completed checkout already holds a subscription — a raw Payment
+  // Link here mints a SECOND one. Try the Customer Portal first; if this
+  // device saw checkout succeed, never fall through to a fresh link.
+  const email = ((state.parent && state.parent.email) || '').trim().toLowerCase();
+  try {
+    if (email) {
+      const resp = await fetch('/api/stripe-portal-session', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ email }),
+      });
+      const data = await resp.json().catch(function () { return {}; });
+      if (resp.ok && data && data.ok && data.url) {
+        saveState();
+        window.location.href = data.url;
+        return;
+      }
+    }
+  } catch (e) { /* network blip — the local guard below still protects */ }
+  try {
+    if (localStorage.getItem('mg_plan_picker_shown') === '1') {
+      alert('Your card is already on file, so there is nothing extra to pay today. Manage or change your plan anytime from Settings inside the app.');
+      return;
+    }
+  } catch (e) {}
   const plan     = state.preferredPlan || 'annual';
   const count    = state.playerCount   || 1;
   const isFamily = count >= 2;
@@ -6165,7 +6200,11 @@ function openPlanPicker() {
   } else if (hasUnder13) {
     _planPickerSelection = monthly ? 'family_monthly' : 'family_annual';
   } else {
-    _planPickerSelection = monthly ? 'family_monthly' : 'family_annual';
+    // Respect the household size (audit 7/8): one-kid parents were being
+    // pre-selected into Family $149.99 after Screen 3 quoted them Single.
+    _planPickerSelection = ((state.playerCount || 1) >= 2)
+      ? (monthly ? 'family_monthly' : 'family_annual')
+      : (monthly ? 'single_monthly' : 'single_annual');
   }
   applyPlanPickerSelection();
 
@@ -6189,9 +6228,10 @@ function openPlanPicker() {
   // there's nothing to toggle here. The skip button + onPlanPickerSkip were
   // removed with this change.
 
-  // Highlight Family as Recommended when this is a parent-path signup.
+  // Highlight Family as Recommended only when the household actually has
+  // 2+ players (or COPPA already forces Family).
   const familyPill = document.getElementById('ppc_fa_pill');
-  if (familyPill) familyPill.style.display = isSelfPath() ? 'none' : '';
+  if (familyPill) familyPill.style.display = (!isSelfPath() && (hasUnder13 || (state.playerCount || 1) >= 2)) ? '' : 'none';
 
   // Headline + sub copy. Months promos carry their own length (FOUNDERMYGRIND /
   // D1GRIND = 180 days, ALLSTARMYGRIND = 90) — never assume 6 months.
@@ -6344,7 +6384,9 @@ async function onPlanPickerContinue() {
 // Stripe Payment Links (LIVE mode). One link per (Single|Family) × (Annual|Monthly).
 // Each link is pre-configured in Stripe with the right product, price, and
 // success/cancel URLs. The FOUNDERMYGRIND promotion code is auto-accepted on all 4.
-const STRIPE_PAYMENT_LINKS = {
+// Primary source = assets/mg-stripe-links.js (audit 7/8, single source of
+// truth shared with softball.html). Literals are the load-failure fallback.
+const STRIPE_PAYMENT_LINKS = (typeof window !== 'undefined' && window.MG_STRIPE_LINKS) || {
   single_annual:  'https://buy.stripe.com/fZucN78Q20Nncd4brb4gg0a',
   single_monthly: 'https://buy.stripe.com/4gM7sN2rE9jT5OG3YJ4gg06',
   family_annual:  'https://buy.stripe.com/bJeeVf4zM1Rr6SK0Mx4gg07',
@@ -6550,11 +6592,11 @@ function applyPromoMessaging() {
     // No (recognized) promo — restore the default 14-day trial copy.
     if (s5Sub)      s5Sub.textContent      = 'You will not be charged today, or anytime during your 30-day free trial. This is just so you can have a plan in mind for when it ends.';
     if (s5Title)    s5Title.textContent    = 'What happens at day 30?';
-    if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Twice</strong>: on day 28, and again on day 30.";
+    if (s5Notify)   s5Notify.innerHTML     = "We'll email you a reminder <strong>a few days before day 30</strong>. Nothing renews silently.";
     if (s5Start)    s5Start.innerHTML      = "If it's earning its place, do nothing: your plan starts <strong>automatically on day 31</strong>.";
     if (s5Walkaway) s5Walkaway.innerHTML   = "If not, cancel in one tap before your trial ends and you pay nothing. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
     if (s5Skip)     s5Skip.style.display   = '';
-    if (s7Notify)   s7Notify.innerHTML     = "<strong>Days 28 &amp; 30:</strong> we'll text and email a reminder before your trial ends.";
+    if (s7Notify)   s7Notify.innerHTML     = "<strong>Before day 30:</strong> we'll email a reminder, so nothing renews silently.";
     return;
   }
 
@@ -6573,11 +6615,11 @@ function applyPromoMessaging() {
     const dur = info.durationLabel;        // e.g. "6 months"
     if (s5Sub)      s5Sub.textContent      = "You will not be charged today, or anytime during your " + dur + " free trial. This is just so you can have a plan in mind for when it ends.";
     if (s5Title)    s5Title.textContent    = "What happens after your free " + dur + "?";
-    if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Two weeks before</strong> your free " + dur + " ends.";
+    if (s5Notify)   s5Notify.innerHTML     = "We'll email you a reminder <strong>a few days before</strong> your free " + dur + " ends.";
     if (s5Start)    s5Start.innerHTML      = "If it's earning its place, do nothing: your plan starts <strong>automatically after your free " + dur + "</strong>.";
     if (s5Walkaway) s5Walkaway.innerHTML   = "If not, cancel in one tap before your trial ends and you pay nothing. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
     if (s5Skip)     s5Skip.style.display   = '';       // Still relevant — eager parents can pay early
-    if (s7Notify)   s7Notify.innerHTML     = "<strong>Two weeks before " + dur + " is up:</strong> we'll text and email a reminder before your free period ends.";
+    if (s7Notify)   s7Notify.innerHTML     = "<strong>Before your free " + dur + " ends:</strong> we'll email a reminder, so nothing renews silently.";
     return;
   }
 }
@@ -7194,7 +7236,11 @@ window.addEventListener('DOMContentLoaded', () => {
   try {
     var qsCo = new URLSearchParams(window.location.search);
     if (qsCo.get('co') === 'cancel') {
-      if (state.playersLockedAt) _resumeAtScreen8 = true;
+      // Slot-locked signups resume at Screen 8 (picker re-opens). Self and
+      // all-fallback households never lock slots, but their stashed
+      // onboarding hand-off proves they were mid-checkout too (audit 7/8) —
+      // without this they restarted at Screen 2.
+      if (state.playersLockedAt || localStorage.getItem('mg_pending_onboarding')) _resumeAtScreen8 = true;
       qsCo.delete('co');
       var cleanCo = window.location.pathname + (qsCo.toString() ? '?' + qsCo.toString() : '');
       window.history.replaceState(null, '', cleanCo);
@@ -7244,6 +7290,12 @@ window.addEventListener('DOMContentLoaded', () => {
   // the top of the chosen funnel.
   if (_resumeAtScreen8) {
     go(8);
+  } else if ((state.currentScreen || 0) >= 2) {
+    // Mid-funnel resume (audit 7/8): a refresh or closed tab used to restart
+    // the whole funnel — pick up exactly where the parent left off. go()
+    // saves currentScreen on every transition; loadState already remaps the
+    // orphaned screens 1→2 and 4→5.
+    go(Math.min(state.currentScreen, 8));
   } else {
     go(state.signupFor ? 2 : 0);
   }

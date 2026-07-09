@@ -285,6 +285,10 @@
         if (family !== 'both' && family !== newSport) return;
 
         localStorage.setItem('mg_sport', newSport);
+        // Per-minor sport memory (audit 7/8): at click time the minor-scope
+        // shim is installed, so this write lands under mm:<minorId>: for the
+        // active child. The minor switcher reads it back on switch.
+        try { localStorage.setItem('mg_sport_minor', newSport); } catch (e) {}
         document.documentElement.setAttribute('data-sport', newSport);
         applyTitleAndMeta(newSport);
         applyBallEmoji(newSport);
@@ -1675,6 +1679,14 @@ if ('serviceWorker' in navigator) {
     // (same shim as above) keeps each profile's streak its own. Account-
     // switch leakage is already handled by the prefix-purge clear.
     'mg_activity_days':     1,
+    // Speed logs (audit 7/8): 60-yard (baseball) and home-to-first
+    // (softball) histories were flat, so siblings on one device shared a
+    // single PR/trend history.
+    'ybg_sixty_log':        1,
+    'ybg_h1_log':           1,
+    // Each minor's remembered sport (audit 7/8) — the switcher stamps it
+    // onto the flat mg_sport so a child opens onto THEIR sport.
+    'mg_sport_minor':       1,
   };
   var ACTIVE_KEY = 'mg_active_minor_id';
 
@@ -1950,6 +1962,7 @@ function signOutAndSwitchAccount() {
 }
 </script>
 <!-- ══ FIREBASE INTEGRATION ══════════════════════════════════════ -->
+<script src="assets/mg-stripe-links.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -2725,6 +2738,13 @@ fbq('init','326334441984368');fbq('track','PageView');
             </button>
           </div>
 
+        </div>
+
+        <!-- Data honesty (audit 7/8): "your data stays safe" needs a door.
+             A lapsed family can take a full backup without paying. -->
+        <div style="text-align:center; margin-bottom:12px;">
+          <button onclick="try{downloadBackup()}catch(e){}" style="background:transparent; border:none; color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; text-decoration:underline; cursor:pointer;">Download my data (free)</button>
+          <div style="font-family:'Barlow'; font-size:11px; color:#807565; margin-top:2px;">Your journal is yours. Take a full backup anytime, plan or no plan.</div>
         </div>
 
         <div style="text-align:center; font-family:'Barlow Condensed',sans-serif; font-size:12px; letter-spacing:1px; color:#4A4239; line-height:1.8;">
@@ -3505,12 +3525,16 @@ input[type="number"] {
               <optgroup label="⚾ Pitching Milestones">
                 <option value="Throw a No-Hitter|pitching">Throw a No-Hitter</option>
                 <option value="Earn ERA Under 2.50|pitching">Earn ERA Under 2.50</option>
-                <option value="Hit 60+ MPH on the Mound|pitching">Hit 60+ MPH on the Mound</option>
-                <option value="Hit 70+ MPH on the Mound|pitching">Hit 70+ MPH on the Mound</option>
-                <option value="Hit 75+ MPH on the Mound|pitching">Hit 75+ MPH on the Mound</option>
-                <option value="Hit 80+ MPH on the Mound|pitching">Hit 80+ MPH on the Mound</option>
-                <option value="Hit 85+ MPH on the Mound|pitching">Hit 85+ MPH on the Mound</option>
-                <option value="Hit 90+ MPH on the Mound|pitching">Hit 90+ MPH on the Mound</option>
+                <option data-baseball-only value="Hit 60+ MPH on the Mound|pitching">Hit 60+ MPH on the Mound</option>
+                <option data-baseball-only value="Hit 70+ MPH on the Mound|pitching">Hit 70+ MPH on the Mound</option>
+                <option data-baseball-only value="Hit 75+ MPH on the Mound|pitching">Hit 75+ MPH on the Mound</option>
+                <option data-baseball-only value="Hit 80+ MPH on the Mound|pitching">Hit 80+ MPH on the Mound</option>
+                <option data-baseball-only value="Hit 85+ MPH on the Mound|pitching">Hit 85+ MPH on the Mound</option>
+                <option data-baseball-only value="Hit 90+ MPH on the Mound|pitching">Hit 90+ MPH on the Mound</option>
+                <option data-softball-only value="Hit 50+ MPH in the Circle|pitching">Hit 50+ MPH in the Circle</option>
+                <option data-softball-only value="Hit 55+ MPH in the Circle|pitching">Hit 55+ MPH in the Circle</option>
+                <option data-softball-only value="Hit 60+ MPH in the Circle|pitching">Hit 60+ MPH in the Circle</option>
+                <option data-softball-only value="Hit 63+ MPH in the Circle|pitching">Hit 63+ MPH in the Circle</option>
                 <option value="Strikeouts 50%+ of Batters Faced|pitching">Strikeouts 50%+ of Batters Faced</option>
               </optgroup>
               <optgroup label="🧤 Fielding Milestones">
@@ -3519,10 +3543,13 @@ input[type="number"] {
                 <option value="Master Two New Defensive Positions|fielding">Master Two New Defensive Positions</option>
               </optgroup>
               <optgroup label="💪 Strength &amp; Speed">
-                <option value="Run a Sub-8.0 60-Yard|strength">Run a Sub-8.0 60-Yard</option>
-                <option value="Run a Sub-7.5 60-Yard|strength">Run a Sub-7.5 60-Yard</option>
-                <option value="Run a Sub-7.0 60-Yard|strength">Run a Sub-7.0 60-Yard</option>
-                <option value="Run a Sub-6.7 60-Yard|strength">Run a Sub-6.7 60-Yard</option>
+                <option data-baseball-only value="Run a Sub-8.0 60-Yard|strength">Run a Sub-8.0 60-Yard</option>
+                <option data-baseball-only value="Run a Sub-7.5 60-Yard|strength">Run a Sub-7.5 60-Yard</option>
+                <option data-baseball-only value="Run a Sub-7.0 60-Yard|strength">Run a Sub-7.0 60-Yard</option>
+                <option data-baseball-only value="Run a Sub-6.7 60-Yard|strength">Run a Sub-6.7 60-Yard</option>
+                <option data-softball-only value="Home to First Under 3.3 Seconds|strength">Home to First Under 3.3 Seconds</option>
+                <option data-softball-only value="Home to First Under 3.1 Seconds|strength">Home to First Under 3.1 Seconds</option>
+                <option data-softball-only value="Home to First Under 2.9 Seconds|strength">Home to First Under 2.9 Seconds</option>
                 <option value="Add 10 lbs of Lean Muscle|strength">Add 10 lbs of Lean Muscle</option>
                 <option value="Hit a Personal Best on Squat|strength">Hit a Personal Best on Squat</option>
                 <option value="Hit a Personal Best on Bench|strength">Hit a Personal Best on Bench</option>
@@ -4208,6 +4235,14 @@ input[type="number"] {
               <input type="number" id="gs-h" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">2B</label>
+              <input type="number" id="gs-2b" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
+            </div>
+            <div>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">3B</label>
+              <input type="number" id="gs-3b" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
+            </div>
+            <div>
               <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">HR</label>
               <input type="number" id="gs-hr" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
@@ -4230,6 +4265,10 @@ input[type="number"] {
             <div>
               <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">SB</label>
               <input type="number" id="gs-sb" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
+            </div>
+            <div>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">HBP</label>
+              <input type="number" id="gs-hbp" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
           </div>
 
@@ -4257,6 +4296,10 @@ input[type="number"] {
             <div>
               <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">IP</label>
               <input type="number" id="gs-ip" placeholder="0" min="0" step="0.1" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
+            </div>
+            <div>
+              <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">H</label>
+              <input type="number" id="gs-ph" placeholder="0" min="0" style="text-align:center; padding:8px 4px; font-size:16px; font-family:'Bebas Neue'; letter-spacing:1px; max-width:90px; margin:0 auto; display:block;" oninput="calcGameStats()">
             </div>
             <div>
               <label style="font-size:13px; letter-spacing:1.5px; font-weight:700; color:var(--light);">ER</label>
@@ -5606,7 +5649,8 @@ input[type="number"] {
   <div class="panel" id="panel-goals" style="display:none;"></div><!-- panel-goals removed; goals now live on Dashboard -->
 
   <!-- ══════════════════════════════════════════ TEAM ══ -->
-  <div class="panel" id="panel-team">
+  <!-- HIDDEN 7/9 (Coach decision, audit item 50): built but unlaunched. Remove hidden when My Team ships. -->
+  <div class="panel" id="panel-team" hidden>
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
     <button onclick="mgBack('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
@@ -5854,7 +5898,8 @@ input[type="number"] {
   </div><!-- END panel-team -->
 
   <!-- ══════════════════════════════════════════ COACH FEEDBACK ══ -->
-  <div class="panel" id="panel-coach-feedback">
+  <!-- HIDDEN 7/9 (Coach decision, audit item 50): built but unlaunched. Remove hidden when Ask Coach ships. -->
+  <div class="panel" id="panel-coach-feedback" hidden>
     <!-- Back-to-dashboard pill added 2026-05-16 walkthrough. -->
     <button onclick="mgBack('dashboard', 'tab-dashboard')" style="background:transparent; border:1px solid var(--border); color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:8px 14px; border-radius:8px; cursor:pointer; margin-bottom:14px;">← Back</button>
     <div class="section-header">
@@ -5964,6 +6009,7 @@ input[type="number"] {
           <button type="button" class="trend-metric-btn" data-m="avg" onclick="setTrendMetric('avg')" style="background:var(--gold); border:1px solid var(--gold); color:#181614; font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 11px; border-radius:6px; cursor:pointer;">AVG</button>
           <button type="button" class="trend-metric-btn" data-m="obp" onclick="setTrendMetric('obp')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 11px; border-radius:6px; cursor:pointer;">OBP</button>
           <button type="button" class="trend-metric-btn" data-m="slg" onclick="setTrendMetric('slg')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 11px; border-radius:6px; cursor:pointer;">SLG</button>
+          <button type="button" class="trend-metric-btn" data-m="era" onclick="setTrendMetric('era')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed',sans-serif; font-size:11px; font-weight:800; letter-spacing:1px; text-transform:uppercase; padding:5px 11px; border-radius:6px; cursor:pointer;">ERA</button>
         </div>
       </div>
       <div id="trend-headline" style="display:none; align-items:baseline; gap:10px; margin-bottom:8px;">
@@ -6091,13 +6137,13 @@ input[type="number"] {
         </div>
         <div style="background:var(--card2); padding:22px 8px; text-align:center; border-radius:2px; border-top:2px solid #2471A3;">
           <div style="font-family:'Bebas Neue'; font-size:42px; color:#5DADE2; line-height:1; margin-bottom:4px;" id="disp-k9">---</div>
-          <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey);">K/9</div>
-          <div style="font-family:'Barlow'; font-size:10px; color:var(--border); margin-top:2px;">Strikeouts per 9</div>
+          <div id="lbl-krate" style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey);">K/9</div>
+          <div id="sub-krate" style="font-family:'Barlow'; font-size:10px; color:var(--border); margin-top:2px;">Strikeouts per 9</div>
         </div>
         <div style="background:var(--card2); padding:22px 8px; text-align:center; border-radius:2px; border-top:2px solid #2471A3;">
           <div style="font-family:'Bebas Neue'; font-size:42px; color:#5DADE2; line-height:1; margin-bottom:4px;" id="disp-bb9">---</div>
-          <div style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey);">BB/9</div>
-          <div style="font-family:'Barlow'; font-size:10px; color:var(--border); margin-top:2px;">Walks per 9</div>
+          <div id="lbl-bbrate" style="font-family:'Barlow Condensed'; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey);">BB/9</div>
+          <div id="sub-bbrate" style="font-family:'Barlow'; font-size:10px; color:var(--border); margin-top:2px;">Walks per 9</div>
         </div>
       </div>
     </div>
@@ -7917,15 +7963,15 @@ const months = [
     note: "The work you did last June is showing up right now. January does not lie. Get healthy first, fine-tune second, then build. Hit every day. Not just when you feel like it. Your rest day is sacred. Rest, spend it with your family, and come back Monday with something to prove."
   },
   {
-    name: "FEBRUARY", type: "preseason", phase: "Pre-Season", focus: "Situational Baseball · Mental Game · Daily Hitting · Maintenance Lifting",
-    intro: "February is where it starts looking like real baseball. Everything you built in the off-season now gets applied to game situations. Hitting is still every day. It does not stop because the season is close, it gets more focused. Weight training shifts to maintenance. You are protecting what you built, not adding more. And your rest day? That is still for rest and the people who matter most to you.",
+    name: "FEBRUARY", type: "preseason", phase: "Pre-Season", focus: "Situational {Sport} · Mental Game · Daily Hitting · Maintenance Lifting",
+    intro: "February is where it starts looking like real {sport}. Everything you built in the off-season now gets applied to game situations. Hitting is still every day. It does not stop because the season is close, it gets more focused. Weight training shifts to maintenance. You are protecting what you built, not adding more. And your rest day? That is still for rest and the people who matter most to you.",
     weeks: [
       { title: "Week 1: Offensive Situations + Daily Hitting", content: "Hit and run, bunt for a hit, sacrifice bunt, two-strike approach, first-and-third reads. Every hitter should know their job in every count.\n\n🏋️ MON · WED: Weight Room (Maintenance): Moderate weight, higher reps. Protect the strength you built. Squats, rows, bench, pull-ups. Same lifts, less intensity.\n⚾ MON–SAT: Hitting (Every Day): Minimum 50 swings. But now with a situational focus. Two-strike approach one day, opposite field the next. Never just mindless swings.\n🤸 TUE · THU · FRI: Fielding situations, arm & shoulder care, footwork.\n😴 ONE FULL REST DAY (your pick): Rest. Family. Your loved ones miss you during the season. Give them February rest days." },
       { title: "Week 2: Defensive Situations + Hitting Continues", content: "Cutoffs and relays, bunt defense, double play footwork, rundowns, pick-off plays. Know your role in every situation cold.\n\n🏋️ MON · WED: Weight Room (Maintenance): Same program. Full body, moderate load. Keep the engine running without burning out.\n⚾ MON–SAT: Hitting (Every Day): Pitchers bullpen with situational focus. Runner on, two outs, full count. Position players: daily cage work continues. Chart your at-bats.\n🤸 TUE · THU · FRI: Position-specific defensive reps.\n😴 ONE FULL REST DAY (your pick): Rest. Go to church. Watch a game. Cook a meal with your family. This is what you are playing for." },
       { title: "Week 3: Mental Game Under Pressure", content: "Build your pre-game routine and write it down. Practice staying present. Work through what you do after a strikeout, an error, a bad inning.\n\n🏋️ MON · WED: Weight Room (Maintenance): Final maintenance week before the season fully opens. Protect your body.\n⚾ MON–SAT: Hitting (Every Day): 5 minutes of visualization before every session. See yourself succeeding in a pressure situation. Then go hit. Minimum 50 swings.\n🤸 TUE · THU · FRI: Pre-game routine building. Mental reset drills.\n😴 ONE FULL REST DAY (your pick): Rest. This is not optional. It is part of your preparation. A rested mind performs better than a tired one." },
       { title: "Week 4: Full Game Simulation", content: "Scrimmage-style situations, pressure reps, walk-off scenarios, late-game defensive assignments. Run every situation like it is game seven.\n\n🏋️ MON: Weight Room (Light): One light session to stay loose. Body weight and bands only. Preserve energy for game reps.\n⚾ MON–SAT: Hitting (Every Day): Game-simulation swings. Pitch recognition focus. Grade yourself after every round. Not on results, but on preparation and execution.\n🤸 TUE–FRI: Full game situations. Walk throughs, scrimmages, competitive reps.\n😴 ONE FULL REST DAY (your pick): Rest. You just put in your hardest week of pre-season. Your family needs you, and your body needs the break." }
     ],
-    note: "February is when baseball starts looking like baseball. Hit every day. It is not a suggestion, it is the standard. Weight room shifts to maintenance. Protect what you built. And never forget: Your rest day is for rest, family, and the people who keep you grounded. That balance is what makes great players."
+    note: "February is when {sport} starts looking like {sport}. Hit every day. It is not a suggestion, it is the standard. Weight room shifts to maintenance. Protect what you built. And never forget: Your rest day is for rest, family, and the people who keep you grounded. That balance is what makes great players."
   },
   {
     name: "MARCH", type: "season", phase: "In-Season", focus: "Consistency · Daily Hitting · Maintenance Lifting · One Rest Day",
@@ -7944,10 +7990,10 @@ const months = [
     weeks: [
       { title: "Week 1: One Game at a Time + Daily Hitting", content: "Close the book on every game. Win or loss. Write it down and move on.\n\n🏋️ MON · WED: Maintenance Lifting: Full body, moderate weight. Squats, rows, bench, pull-ups. Non-negotiable.\n⚾ EVERY DAY: Hitting: Daily tee or soft toss. In April, your mechanics are either getting sharp or getting sloppy. Hitting every day keeps them sharp.\n🩹 DAILY: Arm & Shoulder Care: Non-negotiable. June is when arms break if you skip this in April.\n😴 ONE FULL REST DAY (your pick): Rest and family. You play for them as much as you play for yourself." },
       { title: "Week 2: First Adjustments", content: "What is the game showing you? Hitters slumping go back to the tee. Not the batting cage, the tee. Pitchers return to flat-ground mechanics.\n\n🏋️ MON · WED: Maintenance Lifting: Consistent. Same program every week.\n⚾ EVERY DAY: Hitting: The daily habit is your insurance policy. Players who hit every day slump shorter and peak longer.\n🗣️ Talk to your coaches and your instructor. Get on the same page.\n😴 ONE FULL REST DAY (your pick): Spend it with your family. Go to church. Have a meal together. This is what the game is about." },
-      { title: "Week 3: Mental Game Locked In", content: "You play for your team. Not your stats. Not the scout in the stands. When every player has that mindset. Something special happens.\n\n🏋️ MON · WED: Maintenance Lifting: Same lifts, same weight, same commitment.\n⚾ EVERY DAY: Hitting: around 30 focused swings. If you had a rough game. Get in the cage the next morning before school. Fix it before it becomes a habit.\n🧠 MENTAL: Visualize a great at-bat tonight before you go to sleep.\n😴 ONE FULL REST DAY (your pick): Rest. Recharge. Your loved ones need to see you be a person, not just a baseball player." },
+      { title: "Week 3: Mental Game Locked In", content: "You play for your team. Not your stats. Not the scout in the stands. When every player has that mindset. Something special happens.\n\n🏋️ MON · WED: Maintenance Lifting: Same lifts, same weight, same commitment.\n⚾ EVERY DAY: Hitting: around 30 focused swings. If you had a rough game. Get in the cage the next morning before school. Fix it before it becomes a habit.\n🧠 MENTAL: Visualize a great at-bat tonight before you go to sleep.\n😴 ONE FULL REST DAY (your pick): Rest. Recharge. Your loved ones need to see you be a person, not just a {sport} player." },
       { title: "Week 4: End of Week Reset", content: "Grade yourself A through F in 5 categories: hitting, fielding, attitude, effort, and team contribution. Be honest.\n\n🏋️ MON · WED: Maintenance Lifting: Consistent. No excuses.\n⚾ EVERY DAY: Hitting: Never miss a day. Not one. Build the streak. Count it and protect it.\n📓 WEEKLY REVIEW: Journal your week. What did I do for my team? What do I bring into next week?\n😴 ONE FULL REST DAY (your pick): Family first. Always. The grind will be here Monday." }
     ],
-    note: "April tests your consistency. The players who hit every day, lift twice a week, stay mentally present, and give your rest day to their families are the ones who are still playing their best baseball in June. Build the habits now."
+    note: "April tests your consistency. The players who hit every day, lift twice a week, stay mentally present, and give your rest day to their families are the ones who are still playing their best {sport} in June. Build the habits now."
   },
   {
     name: "MAY", type: "season", phase: "In-Season", focus: "Season Closing · CIF Playoffs · Finals Week · One Rest Day",
@@ -7962,9 +8008,9 @@ const months = [
   },
   {
     name: "JUNE", type: "offseason", phase: "Rest + Recovery", focus: "Post-Season Rest · Body Recovery · Begin Strength Build · Family Day",
-    intro: "Your season is done. For most non-playoff teams it ended in May. For playoff teams, CIF finals May 29-30 or state regionals into early June closed it out. Either way: your first three weeks after the final game are throwing rest. The fourth week you start building. Pitchers, your arm rests longer: Pitch Smart (MLB and USA Baseball) calls for 2 to 3 continuous months with no overhead throwing every year, and this is the window. Build the body and the bat while the arm heals. If your rest already happened in May, you can shift the build forward. June through Thanksgiving is your strength-building season. The work you put in this summer is what shows up in March.",
+    intro: "Your season is done. For most non-playoff teams it ended in May. For playoff teams, CIF finals May 29-30 or state regionals into early June closed it out. Either way: your first three weeks after the final game are throwing rest. The fourth week you start building. Pitchers, your arm rests longer: Pitch Smart (MLB and USA {Sport}) calls for 2 to 3 continuous months with no overhead throwing every year, and this is the window. Build the body and the bat while the arm heals. If your rest already happened in May, you can shift the build forward. June through Thanksgiving is your strength-building season. The work you put in this summer is what shows up in March.",
     weeks: [
-      { title: "Week 1: Post-Season Decompression", content: "Season is done. Step away from baseball for a week. No throwing. No heavy lifting. Walk, stretch, sleep, eat. Your body has been on grind mode since February. It needs to heal before it can grow.\n\n🛌 RECOVERY: Sleep 9 hours. Real growth starts in bed.\n🤸 DAILY: Light stretching only. No bands, no bullpens, no long toss.\n⚾ DRY SWINGS: 20 in the mirror if you want to keep the feel. Optional, not required.\n😴 ONE FULL REST DAY (your pick): Family. Be present. They held things down for you all season." },
+      { title: "Week 1: Post-Season Decompression", content: "Season is done. Step away from {sport} for a week. No throwing. No heavy lifting. Walk, stretch, sleep, eat. Your body has been on grind mode since February. It needs to heal before it can grow.\n\n🛌 RECOVERY: Sleep 9 hours. Real growth starts in bed.\n🤸 DAILY: Light stretching only. No bands, no bullpens, no long toss.\n⚾ DRY SWINGS: 20 in the mirror if you want to keep the feel. Optional, not required.\n😴 ONE FULL REST DAY (your pick): Family. Be present. They held things down for you all season." },
       { title: "Week 2: Body Audit and Recovery", content: "Use this week to address whatever got tight or hurt during the season. See your trainer if anything still aches.\n\n🤸 DAILY: Mobility work: hips, thoracic spine, shoulders. Hold each stretch 30 seconds.\n🏊 LIGHT CARDIO: Swim, bike, walk. Build the aerobic engine back. No throwing yet.\n📓 SEASON REVIEW: Write it down. Best moment, hardest moment, what grew, what hurt. Bring it to your instructor in July.\n😴 ONE FULL REST DAY (your pick): Family. The first month after the season is family time as much as recovery time." },
       { title: "Week 3: Light Hitting Returns", content: "Still no throwing. But the bat can come back this week. Light volume, wood preferred.\n\n⚾ MON · WED · FRI: Wood Bat: 30 to 40 tee swings. No game-speed front toss yet. Just feel the bat and the body again.\n🤸 DAILY: Mobility plus light arm and shoulder care. Bands only, no bullpens.\n🏃 EASY RUN: Walking or light jogging. Rebuild the engine without taxing the arm.\n😴 ONE FULL REST DAY (your pick): Family. You are halfway through the rest window. Use the time well." },
       { title: "Week 4: Begin Strength Building", content: "The rest is over. Time to start building. June through Thanksgiving is your window to add real muscle, real strength, real speed.\n\n🏋️ MON · WED · FRI: Weight Room (Build Phase): Compound lifts. Squats, deadlifts, bench, rows. Light to moderate week one. Do not max out the first week back.\n⚾️ MON to SAT: Hitting (Wood Bat): 50 swings daily. Wood from now through December. Build the hands.\n🤾 LONG TOSS (Position Players): Start the progression. 60 feet this week, build to 90 over the next few. Tell your coach if anything aches.\n🚫 PITCHERS: Arm stays shut down. Pitch Smart calls for 2 to 3 continuous months with no overhead throwing. No long toss, no bullpens. The weight room and the wood bat are your build right now.\n😴 ONE FULL REST DAY (your pick): Family. The build is on. rest days stay sacred." }
@@ -7980,7 +8026,7 @@ const months = [
       { title: "Build Phase Continues: Strength + Wood", content: "If you have already taken your June rest, July is where the build keeps going. Weight room four days a week, wood bat every day, long toss progressing.\n\n🏋️ MON · TUE · THU · FRI: Weight Room: Compound lifts. Add weight from June. Track your numbers. You should be stronger this month than last.\n⚾️ MON to SAT: Hitting (Wood Bat): 60 to 75 swings daily. Tee, soft toss, front toss. All wood.\n🤾 LONG TOSS (Position Players): Build out to 120 feet over the month. Light, easy throws. Quality not quantity.\n🚫 PITCHERS: Still inside your no-throw window. 2 to 3 continuous months off overhead throwing protects the arm that pays for everything else.\n😴 ONE FULL REST DAY (your pick): Family. The summer is short. Be present at home when you are home." },
       { title: "Pick Up the Wood Bat", content: "From now until after winter break. Swing wood only. Wood exposes bad habits and builds real bat-to-ball skills.\n\n🏋️ Once rest period is over: get in the weight room. This is when the off-season work begins.\n⚾ EVERY DAY: Hitting (Wood): Daily wood bat sessions. Tee, soft toss, front toss. All wood. Build the hands.\n😴 ONE FULL REST DAY (your pick): Rest and family. Always. Non-negotiable no matter where you are in July." }
     ],
-    note: "July is a fork in the road. Compete or rest. Both are right moves. What is never the right move is doing nothing with intention, or skipping rest-day family time. Protect your body, protect your relationships, and build your plan for the most important months of your baseball year."
+    note: "July is a fork in the road. Compete or rest. Both are right moves. What is never the right move is doing nothing with intention, or skipping rest-day family time. Protect your body, protect your relationships, and build your plan for the most important months of your {sport} year."
   },
   {
     name: "AUGUST", type: "offseason", phase: "The Build", focus: "Strength Build Escalates · Speed · Tryout Season · Wood Bats Daily · One Rest Day",
@@ -8039,6 +8085,33 @@ const months = [
   }
 ];
 
+// Sport-render the calendar once per load (audit 7/8): the prose was
+// baseball-hardcoded on four softball-facing surfaces (calendar, month
+// focus, dash month card, this-week sample). Sport is fixed per page load,
+// so {sport}/{Sport} tokens, the ball emoji, and the speed-drill name are
+// resolved in place here instead of at every render site.
+(function () {
+  try {
+    var soft = (window.mgSport === 'softball');
+    var rt = (typeof window.mgRenderText === 'function') ? window.mgRenderText : function (s) { return s; };
+    var fix = function (s) {
+      if (s == null) return s;
+      var out = rt(String(s));
+      if (soft) {
+        out = out.replace(/\u26be\ufe0f?/g, '\ud83e\udd4e')
+                 .replace(/60-yard dashes/gi, 'home-to-first sprints')
+                 .replace(/60-yard dash/gi, 'home-to-first sprint')
+                 .replace(/Time your 60\b/g, 'Time your home-to-first');
+      }
+      return out;
+    };
+    months.forEach(function (m) {
+      m.focus = fix(m.focus); m.intro = fix(m.intro); m.note = fix(m.note);
+      (m.weeks || []).forEach(function (w) { w.title = fix(w.title); w.content = fix(w.content); });
+    });
+  } catch (e) {}
+})();
+
 // Gym form month-phase line (2026-06-11): surfaces the current month's
 // training-calendar focus inside the Gym Session form so the player lifts
 // with the season's intent. Reads the `months` array above; the form markup
@@ -8076,9 +8149,13 @@ function mgTrialDaysLeft(acc) {
 // Reconciled with signup.html on 2026-05-06. Softball.html now uses the same
 // Single Monthly / Single Annual payment links as signup.html (single source of
 // truth). Team Sponsor is a fresh active link for the existing $300 price.
-const STRIPE_MONTHLY_URL = 'https://buy.stripe.com/4gM7sN2rE9jT5OG3YJ4gg06';
-const STRIPE_ANNUAL_URL  = 'https://buy.stripe.com/fZucN78Q20Nncd4brb4gg0a'; // $99.99/yr on prod_UPIFHJyfyTvBYy (price_1TgoAB). Repointed 2026-06-19 — old link buy.stripe.com/28EdRb… was deactivated in Stripe and broke annual signups.
-const STRIPE_TEAM_SPONSOR_URL = 'https://buy.stripe.com/fZu14peamcw56SK0Mx4gg09';
+// Primary source = assets/mg-stripe-links.js (audit 7/8, single source of
+// truth shared with signup.html). Literals below are the offline fallback
+// only — this page is SW-precached and must work with no network.
+const _MG_LINKS = (typeof window !== 'undefined' && window.MG_STRIPE_LINKS) || {};
+const STRIPE_MONTHLY_URL = _MG_LINKS.single_monthly || 'https://buy.stripe.com/4gM7sN2rE9jT5OG3YJ4gg06';
+const STRIPE_ANNUAL_URL  = _MG_LINKS.single_annual  || 'https://buy.stripe.com/fZucN78Q20Nncd4brb4gg0a'; // $99.99/yr (price_1TgoAB). Repointed 2026-06-19 — the old link was deactivated in Stripe and broke annual signups.
+const STRIPE_TEAM_SPONSOR_URL = _MG_LINKS.team_sponsor || 'https://buy.stripe.com/fZu14peamcw56SK0Mx4gg09';
 const TEAM_SPONSOR_SEATS = 15;
 const TEAM_REMOVAL_GRACE_DAYS = 7;
 // CREATOR_PIN removed 2026-05-04. Was a hardcoded backdoor visible in
@@ -10457,13 +10534,17 @@ function saveEntry() {
   if (type === 'game') {
     const gsAb  = parseInt(document.getElementById('gs-ab').value)  || 0;
     const gsH   = parseInt(document.getElementById('gs-h').value)   || 0;
+    const gs2b  = parseInt(document.getElementById('gs-2b')?.value) || 0;
+    const gs3b  = parseInt(document.getElementById('gs-3b')?.value) || 0;
     const gsHr  = parseInt(document.getElementById('gs-hr').value)  || 0;
     const gsRbi = parseInt(document.getElementById('gs-rbi').value) || 0;
     const gsR   = parseInt(document.getElementById('gs-r').value)   || 0;
     const gsBb  = parseInt(document.getElementById('gs-bb').value)  || 0;
+    const gsHbp = parseInt(document.getElementById('gs-hbp')?.value)|| 0;
     const gsK   = parseInt(document.getElementById('gs-k').value)   || 0;
     const gsSb  = parseInt(document.getElementById('gs-sb').value)  || 0;
     const gsIp  = parseFloat(document.getElementById('gs-ip').value)  || 0;
+    const gsPh  = parseInt(document.getElementById('gs-ph')?.value) || 0;
     const gsEr  = parseInt(document.getElementById('gs-er').value)  || 0;
     const gsPk  = parseInt(document.getElementById('gs-pk').value)  || 0;
     const gsPbb = parseInt(document.getElementById('gs-pbb').value) || 0;
@@ -10483,20 +10564,24 @@ function saveEntry() {
     // (all zeros) still skip — that's correct, the player didn't
     // actually play.
     if (gsAb > 0 || gsIp > 0 || gsPo > 0 || gsA > 0 || gsE > 0 ||
-        gsH > 0 || gsHr > 0 || gsRbi > 0 || gsR > 0 || gsBb > 0 ||
-        gsK > 0 || gsSb > 0 || gsEr > 0 || gsPk > 0 || gsPbb > 0) {
-      const tb  = gsH + gsHr * 2; // simplified TB
-      const pa  = gsAb + gsBb;
+        gsH > 0 || gs2b > 0 || gs3b > 0 || gsHr > 0 || gsRbi > 0 ||
+        gsR > 0 || gsBb > 0 || gsHbp > 0 || gsK > 0 || gsSb > 0 ||
+        gsEr > 0 || gsPk > 0 || gsPbb > 0 || gsPh > 0) {
+      // Real TB: singles + 2·2B + 3·3B + 4·HR (was h + hr*2, audit 7/8).
+      const tb  = (gsH - gs2b - gs3b - gsHr) + (2 * gs2b) + (3 * gs3b) + (4 * gsHr);
+      const pa  = gsAb + gsBb + gsHbp;
       const tc  = gsPo + gsA + gsE; // total chances
+      // Softball is a 7-inning game — per-game ERA normalizes per 7.
+      const eraPer = (window.mgSport === 'softball') ? 7 : 9;
       gameStats = {
-        ab: gsAb, h: gsH, hr: gsHr, rbi: gsRbi,
-        r: gsR, bb: gsBb, k: gsK, sb: gsSb,
-        ip: gsIp, er: gsEr, pk: gsPk, pbb: gsPbb,
+        ab: gsAb, h: gsH, d2b: gs2b, d3b: gs3b, hr: gsHr, rbi: gsRbi,
+        r: gsR, bb: gsBb, hbp: gsHbp, k: gsK, sb: gsSb,
+        ip: gsIp, ph: gsPh, er: gsEr, pk: gsPk, pbb: gsPbb,
         po: gsPo, a: gsA, e: gsE,
         avg: gsAb > 0 ? (gsH / gsAb).toFixed(3) : null,
-        obp: pa  > 0 ? ((gsH + gsBb) / pa).toFixed(3) : null,
+        obp: pa  > 0 ? ((gsH + gsBb + gsHbp) / pa).toFixed(3) : null,
         slg: gsAb > 0 ? (tb / gsAb).toFixed(3) : null,
-        era: gsIp > 0 ? ((gsEr / gsIp) * 9).toFixed(2) : null,
+        era: gsIp > 0 ? ((gsEr / gsIp) * eraPer).toFixed(2) : null,
         fp:  tc   > 0 ? ((gsPo + gsA) / tc).toFixed(3) : null
       };
     }
@@ -11945,14 +12030,19 @@ function onInstructorFocusChange() {
 function calcGameStats() {
   const ab  = parseInt(document.getElementById('gs-ab').value)  || 0;
   const h   = parseInt(document.getElementById('gs-h').value)   || 0;
+  const d2b = parseInt(document.getElementById('gs-2b')?.value) || 0;
+  const d3b = parseInt(document.getElementById('gs-3b')?.value) || 0;
   const hr  = parseInt(document.getElementById('gs-hr').value)  || 0;
   const bb  = parseInt(document.getElementById('gs-bb').value)  || 0;
-  const tb  = h + (hr * 2);
-  const pa  = ab + bb;
+  const hbp = parseInt(document.getElementById('gs-hbp')?.value)|| 0;
+  // Real total bases: singles + 2·2B + 3·3B + 4·HR. The old "simplified"
+  // h + hr*2 counted a HR as 3 bases and every 2B/3B as 1 (audit 7/8).
+  const tb  = (h - d2b - d3b - hr) + (2 * d2b) + (3 * d3b) + (4 * hr);
+  const pa  = ab + bb + hbp;
 
-  const avg = ab > 0 ? (h / ab).toFixed(3)       : null;
-  const obp = pa > 0 ? ((h + bb) / pa).toFixed(3): null;
-  const slg = ab > 0 ? (tb / ab).toFixed(3)       : null;
+  const avg = ab > 0 ? (h / ab).toFixed(3)             : null;
+  const obp = pa > 0 ? ((h + bb + hbp) / pa).toFixed(3): null;
+  const slg = ab > 0 ? (tb / ab).toFixed(3)             : null;
 
   const dispAvg = document.getElementById('gs-disp-avg');
   const dispObp = document.getElementById('gs-disp-obp');
@@ -15044,16 +15134,18 @@ function updateBaSampleSize(ab) {
   tier.style.color = color;
 }
 
-// Metric for the progress trend chart: 'avg' | 'obp' | 'slg' (Coach Young 2026-06-06).
+// Metric for the progress trend chart: 'avg' | 'obp' | 'slg' | 'era'
+// (ERA added 7/9, audit item 27 — pitcher-only players had a permanent
+// empty chart because every batting metric requires at-bats).
 var _mgTrendMetric = 'avg';
 function setTrendMetric(m) {
-  _mgTrendMetric = (m === 'obp' || m === 'slg') ? m : 'avg';
+  _mgTrendMetric = (m === 'obp' || m === 'slg' || m === 'era') ? m : 'avg';
   try { renderStatTrend(); } catch (e) {}
   try { updateTrendMetricUI(); } catch (e) {}
   try { ybgHaptic(8); } catch (e) {}
 }
 function updateTrendMetricUI() {
-  ['avg', 'obp', 'slg'].forEach(function (m) {
+  ['avg', 'obp', 'slg', 'era'].forEach(function (m) {
     var btn = document.querySelector('.trend-metric-btn[data-m="' + m + '"]');
     if (!btn) return;
     var on = (m === _mgTrendMetric);
@@ -15076,8 +15168,15 @@ function renderStatTrend() {
   var cap   = document.getElementById('trend-caption');
   var setText = function (id, v) { var el = document.getElementById(id); if (el) el.textContent = v; };
 
+  // Sport-filtered (audit 7/8): two-sport players' trends no longer blend.
+  // ERA metric reads innings-pitched games; batting metrics need at-bats.
+  var activeSport = (window.mgSport || 'baseball');
+  var isEra = (_mgTrendMetric === 'era');
   var games = ((state && state.entries) || []).filter(function (e) {
-    return e && e.type === 'game' && e.gameStats && (parseInt(e.gameStats.ab, 10) > 0);
+    if (!e || e.type !== 'game' || !e.gameStats) return false;
+    if (e.sport && e.sport !== activeSport) return false;
+    return isEra ? ((parseFloat(e.gameStats.ip) || 0) > 0)
+                 : (parseInt(e.gameStats.ab, 10) > 0);
   });
   games.sort(function (a, b) {
     var da = null, db = null;
@@ -15092,7 +15191,9 @@ function renderStatTrend() {
     if (empty) {
       empty.style.display = 'block';
       empty.textContent = games.length === 0
-        ? 'Log 2 or more games (with at-bats) in your Journal and your average will start climbing here.'
+        ? (isEra
+            ? 'Log 2 or more games with innings pitched and your ERA trend will start here.'
+            : 'Log 2 or more games (with at-bats) in your Journal and your average will start climbing here. Pitchers: tap ERA above.')
         : 'One game logged. Log one more game to start your trend line.';
     }
     return;
@@ -15101,12 +15202,15 @@ function renderStatTrend() {
   if (head) head.style.display = 'flex';
   if (cap)  cap.style.display = 'block';
 
-  var sumH = 0, sumAB = 0, sumOB = 0, sumPA = 0, sumTB = 0, pts = [];
+  var eraPer = (window.mgSport === 'softball') ? 7 : 9;
+  var sumH = 0, sumAB = 0, sumOB = 0, sumPA = 0, sumTB = 0, sumER = 0, sumIP = 0, pts = [];
   games.forEach(function (g) {
     var gs = g.gameStats;
     var ab = parseInt(gs.ab, 10) || 0, h = parseInt(gs.h, 10) || 0;
     var bb = parseInt(gs.bb, 10) || 0, hr = parseInt(gs.hr, 10) || 0;
-    sumH += h; sumAB += ab; sumOB += (h + bb); sumPA += (ab + bb);
+    var hbp = parseInt(gs.hbp, 10) || 0;
+    sumH += h; sumAB += ab; sumOB += (h + bb + hbp); sumPA += (ab + bb + hbp);
+    sumER += parseInt(gs.er, 10) || 0; sumIP += parseFloat(gs.ip) || 0;
     // Total bases: prefer the per-game SLG stored at save (already accounts for
     // 2B/3B); fall back to singles+HR when older entries lack it.
     var tb = (gs.slg != null && gs.slg !== '' && !isNaN(parseFloat(gs.slg)))
@@ -15115,6 +15219,7 @@ function renderStatTrend() {
     var val;
     if (_mgTrendMetric === 'obp')      val = sumPA > 0 ? sumOB / sumPA : 0;
     else if (_mgTrendMetric === 'slg') val = sumAB > 0 ? sumTB / sumAB : 0;
+    else if (isEra)                    val = sumIP > 0 ? (sumER / sumIP) * eraPer : 0;
     else                               val = sumAB > 0 ? sumH / sumAB : 0;
     pts.push(val);
   });
@@ -15147,15 +15252,22 @@ function renderStatTrend() {
       dots +
     '</svg>';
 
-  var fmtAvg = function (x) { return x.toFixed(3).replace(/^0(?=\.)/, ''); };
-  setText('trend-current', fmtAvg(current));
+  var fmtVal = function (x) { return isEra ? x.toFixed(2) : x.toFixed(3).replace(/^0(?=\.)/, ''); };
+  setText('trend-current', fmtVal(current));
   var dEl = document.getElementById('trend-delta');
   if (dEl) {
-    if (Math.abs(delta) < 0.0005) { dEl.textContent = 'Holding steady'; dEl.style.color = 'var(--grey)'; }
-    else if (delta > 0) { dEl.textContent = '▲ +' + fmtAvg(delta) + ' since game 1'; dEl.style.color = '#27AE60'; }
-    else { dEl.textContent = '▼ ' + fmtAvg(Math.abs(delta)) + ' since game 1'; dEl.style.color = '#E57373'; }
+    // For ERA, DOWN is the win — the colors flip with the metric.
+    var goodDelta = isEra ? (delta < 0) : (delta > 0);
+    if (Math.abs(delta) < (isEra ? 0.005 : 0.0005)) { dEl.textContent = 'Holding steady'; dEl.style.color = 'var(--grey)'; }
+    else {
+      dEl.textContent = (delta > 0 ? '▲ +' : '▼ ') + fmtVal(Math.abs(delta)) + ' since game 1';
+      dEl.style.color = goodDelta ? '#27AE60' : '#E57373';
+    }
   }
-  var metricLabel = _mgTrendMetric === 'obp' ? 'on-base percentage' : (_mgTrendMetric === 'slg' ? 'slugging percentage' : 'batting average');
+  var metricLabel = _mgTrendMetric === 'obp' ? 'on-base percentage'
+    : _mgTrendMetric === 'slg' ? 'slugging percentage'
+    : isEra ? ('ERA, earned runs per ' + eraPer + ' innings')
+    : 'batting average';
   setText('trend-caption', 'Your season ' + metricLabel + ' across ' + n + ' games. Each point is the cumulative number after that game.');
 }
 
@@ -15628,18 +15740,32 @@ function calcStats() {
   try { updateBaSampleSize(ab); } catch (e) {}
 
   // ── PITCHING ──
+  // Softball is a 7-inning game: ERA, K, and BB rates normalize per 7
+  // innings (the sport's convention). Baseball stays per 9 (audit 7/8).
   const ip  = g('st-ip'), er = g('st-er'), pk = g('st-pk');
   const pbb = g('st-pbb'), ph = g('st-ph');
-  const era  = ip > 0 ? (er / ip) * 9   : NaN;
+  const per = (window.mgSport === 'softball') ? 7 : 9;
+  const era  = ip > 0 ? (er / ip) * per : NaN;
   const whip = ip > 0 ? (pbb + ph) / ip : NaN;
-  const k9   = ip > 0 ? (pk / ip) * 9   : NaN;
-  const bb9  = ip > 0 ? (pbb / ip) * 9  : NaN;
+  const k9   = ip > 0 ? (pk / ip) * per : NaN;
+  const bb9  = ip > 0 ? (pbb / ip) * per : NaN;
 
   set('disp-era',  !isNaN(era)  ? fmt(era,  2) : '---');
   set('disp-whip', !isNaN(whip) ? fmt(whip, 2) : '---');
   set('disp-k9',   !isNaN(k9)   ? fmt(k9,   1) : '---');
   set('disp-bb9',  !isNaN(bb9)  ? fmt(bb9,  1) : '---');
-  colorStat('disp-era',  parseFloat(fmt(era, 2)),  [5,4,3,2],     true);
+  // Tile labels follow the sport (K/7 for softball).
+  const lblK = document.getElementById('lbl-krate');
+  const subK = document.getElementById('sub-krate');
+  const lblB = document.getElementById('lbl-bbrate');
+  const subB = document.getElementById('sub-bbrate');
+  if (lblK) lblK.textContent = 'K/' + per;
+  if (subK) subK.textContent = 'Strikeouts per ' + per;
+  if (lblB) lblB.textContent = 'BB/' + per;
+  if (subB) subB.textContent = 'Walks per ' + per;
+  // ERA color tiers scale with the shorter game (7/9 of the baseball bands).
+  const eraBands = per === 7 ? [3.9, 3.1, 2.3, 1.6] : [5, 4, 3, 2];
+  colorStat('disp-era',  parseFloat(fmt(era, 2)),  eraBands,      true);
   colorStat('disp-whip', parseFloat(fmt(whip,2)),  [2,1.5,1.2,1], true);
 
   // Pitching sample-size reliability — Coach Young 2026-05-11. Same
@@ -15719,8 +15845,27 @@ function initStats() {
 // Totals up all game entries and populates My Stats tab
 function accumulateGameStats() {
   try {
-    const gameEntries = state.entries.filter(e => e.type === 'game' && e.gameStats);
-    if (!gameEntries.length) return;
+    // Per-sport accumulation (audit 7/8): the journal list already filters
+    // by the per-entry sport tag, but stats blended both sports for
+    // two-sport players. Untagged legacy entries count for either sport.
+    const activeSport = (window.mgSport || 'baseball');
+    const gameEntries = state.entries.filter(e =>
+      e.type === 'game' && e.gameStats && (!e.sport || e.sport === activeSport));
+
+    // Clear first so switching sports (or deleting entries) never leaves
+    // the other sport's totals stuck in these readonly fields.
+    ['st-g','st-ab','st-h','st-2b','st-3b','st-hbp','st-hr','st-rbi','st-r',
+     'st-bb','st-k','st-sb','st-ip','st-er','st-pk','st-pbb','st-ph',
+     'st-po','st-a','st-e'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    if (!gameEntries.length) {
+      const notice = document.getElementById('stats-journal-notice');
+      if (notice) notice.style.display = 'none';
+      calcStats();
+      return;
+    }
 
     // Coach Young 2026-05-09: stats are derived purely from journal game
     // entries — no manual override blocks the accumulator. Was previously
@@ -15729,7 +15874,7 @@ function accumulateGameStats() {
     // Removed.
 
     // Accumulate totals from all game entries
-    let ab=0, h=0, hr=0, rbi=0, r=0, bb=0, k=0, sb=0;
+    let ab=0, h=0, d2b=0, d3b=0, hr=0, rbi=0, r=0, bb=0, hbp=0, k=0, sb=0;
     let ip=0, er=0, pk=0, pbb=0, ph=0;
     let po=0, a=0, e_=0; // fielding (e_ to avoid shadowing the catch param)
     let games = 0;
@@ -15739,10 +15884,13 @@ function accumulateGameStats() {
       games += 1;
       ab  += parseInt(gs.ab)  || 0;
       h   += parseInt(gs.h)   || 0;
+      d2b += parseInt(gs.d2b) || 0;
+      d3b += parseInt(gs.d3b) || 0;
       hr  += parseInt(gs.hr)  || 0;
       rbi += parseInt(gs.rbi) || 0;
       r   += parseInt(gs.r)   || 0;
       bb  += parseInt(gs.bb)  || 0;
+      hbp += parseInt(gs.hbp) || 0;
       k   += parseInt(gs.k)   || 0;
       sb  += parseInt(gs.sb)  || 0;
       ip  += parseFloat(gs.ip)  || 0;
@@ -15763,6 +15911,9 @@ function accumulateGameStats() {
     set('st-g',   games);
     set('st-ab',  ab);
     set('st-h',   h);
+    set('st-2b',  d2b);
+    set('st-3b',  d3b);
+    set('st-hbp', hbp);
     set('st-hr',  hr);
     set('st-rbi', rbi);
     set('st-r',   r);
@@ -15802,11 +15953,26 @@ function accumulateGameStats() {
 // daily fatigue self-report, annual innings cap).
 // ═══════════════════════════════════════════════════════════════════════
 const ARM_LOAD_THRESHOLDS = {
-  // Bracket → { greenMax: top of green band, goldMax: top of gold band }
-  '13-14': { greenMax: 150, goldMax: 250 },
-  '15-16': { greenMax: 220, goldMax: 360 },
-  '17-18': { greenMax: 250, goldMax: 400 },
-  '19-22': { greenMax: 300, goldMax: 450 } // college
+  // Per sport (audit 7/8): the baseball bands come from OVERHAND-throwing
+  // research (MLB Pitch Smart, ASMI, Fleisig 2011) and were being applied
+  // to softball windmill pitchers, guaranteeing false red "overuse" alerts
+  // for a normal windmill week. Windmill mechanics tolerate substantially
+  // higher weekly volumes (see the softball pitch-count guidance card in
+  // Resources) — softball bands scale the baseball ones ~1.8x. Both stay
+  // conservative: this is a nudge to rest, never medical advice.
+  baseball: {
+    // Bracket → { greenMax: top of green band, goldMax: top of gold band }
+    '13-14': { greenMax: 150, goldMax: 250 },
+    '15-16': { greenMax: 220, goldMax: 360 },
+    '17-18': { greenMax: 250, goldMax: 400 },
+    '19-22': { greenMax: 300, goldMax: 450 } // college
+  },
+  softball: {
+    '13-14': { greenMax: 270, goldMax: 450 },
+    '15-16': { greenMax: 400, goldMax: 650 },
+    '17-18': { greenMax: 450, goldMax: 720 },
+    '19-22': { greenMax: 540, goldMax: 810 } // college
+  }
 };
 
 // Map a player's age (string from profile.age) to one of our four brackets.
@@ -15821,11 +15987,13 @@ function getAgeBracket(ageStr) {
   return null;
 }
 
-// Decide tier from arm-load number + age. Returns null when age unknown.
+// Decide tier from arm-load number + age + active sport. Returns null when
+// age unknown.
 function getArmLoadTier(armLoad7d, ageStr) {
   const bracket = getAgeBracket(ageStr);
   if (!bracket) return null;
-  const t = ARM_LOAD_THRESHOLDS[bracket];
+  const table = ARM_LOAD_THRESHOLDS[(window.mgSport === 'softball') ? 'softball' : 'baseball'];
+  const t = table[bracket];
   if (armLoad7d <= t.greenMax) return 'green';
   if (armLoad7d <= t.goldMax)  return 'gold';
   return 'red';
@@ -16521,6 +16689,26 @@ function bridgeFromOnboarding() {
       pos:    Array.isArray(ob.position) ? ob.position.join(' / ') : ''
     };
     localStorage.setItem('ybg_softball_profile', JSON.stringify(bridged));
+
+    // Seed the player's onboarding goals as real Goals (audit 7/8): the
+    // exit card promised "goals loaded" but the answers were dropped.
+    // Same shape as addGoal(); duplicates skipped; 'team' is the closest
+    // standing category for aspiration statements.
+    try {
+      if (Array.isArray(ob.goal) && ob.goal.length) {
+        const rawState = localStorage.getItem('ybg_softball_state');
+        const st = rawState ? JSON.parse(rawState) : {};
+        st.goals = st.goals || [];
+        const seen = {};
+        st.goals.forEach(function (g) { if (g && g.text) seen[String(g.text).toLowerCase()] = 1; });
+        ob.goal.forEach(function (t, i) {
+          const text = String(t || '').trim();
+          if (!text || seen[text.toLowerCase()]) return;
+          st.goals.push({ id: Date.now() + i, text: text, cat: 'team', done: false });
+        });
+        localStorage.setItem('ybg_softball_state', JSON.stringify(st));
+      }
+    } catch (e) {}
   } catch(e) {}
 }
 
@@ -17022,6 +17210,19 @@ function updateSpeedFieldUI() {
 // [data-softball-only] and let the global data-sport CSS hide whichever
 // sport isn't active. Column order is fixed: Level | Baseball | Softball.
 // Pure attribute tagging, no re-render needed when the sport toggles.
+// Goal presets are sport-gated (audit 7/8): CSS can't reliably hide
+// <option> elements on iOS Safari, so the wrong sport's presets are
+// REMOVED from the menu at boot instead (data-baseball-only mound velo
+// and 60-yard tiers vs data-softball-only circle velo and home-to-first).
+function pruneGoalPresetOptions() {
+  try {
+    var menu = document.getElementById('goal-preset-menu');
+    if (!menu) return;
+    var kill = (window.mgSport === 'softball') ? '[data-baseball-only]' : '[data-softball-only]';
+    menu.querySelectorAll('option' + kill).forEach(function (o) { o.remove(); });
+  } catch (e) {}
+}
+
 function tagFiveToolsColumns() {
   try {
     var panel = document.getElementById('panel-tools');
@@ -17055,6 +17256,7 @@ loadGrades();
 renderHWTracker();
 try { migrateSixtyLog(); renderSixtyProgress(); updateSpeedFieldUI(); } catch (e) { console.warn('[MG] sixty log init:', e); }
 try { tagFiveToolsColumns(); } catch (e) { console.warn('[MG] 5 tools columns:', e); }
+try { pruneGoalPresetOptions(); } catch (e) { console.warn('[MG] goal presets:', e); }
 updateSubscriptionCard();
 try { renderInstallCard(); } catch (e) { console.warn('[MG] renderInstallCard:', e); }
 // Journal page is the default active panel — paint reminder banners on
@@ -22653,6 +22855,12 @@ window.addEventListener('load', function() {
         return;
       }
     } catch (e) {}
+    // First-run grace (audit 7/8): a brand-new player fresh off the
+    // onboarding hand-off gets the Welcome card, not a full-screen quote
+    // 0.9s in. The daily quote starts once they have an entry.
+    try {
+      if (typeof state !== 'undefined' && state && Array.isArray(state.entries) && state.entries.length === 0) return;
+    } catch (e) {}
     // Only show if not on the trial/paywall overlay
     var trialOverlay = document.getElementById('trial-overlay');
     var isBlocked = trialOverlay && trialOverlay.style.display === 'flex';
@@ -22883,6 +23091,13 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const db   = firebase.firestore();
+// Offline persistence (audit 7/8): without this, an entry logged offline
+// while signed in NEVER reached the cloud — the write failed silently and
+// sync is pull-only. With IndexedDB persistence, Firestore queues offline
+// writes and replays them on reconnect. Must run before any other
+// Firestore call; failures (multi-tab precondition, private mode) are
+// non-fatal — behavior just stays as before.
+try { db.enablePersistence({ synchronizeTabs: true }).catch(function () {}); } catch (e) {}
 const auth = firebase.auth();
 
 // Analytics is best-effort: fails silently if blocked by an ad blocker or
@@ -23070,21 +23285,26 @@ function fbSignIn(email, password) { return auth.signInWithEmailAndPassword(emai
 function fbSignOut() { return auth.signOut().then(function() { fbUser = null; }); }
 
 // ══ FIRESTORE SAVES ═══════════════════════════════════════════════
+// fbSave* return their write promise (audit 7/8) so callers that need the
+// truth (bulk backup) can await it; the attached .catch keeps fire-and-
+// forget call sites free of unhandled rejections.
 function fbSaveProfile(data) {
   if (!fbUser) return;
   var ref = _mgUserDocRef();
   if (!ref) return;
-  ref.set({ profile: data, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
-     .catch(function(e) { console.warn('[FB] profile:', e); });
+  var p = ref.set({ profile: data, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+  p.catch(function(e) { console.warn('[FB] profile:', e); });
+  return p;
 }
 function fbSaveEntry(entry) {
   if (!fbUser || !entry) return;
   var col = _mgEntriesColRef();
   if (!col) return;
   var id = String(entry.id || Date.now());
-  col.doc(id)
-     .set(Object.assign({}, entry, { uid: fbUser.uid, savedAt: firebase.firestore.FieldValue.serverTimestamp() }), { merge: true })
-     .catch(function(e) { console.warn('[FB] entry:', e); });
+  var p = col.doc(id)
+     .set(Object.assign({}, entry, { uid: fbUser.uid, savedAt: firebase.firestore.FieldValue.serverTimestamp() }), { merge: true });
+  p.catch(function(e) { console.warn('[FB] entry:', e); });
+  return p;
 }
 function fbDeleteEntry(id) {
   // Permanently remove a deleted entry's Firestore doc. Without this, the
@@ -23100,8 +23320,9 @@ function fbSaveState(state) {
   if (!fbUser) return;
   var ref = _mgUserDocRef();
   if (!ref) return;
-  ref.set({ goals: state.goals || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true })
-     .catch(function(e) { console.warn('[FB] state:', e); });
+  var p = ref.set({ goals: state.goals || [], updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+  p.catch(function(e) { console.warn('[FB] state:', e); });
+  return p;
 }
 // Generic additive cloud write for misc namespaced data (academics, settings).
 // Fire-and-forget, signed-in only, merge:true so it never clobbers other fields.
@@ -23161,10 +23382,22 @@ async function syncFromCloud(uid) {
   var entriesCol = _mgEntriesColRef() || db.collection('users').doc(uid).collection('entries');
 
   var docSnap = null, entryDocs = [];
+  var docFailed = false, entriesFailed = false;
   try { docSnap = await docRef.get(); }
-  catch (e) { console.warn('[FB] sync doc:', e); }
+  catch (e) { console.warn('[FB] sync doc:', e); docFailed = true; }
   try { entryDocs = await _mgFetchAllEntries(entriesCol); }
-  catch (e) { console.warn('[FB] sync entries:', e); entryDocs = []; }
+  catch (e) { console.warn('[FB] sync entries:', e); entryDocs = []; entriesFailed = true; }
+  if (docFailed && entriesFailed) {
+    // Surface it (audit 7/8): a failed restore used to render an empty
+    // journal with no notice — which reads as "the app lost my season."
+    setTimeout(function () {
+      try {
+        if (typeof showShareToast === 'function') {
+          showShareToast('⚠️ Cloud sync could not load. Your entries are safe in the cloud. Check your connection and reopen the app.');
+        }
+      } catch (_) {}
+    }, 1200);
+  }
 
   var data = (docSnap && docSnap.exists) ? docSnap.data() : {};
   try {
@@ -23318,18 +23551,30 @@ async function bulkBackupToCloud() {
       }
     } catch (e) { console.warn('[cloud-backup] state read:', e); }
 
-    // Entries — uploaded one by one. fbSaveEntry uses .set({merge:true})
-    // keyed by entry.id, so re-running this function is idempotent.
-    // Show progress so a 100-entry account doesn't look frozen.
-    let uploaded = 0;
+    // Entries — uploaded one by one and AWAITED (audit 7/8): the old loop
+    // counted fire-and-forget calls as "uploaded", reported success, and
+    // permanently disarmed the banner even if every single write failed.
+    // fbSaveEntry uses .set({merge:true}) keyed by entry.id, so re-running
+    // this function is idempotent.
+    let uploaded = 0, failed = 0, i = 0;
     for (const e of entries) {
+      i++;
       try {
-        fbSaveEntry(e);
+        const p = fbSaveEntry(e);
+        if (p && typeof p.then === 'function') await p;
         uploaded++;
-        if (cta && uploaded % 5 === 0) {
-          cta.textContent = 'Uploading… ' + uploaded + '/' + entries.length;
-        }
-      } catch (err) { console.warn('[cloud-backup] entry:', err); }
+      } catch (err) { failed++; console.warn('[cloud-backup] entry:', err); }
+      if (cta && i % 5 === 0) {
+        cta.textContent = 'Uploading… ' + i + '/' + entries.length;
+      }
+    }
+
+    if (failed > 0) {
+      // Partial or total failure: do NOT stamp done — the banner should
+      // keep offering backup until a clean run.
+      if (cta) { cta.disabled = false; cta.textContent = original; }
+      alert('Backed up ' + uploaded + ' of ' + entries.length + ' entries. ' + failed + ' did not reach the cloud. Check your connection and tap Save to Cloud again — already-uploaded entries are skipped automatically.');
+      return;
     }
 
     // Mark done so the banner never re-fires for this device. Also
@@ -23519,6 +23764,17 @@ function onMinorSwitcherChange(minorId) {
   var next    = minorId || null;
   if (current === next) return;
   if (window.MgMinorScope) window.MgMinorScope.setActiveMinorId(next);
+  // Follow the profile's sport (audit 7/8): each minor remembers their own
+  // sport (mm-scoped mg_sport_minor, stamped by the header toggle). Copy it
+  // onto the flat mg_sport the head bootstrap reads, so a softball daughter
+  // never opens onto her brother's baseball view. mg_sport itself stays
+  // flat by design — the boot script runs before the scope shim exists.
+  try {
+    var sportPref = localStorage.getItem('mg_sport_minor'); // scoped to the NEW minor
+    if (sportPref === 'baseball' || sportPref === 'softball') {
+      localStorage.setItem('mg_sport', sportPref);
+    }
+  } catch (e) {}
   // Hard reload so every cached profile/state read picks up the new scope.
   window.location.reload();
 }
