@@ -18,8 +18,11 @@
 // 2026-07-09 (v393): ad-funnel fixes — Meta pixel ViewContent +
 // InitiateCheckout mid-funnel events, card-expectation line on the
 // signup gate screen (runtime cache can hold signup.html).
+// 2026-07-09 (v394): HOTFIX — saveEntry crashed in renderMediaPreview on
+// every save since 5/11 (photo-upload DOM pulled, renderer unguarded),
+// silencing the save confirmation. Entries were never lost.
 
-const CACHE = 'mygrind-v393';
+const CACHE = 'mygrind-v394';
 const ASSETS = [
   '/',
   '/softball.html',

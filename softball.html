@@ -9776,6 +9776,12 @@ function processFiles(files) {
 
 function renderMediaPreview() {
   const grid = document.getElementById('media-preview-grid');
+  // Photo upload UI was pulled from the DOM (2aadf42, 5/11, defer to Pro)
+  // but this renderer kept being called unguarded — saveEntry crashed HERE
+  // on every save since then, killing the "Entry saved" toast and the
+  // renderAll() behind it (the silent-save bug Coach hit 7/9). Guard until
+  // the Pro upload ships.
+  if (!grid) return;
   if (!pendingMedia.length) { grid.style.display = 'none'; return; }
   grid.style.display = 'grid';
   grid.innerHTML = pendingMedia.map((m, i) => `
