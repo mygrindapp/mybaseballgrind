@@ -108,6 +108,11 @@
 <!-- ── FONTS ── -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Audit item 58: head-level preconnect for the four render-blocking
+     Firebase SDK scripts (www.gstatic.com — different origin from
+     fonts.gstatic.com). TLS starts during parse, first-paint win on a
+     cold cache. -->
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow+Condensed:wght@400;600;700&family=Barlow:wght@300;400;500&family=Lora:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
 
 <script>
@@ -209,7 +214,12 @@
         var anc = node.parentNode;
         var skip = false;
         while (anc && anc !== document.body) {
+          // data-no-emoji-swap (audit item 60, 7/9): same tab-label
+          // exemption as .sport-toggle for any other sport-picker UI —
+          // the Settings switcher's "⚾ Baseball" was being walked into
+          // "🥎 Baseball" in softball mode.
           if (anc.classList && anc.classList.contains('sport-toggle')) { skip = true; break; }
+          if (anc.hasAttribute && anc.hasAttribute('data-no-emoji-swap')) { skip = true; break; }
           anc = anc.parentNode;
         }
         if (skip) continue;
@@ -231,7 +241,14 @@
       var url   = new URLSearchParams(window.location.search).get('sport');
       var saved = localStorage.getItem('mg_sport');
       var valid = { baseball: 1, softball: 1, both: 1 };
-      var sport = valid[url] ? url : (valid[saved] ? saved : 'baseball');
+      // First-boot default (audit bucket 4, 7/9): when no view was ever
+      // picked (no ?sport=, no saved mg_sport), follow the family's signup
+      // sport instead of hardcoding baseball. signup.html writes
+      // mg_family_sport at the sport tile, so a softball family's first
+      // landing after checkout opens ON the softball side. 'both' and
+      // unknown still default to baseball below.
+      var famSaved = localStorage.getItem('mg_family_sport');
+      var sport = valid[url] ? url : (valid[saved] ? saved : (valid[famSaved] ? famSaved : 'baseball'));
 
       // Phase 1D — track the user's ORIGINAL family-sport choice separately
       // from the active dashboard view. If they ever come in with sport='both',
@@ -281,8 +298,13 @@
         // → can't switch to softball; same for the inverse. 'both'
         // unlocks the toggle. Without this gate, the disabled visual
         // state could be bypassed via console or stale DOM clicks.
-        var family = localStorage.getItem('mg_family_sport') || familySport || newSport;
-        if (family !== 'both' && family !== newSport) return;
+        // Audit bucket 4 (7/9): only enforce when the family sport is
+        // EXPLICITLY known (stored). The old fallback chain bottomed out
+        // at 'baseball' on any fresh device, silently locking a softball
+        // family out of their own sport — the "softball side still feels
+        // like baseball" walkthrough. Unknown = unlocked.
+        var family = localStorage.getItem('mg_family_sport');
+        if (family && family !== 'both' && family !== newSport) return;
 
         localStorage.setItem('mg_sport', newSport);
         // Per-minor sport memory (audit 7/8): at click time the minor-scope
@@ -293,6 +315,7 @@
         applyTitleAndMeta(newSport);
         applyBallEmoji(newSport);
         applyBodyText(newSport);
+        syncSportHrefs(newSport);
         window.mgSport       = newSport;
         window.mgSportName   = sportName(newSport);
         window.mgSportLower  = sportLower(newSport);
@@ -305,6 +328,9 @@
           if (b.getAttribute('data-toggle-sport') === newSport) b.classList.add('active');
           else                                                  b.classList.remove('active');
         }
+        // Settings sport-switcher highlight follows the tap (audit item 60,
+        // 7/9). Defined later in the file; guarded for early callers.
+        try { if (typeof window.syncSettingsSportToggle === 'function') window.syncSettingsSportToggle(); } catch (_) {}
         // Refresh the journal entry form so the new entry is scoped
         // to the newly-selected sport. cancelEdit() is the safest
         // reset path — idempotent when no edit is in progress.
@@ -327,15 +353,33 @@
           else                                                     b.classList.remove('active');
         }
       }
+      // Sport-aware hrefs (audit bucket 4, 7/9): any anchor carrying
+      // data-href-baseball / data-href-softball gets its live href swapped
+      // to the active sport's URL. Keeps the visible URL, long-press
+      // preview, and no-JS fallback consistent with what a click opens.
+      function syncSportHrefs(sport) {
+        var attr = (sport === 'softball') ? 'data-href-softball' : 'data-href-baseball';
+        var nodes = document.querySelectorAll('[data-href-baseball], [data-href-softball]');
+        for (var i = 0; i < nodes.length; i++) {
+          var u = nodes[i].getAttribute(attr);
+          if (u) nodes[i].setAttribute('href', u);
+        }
+      }
+      window.syncSportHrefs = syncSportHrefs;
+
       // Coach Young 2026-05-11: lock the non-owned sport tab visually
       // (greyed + not clickable). family === 'both' unlocks both.
       function syncToggleAllowed() {
-        var family = localStorage.getItem('mg_family_sport') || familySport || activeSport;
+        // Same unknown-= -unlocked rule as setActiveSport (audit bucket 4,
+        // 7/9): only grey a tab out when the family sport is explicitly
+        // stored and mismatched. The old 'baseball' fallback greyed the
+        // softball tab for softball families on fresh devices.
+        var family = localStorage.getItem('mg_family_sport');
         var btns = document.querySelectorAll('[data-toggle-sport]');
         for (var i = 0; i < btns.length; i++) {
           var b = btns[i];
           var tabSport = b.getAttribute('data-toggle-sport');
-          var allowed = (family === 'both') || (family === tabSport);
+          var allowed = !family || (family === 'both') || (family === tabSport);
           if (allowed) {
             b.classList.remove('disabled');
             b.removeAttribute('aria-disabled');
@@ -351,12 +395,14 @@
         document.addEventListener('DOMContentLoaded', function() {
           applyBodyText(activeSport);
           applyBallEmoji(activeSport);
+          syncSportHrefs(activeSport);
           syncToggleActiveClass();
           syncToggleAllowed();
         });
       } else {
         applyBodyText(activeSport);
         applyBallEmoji(activeSport);
+        syncSportHrefs(activeSport);
         syncToggleActiveClass();
         syncToggleAllowed();
       }
@@ -510,14 +556,19 @@
      so the default look is provably unchanged when the toggle is off.
      Driven through CSS variables, so every surface that uses var(--grey/
      --light/--border/--card) brightens at once. */
-  body.mg-outdoor {
+  /* Audit item 59 (7/9): outdoor mode's brightened palette was built for
+     Warm Dark. Under the light default theme its near-white --light/--grey
+     landed on a white page (invisible text), so the override — and the
+     Settings row below — are gated to the dark theme. */
+  html[data-theme="dark"] body.mg-outdoor {
     --grey:  #C9BDA9;   /* was #A89880 — secondary text, sunlight-legible */
     --light: #F0E9E0;   /* was #D4C8BC — primary body copy brighter */
     --border:#5C5249;   /* was #3D3530 — card edges actually visible outdoors */
     --card:  #2A2622;   /* was #231F1C — lift cards off the page background */
     --card2: #322D28;   /* was #2A2622 */
   }
-  body.mg-outdoor::before { display: none; }   /* kill the contrast-sapping pattern */
+  html[data-theme="dark"] body.mg-outdoor::before { display: none; }   /* kill the contrast-sapping pattern */
+  html[data-theme="light"] #pref-outdoor-row { display: none !important; }   /* light theme IS the high-contrast look (!important beats the row's inline flex) */
 
   [data-sport="softball"] {
     --gold: #D4547A;
@@ -3601,7 +3652,7 @@ input[type="number"] {
     <div id="dash-stats-card" class="card" style="display:none; margin-top:16px; border-left:3px solid var(--gold);">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
         <div class="card-title" style="margin:0; font-size:22px;">Hitting Stats · Season</div>
-        <button onclick="showPanel('stats')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:8px; cursor:pointer;">Full Stats</button>
+        <button onclick="mgTab('stats','tab-stats')" style="background:transparent; border:1px solid var(--gold-dark); color:var(--gold); font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:8px; cursor:pointer;">Full Stats</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:10px; margin-bottom:14px;">
         <div style="text-align:center; padding:14px 6px; background:var(--card2); border:1px solid var(--gold-dark); border-radius:3px;">
@@ -3624,7 +3675,7 @@ input[type="number"] {
     <div id="dash-fielding-card" class="card" style="display:none; margin-top:16px; border-left:3px solid #5DADE2;">
       <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
         <div class="card-title" style="margin:0; font-size:22px;">Fielding · Season</div>
-        <button onclick="showPanel('stats')" style="background:transparent; border:1px solid var(--border); color:#5DADE2; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:8px; cursor:pointer;">Full Stats</button>
+        <button onclick="mgTab('stats','tab-stats')" style="background:transparent; border:1px solid var(--border); color:#5DADE2; font-family:'Barlow Condensed'; font-size:11px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:6px 12px; border-radius:8px; cursor:pointer;">Full Stats</button>
       </div>
       <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:8px;">
         <div style="text-align:center; padding:14px 4px; background:var(--card2); border:1px solid var(--border); border-radius:3px;">
@@ -6478,7 +6529,7 @@ input[type="number"] {
       <!-- Sport switcher for family=both — JS shows/hides via data-family-sport.
            Mirrors the dashboard header toggle so a both-sport family can flip
            the app's sport identity from Settings too. -->
-      <div id="settings-you-sport-toggle" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
+      <div id="settings-you-sport-toggle" data-no-emoji-swap style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border);">
         <div style="font-family:'Barlow Condensed'; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--grey); margin-bottom:8px;">Active Sport</div>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
           <button type="button" id="settings-sport-baseball" onclick="setActiveSport('baseball')" style="background:var(--card2); border:1px solid var(--border); color:var(--light); font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; padding:10px 8px; border-radius:6px; cursor:pointer;">⚾ Baseball</button>
@@ -6639,11 +6690,13 @@ input[type="number"] {
       <!-- Outdoor Mode — Coach 2026-06-12. High-contrast boost for reading
            in direct sunlight at the field. Toggles body.mg-outdoor (see the
            palette override in the head). Default OFF so the brand look is
-           the default. -->
-      <div style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-top:1px solid var(--border);">
+           the default. Dark theme only (audit item 59): the row hides on
+           the light theme, where the white page already is the sunlight
+           look and the dark-tuned palette washed out. -->
+      <div id="pref-outdoor-row" style="display:flex; align-items:center; justify-content:space-between; padding:14px 0; border-top:1px solid var(--border);">
         <div style="flex:1; min-width:0; padding-right:14px;">
           <div style="font-family:'Barlow Condensed'; font-size:14px; font-weight:700; letter-spacing:1px; color:var(--white); margin-bottom:2px;">Outdoor Mode</div>
-          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Brighter text and edges for bright sun at the field</div>
+          <div style="font-family:'Barlow'; font-size:14px; color:var(--grey);">Brighter text and edges for bright sun at the field. Dark theme only.</div>
         </div>
         <label style="position:relative; display:inline-block; width:52px; height:28px; flex-shrink:0;">
           <input type="checkbox" id="pref-outdoor" onchange="saveSettings(); mgUpdatePrefSlider('pref-outdoor')" style="opacity:0; width:0; height:0;">
@@ -7289,7 +7342,12 @@ input[type="number"] {
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">JuCo is a real path. Plenty of D1 starters spent two years here first.</div>
         </a>
 
-        <a href="https://www.ncsasports.org/baseball/recruiting-rules-calendar" target="_blank" rel="noopener" onclick="return mgOpenRecruitingCal(event)" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+        <!-- Sport-aware href (audit bucket 4, 7/9): the click handler already
+             opened the right sport's calendar, but the visible/long-press URL
+             was hardcoded baseball — a softball player previewing the link saw
+             /baseball/. data-href-* is synced by syncSportHrefs() at boot and
+             on every sport toggle, so href and click now always agree. -->
+        <a href="https://www.ncsasports.org/baseball/recruiting-rules-calendar" data-href-baseball="https://www.ncsasports.org/baseball/recruiting-rules-calendar" data-href-softball="https://www.ncsasports.org/softball/recruiting-rules-calendar" target="_blank" rel="noopener" onclick="return mgOpenRecruitingCal(event)" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
           <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">NCAA Recruiting Calendar &rarr;</div>
             <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Reference</div>
@@ -7484,6 +7542,61 @@ input[type="number"] {
       </div>
       <div style="font-family:'Barlow',sans-serif; font-size:14.5px; color:var(--light); font-style:italic; padding:16px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:16px;">
         💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> Watch WPBL games this August to see what's possible. Then go through Baseball For All for community, tournaments, and the college club circuit. LA Heat for SoCal clinics.
+      </div>
+    </div>
+
+    <!-- ────────── GROUP 4S: THE SOFTBALL PATHWAY ──────────
+         Softball mirror of the Girls in Baseball card (audit bucket 4,
+         7/9). That card is data-baseball-only, which left the softball
+         side with no pathway story at all between Strength and Academic.
+         This one is data-softball-only: pro league (AUSL, first season
+         2025), Team USA pipeline (LA28 Olympics), the WCWS, and the
+         Hall of Fame for history. All URLs verified live 2026-07-09. -->
+    <div class="card" data-softball-only style="margin-bottom:16px;">
+      <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:2px; color:var(--gold); line-height:1.1;">The Softball Pathway</div>
+        <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); text-transform:uppercase;">Pro Ball Is Real Now</div>
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14px; color:var(--light); line-height:1.55; margin-bottom:14px;">
+        Softball's ceiling is rising fast. A new pro league played its first season in 2025, the Women's College World Series packs a stadium every June, and softball returns to the Olympics in Los Angeles in 2028. The path is real.
+      </div>
+      <div style="display:grid; grid-template-columns:1fr; gap:8px;">
+
+        <a href="https://theausl.com/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid var(--gold-dark); border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Athletes Unlimited Softball League &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold); white-space:nowrap;">Pro · New Era</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The AUSL, the new professional league backed by MLB. First season played summer 2025. The best players in the world, on TV, getting paid to play.</div>
+        </a>
+
+        <a href="https://www.usasoftball.com/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 USA Softball &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">Team USA · LA28</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The national governing body. Junior National Team programs, national tournaments, and the pipeline to the Women's National Team and the 2028 Olympics.</div>
+        </a>
+
+        <a href="https://www.ncaa.com/sports/softball/d1" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 Women's College World Series &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">NCAA · Every June</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">College softball's biggest stage, in Oklahoma City every June. Scores, brackets, and the programs you're working toward.</div>
+        </a>
+
+        <a href="https://www.usasoftball.com/hall-of-fame/" target="_blank" rel="noopener" style="display:block; padding:12px 14px; background:#1E1A17; border:1px solid #3D3530; border-radius:4px; text-decoration:none; color:var(--white);">
+          <div style="display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin-bottom:4px;">
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; color:var(--gold-light);">🥎 National Softball Hall of Fame &rarr;</div>
+            <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:1.5px; color:var(--gold-dark); white-space:nowrap;">History · Inspiration</div>
+          </div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">The players who built the game, from Joan Joyce to Lisa Fernandez. Know whose shoulders you're standing on.</div>
+        </a>
+
+      </div>
+      <div style="font-family:'Barlow',sans-serif; font-size:14.5px; color:var(--light); font-style:italic; padding:16px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:16px;">
+        💡 <strong style="color:var(--gold); font-style:normal;">Pro tip from Coach:</strong> Watch one AUSL or WCWS game a week in season. Pick one player at your position and study what they do between pitches. Log what you notice in your journal.
       </div>
     </div>
 
@@ -8101,7 +8214,13 @@ const months = [
         out = out.replace(/\u26be\ufe0f?/g, '\ud83e\udd4e')
                  .replace(/60-yard dashes/gi, 'home-to-first sprints')
                  .replace(/60-yard dash/gi, 'home-to-first sprint')
-                 .replace(/Time your 60\b/g, 'Time your home-to-first');
+                 .replace(/Time your 60\b/g, 'Time your home-to-first')
+                 // Pitch Smart is MLB + USA Baseball only (audit bucket 4,
+                 // 7/9) \u2014 citing it as "MLB and USA Softball" to softball
+                 // players was a wrong attribution. The shutdown guidance
+                 // itself stays; it applies to overhand position throwing.
+                 .replace(/Pitch Smart \(MLB and USA Softball\)/g, 'Sports-medicine guidance')
+                 .replace(/Pitch Smart calls for/g, 'Sports-medicine guidance calls for');
       }
       return out;
     };
@@ -10265,6 +10384,19 @@ function _doEditEntry(id) {
     try { setSoloWorkTypes(entry.soloWorkType); } catch (e) {}
   }
   try { toggleGameStats(); } catch (e) {}
+
+  // Reflection mood tag (audit item 62, 7/9): editing a Reflection used to
+  // drop the saved mindset — the chips reset and saveEntry re-read the now
+  // empty hidden field. Restore the chip + hidden value here so an edit
+  // carries the mood through unchanged unless the player re-picks.
+  try {
+    if (entry.type === 'reflection' && entry.mindset) {
+      var mChip = document.querySelector('#j-mindset-chips .mindset-chip[data-mindset="' + entry.mindset + '"]');
+      selectMindset(entry.mindset, mChip);
+    } else {
+      resetMindsetChips();
+    }
+  } catch (e) {}
 
   // Standard text fields
   const setVal = function(elId, val) {
@@ -17633,29 +17765,35 @@ function updateSettingsYouHeader() {
 
     // Sport switcher — only family=both gets to flip the active sport
     // from Settings. Mirror the dashboard header toggle visuals so it
-    // feels like the same control in two places.
-    try {
-      const toggleEl = document.getElementById('settings-you-sport-toggle');
-      const family   = localStorage.getItem('mg_family_sport') || '';
-      const current  = (typeof document !== 'undefined' && document.documentElement.getAttribute('data-sport')) || 'baseball';
-      if (toggleEl) {
-        toggleEl.style.display = (family === 'both') ? 'block' : 'none';
-        if (family === 'both') {
-          const bb = document.getElementById('settings-sport-baseball');
-          const sb = document.getElementById('settings-sport-softball');
-          const activeStyle   = function(el, on) {
-            if (!el) return;
-            el.style.background  = on ? 'var(--gold)' : 'var(--card2)';
-            el.style.color       = on ? '#0C0A08'     : 'var(--light)';
-            el.style.borderColor = on ? 'var(--gold)' : 'var(--border)';
-          };
-          activeStyle(bb, current === 'baseball');
-          activeStyle(sb, current === 'softball');
-        }
-      }
-    } catch (e) {}
+    // feels like the same control in two places. Exposed on window
+    // (audit item 60, 7/9) so setActiveSport can re-sync the highlight
+    // the moment a sport button is tapped — it used to only sync on the
+    // next Settings render, so the active state looked stuck.
+    try { window.syncSettingsSportToggle(); } catch (e) {}
   } catch (e) {}
 }
+
+// Settings sport-switcher visual sync (audit item 60, 7/9). Called on
+// Settings render AND from setActiveSport so the gold highlight follows
+// the tap immediately.
+window.syncSettingsSportToggle = function() {
+  try {
+    var toggleEl = document.getElementById('settings-you-sport-toggle');
+    var family   = localStorage.getItem('mg_family_sport') || '';
+    var current  = document.documentElement.getAttribute('data-sport') || 'baseball';
+    if (!toggleEl) return;
+    toggleEl.style.display = (family === 'both') ? 'block' : 'none';
+    if (family !== 'both') return;
+    var activeStyle = function(el, on) {
+      if (!el) return;
+      el.style.background  = on ? 'var(--gold)' : 'var(--card2)';
+      el.style.color       = on ? '#0C0A08'     : 'var(--light)';
+      el.style.borderColor = on ? 'var(--gold)' : 'var(--border)';
+    };
+    activeStyle(document.getElementById('settings-sport-baseball'), current === 'baseball');
+    activeStyle(document.getElementById('settings-sport-softball'), current === 'softball');
+  } catch (e) {}
+};
 
 // ─── TELL A TEAMMATE ───────────────────────────────────────
 // Settings → Help & Support → Tell a Teammate. Reuses the existing
@@ -17805,7 +17943,7 @@ function sendDailyNotification() {
       tag:  'ybg-daily',
       renotify: true,
     });
-    n.onclick = () => { window.focus(); showPanel('journal'); n.close(); };
+    n.onclick = () => { window.focus(); mgTab('journal','tab-journal'); n.close(); };
   } catch(e) {}
 }
 
@@ -19369,14 +19507,14 @@ const ARM_CARE_REFS = {
     desc: "Light jog from foul pole to foul pole (or 60-90 yards back and forth) before any throwing. Gets blood flowing to your shoulder, hips, and legs. Your throwing engine. So the J-Bands and warm-up toss actually work on warm tissue, not cold.",
     proTip: "Easy effort, not a sprint. Build a sweat without burning the legs you'll need for game throws. 2-3 poles is plenty for a normal day; pitchers prep day can stretch this longer.",
     video: null,
-    credit: 'Source: Young\'s Baseball Group arm care protocol'
+    credit: 'Source: MyGrind arm care protocol'
   },
   stretches: {
     title: 'Arm Stretches: Full Range of Motion',
     desc: "After J-Bands and before throwing, take the shoulder, elbow, and wrist through full range of motion. Cross-body stretch, sleeper stretch (the gentle version), wrist flexion + extension, forearm pronation. 30 seconds each.",
     proTip: "Slow and controlled, never bouncing. If anything pinches at the FRONT of the shoulder, back off. You want stretch in the back/sides, not the front. Pain ≠ progress.",
     video: null,
-    credit: 'Source: Young\'s Baseball Group pre-throw mobility protocol'
+    credit: 'Source: MyGrind pre-throw mobility protocol'
   },
   longtoss: {
     title: 'Long Toss: When Necessary',
@@ -19404,14 +19542,14 @@ const ARM_CARE_REFS = {
     desc: "For pitchers. A 5-10 minute easy jog right after a bullpen flushes the metabolic waste out of the throwing arm and gets the heart rate down gradually. Helps the arm feel fresh the next day instead of cement.",
     proTip: "Easy effort. Conversation pace, not punishment. The point is blood flow, not conditioning. If you can't talk while jogging, you're going too hard.",
     video: null,
-    credit: 'Source: Young\'s Baseball Group post-bullpen flush protocol'
+    credit: 'Source: MyGrind post-bullpen flush protocol'
   },
   ice: {
     title: 'Ice with Pressure: End of Day',
     desc: "After a heavy throwing day (long game, bullpen, max-effort outing), ice the shoulder and elbow with light compression for 15-20 minutes at the end of the day. Helps with inflammation when the arm is genuinely beat up.",
     proTip: "Not after every throw. That slows healing for normal days. Use it after the days where you KNOW your arm did real work. Wrap with a light ace bandage to keep contact without restricting circulation.",
     video: null,
-    credit: 'Source: Young\'s Baseball Group heavy-day recovery protocol'
+    credit: 'Source: MyGrind heavy-day recovery protocol'
   },
   rest: {
     title: 'Active Rest: No Throwing Today',
@@ -19464,8 +19602,16 @@ function openArmCareDetail(id) {
 
   var creditEl = document.getElementById('acd-credit');
   if (creditEl) {
-    creditEl.textContent = ref.credit || '';
-    creditEl.style.display = ref.credit ? 'block' : 'none';
+    var creditTxt = ref.credit || '';
+    // Sport-aware attribution (audit bucket 4, 7/9): Pitch Smart is a
+    // baseball program; softball players see the sports-medicine framing.
+    try {
+      if (localStorage.getItem('mg_sport') === 'softball') {
+        creditTxt = creditTxt.replace(/MLB Pitch Smart/g, 'sports-medicine workload guidance');
+      }
+    } catch (e) {}
+    creditEl.textContent = creditTxt;
+    creditEl.style.display = creditTxt ? 'block' : 'none';
   }
 
   overlay.style.display = 'flex';
@@ -19960,6 +20106,20 @@ const EXERCISE_VIDEOS = {
   'weighted ball pulldowns':      '2agC6NeYNUM'
 };
 
+// Softball-mode video overrides (audit bucket 4, 7/9). Checked BEFORE the
+// shared map when the app is in softball mode. A key with a video id opens
+// that curated softball demo; a key set to null means "this demo is
+// baseball-specific, fall through to a softball-worded YouTube search"
+// so a softball player is never handed a baseball drill video. Generic
+// gym lifts (deadlifts, med ball work, bands) stay on the shared demos,
+// which are sport-neutral. Grow curated softball ids here over time the
+// same way the shared map grew.
+const EXERCISE_VIDEOS_SOFTBALL = {
+  'plyo ball pivot pickoffs': null,  // pickoff footwork is a baseball pitcher drill
+  'weighted ball pulldowns':  null,  // Driveline overhand run-and-gun velo drill
+  'weighted ball catch play': null   // Trevor Bauer routine breakdown, baseball-framed
+};
+
 // Strip emoji prefix + rep scheme so "🔻 Trap Bar Deadlift 3x5" becomes
 // "trap bar deadlift" for the lookup. Preserves the original label for
 // the YouTube search fallback.
@@ -19978,16 +20138,31 @@ function _canonicalExerciseName(lift) {
 // small ✕). New-tab approach lets players use the OS back swipe / tab
 // close — universal mobile navigation, no custom close UI to maintain.
 function openExerciseVideo(lift) {
-  const key = _canonicalExerciseName(lift);
-  const vid = EXERCISE_VIDEOS[key];
+  const key  = _canonicalExerciseName(lift);
+  const soft = (window.mgSport === 'softball');
+  // Softball mode consults the override map first (audit bucket 4, 7/9):
+  // a curated softball demo wins; an explicit null forces the sport-worded
+  // search below instead of a baseball-specific video.
+  let vid = EXERCISE_VIDEOS[key];
+  let sportWordSearch = false;
+  if (soft && Object.prototype.hasOwnProperty.call(EXERCISE_VIDEOS_SOFTBALL, key)) {
+    vid = EXERCISE_VIDEOS_SOFTBALL[key];
+    sportWordSearch = true;
+  }
   let url;
   if (vid) {
     // Curated direct video link — opens the exact demo we vetted.
     url = 'https://www.youtube.com/watch?v=' + vid;
   } else {
     // No curated video — open search results so the player still lands
-    // on form demos for the exercise.
-    const query = encodeURIComponent(lift.replace(/^[^\w]+/, '').trim() + ' form tutorial');
+    // on form demos for the exercise. Sport-specific drills get the
+    // sport word in the query; generic gym lifts stay neutral. Rep
+    // schemes are stripped ("3x5" in a search only hurts results).
+    const base = lift.replace(/^[^\w]+/, '')
+                     .replace(/\s+\d+x.*$/i, '')
+                     .replace(/\s+\d+ (reps|min|sec|s|yd).*$/i, '')
+                     .trim();
+    const query = encodeURIComponent((sportWordSearch ? 'softball ' : '') + base + ' form tutorial');
     url = 'https://www.youtube.com/results?search_query=' + query;
   }
   window.open(url, '_blank', 'noopener');
@@ -23685,6 +23860,10 @@ function renderMinorSwitcher(minors) {
   var bar    = document.getElementById('mg-minor-switcher');
   var select = document.getElementById('mg-minor-select');
   var label  = document.getElementById('mg-minor-active-label');
+  // Stash for onMinorSwitcherChange: each minor's server profile carries
+  // their sport, used as the view fallback when the kid never touched the
+  // header toggle (audit bucket 4, 7/9).
+  window._mgMinors = minors || [];
   if (!bar || !select) return;
 
   if (!minors || minors.length === 0) {
@@ -23771,6 +23950,13 @@ function onMinorSwitcherChange(minorId) {
   // flat by design — the boot script runs before the scope shim exists.
   try {
     var sportPref = localStorage.getItem('mg_sport_minor'); // scoped to the NEW minor
+    // Fallback (audit bucket 4, 7/9): a kid who never touched the header
+    // toggle has no mm-scoped memory, which used to leave them on their
+    // sibling's sport. Their server profile knows their sport — use it.
+    if (sportPref !== 'baseball' && sportPref !== 'softball') {
+      var prof = (window._mgMinors || []).find(function(m) { return m.minorId === next; });
+      if (prof && (prof.sport === 'baseball' || prof.sport === 'softball')) sportPref = prof.sport;
+    }
     if (sportPref === 'baseball' || sportPref === 'softball') {
       localStorage.setItem('mg_sport', sportPref);
     }

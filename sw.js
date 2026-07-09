@@ -9,8 +9,11 @@
 // Cache prefix renamed ybg-mygrind → mygrind (activate cleans old caches).
 // 2026-07-09 (v390): precache checkin.html — the dashboard's top daily-habit
 // card 404'd offline while the shell promised "works offline" (audit 7/8).
+// 2026-07-09 (v391): audit buckets 3+4 — softball-side fixes (sport-aware
+// resources hrefs, Softball Pathway card, per-sport workout videos, boot
+// follows family sport) + settings switcher, mood-tag edit, outdoor gate.
 
-const CACHE = 'mygrind-v390';
+const CACHE = 'mygrind-v391';
 const ASSETS = [
   '/',
   '/softball.html',

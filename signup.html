@@ -6752,15 +6752,25 @@ function onSkipTrialClicked() {
    Renders dots for a given screen. Active screen = gold pill,
    completed screens = dim gold dots, future screens = dark dots.
    ───────────────────────────────────────────────────────── */
+// The active funnel order for the CURRENT path (audit item 64, 7/9): the
+// self path auto-skips Screen 6 without rendering it, so its progress UI
+// must not count it — "Just me" users used to see Step 3 of 6 jump to
+// Step 5 of 6 with a step 4 that never existed.
+function activeStepOrder() {
+  try { return isSelfPath() ? STEP_ORDER.filter(function(s) { return s !== 6; }) : STEP_ORDER; }
+  catch (e) { return STEP_ORDER; }
+}
+
 function renderDots(currentScreen) {
   // currentScreen is a physical screen id; map it to its position in the
   // active funnel order so removed screens (s1, s4) leave no gaps in the dots.
-  const pos = STEP_ORDER.indexOf(currentScreen);
+  const order = activeStepOrder();
+  const pos = order.indexOf(currentScreen);
   STEP_ORDER.forEach(function(sid) {
     const container = document.getElementById('d' + sid);
     if (!container) return;
     container.innerHTML = '';
-    for (let k = 0; k < TOTAL_SCREENS; k++) {
+    for (let k = 0; k < order.length; k++) {
       const dot = document.createElement('div');
       dot.className = 'dot';
       if (k === pos) dot.classList.add('active');
@@ -6775,13 +6785,14 @@ function renderDots(currentScreen) {
 // Only relabels screens that already carry a "Step …" label, so the s8 arrival
 // dashboard keeps its own copy. Gate screen s0 has no progress UI (pos < 0).
 function updateProgressUI(n) {
-  const pos = STEP_ORDER.indexOf(n);
+  const order = activeStepOrder();   // path-aware (audit item 64, 7/9)
+  const pos = order.indexOf(n);
   if (pos < 0) return;
   const fill = document.querySelector('#s' + n + ' .prog-fill');
-  if (fill) fill.style.width = Math.round(((pos + 1) / TOTAL_SCREENS) * 100) + '%';
+  if (fill) fill.style.width = Math.round(((pos + 1) / order.length) * 100) + '%';
   const label = document.querySelector('#s' + n + ' .prog-label span');
   if (label && /^Step\b/.test(label.textContent || '')) {
-    label.textContent = 'Step ' + (pos + 1) + ' of ' + TOTAL_SCREENS;
+    label.textContent = 'Step ' + (pos + 1) + ' of ' + order.length;
   }
 }
 

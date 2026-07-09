@@ -242,7 +242,20 @@
     <div class="card">
       <h2>Arm care</h2>
       <div class="armcare" id="armCare">No throwing logged yet.</div>
-      <p class="disclaimer">For pitch and throw limits, follow MLB Pitch Smart guidelines for the player's age. This tracker shows volume and rest, it does not set medical limits.</p>
+      <p class="disclaimer" id="armcare-disclaimer">For pitch and throw limits, follow MLB Pitch Smart guidelines for the player's age. This tracker shows volume and rest, it does not set medical limits.</p>
+      <script>
+        // Sport-aware disclaimer (audit bucket 4, 7/9): Pitch Smart is a
+        // baseball program (MLB + USA Baseball). Softball has no single
+        // official pitch-count standard, so softball players get the
+        // sports-medicine framing instead. Same mg_sport key softball.html
+        // maintains; same-origin localStorage is shared.
+        try {
+          if (localStorage.getItem('mg_sport') === 'softball') {
+            document.getElementById('armcare-disclaimer').textContent =
+              'Softball has no single official pitch-count standard. Follow your coach and sports-medicine guidance for the player\'s age, and manage windmill innings with the same care. This tracker shows volume and rest, it does not set medical limits.';
+          }
+        } catch (e) {}
+      </script>
     </div>
     <div class="card">
       <h2>Readiness trend</h2>
