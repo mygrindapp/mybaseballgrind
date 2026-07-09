@@ -37,8 +37,11 @@ import {
 import { checkIpReadLimit, recordRead } from '../../lib/rate-limit.js';
 
 const CAPS = {
-  FOUNDERMYGRIND:   100,
-  FOREVERYOUNG2026: 10,
+  FOUNDERMYGRIND:    100,
+  FOREVERYOUNG2026:  10,
+  ALLSTARMYGRIND:    15,
+  D1GRIND:           250,
+  CALIFORNIAMYGRIND: 250,
 };
 
 function constantTimeEqual(a, b) {

@@ -62,11 +62,11 @@ const PLAN_TO_PRICE = {
 };
 
 // Trial length is decided SERVER-SIDE — never taken from the client.
-// A standard signup gets 14 days. The FOUNDERMYGRIND cohort gets 180 days,
-// but only while the cohort cap isn't full (otherwise it falls back to 14).
-// This is what stops a direct POST from minting a long free trial.
-// (FOREVERYOUNG2026 lifetime promos never reach this endpoint — signup.html
-// skips the card picker for them — so only FOUNDERMYGRIND is handled here.)
+// A standard signup gets 30 days. Each code below grants its own longer
+// trial, but only while that cohort's cap isn't full (otherwise it falls
+// back to the standard 30). This is what stops a direct POST from minting
+// a long free trial. (FOREVERYOUNG2026 lifetime promos never reach this
+// endpoint — signup.html skips the card picker for them.)
 const STANDARD_TRIAL_DAYS = 30;
 const FOUNDER_CODES = {
   FOUNDERMYGRIND: { days: 180, cap: 100 },
@@ -79,6 +79,11 @@ const FOUNDER_CODES = {
   // auto-converts at day 91 unless the family cancels. Mirror in
   // lib/founder-cohort-store.js and signup.html PROMO_INFO.
   ALLSTARMYGRIND: { days: 90,  cap: 15 },
+  // California coaches letter campaign (2026-08) — the standard team offer:
+  // 3 months free. Same server-derived mechanics as ALLSTARMYGRIND, its own
+  // cohort cap. Mirror in lib/founder-cohort-store.js, signup.html
+  // PROMO_INFO, and api/admin/founder-count.js.
+  CALIFORNIAMYGRIND: { days: 90, cap: 250 },
 };
 
 function setCors(req, res) {

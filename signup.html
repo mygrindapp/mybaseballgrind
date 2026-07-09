@@ -2804,11 +2804,11 @@ fbq('init','326334441984368');fbq('track','PageView');
       </div>
       <div class="promise-block-line">
         <span class="bullet">→</span>
-        <div>If you've seen the value, you pay <strong>from your dashboard</strong>, whenever you're ready.</div>
+        <div id="s5_promise_start">If it's earning its place, do nothing: your plan starts <strong>automatically on day 31</strong>.</div>
       </div>
       <div class="promise-block-line">
         <span class="bullet">→</span>
-        <div id="s5_promise_walkaway">If not, you walk away. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.</div>
+        <div id="s5_promise_walkaway">If not, cancel in one tap before your trial ends and you pay nothing. Your player's data stays safe for <strong>90 days</strong> in case you change your mind.</div>
       </div>
     </div>
 
@@ -3020,10 +3020,10 @@ fbq('init','326334441984368');fbq('track','PageView');
     <div class="next-block">
       <div class="next-block-title">What's next</div>
       <div class="next-block-line" id="s7_notify_line">
-        <strong>Days 12 & 14:</strong> we'll text and email a reminder before your trial ends.
+        <strong>Days 28 & 30:</strong> we'll text and email a reminder before your trial ends.
       </div>
       <div class="next-block-line">
-        Pay anytime from your dashboard. <strong>No surprises.</strong>
+        Starts automatically after your trial. Cancel anytime before then in one tap. <strong>No surprises.</strong>
       </div>
     </div>
 
@@ -3418,7 +3418,7 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <div style="display:flex; align-items:center; justify-content:center; gap:7px; margin:14px 0 0; font-family:'Barlow',sans-serif; font-size:13px; color:var(--light); text-align:center;">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex:0 0 auto;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-      <span>No charge for 30 days. Cancel anytime in one tap.</span>
+      <span id="plan_picker_lock_line">No charge for 30 days. Cancel anytime in one tap.</span>
     </div>
 
     <button type="button" class="cta-primary" id="plan_picker_cta" onclick="onPlanPickerContinue()" style="margin-top:14px; width:100%;">
@@ -3463,7 +3463,11 @@ fbq('init','326334441984368');fbq('track','PageView');
   .plan-picker-card:hover { border-color: #8F7A36; }
   .plan-picker-card.selected {
     border-color: var(--gold);
-    background: rgba(232,201,122,0.08);
+    /* SOLID warm-dark with a gold cast. The old rgba(232,201,122,0.08)
+       was translucent: on the (always-white) signup page it rendered the
+       selected card CREAM, hiding this card family's hard-coded warm-white
+       price text — the selected-state cousin of the 7/5 picker price bug. */
+    background: #2A2318;
   }
   .plan-picker-pill {
     position: absolute;
@@ -4334,7 +4338,7 @@ function renderPricingCards() {
     // Family tier — flat household pricing
     set('pc_annual_name',   'MyGrind Family Annual');
     set('pc_annual_amount', '$149.99<span class="per"> / year &middot; up to 3 players</span>');
-    set('pc_annual_equiv',  '~ $12.50/mo &middot; save up to $147/yr');
+    set('pc_annual_equiv',  '~ $12.50/mo &middot; save up to $149.98/yr');
     set('pc_annual_tag',    'For 2-3 players in your household');
 
     set('pc_monthly_name',   'MyGrind Family Monthly');
@@ -4343,7 +4347,7 @@ function renderPricingCards() {
     set('pc_monthly_tag',    'Month to month for the whole household');
 
     // "You\'ll save" line below each card — concrete dollars saved vs Single
-    const savedYr  = (count * 99) - 149;
+    const savedYr  = ((count * 99.99) - 149.99).toFixed(2);
     const savedMo  = ((count * 9.99) - 14.99).toFixed(2);
     set('annual_total',
       '<span class="you-pay">You Save</span>' +
@@ -5339,9 +5343,12 @@ function onScreen7Continue() {
     // "your parent's phone" copy and skip the sport-selection screen.
     const firstFallback = fallbackNames[0];
     let url = 'onboarding.html?fallback=1&name=' + encodeURIComponent(firstFallback);
+    // Pass the family's sport on EVERY path (audit 7/8) — it was self-only,
+    // so a softball family's fallback kid landed in a baseball-branded
+    // onboarding (onboarding.html reads ?sport= and stamps mg_sport).
+    if (state.familySport) url += '&sport=' + encodeURIComponent(state.familySport);
     if (isSelfPath()) {
       url += '&self=1';
-      if (state.familySport) url += '&sport=' + encodeURIComponent(state.familySport);
     }
     // ── CARD GATE (2026-07-02) ────────────────────────────────────
     // The 7/1 card-required ship put the mandatory plan picker in
@@ -6186,8 +6193,9 @@ function openPlanPicker() {
   const familyPill = document.getElementById('ppc_fa_pill');
   if (familyPill) familyPill.style.display = isSelfPath() ? 'none' : '';
 
-  // Headline + sub copy.
-  const trialDays = isFounder ? 180 : 30;
+  // Headline + sub copy. Months promos carry their own length (FOUNDERMYGRIND /
+  // D1GRIND = 180 days, ALLSTARMYGRIND = 90) — never assume 6 months.
+  const trialDays = isFounder ? (promoInfo.days || 180) : 30;
   const chargeDate = new Date(Date.now() + trialDays * 86400 * 1000);
   const chargeLabel = chargeDate.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
   const titleEl = document.getElementById('plan_picker_title');
@@ -6195,19 +6203,27 @@ function openPlanPicker() {
   const ctaEl   = document.getElementById('plan_picker_cta');
   const promoBannerEl = document.getElementById('plan_picker_promo_banner');
 
+  const lockLineEl = document.getElementById('plan_picker_lock_line');
   if (isFounder) {
-    if (titleEl) titleEl.textContent = 'Lock in your founder spot';
-    if (subEl)   subEl.innerHTML = 'Your first 6 months are free. We hold your card so we can charge automatically on <strong>' + chargeLabel + '</strong>. Cancel anytime from your dashboard.';
-    if (ctaEl)   ctaEl.textContent = 'Lock In My Founder Spot →';
+    const dur  = promoInfo.durationLabel || '6 months';
+    const code = (state.promoCode || '').trim().toUpperCase();
+    const isFounderCode = code === 'FOUNDERMYGRIND';
+    if (titleEl) titleEl.textContent = isFounderCode ? 'Lock in your founder spot' : 'Lock in your free ' + dur;
+    if (subEl)   subEl.innerHTML = 'Your first ' + dur + ' are free. We hold your card so we can charge automatically on <strong>' + chargeLabel + '</strong>. Cancel anytime from your dashboard.';
+    if (ctaEl)   ctaEl.textContent = isFounderCode ? 'Lock In My Founder Spot →' : 'Lock In My Spot →';
     if (promoBannerEl) {
       promoBannerEl.style.display = '';
-      promoBannerEl.textContent = '✓ FOUNDERMYGRIND applied. First 6 months free, then your selected plan.';
+      promoBannerEl.textContent = '✓ ' + code + ' applied. First ' + dur + ' free, then your selected plan.';
     }
+    // The lock line was hardcoded "30 days" — under a months promo it
+    // contradicted the free-period promise two lines above it.
+    if (lockLineEl) lockLineEl.textContent = 'No charge during your free ' + dur + '. Cancel anytime in one tap.';
   } else {
     if (titleEl) titleEl.textContent = 'Start your 30-day free trial';
     if (subEl)   subEl.innerHTML = 'Free now. No charge until <strong>' + chargeLabel + '</strong>. We just hold your card so it can renew automatically. Cancel anytime from your dashboard.';
     if (ctaEl)   ctaEl.textContent = 'Start My 30-Day Trial →';
     if (promoBannerEl) promoBannerEl.style.display = 'none';
+    if (lockLineEl) lockLineEl.textContent = 'No charge for 30 days. Cancel anytime in one tap.';
   }
 
   const errEl = document.getElementById('plan_picker_error');
@@ -6263,7 +6279,9 @@ async function onPlanPickerContinue() {
 
     const promoInfo = getPromoInfo(state.promoCode);
     const isFounder = promoInfo && promoInfo.kind === 'months';
-    const trialDays = isFounder ? 180 : 30;
+    // Server derives the authoritative trial_end per promo code; this value
+    // must still match the per-code length (ALLSTARMYGRIND = 90, not 180).
+    const trialDays = isFounder ? (promoInfo.days || 180) : 30;
     const trialEndUnix = Math.floor(Date.now() / 1000) + (trialDays * 86400);
 
     saveState();
@@ -6284,6 +6302,21 @@ async function onPlanPickerContinue() {
     const data = await resp.json().catch(function() { return {}; });
     if (!resp.ok || !data.ok || !data.url) {
       console.error('[plan-picker] checkout session failed', { status: resp.status, data: data });
+      // Existing customer or already-used trial: the server will never open a
+      // second trial checkout for this email, so "try again" is a dead end.
+      // Their account and billing portal live behind sign-in — send them there.
+      if (resp.status === 403 && data.error === 'trial_not_eligible') {
+        if (errEl) {
+          errEl.style.display = '';
+          errEl.textContent = 'Good news: this email already has a MyGrind account. Taking you to sign in.';
+        }
+        if (cta) { cta.textContent = 'Sending you to sign in…'; }
+        try { sessionStorage.setItem('mg_signin_intent', email); } catch (_) {}
+        setTimeout(function() {
+          window.location.href = '/signin.html?email=' + encodeURIComponent(email) + '&auto=1';
+        }, 1800);
+        return;
+      }
       if (errEl) {
         errEl.style.display = '';
         errEl.textContent = 'We hit a snag opening checkout. Try again in a sec.';
@@ -6333,7 +6366,7 @@ const PROMO_INFO = {
     kind: 'months',
     days: 180,
     durationLabel: '6 months',
-    summary: '✓ Founder code applied — your first 6 months are free. Welcome to the first 100.'
+    summary: '✓ Founder code applied: your first 6 months are free. Welcome to the first 100.'
   },
   // D1 Training partner code (2026-06-16). Same 6-month free grant as the
   // founder cohort (kind:'months' → 180-day trial), its own Stripe promo +
@@ -6343,7 +6376,7 @@ const PROMO_INFO = {
     kind: 'months',
     days: 180,
     durationLabel: '6 months',
-    summary: '✓ D1 Training partner code applied — your first 6 months are free.'
+    summary: '✓ D1 Training partner code applied: your first 6 months are free.'
   },
   // AllStars team gift (2026-07-02) — Brandon Sonnier's roster, 3 months
   // free, server cap 15. Mirror in api/create-checkout-session.js
@@ -6353,12 +6386,23 @@ const PROMO_INFO = {
     kind: 'months',
     days: 90,
     durationLabel: '3 months',
-    summary: '✓ AllStars team code applied — your first 3 months are free.'
+    summary: '✓ AllStars team code applied: your first 3 months are free.'
+  },
+  // California coaches letter campaign (2026-08) — the standard team offer:
+  // 3 months free, card on file, server-derived 90-day trial_end. Mirror in
+  // api/create-checkout-session.js FOUNDER_CODES, lib/founder-cohort-store.js,
+  // and api/admin/founder-count.js. No Stripe coupon by design (same as
+  // ALLSTARMYGRIND). Issued via signup.html?team=<TEAM>&promo=CALIFORNIAMYGRIND.
+  'CALIFORNIAMYGRIND': {
+    kind: 'months',
+    days: 90,
+    durationLabel: '3 months',
+    summary: '✓ California coaches code applied: your first 3 months are free.'
   },
   'FOREVERYOUNG2026': {
     kind: 'lifetime',
     durationLabel: 'forever',
-    summary: '✓ Code "FOREVERYOUNG2026" applied — your account is free for life.'
+    summary: '✓ Code "FOREVERYOUNG2026" applied: your account is free for life.'
   }
 };
 
@@ -6492,6 +6536,7 @@ function applyPromoMessaging() {
   const s5Sub      = document.getElementById('s5_sub');
   const s5Title    = document.getElementById('s5_promise_title');
   const s5Notify   = document.getElementById('s5_promise_notify');
+  const s5Start    = document.getElementById('s5_promise_start');
   const s5Walkaway = document.getElementById('s5_promise_walkaway');
   const s5Skip     = document.getElementById('s5_skip_trial');
   const s7Notify   = document.getElementById('s7_notify_line');
@@ -6506,9 +6551,10 @@ function applyPromoMessaging() {
     if (s5Sub)      s5Sub.textContent      = 'You will not be charged today, or anytime during your 30-day free trial. This is just so you can have a plan in mind for when it ends.';
     if (s5Title)    s5Title.textContent    = 'What happens at day 30?';
     if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Twice</strong>: on day 28, and again on day 30.";
-    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
+    if (s5Start)    s5Start.innerHTML      = "If it's earning its place, do nothing: your plan starts <strong>automatically on day 31</strong>.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, cancel in one tap before your trial ends and you pay nothing. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
     if (s5Skip)     s5Skip.style.display   = '';
-    if (s7Notify)   s7Notify.innerHTML     = "<strong>Days 12 &amp; 14:</strong> we'll text and email a reminder before your trial ends.";
+    if (s7Notify)   s7Notify.innerHTML     = "<strong>Days 28 &amp; 30:</strong> we'll text and email a reminder before your trial ends.";
     return;
   }
 
@@ -6516,6 +6562,7 @@ function applyPromoMessaging() {
     if (s5Sub)      s5Sub.textContent      = "Not today. Not ever. You're locked in for life.";
     if (s5Title)    s5Title.textContent    = "What happens after sign-up?";
     if (s5Notify)   s5Notify.innerHTML     = "Nothing changes. <strong>No reminders. No charges. Ever.</strong> Your account stays free for life.";
+    if (s5Start)    s5Start.innerHTML      = "There is no plan to start. <strong>Your account is free for life.</strong>";
     if (s5Walkaway) s5Walkaway.innerHTML   = "Use it as long as you want. " + dataPhraseKeep.charAt(0).toUpperCase() + dataPhraseKeep.slice(1) + " — there's nothing to cancel.";
     if (s5Skip)     s5Skip.style.display   = 'none';   // No trial to skip — there is no payment
     if (s7Notify)   s7Notify.innerHTML     = "<strong>You're locked in for life.</strong> No reminders, no surprise charges &mdash; ever.";
@@ -6527,7 +6574,8 @@ function applyPromoMessaging() {
     if (s5Sub)      s5Sub.textContent      = "You will not be charged today, or anytime during your " + dur + " free trial. This is just so you can have a plan in mind for when it ends.";
     if (s5Title)    s5Title.textContent    = "What happens after your free " + dur + "?";
     if (s5Notify)   s5Notify.innerHTML     = "We'll text you. We'll email you. <strong>Two weeks before</strong> your free " + dur + " ends.";
-    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, you walk away. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
+    if (s5Start)    s5Start.innerHTML      = "If it's earning its place, do nothing: your plan starts <strong>automatically after your free " + dur + "</strong>.";
+    if (s5Walkaway) s5Walkaway.innerHTML   = "If not, cancel in one tap before your trial ends and you pay nothing. " + dataPhraseWalkaway + " stays safe for <strong>90 days</strong> in case you change your mind.";
     if (s5Skip)     s5Skip.style.display   = '';       // Still relevant — eager parents can pay early
     if (s7Notify)   s7Notify.innerHTML     = "<strong>Two weeks before " + dur + " is up:</strong> we'll text and email a reminder before your free period ends.";
     return;

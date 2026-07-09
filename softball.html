@@ -1865,7 +1865,7 @@ function openInstallHelp(event) {
   if (event && event.preventDefault) event.preventDefault();
   try { dismissIosBanner(); } catch (e) {}
   try {
-    if (typeof mgTab === 'function') mgTab('settings', 'tab-settings');
+    if (typeof mgTab === 'function') mgTab('settings', 'tab-players');
   } catch (e) {}
   setTimeout(function() {
     const card = document.getElementById('settings-install-card');
@@ -3049,6 +3049,25 @@ input[type="number"] {
       <div class="gold-line"></div>
     </div>
 
+    <!-- ── FIRST-OPEN WELCOME (2026-06-09) — one-time card for a player's
+         first arrival from onboarding. onboarding.html sets
+         mg_first_journal_open=1 (already KEEP-listed here as the
+         "welcome-state flag"); this card is its missing consumer. Shows
+         until the first entry is logged or the player dismisses it.
+         Moved to the TOP dashboard slot 7/9 (audit): it rendered 8th,
+         below evergreen cards, on an account whose only job is entry #1. -->
+    <div id="first-open-welcome" class="card" style="display:none; margin-bottom:20px; background:linear-gradient(135deg,var(--gold) 0%,#8B2050 100%); border:2px solid #FFD966; padding:20px; text-align:center;">
+      <div style="font-size:40px; line-height:1; margin-bottom:8px;">👋</div>
+      <div id="first-open-welcome-title" style="font-family:'Bebas Neue',cursive; font-size:26px; letter-spacing:2px; color:#161210; line-height:1;">WELCOME TO MYGRIND</div>
+      <div style="font-family:'Barlow'; font-size:13px; color:#2A0018; margin-top:4px; margin-bottom:14px;">Your journal is ready. One entry starts your streak. Log today's work.</div>
+      <button onclick="firstOpenWelcomeStart()" style="background:#161210; color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:1px solid #000; border-radius:8px; cursor:pointer;">
+        <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg> Log My First Entry
+      </button>
+      <button onclick="dismissFirstOpenWelcome()" style="background:transparent; color:#2A0018; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:12px 16px; border:none; cursor:pointer; margin-left:6px;">
+        Dismiss
+      </button>
+    </div>
+
     <!-- ══ DAILY NUDGE — streak-protection reminder when not logged today ══
          Coach Young 2026-06-06: in-app nudge (shows on Dashboard when today has
          no entry/check-in) + a no-backend .ics daily phone reminder. renderDailyNudge(). -->
@@ -3203,23 +3222,6 @@ input[type="number"] {
         <button onclick="dashCoachRefresh()" style="background:transparent;border:1px solid var(--gold-dark);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:6px 10px;border-radius:8px;cursor:pointer;">Refresh</button>
       </div>
       <div id="dash-coach-body" style="padding:16px 18px;"></div>
-    </div>
-
-    <!-- ── FIRST-OPEN WELCOME (2026-06-09) — one-time card for a player's
-         first arrival from onboarding. onboarding.html sets
-         mg_first_journal_open=1 (already KEEP-listed here as the
-         "welcome-state flag"); this card is its missing consumer. Shows
-         until the first entry is logged or the player dismisses it. -->
-    <div id="first-open-welcome" class="card" style="display:none; margin-bottom:20px; background:linear-gradient(135deg,var(--gold) 0%,#8B2050 100%); border:2px solid #FFD966; padding:20px; text-align:center;">
-      <div style="font-size:40px; line-height:1; margin-bottom:8px;">👋</div>
-      <div id="first-open-welcome-title" style="font-family:'Bebas Neue',cursive; font-size:26px; letter-spacing:2px; color:#161210; line-height:1;">WELCOME TO MYGRIND</div>
-      <div style="font-family:'Barlow'; font-size:13px; color:#2A0018; margin-top:4px; margin-bottom:14px;">Your journal is ready. One entry starts your streak — log today's work.</div>
-      <button onclick="firstOpenWelcomeStart()" style="background:#161210; color:var(--gold); font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:12px 24px; border:1px solid #000; border-radius:8px; cursor:pointer;">
-        <svg class="mg-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-3px;"><use href="#mg-icon-book-open"/></svg> Log My First Entry
-      </button>
-      <button onclick="dismissFirstOpenWelcome()" style="background:transparent; color:#2A0018; font-family:'Barlow Condensed'; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:12px 16px; border:none; cursor:pointer; margin-left:6px;">
-        Dismiss
-      </button>
     </div>
 
     <!-- ── MILESTONE CELEBRATION (hidden by default, shown when hit) ── -->
@@ -8064,6 +8066,13 @@ try {
 // ═══════════════════════════════════════════════════════
 
 const TRIAL_DAYS        = 30;
+// Days left in this account's free trial. Honors per-account grants
+// (founder/AllStars trialDurationDays) — display code must never hardcode 30.
+function mgTrialDaysLeft(acc) {
+  const cliff = (acc && acc.trialDurationDays) || TRIAL_DAYS;
+  const elapsed = (Date.now() - ((acc && acc.trialStart) || Date.now())) / (1000 * 60 * 60 * 24);
+  return Math.max(0, Math.ceil(cliff - elapsed));
+}
 // Reconciled with signup.html on 2026-05-06. Softball.html now uses the same
 // Single Monthly / Single Annual payment links as signup.html (single source of
 // truth). Team Sponsor is a fresh active link for the existing $300 price.
@@ -9283,9 +9292,13 @@ async function routeExistingCustomerToPortal(email) {
 async function goToPurchase(plan) {
   const base = plan === 'annual' ? STRIPE_ANNUAL_URL : STRIPE_MONTHLY_URL;
 
-  // Check if we're on the welcome/registration screen by checking the overlay
+  // Check if we're on the welcome/registration screen (not expired/blocked)
   const overlay = document.getElementById('trial-overlay');
-  const welcomeVisible = overlay && overlay.style.display === 'flex';
+  // #trial-overlay hosts welcome, expired, AND blocked screens, so overlay
+  // visibility alone doesn't mean "new user" — check the welcome card itself.
+  const welcomeEl = document.getElementById('trial-screen-welcome');
+  const welcomeVisible = overlay && overlay.style.display === 'flex' &&
+                         welcomeEl && welcomeEl.style.display !== 'none';
 
   // If NOT on welcome screen — the user is already registered (trial or paid),
   // so they have a Stripe customer on file. Send them to the Customer Portal to
@@ -9399,7 +9412,11 @@ async function goToPurchase(plan) {
 async function goToCoachPurchase() {
   const base = STRIPE_ANNUAL_URL;
   const overlay = document.getElementById('trial-overlay');
-  const welcomeVisible = overlay && overlay.style.display === 'flex';
+  // #trial-overlay hosts welcome, expired, AND blocked screens, so overlay
+  // visibility alone doesn't mean "new user" — check the welcome card itself.
+  const welcomeEl = document.getElementById('trial-screen-welcome');
+  const welcomeVisible = overlay && overlay.style.display === 'flex' &&
+                         welcomeEl && welcomeEl.style.display !== 'none';
 
   // If not on welcome screen (e.g., user already has an account), they have a
   // Stripe customer on file — route to the Customer Portal to change plan rather
@@ -9486,7 +9503,11 @@ async function goToTeamSponsorPurchase() {
 
   const base = STRIPE_TEAM_SPONSOR_URL;
   const overlay = document.getElementById('trial-overlay');
-  const welcomeVisible = overlay && overlay.style.display === 'flex';
+  // #trial-overlay hosts welcome, expired, AND blocked screens, so overlay
+  // visibility alone doesn't mean "new user" — check the welcome card itself.
+  const welcomeEl = document.getElementById('trial-screen-welcome');
+  const welcomeVisible = overlay && overlay.style.display === 'flex' &&
+                         welcomeEl && welcomeEl.style.display !== 'none';
 
   // Already registered → existing Stripe customer → manage via Customer Portal
   // instead of minting a parallel subscription. Fall through to the Payment Link
@@ -10704,11 +10725,16 @@ function saveEntry() {
     }
   }
 
+  // Keep history chronological (audit 7/8): a back-dated entry used to sit
+  // pinned at the top (unshift, never re-sorted), fragmenting day groups.
+  try { mgSortEntries(state.entries); } catch (e) {}
+
   // Persist locally + push THIS saved entry to the cloud. The old hook always
   // pushed entries[0], so edits to any non-newest entry never synced and were
   // reverted on the next restore. saveState() first so localStorage + Firestore
   // agree; fbSaveEntry(entry) writes the exact doc that was edited/created.
-  try { saveState(); } catch (e) {}
+  let entryPersisted = false;
+  try { entryPersisted = saveState(); } catch (e) {}
   try { if (typeof fbSaveEntry === 'function' && typeof fbUser !== 'undefined' && fbUser) fbSaveEntry(entry); } catch (e) {}
 
   // Day-0 activation + team-code attribution stamps (once each, no-ops after).
@@ -10833,20 +10859,27 @@ function saveEntry() {
   // return to today's view. If the player wants to verify the entry
   // landed, they can tap 📅 Pick Date on the entries list.
   try {
-    const _savedDate = parseEntryDate(entry.date);
-    const _todayYmd  = todayLocalISO();
-    let _savedYmd = null;
-    if (_savedDate && !isNaN(_savedDate.getTime())) {
-      _savedYmd = _savedDate.getFullYear() + '-' +
-                  String(_savedDate.getMonth() + 1).padStart(2, '0') + '-' +
-                  String(_savedDate.getDate()).padStart(2, '0');
-    }
-    if (typeof showShareToast === 'function') {
-      if (_savedYmd && _savedYmd !== _todayYmd) {
-        const _pretty = _savedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        showShareToast('✅ Saved for ' + _pretty);
-      } else {
-        showShareToast('✅ Entry saved');
+    // Storage-full honesty (audit 7/8): if the local write failed, do NOT
+    // toast success — the entry only lives in memory and evaporates on
+    // reload. saveState() already alerted once this session with the fix.
+    if (!entryPersisted) {
+      if (typeof showShareToast === 'function') showShareToast('⚠️ Not saved. Device storage is full. Back up in Settings, free space, then save again.');
+    } else {
+      const _savedDate = parseEntryDate(entry.date);
+      const _todayYmd  = todayLocalISO();
+      let _savedYmd = null;
+      if (_savedDate && !isNaN(_savedDate.getTime())) {
+        _savedYmd = _savedDate.getFullYear() + '-' +
+                    String(_savedDate.getMonth() + 1).padStart(2, '0') + '-' +
+                    String(_savedDate.getDate()).padStart(2, '0');
+      }
+      if (typeof showShareToast === 'function') {
+        if (_savedYmd && _savedYmd !== _todayYmd) {
+          const _pretty = _savedDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          showShareToast('✅ Saved for ' + _pretty);
+        } else {
+          showShareToast('✅ Entry saved');
+        }
       }
     }
   } catch (_) {}
@@ -10983,9 +11016,11 @@ function hideUndoToast() {
 }
 function undoDelete() {
   if (!_trashedEntry) { hideUndoToast(); return; }
-  // Restore at top — original index may be stale if anything else
-  // changed during the 10s window. Player can re-sort if needed.
+  // Restore, then re-sort into chronological position (audit 7/8) —
+  // the old restore-at-top left the entry stranded out of date order.
   state.entries.unshift(_trashedEntry);
+  try { mgSortEntries(state.entries); } catch (e) {}
+  try { saveState(); } catch (e) {}
   _trashedEntry = null;
   if (_undoTimer) clearTimeout(_undoTimer);
   _undoTimer = null;
@@ -11042,6 +11077,13 @@ function submitComment() {
     time: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })
   });
 
+  // Persist the comment (audit 7/8): this was render-only, so "Feedback
+  // saved" toasted while localStorage + Firestore still held the
+  // pre-comment entry and the comment vanished on reload. Same persist
+  // pair as saveEntry.
+  try { saveState(); } catch (e) {}
+  try { if (typeof fbSaveEntry === 'function' && typeof fbUser !== 'undefined' && fbUser) fbSaveEntry(entry); } catch (e) {}
+
   // Refresh entry list immediately so the new comment appears, then
   // toast-confirm and dismiss the comment card. Toast-only pattern
   // (Coach Young 2026-05-17 iteration 2) — matches saveEntry.
@@ -11054,6 +11096,9 @@ function deleteComment(entryId, commentId) {
   const entry = state.entries.find(e => e.id === entryId);
   if (!entry) return;
   entry.comments = entry.comments.filter(c => c.id !== commentId);
+  // Persist the removal (audit 7/8) — same pair as submitComment/saveEntry.
+  try { saveState(); } catch (e) {}
+  try { if (typeof fbSaveEntry === 'function' && typeof fbUser !== 'undefined' && fbUser) fbSaveEntry(entry); } catch (e) {}
   renderAll();
 }
 
@@ -14444,8 +14489,7 @@ function updateSubscriptionCard() {
         }
       }
     } else if (acc.trialStart) {
-      const elapsed = (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24);
-      const daysLeft = Math.max(0, Math.ceil(30 - elapsed));
+      const daysLeft = mgTrialDaysLeft(acc);
       if (planEl)    planEl.textContent = `Free Trial · ${daysLeft} day${daysLeft !== 1 ? 's' : ''} remaining`;
       if (trialInfo) trialInfo.style.display = 'block';
       if (paidInfo)  paidInfo.style.display  = 'none';
@@ -15794,6 +15838,22 @@ function parseEntryDate(s) {
   if (!s || s === 'Today') return new Date();
   const d = new Date(s);
   return isNaN(d.getTime()) ? null : d;
+}
+
+// Chronological journal order, newest first. Entry dates are locale STRINGS
+// ("Jul 8, 2026"), so string comparison scrambles history across months and
+// years — always sort through parsed dates, tie-breaking on id (a Date.now()
+// stamp, so it's a valid ms-epoch fallback for unparseable dates too).
+function mgSortEntries(arr) {
+  if (!Array.isArray(arr)) return arr;
+  arr.sort(function(a, b) {
+    var da = parseEntryDate(a && a.date);
+    var db = parseEntryDate(b && b.date);
+    var ta = da ? da.getTime() : ((a && a.id) || 0);
+    var tb = db ? db.getTime() : ((b && b.id) || 0);
+    return tb !== ta ? (tb - ta) : (((b && b.id) || 0) - ((a && a.id) || 0));
+  });
+  return arr;
 }
 
 // Sum entry.reps across all entries into season / last30 / last7 buckets.
@@ -17358,8 +17418,7 @@ function updateSettingsYouHeader() {
         } else if (acc.paid) {
           label = 'Pro';
         } else if (acc.trialStart) {
-          const elapsed = (Date.now() - acc.trialStart) / (1000 * 60 * 60 * 24);
-          const daysLeft = Math.max(0, Math.ceil(30 - elapsed));
+          const daysLeft = mgTrialDaysLeft(acc);
           label = daysLeft > 0 ? ('Trial · ' + daysLeft + 'd') : 'Trial Ended';
         } else {
           label = 'Free';
@@ -17562,8 +17621,12 @@ function initNotifications() {
     if (btn) { btn.textContent='✅ Notifications Active'; btn.style.background='#27AE60'; }
     localStorage.setItem('ybg_notif_granted','1');
 
-  } else if (Notification.permission === 'default' && !localStorage.getItem('ybg_notif_asked')) {
-    // First time — auto-request after 3 seconds so it feels natural
+  } else if (Notification.permission === 'default' && !localStorage.getItem('ybg_notif_asked') &&
+             typeof state !== 'undefined' && state && Array.isArray(state.entries) && state.entries.length > 0) {
+    // Ask only after the player has logged at least one entry (audit 7/8).
+    // Firing 3s into a cold first session burned the one-shot browser ask
+    // before the app had shown any value, and poisoned the deliberate
+    // 3-day-streak push prompt that arrives later.
     localStorage.setItem('ybg_notif_asked','1');
     setTimeout(() => {
       Notification.requestPermission().then(perm => {
@@ -17598,8 +17661,22 @@ function formatTime(t) {
 // ── SHARE MODAL ──────────────────────────────────────
 const SHARE_URL  = 'https://mygrindapp.com/signup.html';
 
-const SHARE_CAPTIONS = {
-  instagram: `Bro this app is different ⚾️
+// Sport-aware share captions (audit 7/8): these were hardcoded baseball-only,
+// so softball families shared baseball copy and hashtags. Built once at parse
+// time from the active sport (sport is fixed per load). The old #EliteBaseball
+// tag is dropped per brand voice, and "my son" is now "my player".
+const SHARE_CAPTIONS = (function () {
+  const sport = (window.mgSportLower === 'softball') ? 'softball' : 'baseball';
+  const ball  = sport === 'softball' ? '🥎' : '⚾️';
+  const grindTag = sport === 'softball' ? '#SoftballGrind' : '#BaseballGrind';
+  const tagsIg = sport === 'softball'
+    ? '#MyGrind #SoftballLife #SoftballTraining #PlayerDevelopment #SoftballJournal #YouthSoftball #SoftballPlayer #HighSchoolSoftball #TravelSoftball #SoftballCoach #SCVSoftball #SantaClaritaSoftball #SoftballMom #SoftballDad #SoftballFamily #SoftballGrind #NeverStopGrinding #SoftballIsLife #Fastpitch #SoftballSkills #PitchingCoach #HittingCoach #SoftballWorkout #FastpitchSoftball #PGF #SoftballUSA'
+    : '#MyGrind #BaseballLife #BaseballTraining #PlayerDevelopment #BaseballJournal #YouthBaseball #BaseballPlayer #HighSchoolBaseball #TravelBall #BaseballCoach #SCVBaseball #SantaClaritaBaseball #BaseballMom #BaseballDad #BaseballFamily #BaseballGrind #NeverStopGrinding #BaseballIsLife #FutureProBaseball #BaseballSkills #PitchingCoach #HittingCoach #BaseballWorkout #AABaseball #PerfectGame #BaseballUSA';
+  const tagsFb = sport === 'softball'
+    ? '#MyGrind #SoftballParents #SoftballFamily #TravelSoftball #YouthSoftball #HighSchoolSoftball #SoftballTraining #PlayerDevelopment #SCVSoftball #SantaClaritaSoftball #SoftballMom #SoftballDad #SoftballCoach #CaliforniaSoftball #SoftballLife #SoftballIsLife #Fastpitch'
+    : '#MyGrind #BaseballParents #BaseballFamily #TravelBall #YouthBaseball #HighSchoolBaseball #BaseballTraining #PlayerDevelopment #SCVBaseball #SantaClaritaBaseball #BaseballMom #BaseballDad #BaseballCoach #CaliforniaBaseball #BaseballLife #BaseballIsLife #BaseballKids';
+  return {
+    instagram: `Bro this app is different ${ball}
 
 Been using MY GRIND to log my games and track my stats. Not just a notes app. It auto-calculates AVG, OBP, SLG, ERA, has a 12-month training plan, goals, arm & shoulder care, everything.
 
@@ -17610,11 +17687,11 @@ https://mygrindapp.com/signup.html
 
 Who needs this? Tag 'em 👇
 
-#MyGrind #BaseballLife #BaseballTraining #PlayerDevelopment #BaseballJournal #YouthBaseball #BaseballPlayer #HighSchoolBaseball #TravelBall #BaseballCoach #SCVBaseball #SantaClaritaBaseball #BaseballMom #BaseballDad #BaseballFamily #BaseballGrind #NeverStopGrinding #BaseballIsLife #FutureProBaseball #BaseballSkills #PitchingCoach #HittingCoach #BaseballWorkout #EliteBaseball #AABaseball #PerfectGame #BaseballUSA`,
+${tagsIg}`,
 
-  facebook: `Parents. If your kid plays baseball, they need to see this. ⚾️
+    facebook: `Parents. If your kid plays ${sport}, they need to see this. ${ball}
 
-My son started using MY GRIND this season and the difference is real. He's more focused, more accountable, actually thinking about his game between practices. Every game he logs what happened, tracks his stats, and reviews what he's working on.
+My player started using MY GRIND this season and the difference is real. They're more focused, more accountable, actually thinking about their game between practices. Every game they log what happened, track their stats, and review what they're working on.
 
 The app has everything a serious player needs. A daily journal, automatic stat calculations (AVG, OBP, SLG, ERA), a 12-month training plan, goal tracking, arm & shoulder care, and more.
 
@@ -17622,26 +17699,27 @@ The app has everything a serious player needs. A daily journal, automatic stat c
 
 👉 https://mygrindapp.com/signup.html
 
-Tag a baseball family who'd use this 👇
+Tag a ${sport} family who'd use this 👇
 
-#MyGrind #BaseballParents #BaseballFamily #TravelBall #YouthBaseball #HighSchoolBaseball #BaseballTraining #PlayerDevelopment #SCVBaseball #SantaClaritaBaseball #BaseballMom #BaseballDad #BaseballCoach #CaliforniaBaseball #BaseballLife #BaseballIsLife #BaseballKids`,
+${tagsFb}`,
 
-  twitter: `.300 hitters journal. .200 hitters guess. ⚾️
+    twitter: `.300 hitters journal. .200 hitters guess. ${ball}
 
 MY GRIND: auto stats, daily journal, 12-month training plan. Everything a serious player needs in one app.
 
 30 days free 👇
 https://mygrindapp.com/signup.html
 
-#MyGrind #BaseballGrind`,
+#MyGrind ${grindTag}`,
 
-  sms: `Yo you gotta get this. MY GRIND: journal + stats + training plan in one app.
+    sms: `Yo you gotta get this. MY GRIND: journal + stats + training plan in one app.
 
 Been logging every game with it. Download it and let's keep each other accountable this season 💯
 
 30 days free 👇
 https://mygrindapp.com/signup.html`
-};
+  };
+})();
 
 let currentSharePlatform = null;
 
@@ -18310,13 +18388,13 @@ function renderYourWeek() {
 // ─── DAILY QUOTES (rotates daily) ───
 
 function renderDailyQuote() {
-  // Pick a quote based on day of year — stays the same all day, rotates tomorrow
-  const now = new Date();
-  const start = new Date(now.getFullYear(), 0, 0);
-  const diff = now - start;
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
-  const idx = dayOfYear % YBG_QOTD.length;
-  const quote = YBG_QOTD[idx];
+  // Same sport-filtered pool + daily rotation as the QOTD overlay
+  // (mgQuoteOfTheDay, defined with YBG_QOTD in the nav script). This card
+  // previously indexed the full unfiltered array, so softball players got
+  // baseball-worded quotes (audit 7/8).
+  if (typeof mgQuoteOfTheDay !== 'function') return;
+  const quote = mgQuoteOfTheDay();
+  if (!quote) return;
   const qText = document.getElementById('daily-quote-text');
   const qAuth = document.getElementById('daily-quote-author');
   if (qText) qText.textContent = '"' + quote.q + '"';
@@ -22511,15 +22589,13 @@ var YBG_QOTD = [
   { q: "Everybody talks a big game. Be the one who quietly puts in the work and backs it up when it counts.", a: "MyGrind" }
 ];
 
-function showQotd() {
-  // Quote of the day: stable all day, rotates to a new one tomorrow.
-  // Fixed 2026-06-22: the old logic indexed the FULL 63-quote array by
-  // day-of-year and then stepped forward past wrong-sport quotes, which
-  // clustered several consecutive days onto the same quote and caused the
-  // same line to recur within a few days. We now index into the
-  // sport-eligible list directly, so each eligible quote shows exactly once
-  // per full cycle (~all eligible quotes) before any repeat — a clean
-  // rotation with the longest possible gap before a quote comes back.
+// One quote per day from the active sport's eligible pool, stable all day,
+// rotating tomorrow. Fixed 2026-06-22: indexing the FULL array by day-of-year
+// and stepping past wrong-sport quotes clustered repeats; indexing the
+// sport-eligible list directly gives a clean full-cycle rotation. Extracted
+// 7/9 (audit) so the dashboard/journal daily-quote card shares the SAME
+// sport-filtered pool — it had kept indexing the full array unfiltered.
+function mgQuoteOfTheDay() {
   var now   = new Date();
   var start = new Date(now.getFullYear(), 0, 0);
   var day   = Math.floor((now - start) / (1000 * 60 * 60 * 24));
@@ -22533,7 +22609,11 @@ function showQotd() {
     if (c && (!c.sport || c.sport === activeSport)) eligible.push(c);
   }
   if (!eligible.length) eligible = YBG_QOTD.slice();
-  var q = eligible[day % eligible.length];
+  return eligible[day % eligible.length];
+}
+
+function showQotd() {
+  var q = mgQuoteOfTheDay();
 
   var textEl   = document.getElementById('qotd-text');
   var authorEl = document.getElementById('qotd-author');
@@ -22555,12 +22635,10 @@ function showQotd() {
 function closeQotd() {
   var overlay = document.getElementById('qotd-overlay');
   if (overlay) overlay.style.display = 'none';
-  // Land on the Dashboard (changed 2026-06-09 from Journal). The QOTD popup
-  // shows on every open, so this is the real default-landing screen — drop
-  // returning users on the engagement home (streak / Your Week / Log Now
-  // nudge), not a blank log screen. Logging stays one tap via the bottom
-  // Journal tab.
-  showPanel('dashboard');
+  // Do NOT navigate here (audit 7/8). The load-time router has already
+  // landed the user on the right panel before this overlay appears —
+  // Profile for brand-new users, hash deep links, Dashboard by default.
+  // The old forced showPanel('dashboard') was clobbering all of those.
 }
 
 // Show quote on every app open — after access check clears (800ms delay)
@@ -23166,7 +23244,11 @@ async function syncFromCloud(uid) {
       var emap = {};
       (ls.entries || []).forEach(function(e) { if (e && e.id) emap[e.id] = e; });
       entryDocs.forEach(function(d) { var e = d.data(); if (e && e.id) emap[e.id] = e; });
-      ls.entries = Object.values(emap).sort(function(a,b) { return b.date > a.date ? 1 : -1; });
+      // Real chronological order (audit 7/8): entry.date is a locale STRING,
+      // so the old string compare scrambled history across months/years.
+      ls.entries = (typeof mgSortEntries === 'function')
+        ? mgSortEntries(Object.values(emap))
+        : Object.values(emap);
       changed = true;
     }
     if (changed) {

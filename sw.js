@@ -7,11 +7,14 @@
 // responses, so the journal opens with no signal. Strategy stays network-first
 // (fresh when online), cache is the fallback. /api/* is never cached.
 // Cache prefix renamed ybg-mygrind → mygrind (activate cleans old caches).
+// 2026-07-09 (v390): precache checkin.html — the dashboard's top daily-habit
+// card 404'd offline while the shell promised "works offline" (audit 7/8).
 
-const CACHE = 'mygrind-v389';
+const CACHE = 'mygrind-v390';
 const ASSETS = [
   '/',
   '/softball.html',
+  '/checkin.html',
   '/manifest.json',
   '/assets/interactions.css',
   '/assets/icon-192.png',
