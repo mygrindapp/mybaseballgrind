@@ -2165,6 +2165,11 @@ n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
 document,'script','https://connect.facebook.net/en_US/fbevents.js');
 fbq('init','326334441984368');fbq('track','PageView');
+// Mid-funnel signal for Meta ad optimization (2026-07-09): PageView alone
+// gives the algorithm nothing to learn from and CompleteRegistration is
+// too rare while volume is low. ViewContent = "reached the signup page";
+// InitiateCheckout fires when the plan picker opens (see openPlanPicker).
+fbq('track','ViewContent',{content_name:'signup_page'});
 </script>
 <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=326334441984368&ev=PageView&noscript=1"/></noscript>
 <!-- End Meta Pixel -->
@@ -2267,6 +2272,10 @@ fbq('init','326334441984368');fbq('track','PageView');
 
     <div style="text-align:center;">
       <div class="no-card-pill">30 days free · Cancel anytime</div>
+      <!-- Card expectation set up front (2026-07-09, ad-funnel fix): paid
+           traffic lands here, and hitting the card ask cold on Screen 7 was
+           killing mobile signups. Honest framing beats the surprise. -->
+      <p style="margin:10px auto 0; max-width:320px; font-family:'Barlow',sans-serif; font-size:12.5px; color:#A89880; line-height:1.5;">Card on file to start, nothing charged until day 31. We remind you twice before then, and canceling is one tap.</p>
     </div>
 
     <div style="margin-top: 28px;">
@@ -6130,6 +6139,16 @@ function openPlanPicker() {
   // gate that sits right before begin_checkout — comparing plan_picker_opened
   // vs begin_checkout tells us whether the card ask itself is the leak.
   try { if (typeof gtag === 'function') gtag('event', 'plan_picker_opened', { plan: _planPickerSelection, founder: !!isFounder, under_13: hasUnder13 }); } catch (e) {}
+  // Meta pixel twin of plan_picker_opened (2026-07-09): InitiateCheckout is
+  // the event the next Sales-objective campaign optimizes on — deep enough
+  // to mean intent, frequent enough for the algorithm to learn while
+  // CompleteRegistration volume is still small. Once per page load.
+  try {
+    if (!window._mgFbqInitiateCheckout && typeof fbq === 'function') {
+      window._mgFbqInitiateCheckout = true;
+      fbq('track', 'InitiateCheckout', { content_name: 'plan_picker', content_category: _planPickerSelection || 'unknown' });
+    }
+  } catch (e) {}
 
   overlay.classList.add('shown');
   overlay.setAttribute('aria-hidden', 'false');

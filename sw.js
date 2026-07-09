@@ -15,8 +15,11 @@
 // 2026-07-09 (v392): audit bucket 3 tail — dead-code removal (gift/team-
 // sponsor flow, voice-input block, retired signup screens 1/4), tokenized
 // toasts, stale-comment sweep, em-dash copy fixes.
+// 2026-07-09 (v393): ad-funnel fixes — Meta pixel ViewContent +
+// InitiateCheckout mid-funnel events, card-expectation line on the
+// signup gate screen (runtime cache can hold signup.html).
 
-const CACHE = 'mygrind-v392';
+const CACHE = 'mygrind-v393';
 const ASSETS = [
   '/',
   '/softball.html',
