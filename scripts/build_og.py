@@ -51,6 +51,9 @@ CARDS = [
     {"slug": "ncaa-eligibility-rule-change-2026",
      "eyebrow": "The Playbook · Recruiting",
      "title": "New NCAA eligibility rules: a parent's guide"},
+    {"slug": "creatine-for-teenage-athletes",
+     "eyebrow": "The Playbook · Nutrition",
+     "title": "Creatine for teenage athletes: a coach's honest answer"},
 ]
 
 
