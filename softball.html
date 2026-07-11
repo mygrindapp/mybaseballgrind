@@ -293,18 +293,14 @@
       // theme-color meta, body emoji walk, and {Sport}-templated text.
       window.setActiveSport = function(newSport) {
         if (!valid[newSport] || newSport === 'both') return;
-        // Coach Young 2026-05-11: players can only switch to a sport
-        // their family signed up for. mg_family_sport === 'baseball'
-        // → can't switch to softball; same for the inverse. 'both'
-        // unlocks the toggle. Without this gate, the disabled visual
-        // state could be bypassed via console or stale DOM clicks.
-        // Audit bucket 4 (7/9): only enforce when the family sport is
-        // EXPLICITLY known (stored). The old fallback chain bottomed out
-        // at 'baseball' on any fresh device, silently locking a softball
-        // family out of their own sport — the "softball side still feels
-        // like baseball" walkthrough. Unknown = unlocked.
-        var family = localStorage.getItem('mg_family_sport');
-        if (family && family !== 'both' && family !== newSport) return;
+        // Coach Young 2026-07-11: sport is a preference, not an
+        // entitlement — every account can use both sides. The old
+        // mg_family_sport gate (2026-05-11) protected no revenue (price
+        // is sport-independent) and silently dead-ended a single-sport
+        // player who picked up the second sport mid-year. The signup
+        // sport still sets the DEFAULT view (boot script above); this
+        // just stops blocking the switch. Multi-player families are
+        // handled by minor profiles, not by this gate.
 
         localStorage.setItem('mg_sport', newSport);
         // Per-minor sport memory (audit 7/8): at click time the minor-scope
@@ -367,28 +363,17 @@
       }
       window.syncSportHrefs = syncSportHrefs;
 
-      // Coach Young 2026-05-11: lock the non-owned sport tab visually
-      // (greyed + not clickable). family === 'both' unlocks both.
+      // Coach Young 2026-07-11: both sport tabs are always live for
+      // every account (see setActiveSport). This used to grey out the
+      // non-owned tab; it now only clears any stale disabled state left
+      // in localStorage-restored DOM from the gated era.
       function syncToggleAllowed() {
-        // Same unknown-= -unlocked rule as setActiveSport (audit bucket 4,
-        // 7/9): only grey a tab out when the family sport is explicitly
-        // stored and mismatched. The old 'baseball' fallback greyed the
-        // softball tab for softball families on fresh devices.
-        var family = localStorage.getItem('mg_family_sport');
         var btns = document.querySelectorAll('[data-toggle-sport]');
         for (var i = 0; i < btns.length; i++) {
           var b = btns[i];
-          var tabSport = b.getAttribute('data-toggle-sport');
-          var allowed = !family || (family === 'both') || (family === tabSport);
-          if (allowed) {
-            b.classList.remove('disabled');
-            b.removeAttribute('aria-disabled');
-            b.title = '';
-          } else {
-            b.classList.add('disabled');
-            b.setAttribute('aria-disabled', 'true');
-            b.title = 'You signed up for ' + family + ' only.';
-          }
+          b.classList.remove('disabled');
+          b.removeAttribute('aria-disabled');
+          b.title = '';
         }
       }
       if (document.readyState === 'loading') {
@@ -7385,6 +7370,21 @@ input[type="number"] {
           </div>
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--grey); line-height:1.5;">Athlete-based strength and conditioning for ages 7 and up, built like the training rooms at Division 1 programs. Northridge serves the Valley; outside SoCal, the same site finds your nearest D1. Log every session as a Workout entry.</div>
         </a>
+
+        <!-- Northridge grand opening (added 7/11). Self-expiring: the
+             script below hides it after July 20 PT so the card never
+             carries a past event. Safe to delete any time after 7/20. -->
+        <div id="d1-grand-opening" style="padding:10px 14px; background:#231E19; border:1px solid var(--gold); border-radius:4px;">
+          <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-bottom:2px;">Grand Opening: July 20</div>
+          <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--light); line-height:1.5;">The new Northridge D1 facility opens its doors Monday, July 20. Coach will be there. Come meet the team and see where the off-season build happens.</div>
+        </div>
+        <script>
+          try {
+            if (new Date() >= new Date('2026-07-21T00:00:00-07:00')) {
+              document.getElementById('d1-grand-opening').style.display = 'none';
+            }
+          } catch (e) {}
+        </script>
 
       </div>
       <div style="font-family:'Barlow',sans-serif; font-size:14.5px; color:var(--light); font-style:italic; padding:16px 0 0; line-height:1.6; border-top:1px solid #2A2520; margin-top:16px;">
@@ -17270,8 +17270,8 @@ function updateSettingsYouHeader() {
       }
     }
 
-    // Sport switcher — only family=both gets to flip the active sport
-    // from Settings. Mirror the dashboard header toggle visuals so it
+    // Sport switcher — every account can flip the active sport from
+    // Settings (unlocked 7/11). Mirror the dashboard header toggle visuals so it
     // feels like the same control in two places. Exposed on window
     // (audit item 60, 7/9) so setActiveSport can re-sync the highlight
     // the moment a sport button is tapped — it used to only sync on the
@@ -17286,11 +17286,11 @@ function updateSettingsYouHeader() {
 window.syncSettingsSportToggle = function() {
   try {
     var toggleEl = document.getElementById('settings-you-sport-toggle');
-    var family   = localStorage.getItem('mg_family_sport') || '';
     var current  = document.documentElement.getAttribute('data-sport') || 'baseball';
     if (!toggleEl) return;
-    toggleEl.style.display = (family === 'both') ? 'block' : 'none';
-    if (family !== 'both') return;
+    // Coach Young 2026-07-11: shown for everyone, not just family='both'
+    // — both sports are open to every account (see setActiveSport).
+    toggleEl.style.display = 'block';
     var activeStyle = function(el, on) {
       if (!el) return;
       el.style.background  = on ? 'var(--gold)' : 'var(--card2)';

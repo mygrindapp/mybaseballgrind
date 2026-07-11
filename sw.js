@@ -21,8 +21,12 @@
 // 2026-07-09 (v394): HOTFIX — saveEntry crashed in renderMediaPreview on
 // every save since 5/11 (photo-upload DOM pulled, renderer unguarded),
 // silencing the save confirmation. Entries were never lost.
+// 2026-07-11 (v395): sport unlock — both sports open to every account
+// (mg_family_sport no longer gates the toggle; signup sport = default
+// view only). Settings sport switcher shown for everyone. D1 card gets
+// the Northridge grand-opening block (self-expires after 7/20).
 
-const CACHE = 'mygrind-v394';
+const CACHE = 'mygrind-v395';
 const ASSETS = [
   '/',
   '/softball.html',
