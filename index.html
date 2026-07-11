@@ -1025,6 +1025,27 @@
     max-width: 520px;
     line-height: 1.5;
   }
+  /* Walkthrough video (2026-07-11) — real screen recording above the
+     screenshot grid. Phone-shaped, centered, no chrome. */
+  .walkthrough-wrap { margin: 0 auto 40px auto; }
+  .walkthrough-video {
+    display: block;
+    width: min(280px, 78vw);
+    margin: 0 auto;
+    border-radius: 18px;
+    border: 1px solid var(--border, #E2D9CB);
+    box-shadow: 0 18px 44px rgba(26, 20, 16, 0.18);
+    background: #F5EDE0;
+  }
+  .walkthrough-caption {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-top: 14px;
+  }
   .app-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -1665,6 +1686,31 @@ fbq('init','326334441984368');fbq('track','PageView');
   <section class="see-the-app" id="see">
     <h2 class="section-title">See what your player opens every day</h2>
     <p class="section-sub">A real product, built by a real coach.</p>
+    <!-- WALKTHROUGH VIDEO (2026-07-11): Coach's real screen recording, one
+         Game entry start to finish in 21 seconds. Muted autoplay loop, 586KB
+         web encode at /assets/walkthrough-v1.mp4. The bounce-rate answer:
+         cold ad traffic sees the product working before any explainer. -->
+    <div class="walkthrough-wrap">
+      <video class="walkthrough-video" muted autoplay loop playsinline preload="metadata" poster="/assets/walkthrough-poster.jpg" aria-label="Screen recording of a real MyGrind game entry: log the game, stats update automatically">
+        <source src="/assets/walkthrough-v1.mp4" type="video/mp4">
+      </video>
+      <p class="walkthrough-caption">One real entry, start to finish. 21 seconds.</p>
+    </div>
+    <script>
+      // iOS Low Power Mode blocks autoplay; retry on the first touch or
+      // scroll so the loop still starts for the 78%-iOS audience.
+      (function () {
+        var wv = document.querySelector('.walkthrough-video');
+        if (!wv) return;
+        function nudge() {
+          if (wv.paused) { var p = wv.play(); if (p && p.catch) p.catch(function () {}); }
+          document.removeEventListener('touchstart', nudge);
+          document.removeEventListener('scroll', nudge);
+        }
+        document.addEventListener('touchstart', nudge, { passive: true, once: true });
+        document.addEventListener('scroll', nudge, { passive: true, once: true });
+      })();
+    </script>
     <div class="app-grid">
       <figure>
         <img src="/assets/screenshots/01-dashboard.jpg" width="1080" height="1440" alt="MyGrind dashboard in the clean light theme with a six-day streak, six entries and 490 reps this week, and a completed daily check-in reading fresh, go compete" loading="lazy">

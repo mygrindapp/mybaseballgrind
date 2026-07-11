@@ -25,8 +25,11 @@
 // (mg_family_sport no longer gates the toggle; signup sport = default
 // view only). Settings sport switcher shown for everyone. D1 card gets
 // the Northridge grand-opening block (self-expires after 7/20).
+// 2026-07-11 (v396): homepage walkthrough video — Coach's real 21s screen
+// recording embedded above the screenshot grid (muted autoplay loop).
+// Video file itself is NOT precached (586KB, runtime cache handles it).
 
-const CACHE = 'mygrind-v395';
+const CACHE = 'mygrind-v396';
 const ASSETS = [
   '/',
   '/softball.html',
