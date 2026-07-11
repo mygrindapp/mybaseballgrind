@@ -28,8 +28,11 @@
 // 2026-07-11 (v396): homepage walkthrough video — Coach's real 21s screen
 // recording embedded above the screenshot grid (muted autoplay loop).
 // Video file itself is NOT precached (586KB, runtime cache handles it).
+// 2026-07-11 (v397): media bypass — the fetch handler no longer intercepts
+// video files or Range requests. The v396 handler stalled the homepage
+// walkthrough <video> for returning visitors with an installed SW.
 
-const CACHE = 'mygrind-v396';
+const CACHE = 'mygrind-v397';
 const ASSETS = [
   '/',
   '/softball.html',
@@ -60,6 +63,13 @@ self.addEventListener('fetch', e => {
 
   // Only handle same-origin GETs; never cache API calls.
   if (e.request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) {
+    return;
+  }
+
+  // Never intercept media (v397): Chrome's video pipeline sends Range
+  // requests that stall behind respondWith(fetch), and cache.put() can't
+  // store 206 partials anyway. Let the browser talk to the CDN directly.
+  if (e.request.headers.has('range') || /\.(mp4|webm|mov|m4v)$/i.test(url.pathname)) {
     return;
   }
 
