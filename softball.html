@@ -7374,7 +7374,11 @@ input[type="number"] {
         <!-- Northridge grand opening (added 7/11). Self-expiring: the
              script below hides it after July 20 PT so the card never
              carries a past event. Safe to delete any time after 7/20. -->
-        <div id="d1-grand-opening" style="padding:10px 14px; background:#231E19; border:1px solid var(--gold); border-radius:4px;">
+        <!-- background MUST be a hex the light-theme remap list covers
+             (#1E1A17 → var(--card)); an uncovered dark hex stays dark on
+             light while the text tokens remap to ink (Coach caught this
+             live, 7/11). -->
+        <div id="d1-grand-opening" style="padding:10px 14px; background:#1E1A17; border:1px solid var(--gold); border-radius:4px;">
           <div style="font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:1.5px; color:var(--gold); text-transform:uppercase; margin-bottom:2px;">Grand Opening: July 20</div>
           <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--light); line-height:1.5;">The new Northridge D1 facility opens its doors Monday, July 20. Coach will be there. Come meet the team and see where the off-season build happens.</div>
         </div>

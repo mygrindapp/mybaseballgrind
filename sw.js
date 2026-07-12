@@ -32,7 +32,10 @@
 // video files or Range requests. The v396 handler stalled the homepage
 // walkthrough <video> for returning visitors with an installed SW.
 
-const CACHE = 'mygrind-v397';
+// 2026-07-11 (v398): D1 grand-opening block readable on light theme —
+// background moved to a remap-covered hex (#1E1A17).
+
+const CACHE = 'mygrind-v398';
 const ASSETS = [
   '/',
   '/softball.html',
