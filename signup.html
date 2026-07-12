@@ -5644,18 +5644,12 @@ function recordTrialStartServerSide() {
               });
             }
           } catch (_) {}
-          // Meta Pixel conversion: fires at the same server-confirmed, brand-new
-          // signup moment as the GA sign_up event above (state.startedAt guards
-          // this whole block to exactly once). This is THE event to optimize
-          // Meta ad delivery on. Pixel base code lives in <head>.
-          try {
-            if (typeof fbq === 'function') {
-              fbq('track', 'CompleteRegistration', {
-                content_name: 'trial_started',
-                status: true
-              });
-            }
-          } catch (_) {}
+          // Meta CompleteRegistration moved SERVER-SIDE 2026-07-12 (Conversions
+          // API in api/stripe-webhook.js, checkout.session.completed). The
+          // browser-fired version never reached Meta — Jeff's and Rachel's
+          // signups were never attributed (tracker blocking; verified in
+          // Events Manager 7/12). Server event carries event_id for dedup and
+          // fbc for ad-click attribution. Do NOT re-add a client fbq here.
           return;
         }
         // Server says "already used" AND we have no state.startedAt
@@ -6139,16 +6133,13 @@ function openPlanPicker() {
   // gate that sits right before begin_checkout — comparing plan_picker_opened
   // vs begin_checkout tells us whether the card ask itself is the leak.
   try { if (typeof gtag === 'function') gtag('event', 'plan_picker_opened', { plan: _planPickerSelection, founder: !!isFounder, under_13: hasUnder13 }); } catch (e) {}
-  // Meta pixel twin of plan_picker_opened (2026-07-09): InitiateCheckout is
-  // the event the next Sales-objective campaign optimizes on — deep enough
-  // to mean intent, frequent enough for the algorithm to learn while
-  // CompleteRegistration volume is still small. Once per page load.
-  try {
-    if (!window._mgFbqInitiateCheckout && typeof fbq === 'function') {
-      window._mgFbqInitiateCheckout = true;
-      fbq('track', 'InitiateCheckout', { content_name: 'plan_picker', content_category: _planPickerSelection || 'unknown' });
-    }
-  } catch (e) {}
+  // Meta InitiateCheckout moved SERVER-SIDE 2026-07-12 (Conversions API in
+  // api/create-checkout-session.js). The browser-fired version was received
+  // by Meta ZERO times from real visitors (tracker blockers eat
+  // facebook.com/tr on most of the 96%-mobile audience; the GA4 twin above
+  // arrives fine) — verified in Events Manager during the 7/12 day-3 read.
+  // Do NOT re-add a client fbq conversion here: it would double-count the
+  // few unblocked browsers against the server event.
 
   overlay.classList.add('shown');
   overlay.setAttribute('aria-hidden', 'false');
@@ -6212,6 +6203,12 @@ async function onPlanPickerContinue() {
         trialEndUnix: trialEndUnix,
         promoCode:    state.promoCode || '',
         gaClientId:   ga4ClientId(),
+        // Meta attribution cookies (2026-07-12): the server fires the pixel
+        // conversion events via the Conversions API (browser-fired ones get
+        // eaten by tracker blockers), and fbc is what ties a conversion back
+        // to the ad click. Absent cookies send as ''.
+        fbp:          (document.cookie.match(/(?:^|;\s*)_fbp=([^;]+)/) || [])[1] || '',
+        fbc:          (document.cookie.match(/(?:^|;\s*)_fbc=([^;]+)/) || [])[1] || '',
       }),
     });
     const data = await resp.json().catch(function() { return {}; });

@@ -33,6 +33,7 @@ import Redis from 'ioredis';
 import { upsertSubscription } from '../lib/subscription-store.js';
 import { recordTrialUsed } from '../lib/trial-eligibility-store.js';
 import { getAdminAuth } from '../lib/firebase-admin.js';
+import { sendMetaEvent } from '../lib/meta-capi.js';
 
 // Redis singleton for the post-payment welcome flow. Reuses the same
 // `magiclink:<token>` key shape that api/magic-link-verify.js consumes,
@@ -762,6 +763,26 @@ export default async function handler(req, res) {
           currency:      session.currency,
           plan:          session.metadata?.mg_plan_type || 'unknown',
         });
+
+        // Meta CAPI CompleteRegistration (2026-07-12): server-truth signup
+        // conversion. The browser pixel's version never reached Meta (tracker
+        // blocking — see lib/meta-capi.js header), so Jeff's and Rachel's
+        // signups were never attributed. event_id = session id + suffix keeps
+        // it distinct from the InitiateCheckout sent by create-checkout-session
+        // while staying deterministic, so Stripe webhook retries dedupe on
+        // Meta's side. Fires for both paid and card-on-file trial signups (a
+        // trial start IS the registration). Dormant until META_CAPI_ACCESS_TOKEN
+        // is set; never throws.
+        if (session.payment_status === 'paid' || session.payment_status === 'no_payment_required') {
+          await sendMetaEvent({
+            eventName:  'CompleteRegistration',
+            eventId:    session.id + '_reg',
+            email,
+            fbp:        session.metadata?.mg_fbp || '',
+            fbc:        session.metadata?.mg_fbc || '',
+            customData: { content_name: 'trial_started', content_category: session.metadata?.mg_plan_type || 'unknown', status: true },
+          });
+        }
         break;
       }
 

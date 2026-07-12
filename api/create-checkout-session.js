@@ -46,6 +46,7 @@ import crypto from 'crypto';
 import { checkIpReadLimit, recordRead } from '../lib/rate-limit.js';
 import { checkTrialEligibility } from '../lib/trial-eligibility-store.js';
 import { getFounderCount, recordFounderSignup } from '../lib/founder-cohort-store.js';
+import { sendMetaEvent } from '../lib/meta-capi.js';
 
 const ALLOWED_ORIGINS = new Set([
   'https://www.mygrindapp.com',
@@ -132,7 +133,7 @@ export default async function handler(req, res) {
   await recordRead(clientIp);
 
   // ─── Validate input ───────────────────────────────────────
-  const { email, planType, promoCode, phone, gaClientId } = req.body || {};
+  const { email, planType, promoCode, phone, gaClientId, fbp, fbc } = req.body || {};
   // NOTE: any client-sent trialEndUnix is intentionally ignored — the trial
   // length is derived server-side below so it can't be inflated by a POST.
   // GA4 client_id from the browser's _ga cookie (optional). Stored in session
@@ -230,6 +231,12 @@ export default async function handler(req, res) {
       mg_plan_type:    plan,
       mg_promo_code:   promoCode || '',
       mg_ga_client_id: gaCid,
+      // Meta attribution cookies relayed from the browser (2026-07-12);
+      // the webhook's CompleteRegistration CAPI event reads these so the
+      // conversion can attribute back to the ad click. Sanitized in
+      // lib/meta-capi.js before sending; bounded here.
+      mg_fbp:          typeof fbp === 'string' ? fbp.slice(0, 64) : '',
+      mg_fbc:          typeof fbc === 'string' ? fbc.slice(0, 128) : '',
     },
   };
 
@@ -261,6 +268,24 @@ export default async function handler(req, res) {
       console.warn('[create-checkout-session] founder record failed (non-fatal)', { error: e && e.message });
     }
   }
+
+  // Meta CAPI InitiateCheckout (2026-07-12): the browser pixel's version of
+  // this event is blocked by tracker blockers on most of the audience and
+  // was received ZERO times in the campaign's first days — the ad set was
+  // optimizing on silence. Server-side is unblockable. event_id = the Stripe
+  // session id, deterministic, so any re-fire dedupes on Meta's side.
+  // Awaited because Vercel serverless reaps un-awaited promises at response
+  // time; sendMetaEvent never throws and self-caps at 3s (see lib/meta-capi.js).
+  await sendMetaEvent({
+    eventName:      'InitiateCheckout',
+    eventId:        session.id,
+    email:          normEmail,
+    clientIp,
+    userAgent:      req.headers['user-agent'] || '',
+    fbp:            typeof fbp === 'string' ? fbp.slice(0, 64) : '',
+    fbc:            typeof fbc === 'string' ? fbc.slice(0, 128) : '',
+    customData:     { content_name: 'stripe_checkout_opened', content_category: plan },
+  });
 
   console.log('[create-checkout-session] session created', {
     sessionId:  session.id,
