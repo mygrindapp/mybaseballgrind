@@ -543,14 +543,16 @@
     max-width: 820px; width: 100%;
   }
 
+  /* The slogan sits right under the MYGRIND wordmark at its original
+     tagline size (Coach 2026-07-17) — still the page's H1. */
   .hero h1 {
     font-family: 'Bebas Neue', sans-serif;
     font-weight: 400;
-    font-size: clamp(44px, 9vw, 92px);
-    line-height: 1.05;
-    letter-spacing: 1px;
-    color: var(--white);
-    text-shadow: 0 2px 30px rgba(0,0,0,0.5);
+    font-size: clamp(24px, 6vw, 40px);
+    line-height: 1;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin-top: 8px;
     margin-bottom: 0;
   }
 
@@ -570,16 +572,6 @@
     width: clamp(72px, 16vw, 104px);
     height: auto;
     margin: 0 auto 4px;
-  }
-
-  /* Hero slogan — the MyGrind tagline under the heading (Coach 2026-06-30). */
-  .hero-slogan {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(24px, 6vw, 40px);
-    letter-spacing: 2px;
-    color: var(--gold);
-    line-height: 1;
-    margin-top: 8px;
   }
 
   /* Gold treatment + shimmer for "ONE JOURNAL." */
@@ -1704,10 +1696,11 @@ fbq('init','326334441984368');fbq('track','PageView');
   </div>
 
   <section class="hero">
+    <!-- One headline (Coach 2026-07-17): "Track Your Grind." retired; the
+         locked slogan IS the headline. Hardcoded text = LCP element. -->
     <h1>
-      <span class="line l1"><span class="text">Track Your Grind.</span><span class="cursor c1"></span></span>
+      <span class="line l1"><span class="text">Log it. Own it.</span></span>
     </h1>
-    <p class="hero-slogan">Log it. Own it.</p>
     <div class="accent-underline" id="underline"></div>
     <div class="sport-chip" id="chip">Baseball &middot; Softball</div>
     <h2 class="subhead" id="subhead">
