@@ -57,6 +57,9 @@ CARDS = [
     {"slug": "youth-pitcher-arm-care",
      "eyebrow": "The Playbook · Arm Care",
      "title": "Youth pitcher arm care: protecting growing arms"},
+    {"slug": "youth-bat-sizing-guide",
+     "eyebrow": "The Playbook · Gear",
+     "title": "What size bat your player actually needs"},
 ]
 
 

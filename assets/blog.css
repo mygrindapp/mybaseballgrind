@@ -135,6 +135,56 @@ a:hover { color: var(--gold-light); }
 }
 .cta-button:hover { background: var(--gold-light); color: #080808; box-shadow: 0 0 24px rgba(201,168,76,0.45); }
 
+/* ── In-post gear card (Coach's affiliate picks inside articles, 2026-07-18).
+   Markup: <div class="gear-block"><p class="affiliate-note">…</p><a class="gear-card" …></a></div>
+   Clicks tracked by /assets/affiliate.js (GA4 affiliate_click, same event as /picks). */
+.gear-block { margin: 34px 0; }
+.affiliate-note {
+  font-size: 12.5px; line-height: 1.5; color: var(--grey);
+  margin: 0 0 8px;
+}
+.gear-card {
+  display: block;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  border-radius: 8px;
+  padding: 20px 22px;
+  transition: border-color 0.18s ease;
+}
+.gear-card:hover { border-color: var(--gold); }
+.gear-card .gear-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 8px;
+}
+.gear-card .gear-inner { display: flex; gap: 18px; align-items: flex-start; }
+.gear-card .gear-photo {
+  flex: 0 0 96px; width: 96px; height: 96px; object-fit: cover;
+  border-radius: 6px; border: 1px solid var(--border); display: block;
+}
+.gear-card .gear-name {
+  font-family: 'Bebas Neue', sans-serif; font-size: 24px; line-height: 1.1;
+  letter-spacing: 0.5px; color: var(--white); margin-bottom: 2px;
+}
+.gear-card .gear-by {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 13px;
+  letter-spacing: 1px; text-transform: uppercase; color: var(--grey); margin-bottom: 10px;
+}
+.gear-card .gear-why { font-size: 15.5px; line-height: 1.6; color: var(--light); margin: 0 0 14px; }
+.gear-card .gear-go {
+  display: inline-block;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+  color: #080808; background: var(--gold);
+  padding: 9px 16px; border-radius: 4px;
+}
+.gear-card:hover .gear-go { background: var(--gold-light); }
+@media (max-width: 600px) {
+  .gear-card .gear-inner { flex-direction: column; }
+  .gear-card .gear-photo { width: 100%; height: auto; flex-basis: auto; }
+}
+
 /* ── Related ── */
 .related { margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
 .related h2 {
