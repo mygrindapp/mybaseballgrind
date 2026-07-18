@@ -54,6 +54,9 @@ CARDS = [
     {"slug": "creatine-for-teenage-athletes",
      "eyebrow": "The Playbook · Nutrition",
      "title": "Creatine for teenage athletes: a coach's honest answer"},
+    {"slug": "youth-pitcher-arm-care",
+     "eyebrow": "The Playbook · Arm Care",
+     "title": "Youth pitcher arm care: protecting growing arms"},
 ]
 
 
