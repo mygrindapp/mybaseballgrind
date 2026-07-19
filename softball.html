@@ -3049,6 +3049,22 @@ input[type="number"] {
       </button>
     </div>
 
+    <!-- ── FINISH ACCOUNT SETUP (2026-07-19) — card-on-file buyers land
+         straight in the app after Stripe checkout (by design, keep it),
+         but the Firebase sign-in only happens when they tap the welcome
+         email, and the first two real buyers (Kelly 7/15, Jaime 7/18)
+         never did — so nothing syncs and the account reads as dead in
+         Firebase. Shows for a paying-track access state with no Firebase
+         session; renderFinishSetupCard() in the Firebase block owns
+         visibility. Styling mirrors #dash-nudge (gold-tint bg works on
+         both themes; avoid uncovered dark hexes per the 7/11 lesson). -->
+    <div id="finish-setup-card" style="display:none; background:rgba(201,168,76,0.08); border:1px solid var(--gold); border-radius:10px; padding:14px 16px; margin-bottom:16px;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:4px;">One Last Step</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--light); line-height:1.5; margin-bottom:10px;">Your journal works on this device right now. Signing in backs it up to your account, so every entry follows your player to any phone or computer. Tap the link in your MyGrind welcome email, or sign in here with your email.</div>
+      <a id="finish-setup-signin" href="/signin.html" style="display:inline-block; background:var(--gold); color:#181614; font-family:'Barlow Condensed',sans-serif; font-size:12px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:10px 18px; border-radius:6px; text-decoration:none;">Secure My Account</a>
+      <button type="button" onclick="dismissFinishSetupCard()" style="background:transparent; border:none; color:var(--grey); font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:1px; text-transform:uppercase; padding:10px 12px; cursor:pointer;">Later</button>
+    </div>
+
     <!-- ══ DAILY NUDGE — streak-protection reminder when not logged today ══
          Coach Young 2026-06-06: in-app nudge (shows on Dashboard when today has
          no entry/check-in) + a no-backend .ics daily phone reminder. renderDailyNudge(). -->
@@ -22797,6 +22813,35 @@ function mgClearLocalDataForIdentitySwitch(prevUid) {
     try { if (typeof renderProfilePic === 'function') renderProfilePic(null); } catch(e) {}
   } catch(e) { console.warn('[FB] identity-switch clear:', e); }
 }
+
+// ─── FINISH-SETUP CARD (2026-07-19) ──────────────────────────
+// Companion to #finish-setup-card on the dashboard. A paying-track
+// access state (card on file / trialing / active) with no Firebase
+// session means the buyer never tapped the welcome-email sign-in:
+// their journal is device-local only and invisible to cloud sync.
+// The card points at /signin.html with the email prefilled (the
+// welcome magic link expires in 24h; the code flow always works).
+// Session-dismissible; hides permanently once a sign-in lands.
+function renderFinishSetupCard(user) {
+  try {
+    var card = document.getElementById('finish-setup-card');
+    if (!card) return;
+    if (user) { card.style.display = 'none'; return; }
+    try { if (sessionStorage.getItem('mg_finish_setup_dismissed') === '1') { card.style.display = 'none'; return; } } catch (e) {}
+    var acc = (typeof getAccessState === 'function') ? getAccessState() : {};
+    var payingTrack = !!acc.hasCardOnFile || acc.subStatus === 'trialing' || acc.subStatus === 'active' || acc.subStatus === 'past_due';
+    if (!payingTrack) { card.style.display = 'none'; return; }
+    try { if (typeof getBillingRole === 'function' && getBillingRole().role === 'dependent') { card.style.display = 'none'; return; } } catch (e) {}
+    var btn = document.getElementById('finish-setup-signin');
+    if (btn && acc.email) btn.href = '/signin.html?email=' + encodeURIComponent(String(acc.email).trim());
+    card.style.display = 'block';
+  } catch (e) {}
+}
+function dismissFinishSetupCard() {
+  try { sessionStorage.setItem('mg_finish_setup_dismissed', '1'); } catch (e) {}
+  try { document.getElementById('finish-setup-card').style.display = 'none'; } catch (e) {}
+}
+auth.onAuthStateChanged(function(user) { renderFinishSetupCard(user); });
 
 auth.onAuthStateChanged(function(user) {
   fbUser = user;

@@ -35,7 +35,11 @@
 // 2026-07-11 (v398): D1 grand-opening block readable on light theme —
 // background moved to a remap-covered hex (#1E1A17).
 
-const CACHE = 'mygrind-v398';
+// 2026-07-19 (v399): finish-setup card on the dashboard — paying-track
+// account with no Firebase session gets a "secure my account" prompt
+// (both first real buyers stalled before the welcome-email sign-in).
+
+const CACHE = 'mygrind-v399';
 const ASSETS = [
   '/',
   '/softball.html',
