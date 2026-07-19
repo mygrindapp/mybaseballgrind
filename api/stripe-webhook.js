@@ -30,7 +30,7 @@ import Stripe from 'stripe';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 import Redis from 'ioredis';
-import { upsertSubscription } from '../lib/subscription-store.js';
+import { upsertSubscription, getSubscription } from '../lib/subscription-store.js';
 import { recordTrialUsed } from '../lib/trial-eligibility-store.js';
 import { getAdminAuth } from '../lib/firebase-admin.js';
 import { sendMetaEvent } from '../lib/meta-capi.js';
@@ -476,6 +476,154 @@ async function sendPostPaymentWelcomeEmail({ email }) {
   }
 }
 
+// ─── CHECKOUT RECOVERY EMAIL (2026-07-19) ───────────────────
+// Re-engagement for the warmest lead there is: someone who reached Stripe
+// Checkout (email is prefilled by create-checkout-session) and let the
+// session expire (24h) without finishing. One supportive note, ONCE per
+// email ever (90-day flag), and never to anyone who already has a
+// subscription record or a sent welcome email — an expired session from a
+// buyer who later completed a fresh session is silently skipped by both
+// guards. Additive only: no checkout-path changes. Requires the Stripe
+// dashboard webhook endpoint to subscribe to checkout.session.expired
+// before any events arrive. Fails soft like every email helper here.
+async function sendCheckoutRecoveryEmail({ email }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('[stripe-webhook] recovery email skipped: RESEND_API_KEY not set');
+    return { ok: false, reason: 'no_api_key' };
+  }
+  const normEmail = String(email || '').trim().toLowerCase();
+  if (!normEmail) {
+    console.warn('[stripe-webhook] recovery email skipped: no recipient email');
+    return { ok: false, reason: 'no_email' };
+  }
+  const r = getRedis();
+  if (!r) {
+    console.warn('[stripe-webhook] recovery email skipped: redis unavailable');
+    return { ok: false, reason: 'no_redis' };
+  }
+
+  const emailHashShort = crypto.createHash('sha256').update(normEmail).digest('hex').slice(0, 16);
+
+  // Guard 1: a sent welcome email means they completed a checkout at some
+  // point — they are a customer, not an abandoner.
+  try {
+    const welcomed = await r.get('welcome_sent:' + emailHashShort);
+    if (typeof welcomed === 'string' && welcomed.startsWith('re_')) {
+      console.log('[stripe-webhook] recovery email skipped: welcome already sent (customer)', { emailHash: piiHash(normEmail) });
+      return { ok: true, skipped: 'is_customer' };
+    }
+  } catch (e) {
+    console.warn('[stripe-webhook] recovery welcome-flag read failed (continuing):', e.message);
+  }
+
+  // Guard 2: a subscription record for this email = customer. Fail CLOSED
+  // on a read error — a skipped recovery note costs nothing, a recovery
+  // pitch landing in a paying customer's inbox costs trust.
+  try {
+    const sub = await getSubscription(normEmail);
+    if (sub) {
+      console.log('[stripe-webhook] recovery email skipped: subscription record exists', { emailHash: piiHash(normEmail) });
+      return { ok: true, skipped: 'has_subscription' };
+    }
+  } catch (e) {
+    console.warn('[stripe-webhook] recovery sub-store read failed — skipping to be safe:', e.message);
+    return { ok: false, reason: 'sub_check_failed' };
+  }
+
+  // Guard 3: once per email, ever (within the 90-day flag window). A
+  // repeat abandoner does not get a second note.
+  const recoveryFlagKey = 'recovery_sent:' + emailHashShort;
+  try {
+    const alreadySent = await r.get(recoveryFlagKey);
+    if (alreadySent) {
+      console.log('[stripe-webhook] recovery email skipped: already sent', { emailHash: piiHash(normEmail) });
+      return { ok: true, skipped: 'already_sent' };
+    }
+  } catch (e) {
+    console.warn('[stripe-webhook] recovery-flag read failed (continuing):', e.message);
+  }
+
+  const resumeUrl    = 'https://www.mygrindapp.com/signup.html?utm_source=email&utm_medium=recovery&utm_campaign=checkout_recovery';
+  const from         = process.env.RESEND_FROM || 'MyGrind <coach@mygrindapp.com>';
+  const testRedirect = process.env.WEEKLY_DIGEST_TEST_EMAIL || '';
+  const to           = testRedirect || normEmail;
+
+  const text = [
+    'You were one step from setting up your player\'s journal.',
+    '',
+    'No pressure and no pitch. The signup you started is still open, and it takes about two minutes to finish. Every plan starts with a 30-day trial, and the journal, the academics tracker, and both baseball and softball are all included.',
+    '',
+    resumeUrl,
+    '',
+    'If something at checkout gave you trouble, or you have a question about plans, just reply. I read these myself.',
+    '',
+    'Coach',
+    'The Grind',
+    '',
+    'You are getting this one note because a signup started with this email address. There is nothing to cancel, and we will not send another.',
+  ].join('\n');
+
+  const html = `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head>
+<body style="margin:0; padding:0; background:#0E0006; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif; color:#F2EAD9;">
+  <div style="max-width:560px; margin:0 auto; padding:32px 24px;">
+    <div style="font-family:'Bebas Neue',sans-serif; font-size:28px; letter-spacing:2px; color:#E8C97A; margin-bottom:8px;">MY GRIND</div>
+    <div style="height:2px; background:#B89A4B; width:64px; margin-bottom:28px;"></div>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 18px;">You were one step from setting up your player's journal.</p>
+
+    <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 24px;">
+      No pressure and no pitch. The signup you started is still open, and it takes about two minutes to finish. Every plan starts with a <strong style="color:#E8C97A;">30-day trial</strong>, and the journal, the academics tracker, and both baseball and softball are all included.
+    </p>
+
+    <div style="text-align:center; margin:0 0 28px;">
+      <a href="${resumeUrl}" style="display:inline-block; background:#E8C97A; color:#080808; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:2px; text-transform:uppercase; padding:16px 28px; border-radius:8px; text-decoration:none;">Finish Setting Up &rarr;</a>
+    </div>
+
+    <p style="font-size:13px; line-height:1.6; color:#9F9486; margin:0 0 24px;">
+      If something at checkout gave you trouble, or you have a question about plans, just reply. I read these myself.
+    </p>
+
+    <p style="font-size:15px; line-height:1.4; color:#F2EAD9; margin:0;">Coach</p>
+    <p style="font-family:'Barlow Condensed',sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#B89A4B; margin:4px 0 0;">The Grind</p>
+
+    <p style="font-size:11px; line-height:1.5; color:#6E655B; margin:28px 0 0;">
+      You are getting this one note because a signup started with this email address. There is nothing to cancel, and we will not send another.
+    </p>
+  </div>
+</body></html>`;
+
+  try {
+    const resend = new Resend(apiKey);
+    const result = await resend.emails.send({
+      from,
+      to,
+      subject: 'Your player\'s journal is still here',
+      html,
+      text,
+      replyTo: 'coach@mygrindapp.com',
+    });
+    const resendId = result?.data?.id || null;
+    const resendError = result?.error || null;
+    if (resendError || !resendId) {
+      const errMsg = resendError?.message || resendError?.name || 'no_id_returned';
+      console.error('[stripe-webhook] recovery email rejected by Resend (non-fatal):', { emailHash: piiHash(normEmail), error: errMsg });
+      return { ok: false, reason: 'resend_rejected', error: errMsg };
+    }
+    console.log('[stripe-webhook] recovery email sent', { toHash: piiHash(to), redirected: !!testRedirect, resendId });
+    try {
+      await r.set(recoveryFlagKey, resendId, 'EX', 90 * 24 * 60 * 60);
+    } catch (e) {
+      console.warn('[stripe-webhook] recovery-flag write failed (non-fatal):', e.message);
+    }
+    return { ok: true, id: resendId };
+  } catch (e) {
+    console.error('[stripe-webhook] recovery email send threw (non-fatal):', e.message);
+    return { ok: false, reason: 'send_threw', error: e.message };
+  }
+}
+
 // ─── GA4 PURCHASE (Measurement Protocol, 2026-06-02) ───────
 // Server-side `purchase` event so GA4 closes the funnel begin_checkout →
 // purchase with a signal that (a) can't be spoofed from the browser and
@@ -783,6 +931,21 @@ export default async function handler(req, res) {
             customData: { content_name: 'trial_started', content_category: session.metadata?.mg_plan_type || 'unknown', status: true },
           });
         }
+        break;
+      }
+
+      case 'checkout.session.expired': {
+        // Abandoned checkout (2026-07-19): the session sat 24h unfinished.
+        // customer_email is prefilled by create-checkout-session, so the
+        // hottest lead in the funnel gets one supportive recovery note.
+        // All customer/duplicate guards live inside the helper.
+        const session = event.data.object;
+        const email = session.customer_details?.email || session.customer_email;
+        if (!email) {
+          console.log('[stripe-webhook] checkout.session.expired: no email on session', { sessionId: session.id });
+          break;
+        }
+        await sendCheckoutRecoveryEmail({ email });
         break;
       }
 
