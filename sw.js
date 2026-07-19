@@ -39,7 +39,11 @@
 // account with no Firebase session gets a "secure my account" prompt
 // (both first real buyers stalled before the welcome-email sign-in).
 
-const CACHE = 'mygrind-v399';
+// 2026-07-19 (v400): first-open coherence — Start Here strip on Profile
+// until name/position/age are saved; graduation to dashboard-first now
+// requires at least a saved name (Academics tap alone no longer counts).
+
+const CACHE = 'mygrind-v400';
 const ASSETS = [
   '/',
   '/softball.html',

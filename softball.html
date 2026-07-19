@@ -4917,6 +4917,17 @@ input[type="number"] {
       <div class="gold-line"></div>
     </div>
 
+    <!-- ── START HERE strip (2026-07-19, Coach: "make the app make sense") —
+         first open lands on this panel (routing decision 5/27), but the page
+         never said WHY, so it read as random rather than guided. Shows until
+         name + position + age are saved; renderProfileStartHere() owns
+         visibility and saveProfile() re-runs it so it retires live as they
+         type. Gold-tint bg works on both themes (same pattern as #dash-nudge). -->
+    <div id="profile-start-here" style="display:none; background:rgba(201,168,76,0.08); border:1px solid var(--gold); border-radius:10px; padding:12px 16px; margin-bottom:16px;">
+      <div style="font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:2px;">Start Here</div>
+      <div style="font-family:'Barlow',sans-serif; font-size:13.5px; color:var(--light); line-height:1.5;">First step: tell the journal who is grinding. Add a name, position, and age below. It saves as you type, and the whole app builds around it.</div>
+    </div>
+
     <!-- Settings gateway (2026-06-03): Settings has its own panel; surface a
          clear, compact entry at the top of Profile — where people look for it,
          and the tab that already stays highlighted while Settings is open.
@@ -16300,6 +16311,7 @@ function saveProfile() {
   }
   updateDashboardName(profile.name);
   updateProfileDisplay(profile.name, profile.pos, profile.school);
+  try { renderProfileStartHere(); } catch (e) {}
   // Coach Young 2026-05-17: grade selection drives the Academics surface
   // (MS / HS / College). Re-render the dashboard card (which also re-paints
   // the dedicated Academics tab via the renderAcademicsContext call inside)
@@ -22395,18 +22407,21 @@ window.addEventListener('load', function() {
     } else {
       // First-signup routing (Coach Young 2026-05-27): new users land on
       // Profile (panel-players) so they can identify themselves and tap
-      // "Continue to Academics" at the bottom. Once Academics has been
-      // visited at least once OR the profile is complete, default is the
-      // Dashboard. isProfileComplete + hasVisitedAcademics defined below.
-      // Changed 2026-06-09 from Journal -> Dashboard: returning users land on
-      // the engagement home (streak, Your Week, daily nudge) instead of a
-      // blank log screen. Logging stays one tap away via the bottom Journal
-      // tab + the Dashboard "Log Now" nudge when today is unlogged.
-      var graduated = (typeof isProfileComplete === 'function' && isProfileComplete()) ||
-                      (typeof hasVisitedAcademics === 'function' && hasVisitedAcademics());
+      // "Continue to Academics" at the bottom. Changed 2026-06-09 from
+      // Journal -> Dashboard: returning users land on the engagement home
+      // (streak, Your Week, daily nudge) instead of a blank log screen.
+      // Tightened 2026-07-19 (Coach: profile is the first thing they DO):
+      // a saved name is now required to graduate — tapping through to
+      // Academics with a blank profile no longer counts, so a nameless
+      // journal keeps landing on Profile (with the Start Here strip)
+      // until the player says who they are. One field to graduate.
+      var graduated = (typeof hasProfileName === 'function' && hasProfileName()) &&
+                      ((typeof isProfileComplete === 'function' && isProfileComplete()) ||
+                       (typeof hasVisitedAcademics === 'function' && hasVisitedAcademics()));
       var defaultTab = graduated ? 'dashboard' : 'players';
       mgTab(defaultTab, 'tab-' + defaultTab);
     }
+    try { renderProfileStartHere(); } catch (e) {}
   }, 250);
 });
 
@@ -22595,6 +22610,20 @@ function isProfileComplete() {
 function hasVisitedAcademics() {
   try { return localStorage.getItem('mg_visited_academics') === '1'; }
   catch (e) { return false; }
+}
+// 2026-07-19: name is the graduation floor (see routing above) and the
+// Start Here strip on Profile stays up until the full trio is saved.
+function hasProfileName() {
+  try {
+    var p = JSON.parse(localStorage.getItem('ybg_softball_profile') || '{}');
+    return !!String(p.name || '').trim();
+  } catch (e) { return false; }
+}
+function renderProfileStartHere() {
+  try {
+    var el = document.getElementById('profile-start-here');
+    if (el) el.style.display = isProfileComplete() ? 'none' : 'block';
+  } catch (e) {}
 }
 </script>
 
