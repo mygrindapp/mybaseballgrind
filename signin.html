@@ -614,14 +614,53 @@ async function verifySignInCode() {
 
     const result = await auth.signInWithCustomToken(data.customToken);
     await persistLocalAuthState(result.user);
+    if (data.newAccount) subscribeNewAccountToMailchimp(data.email || pendingEmail);
     showState('state-success');
-    setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, 700);
+    // New accounts hold the success screen a beat longer so the fire-and-
+    // forget Mailchimp JSONP isn't cancelled by the navigation.
+    setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, data.newAccount ? 1500 : 700);
   } catch (e) {
     console.error('[signin] verifySignInCode failed:', e);
     showError('code-error', 'Sign-in failed. Request a new code and try again.');
     btn.disabled = false;
     btn.textContent = orig;
   }
+}
+
+// ─── NEW-ACCOUNT MAILCHIMP SYNC ──────────────────────────
+// signup.html subscribes buyers to the MyGrind audience at checkout, but
+// an account minted HERE (a first-ever sign-in with a code creates the
+// Firebase identity server-side) never touches signup.html, so those
+// players were invisible to MyGrind Weekly. The server flags newAccount
+// on the first mint; same audience + tag as signup.html so the welcome
+// automation fires. The subscribed address is always the one the person
+// typed and verified with a code themselves, so the signup.html COPPA
+// guard's harvested-child-email concern does not arise here.
+function subscribeNewAccountToMailchimp(email) {
+  try {
+    if (!email) return;
+    var cb = 'mgmcsubcb_' + Date.now() + '_' + Math.floor(Math.random() * 100000);
+    var url = 'https://youngsbaseball.us8.list-manage.com/subscribe/post-json'
+      + '?u=73280b4c02e9bc56c7e633892'
+      + '&id=a7d801599a'
+      + '&f_id=0089ace1f0'
+      + '&EMAIL=' + encodeURIComponent(email)
+      + '&tags=2216797'
+      + '&b_73280b4c02e9bc56c7e633892_a7d801599a='
+      + '&c=' + cb;
+    var s = document.createElement('script');
+    window[cb] = function () {
+      try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+      if (s.parentNode) s.parentNode.removeChild(s);
+    };
+    s.async = true;
+    s.onerror = function () {
+      try { delete window[cb]; } catch (_) { window[cb] = undefined; }
+      if (s.parentNode) s.parentNode.removeChild(s);
+    };
+    s.src = url;
+    document.head.appendChild(s);
+  } catch (_) { /* fail-open — never block sign-in */ }
 }
 
 function goBackToEmailEntry() {

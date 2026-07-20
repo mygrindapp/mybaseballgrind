@@ -185,8 +185,9 @@ export default async function handler(req, res) {
   }
 
   console.log('[auth/verify-code] signed in', {
-    emailHash: piiHash(normEmail),
-    uid:       mint.uid,
+    emailHash:  piiHash(normEmail),
+    uid:        mint.uid,
+    newAccount: !!mint.created,
   });
 
   return res.status(200).json({
@@ -194,5 +195,6 @@ export default async function handler(req, res) {
     customToken: mint.customToken,
     email:       mint.email,
     uid:         mint.uid,
+    newAccount:  !!mint.created,
   });
 }
