@@ -43,7 +43,12 @@
 // until name/position/age are saved; graduation to dashboard-first now
 // requires at least a saved name (Academics tap alone no longer counts).
 
-const CACHE = 'mygrind-v400';
+// 2026-07-21 (v401): backdate discoverability — the passive helper text
+// under the entry Date field is now a tappable gold "Missed a day?" link
+// that opens the picker (founder feedback: Kelly Balconi's son couldn't
+// find how to log last week's tournament).
+
+const CACHE = 'mygrind-v401';
 const ASSETS = [
   '/',
   '/softball.html',
