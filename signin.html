@@ -618,7 +618,7 @@ async function verifySignInCode() {
     showState('state-success');
     // New accounts hold the success screen a beat longer so the fire-and-
     // forget Mailchimp JSONP isn't cancelled by the navigation.
-    setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, data.newAccount ? 1500 : 700);
+    setTimeout(() => { window.location.href = postSignInUrl(); }, data.newAccount ? 1500 : 700);
   } catch (e) {
     console.error('[signin] verifySignInCode failed:', e);
     showError('code-error', 'Sign-in failed. Request a new code and try again.');
@@ -722,7 +722,7 @@ async function handleAdminRescueReturn() {
     const result = await auth.signInWithCustomToken(data.customToken);
     await persistLocalAuthState(result.user);
     showState('state-success');
-    setTimeout(() => { window.location.href = '/softball.html?signed_in=1'; }, 700);
+    setTimeout(() => { window.location.href = postSignInUrl(); }, 700);
     return true;
   } catch (e) {
     console.error('[signin] handleAdminRescueReturn:', e);
@@ -730,6 +730,23 @@ async function handleAdminRescueReturn() {
     showError('email-error', 'Sign-in failed. Try again with a code.');
     return true;
   }
+}
+
+// Post-sign-in destination. Carries a whitelisted ?next= through the
+// sign-in flow so email deep links can land somewhere specific. Used by
+// api/cron/backup-nudge.js, whose "Protect the journal" button points at
+// /signin.html?email=...&next=backup and expects the Save-to-Cloud card
+// to be showing when the journal opens. Whitelisted (not a free-form
+// URL) so this can never become an open-redirect.
+const NEXT_DESTINATIONS = { backup: '/softball.html?signed_in=1&next=backup' };
+function postSignInUrl() {
+  try {
+    const next = new URLSearchParams(window.location.search).get('next');
+    if (next && Object.prototype.hasOwnProperty.call(NEXT_DESTINATIONS, next)) {
+      return NEXT_DESTINATIONS[next];
+    }
+  } catch (e) {}
+  return '/softball.html?signed_in=1';
 }
 
 // ─── INIT ────────────────────────────────────────────────
@@ -742,7 +759,7 @@ window.addEventListener('DOMContentLoaded', async () => {
       // path handles its own success state + redirect.
       const qs = new URLSearchParams(window.location.search);
       if (qs.get('mode') !== 'magicLink') {
-        window.location.href = '/softball.html?signed_in=1';
+        window.location.href = postSignInUrl();
       }
     }
   });

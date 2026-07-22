@@ -7,6 +7,10 @@
     {
       "path": "/api/cron/daily-reminder",
       "schedule": "0 1 * * *"
+    },
+    {
+      "path": "/api/cron/backup-nudge",
+      "schedule": "0 15 * * 4"
     }
   ],
   "rewrites": [

@@ -23282,6 +23282,17 @@ async function bulkBackupToCloud() {
   }
 }
 
+// True when the user arrived from the "Protect the journal" button in the
+// backup-nudge email (api/cron/backup-nudge.js → /signin.html?next=backup →
+// here). That is an explicit request to back up, so renderCloudBackupBanner
+// lets it override the 14-day dismissal throttle and scrolls the card into
+// view. It does NOT override mg_cloud_backup_done — if the catch-up already
+// ran there is nothing left to do.
+function _mgWantsBackup() {
+  try { return new URLSearchParams(window.location.search).get('next') === 'backup'; }
+  catch (e) { return false; }
+}
+
 // Dismiss handler — stamp the time so we can soft-throttle re-prompts
 // (re-show in ~14 days if user keeps adding entries without backing up).
 function dismissCloudBackupBanner() {
@@ -23297,6 +23308,9 @@ function dismissCloudBackupBanner() {
 //   - localStorage has at least 1 journal entry
 //   - mg_cloud_backup_done is NOT set
 //   - mg_cloud_backup_dismissed was either never set or > 14 days ago
+//   - EXCEPTION: arriving from the backup-nudge email (?next=backup)
+//     overrides the dismissal throttle, since that is an explicit request
+//     to back up. It does NOT override mg_cloud_backup_done.
 function renderCloudBackupBanner() {
   try {
     const banner = document.getElementById('cloud-backup-banner');
@@ -23304,7 +23318,8 @@ function renderCloudBackupBanner() {
     if (!fbUser) { banner.style.display = 'none'; return; }
     if (localStorage.getItem('mg_cloud_backup_done')) { banner.style.display = 'none'; return; }
 
-    const dismissedAt = localStorage.getItem('mg_cloud_backup_dismissed');
+    const fromEmail = _mgWantsBackup();
+    const dismissedAt = fromEmail ? null : localStorage.getItem('mg_cloud_backup_dismissed');
     if (dismissedAt) {
       const elapsedDays = (Date.now() - new Date(dismissedAt).getTime()) / (1000 * 60 * 60 * 24);
       if (Number.isFinite(elapsedDays) && elapsedDays < 14) {
@@ -23323,6 +23338,16 @@ function renderCloudBackupBanner() {
     const countEl = document.getElementById('cloud-backup-count');
     if (countEl) countEl.textContent = entryCount;
     banner.style.display = 'flex';
+
+    // Arrived from the email CTA: put the card on screen instead of
+    // leaving them to hunt for it. Once only, so a later re-render does
+    // not yank the page around while they are reading.
+    if (fromEmail && !banner.dataset.mgScrolled) {
+      banner.dataset.mgScrolled = '1';
+      setTimeout(function() {
+        try { banner.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+      }, 400);
+    }
   } catch (e) {
     console.warn('[cloud-backup] render:', e);
   }
