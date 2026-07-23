@@ -190,9 +190,19 @@
       "name": "Michael Young",
       "givenName": "Michael",
       "familyName": "Young",
-      "jobTitle": "Founder",
-      "description": "Founder of MyGrind. 35 years in baseball as a coach, trainer, dad, and mentor. Experience spans youth, high school, and travel levels.",
+      "jobTitle": ["Founder", "Head Baseball Coach"],
+      "description": "Founder of MyGrind. 35 years in baseball as a coach, trainer, dad, and mentor. Experience spans youth, high school, and travel levels. Current head baseball coach at Canyon High School in Santa Clarita, California.",
       "worksFor": { "@id": "https://www.mygrindapp.com/#organization" },
+      "affiliation": {
+        "@type": "HighSchool",
+        "name": "Canyon High School",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Santa Clarita",
+          "addressRegion": "CA",
+          "addressCountry": "US"
+        }
+      },
       "knowsAbout": [
         "Baseball coaching",
         "Softball coaching",
@@ -205,7 +215,20 @@
       "sameAs": [
         "https://www.linkedin.com/in/coachmikeyoung",
         "https://www.instagram.com/youngsbaseball/"
-      ]
+      ],
+      "subjectOf": {
+        "@type": "NewsArticle",
+        "headline": "Mike Young named as new Canyon High baseball head coach",
+        "url": "https://signalscv.com/2026/07/mike-young-named-as-new-canyon-high-baseball-head-coach/",
+        "datePublished": "2026-07-22",
+        "author": { "@type": "Person", "name": "Ryan Romero" },
+        "publisher": {
+          "@type": "NewsMediaOrganization",
+          "name": "The Signal",
+          "alternateName": "Santa Clarita Valley Signal",
+          "url": "https://signalscv.com/"
+        }
+      }
     },
     {
       "@type": "FAQPage",
