@@ -122,11 +122,23 @@
     <p class="foot">A product of <a href="/">My Grind Sports LLC</a></p>
   </main>
   <script>
-    document.querySelectorAll('a[data-track]').forEach(function(a){
-      a.addEventListener('click', function(){
-        try { gtag('event', 'bio_hub_click', { target: a.getAttribute('data-track') }); } catch (_) {}
+    // Per-platform bio tag: /links?s=ig maps the short code to a real utm_source
+    // and carries it through to every outbound link, so signups attribute back
+    // to the platform the visitor came from (not just "bio"). Falls back to bio.
+    (function(){
+      var MAP = { ig:'instagram', tt:'tiktok', x:'twitter', fb:'facebook', pin:'pinterest', yt:'youtube', bio:'bio' };
+      var code = (new URLSearchParams(location.search).get('s') || '').toLowerCase();
+      var src = MAP[code] || 'bio';
+      var links = document.querySelectorAll('a[data-track]');
+      if (src !== 'bio') {
+        links.forEach(function(a){ a.href = a.href.replace('utm_source=bio', 'utm_source=' + src); });
+      }
+      links.forEach(function(a){
+        a.addEventListener('click', function(){
+          try { gtag('event', 'bio_hub_click', { target: a.getAttribute('data-track'), source: src }); } catch (_) {}
+        });
       });
-    });
+    })();
   </script>
 </body>
 </html>
