@@ -690,16 +690,6 @@ h1 span {
    before being asked to classify themselves.
    Barlow on purpose: h1 is Bebas Neue 46px, a condensed display face that
    only works on three or four words. Sentence-length copy goes here. */
-.s0-lead {
-  max-width: 340px;
-  margin: 0 auto 18px auto;
-  padding: 0 4px;
-  font-family: 'Barlow', sans-serif;
-  font-size: 15.5px;
-  line-height: 1.5;
-  color: var(--light);
-  text-align: center;
-}
 .s0-value {
   max-width: 340px;
   margin: 0 auto 20px auto;
@@ -2293,7 +2283,10 @@ fbq('track','ViewContent',{content_name:'signup_page'});
        before anything had been offered. Screens 2+ still carry it. -->
 
   <div class="screen-body">
-    <div class="wordmark">Welcome to MyGrind</div>
+    <!-- "Welcome to MyGrind" eyebrow removed 2026-07-25 (Coach). Redundant now
+         that the lead line below names the product outright, and it burned
+         vertical space above the fold on mobile. The .wordmark CSS rule is left
+         in place but is currently unused on this page. -->
 
     <!-- ─────────────────────────────────────────────────────────
          VALUE BEFORE THE ASK (2026-07-25)
@@ -2311,7 +2304,9 @@ fbq('track','ViewContent',{content_name:'signup_page'});
          Baseline to beat: 3.4% tap rate. Judge on the ratio, not raw
          taps, since weekly traffic swings hard.
          ───────────────────────────────────────────────────────── -->
-    <p class="s0-lead">The training journal for baseball and softball players. What your player does between games is the separator, and this is where they write it down.</p>
+    <!-- Lead paragraph removed 2026-07-25 (Coach): it restated what the three
+         proof lines below already say. The proof lines stay — they are what
+         tells cold traffic what MyGrind is before the audience question. -->
 
     <div class="s0-value">
       <div class="s0-value-row">
@@ -5705,19 +5700,20 @@ function recordTrialStartServerSide() {
           // the client side too).
           state.startedAt = new Date().toISOString();
           saveState();
-          // GA4 conversion event: a genuine, brand-new signup just completed
-          // (server confirmed started:true; the state.startedAt stamp above
-          // means this block runs exactly once per signup, so no double-count).
-          // Mark "sign_up" as a Key Event in GA4 to see it in the funnel.
-          try {
-            if (typeof gtag === 'function') {
-              gtag('event', 'sign_up', {
-                method: 'signup_flow',
-                plan:   state.preferredPlan || 'unknown',
-                sport:  state.familySport  || 'unknown'
-              });
-            }
-          } catch (_) {}
+          // GA4 `sign_up` was fired here until 2026-07-25. REMOVED — do not
+          // re-add it to this callback. Two reasons:
+          //  1. It never actually ran. onScreen7Continue() calls finishSignup()
+          //     and then immediately does window.location.href = <stripe or
+          //     onboarding>, so the page unloaded before this .then() resolved.
+          //     GA4 logged ZERO sign_up events over 28 days against 4+ real
+          //     signups. The server-side trial record still happened, so abuse
+          //     prevention was never affected — only analytics.
+          //  2. Even if it had run, this point is BEFORE Stripe Checkout, so it
+          //     would have counted abandoned checkouts as completed signups.
+          //     begin_checkout already measures "reached checkout".
+          // sign_up now fires from softball.html on a real ?co=success return
+          // (see flushSignupConversion there), guarded once-ever by
+          // localStorage mg_signup_ga4_sent.
           // Meta CompleteRegistration moved SERVER-SIDE 2026-07-12 (Conversions
           // API in api/stripe-webhook.js, checkout.session.completed). The
           // browser-fired version never reached Meta — Jeff's and Rachel's

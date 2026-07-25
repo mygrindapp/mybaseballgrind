@@ -56,7 +56,14 @@
 // moved the card disclosure below the tap cards (same copy), dropped the 0%
 // progress bar. Bumped because signup.html is runtime-cached, so returning
 // visitors would otherwise keep the stale gate screen.
-const CACHE = 'mygrind-v402';
+// 2026-07-25 (v403): GA4 sign_up conversion actually fires. It used to sit in
+// signup.html inside the /api/start-trial .then(), which never ran because
+// onScreen7Continue() redirects to Stripe on the next line and unloads the
+// page — 0 sign_up events in 28 days against 4+ real signups. Moved to
+// softball.html on a real ?co=success return (the only state that proves
+// Stripe completed), guarded once-ever by localStorage mg_signup_ga4_sent.
+// softball.html is precached, so this bump is required to ship it.
+const CACHE = 'mygrind-v403';
 const ASSETS = [
   '/',
   '/softball.html',

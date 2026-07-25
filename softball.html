@@ -8950,6 +8950,32 @@ function lockInCardReturnHandler() {
       // never re-prompts (signup.html reads this; the flag is intentionally
       // NOT set on mere redirect-to-Stripe, only here on a real success).
       try { localStorage.setItem('mg_plan_picker_shown', '1'); } catch (_) {}
+      // ─── GA4 `sign_up` CONVERSION (2026-07-25) ────────────────────
+      // This is the ONLY place sign_up is fired, and ?co=success is the only
+      // state that proves Stripe actually completed a checkout.
+      //
+      // It used to live in signup.html's recordTrialStartServerSide(), inside
+      // the /api/start-trial .then() callback. That callback never ran:
+      // onScreen7Continue() calls finishSignup() and then immediately does
+      // window.location.href = <stripe|onboarding>, so the page unloaded
+      // before the promise resolved. The trial still got recorded server-side
+      // (abuse prevention was unaffected) but GA4 logged ZERO sign_up events
+      // across 28 days despite 4+ real signups, leaving begin_checkout as the
+      // last visible funnel step and forcing hand-reconciliation vs Stripe.
+      //
+      // signup.html is also the wrong place semantically: it fires BEFORE
+      // Stripe, so it would count abandoned checkouts as signups.
+      // begin_checkout already measures "reached checkout".
+      //
+      // Only a flag is set here. The actual send happens in the analytics
+      // block (mgLog is declared much later in the file, and the
+      // pending-onboarding branch below can location.replace() away, which
+      // would cancel any setTimeout). localStorage survives both.
+      try {
+        if (!localStorage.getItem('mg_signup_ga4_sent')) {
+          localStorage.setItem('mg_signup_ga4_pending', '1');
+        }
+      } catch (_) {}
       // Optimistic subscription stamp: this device just watched Stripe
       // Checkout succeed, so hide the trial-countdown banner NOW instead of
       // waiting for syncSubscriptionFromServer (which needs a signed-in
@@ -22758,6 +22784,51 @@ try { fbAnalytics = firebase.analytics(); } catch (e) {}
 function mgLog(name, params) {
   try { if (fbAnalytics) fbAnalytics.logEvent(name, params || {}); } catch (e) {}
 }
+
+// ─── GA4 `sign_up` FLUSH (2026-07-25) ──────────────────────────────
+// lockInCardReturnHandler() sets mg_signup_ga4_pending on a real Stripe
+// ?co=success return, but it runs long before mgLog exists and may
+// location.replace() to onboarding.html straight after. So the send is
+// deferred to here, where fbAnalytics is initialised. The flag lives in
+// localStorage so it survives that redirect and fires when the player
+// lands back in the app.
+//
+// Guarded by mg_signup_ga4_sent (localStorage, once EVER per browser) and
+// not mgLogOnce, which uses sessionStorage — too weak for a conversion
+// event, since a second session could double-count it.
+// Mark sign_up as a Key Event in GA4 to close the funnel.
+(function flushSignupConversion() {
+  try {
+    if (!localStorage.getItem('mg_signup_ga4_pending')) return;
+    if (localStorage.getItem('mg_signup_ga4_sent')) {
+      localStorage.removeItem('mg_signup_ga4_pending');
+      return;
+    }
+    if (!fbAnalytics) return;            // blocked/unsupported: keep pending, retry next load
+    var acc = {};
+    try { acc = getAccessState() || {}; } catch (_) {}
+    // A brand-new buyer's access state has no plan yet (the optimistic stamp in
+    // lockInCardReturnHandler only spreads what was already there), so fall
+    // back to the plan signup.html recorded in its own state. Without this the
+    // plan dimension is always "unknown" on the signups we most want to read.
+    var plan = acc.plan || '';
+    if (!plan) {
+      try {
+        var ss = JSON.parse(localStorage.getItem('mg_signup_state') || '{}');
+        plan = ss.preferredPlan || '';
+      } catch (_) {}
+    }
+    var sport = '';
+    try { sport = localStorage.getItem('mg_sport') || ''; } catch (_) {}
+    mgLog('sign_up', {
+      method: 'signup_flow',
+      plan:   plan  || 'unknown',
+      sport:  sport || 'unknown'
+    });
+    localStorage.setItem('mg_signup_ga4_sent', '1');
+    localStorage.removeItem('mg_signup_ga4_pending');
+  } catch (e) {}
+})();
 
 // ══ AUTH STATE ════════════════════════════════════════════════════
 var fbUser = null;
