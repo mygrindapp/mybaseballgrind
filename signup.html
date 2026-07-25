@@ -685,6 +685,44 @@ h1 span {
   text-transform: uppercase;
   color: var(--gold);
 }
+/* Screen 0 value copy (2026-07-25). A lead line plus three one-liners ABOVE
+   the "Who's this for?" headline, so a cold visitor learns what MyGrind is
+   before being asked to classify themselves.
+   Barlow on purpose: h1 is Bebas Neue 46px, a condensed display face that
+   only works on three or four words. Sentence-length copy goes here. */
+.s0-lead {
+  max-width: 340px;
+  margin: 0 auto 18px auto;
+  padding: 0 4px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 15.5px;
+  line-height: 1.5;
+  color: var(--light);
+  text-align: center;
+}
+.s0-value {
+  max-width: 340px;
+  margin: 0 auto 20px auto;
+  padding: 0 4px;
+}
+.s0-value-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-family: 'Barlow', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--light);
+  text-align: left;
+}
+.s0-value-row:last-child { margin-bottom: 0; }
+.s0-value-row .mg-icon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: var(--gold);
+}
+
 .under18-callout {
   margin: 18px auto 0 auto;
   max-width: 380px;
@@ -2250,19 +2288,51 @@ fbq('track','ViewContent',{content_name:'signup_page'});
      ═══════════════════════════════════════════════════════════ -->
 <div class="screen active" id="s0">
 
-  <div class="prog-wrap">
-    <div class="prog-track">
-      <div class="prog-fill" style="width: 0%"></div>
-    </div>
-    <div class="prog-label">
-      <span>Quick question first</span>
-      <span></span>
-    </div>
-  </div>
+  <!-- Progress bar removed from Screen 0 (2026-07-25). A 0% bar labelled
+       "Quick question first" told a cold visitor a long form was coming
+       before anything had been offered. Screens 2+ still carry it. -->
 
   <div class="screen-body">
     <div class="wordmark">Welcome to MyGrind</div>
 
+    <!-- ─────────────────────────────────────────────────────────
+         VALUE BEFORE THE ASK (2026-07-25)
+         Screen 0 used to open with "Who's this for?" followed by the
+         card disclosure, and never once said what MyGrind actually is.
+         28-day funnel read: 291 /signup.html visitors produced 10
+         audience_selected taps (3.4%), while start-to-checkout for
+         people who DID tap was a healthy 60% (10 → 8 → 6). The leak is
+         this screen, not the eight behind it. 76% of arrivals are cold
+         Meta traffic (m.facebook.com is the #1 referrer) and will not
+         classify themselves before the product is explained.
+         The card disclosure is UNCHANGED and still on this screen, per
+         the 2026-07-09 honest-framing decision. It moved below the tap
+         cards so friction stops being the second thing read.
+         Baseline to beat: 3.4% tap rate. Judge on the ratio, not raw
+         taps, since weekly traffic swings hard.
+         ───────────────────────────────────────────────────────── -->
+    <p class="s0-lead">The training journal for baseball and softball players. What your player does between games is the separator, and this is where they write it down.</p>
+
+    <div class="s0-value">
+      <div class="s0-value-row">
+        <svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-clock"/></svg>
+        <span>One minute a day. Practices, games, reps, and how it felt.</span>
+      </div>
+      <div class="s0-value-row">
+        <svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-bar-chart-3"/></svg>
+        <span>Progress they can see, week over week.</span>
+      </div>
+      <div class="s0-value-row">
+        <svg class="mg-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><use href="#mg-icon-target"/></svg>
+        <span>Baseball and softball. Boys and girls, 10 to 18.</span>
+      </div>
+    </div>
+
+    <!-- Original Screen 0 headline, unchanged. It now sits BELOW the value copy
+         so the product is explained before the visitor is asked to classify
+         themselves. Kept short on purpose: h1 is Bebas Neue 46px, a condensed
+         display face that breaks down badly on sentence-length copy. Any
+         explanatory text belongs in .s0-lead (Barlow), never in here. -->
     <h1>
       Who's this for?
       <span>So we set up the right experience.</span>
@@ -2272,10 +2342,6 @@ fbq('track','ViewContent',{content_name:'signup_page'});
 
     <div style="text-align:center;">
       <div class="no-card-pill">30 days free · Cancel anytime</div>
-      <!-- Card expectation set up front (2026-07-09, ad-funnel fix): paid
-           traffic lands here, and hitting the card ask cold on Screen 7 was
-           killing mobile signups. Honest framing beats the surprise. -->
-      <p style="margin:10px auto 0; max-width:320px; font-family:'Barlow',sans-serif; font-size:12.5px; color:#A89880; line-height:1.5;">Card on file to start, nothing charged until day 31. We remind you twice before then, and canceling is one tap.</p>
     </div>
 
     <div style="margin-top: 28px;">
@@ -2300,6 +2366,14 @@ fbq('track','ViewContent',{content_name:'signup_page'});
         </div>
       </button>
 
+      <!-- Card expectation set up front (2026-07-09, ad-funnel fix): paid
+           traffic lands here, and hitting the card ask cold on Screen 7 was
+           killing mobile signups. Honest framing beats the surprise. Moved
+           from above the tap cards to below them 2026-07-25 — same copy, same
+           screen, it just no longer greets a cold visitor before the product
+           has been explained. Never write "no card required" here. -->
+      <p style="margin:16px auto 0; max-width:340px; font-family:'Barlow',sans-serif; font-size:12.5px; color:#A89880; line-height:1.5; text-align:center;">Card on file to start, nothing charged until day 31. We remind you twice before then, and canceling is one tap.</p>
+
       <div class="under18-callout">
         <strong>Under 18?</strong> Tap <em>I'm a parent</em> above and have your mom, dad, or guardian sign up. They'll set it up and you can still have your own player profile.
       </div>
@@ -2311,7 +2385,7 @@ fbq('track','ViewContent',{content_name:'signup_page'});
            them to it. Guardrail copy still tells fresh signers to use their
            own phone so we don't compound the problem. -->
       <p style="font-family:'Barlow',sans-serif; font-size:13px; color:var(--grey); line-height:1.6; text-align:center; margin-top:20px; padding:0 4px;">
-        Sign up on <strong style="color:var(--gold);">your own phone</strong>. Your account locks to this device. Setting up someone else? Pick <strong style="color:var(--light);">I'm a parent</strong> and we'll text them their setup link to start on their own phone.
+        Sign up on <strong style="color:var(--gold);">your own phone</strong>. Setting up someone else? Pick <strong style="color:var(--light);">I'm a parent</strong> and we'll text them their link.
       </p>
 
       <!-- Returning-user sign-in entry. Lives below the two audience tiles so

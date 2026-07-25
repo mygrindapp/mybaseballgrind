@@ -48,7 +48,15 @@
 // that opens the picker (founder feedback: Kelly Balconi's son couldn't
 // find how to log last week's tournament).
 
-const CACHE = 'mygrind-v401';
+// 2026-07-25 (v402): signup Screen 0 leads with value. 28-day funnel showed
+// 291 /signup.html visitors producing 10 audience_selected taps (3.4%), while
+// start-to-checkout for people who tapped was a healthy 60%. Screen 0 never
+// said what MyGrind is and opened with the card disclosure. Added a Barlow
+// lead line + 3 proof points ABOVE the original "Who's this for?" headline,
+// moved the card disclosure below the tap cards (same copy), dropped the 0%
+// progress bar. Bumped because signup.html is runtime-cached, so returning
+// visitors would otherwise keep the stale gate screen.
+const CACHE = 'mygrind-v402';
 const ASSETS = [
   '/',
   '/softball.html',
