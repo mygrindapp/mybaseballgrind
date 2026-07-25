@@ -63,7 +63,16 @@
 // softball.html on a real ?co=success return (the only state that proves
 // Stripe completed), guarded once-ever by localStorage mg_signup_ga4_sent.
 // softball.html is precached, so this bump is required to ship it.
-const CACHE = 'mygrind-v403';
+// 2026-07-25 (v404): brand fonts survive offline. Bebas Neue / Barlow /
+// Barlow Condensed / Lora all load from the Google Fonts CDN and none are
+// self-hosted, and the fetch handler returned early on anything cross-origin,
+// so an offline load of the precached shell fell back to system faces. Coach
+// caught it when a static file:// snapshot showed the same failure. Font URLs
+// are content-versioned and immutable, so cache-first is correct and also
+// saves two round-trips on repeat visits.
+const CACHE = 'mygrind-v404';
+// Cache-first cross-origin hosts. Nothing else cross-origin is intercepted.
+const FONT_HOSTS = ['https://fonts.googleapis.com', 'https://fonts.gstatic.com'];
 const ASSETS = [
   '/',
   '/softball.html',
@@ -91,6 +100,37 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
+
+  // ── Google Fonts: cache-first (v404) ────────────────────────────────
+  // Must sit ABOVE the same-origin early return, which is what previously
+  // let every font request through uncached.
+  //
+  // Two gotchas handled here:
+  //  1. The stylesheet <link> is no-cors, so its response is opaque with
+  //     status 0 and cache.put() rejects it outright. Google Fonts sends
+  //     Access-Control-Allow-Origin: *, so we re-request in cors mode and
+  //     cache that instead. Handing a cors response back to a no-cors
+  //     request is fine — the browser uses it.
+  //  2. Google varies the CSS on User-Agent to serve per-browser formats,
+  //     so a plain match() would miss. ignoreVary keeps the hit.
+  if (e.request.method === 'GET' && FONT_HOSTS.indexOf(url.origin) !== -1) {
+    e.respondWith(
+      caches.match(e.request, { ignoreVary: true }).then(function (hit) {
+        if (hit) return hit;
+        return fetch(e.request.url, { mode: 'cors', credentials: 'omit' })
+          .then(function (res) {
+            if (res && res.ok) {
+              var copy = res.clone();
+              caches.open(CACHE)
+                .then(function (c) { return c.put(e.request.url, copy); })
+                .catch(function () {});
+            }
+            return res;
+          });
+      })
+    );
+    return;
+  }
 
   // Only handle same-origin GETs; never cache API calls.
   if (e.request.method !== 'GET' || url.origin !== self.location.origin || url.pathname.startsWith('/api/')) {
