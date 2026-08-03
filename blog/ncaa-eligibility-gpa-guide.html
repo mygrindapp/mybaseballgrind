@@ -224,6 +224,171 @@
     <p>For Division I, athletes are commonly required to complete 16 core courses across these areas. Division II also uses 16 core courses. Electives, most PE classes, and remedial courses do not count, no matter how good the grade is.</p>
     <p>Every high school files an approved course list with the NCAA, so a class only counts as core if it is on that list. This is exactly why families need to check early instead of assuming a class qualifies. The same class title can be core at one school and not at another.</p>
 
+    <!-- NCAA core-course GPA calculator (2026-08-03). Closes the gap the article
+         opens: families read "a 3.7 can land at 2.9" and have no way to check
+         their own number. Math mirrors the app exactly (softball.html
+         MG_GRADE_PTS + mgCoreGPA): unweighted A=4 B=3 C=2 D=1 F=0, core
+         categories only (english/math/science/social/language), elective
+         excluded. Client-side only, nothing stored or transmitted. If the app's
+         scale ever changes, change it here too. -->
+    <style>
+      .mg-calc{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:22px;margin:26px 0}
+      .mg-calc-eyebrow{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+      .mg-calc table{width:100%;border-collapse:collapse;margin:14px 0 10px}
+      .mg-calc th{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--grey);text-align:left;padding:0 8px 8px 0}
+      .mg-calc td{padding:0 8px 8px 0;vertical-align:middle}
+      .mg-calc input,.mg-calc select{width:100%;background:#101010;color:var(--white);border:1px solid var(--border);border-radius:4px;padding:9px 10px;font-family:'Barlow',sans-serif;font-size:14px}
+      .mg-calc input:focus,.mg-calc select:focus{outline:none;border-color:var(--gold-dark)}
+      .mg-calc-add{background:none;border:1px dashed var(--gold-dark);color:var(--gold);font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;padding:9px 14px;border-radius:4px;cursor:pointer}
+      .mg-calc-add:hover{background:rgba(201,168,76,.08)}
+      .mg-calc-drop{background:none;border:none;color:var(--grey);cursor:pointer;font-size:18px;line-height:1;padding:0 4px}
+      .mg-calc-drop:hover{color:var(--gold)}
+      .mg-calc-out{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+      .mg-calc-box{background:#101010;border:1px solid var(--border);border-radius:5px;padding:14px 16px}
+      .mg-calc-box.core{border-left:4px solid var(--gold)}
+      .mg-calc-lab{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--grey);margin-bottom:4px}
+      .mg-calc-num{font-family:'Bebas Neue',sans-serif;font-size:38px;line-height:1;color:var(--white);letter-spacing:1px}
+      .mg-calc-num.core{color:var(--gold)}
+      .mg-calc-sub{font-family:'Barlow',sans-serif;font-size:12px;color:var(--grey);margin-top:4px;line-height:1.45}
+      .mg-calc-gap{margin-top:14px;font-family:'Barlow',sans-serif;font-size:14px;line-height:1.6;color:var(--light)}
+      .mg-calc-status{margin-top:12px;display:flex;gap:10px;flex-wrap:wrap}
+      .mg-calc-chip{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:6px 12px;border-radius:999px;border:1px solid var(--border);color:var(--grey)}
+      .mg-calc-chip.ok{border-color:#4E7C3A;color:#A8D97B}
+      .mg-calc-chip.under{border-color:#7C3A3A;color:#E39A9A}
+      .mg-calc-note{margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-family:'Barlow',sans-serif;font-size:12.5px;line-height:1.6;color:var(--grey)}
+      @media (max-width:560px){.mg-calc-out{grid-template-columns:1fr}.mg-calc{padding:16px}}
+    </style>
+
+    <h2 id="calculator">Calculate your player's core-course GPA</h2>
+    <p>Reading that a 3.7 can land at 2.9 is one thing. Seeing your own player's number is another. Put their classes in below and this works it out the way the NCAA does: unweighted, core courses only, electives dropped.</p>
+
+    <div class="mg-calc">
+      <div class="mg-calc-eyebrow">NCAA core-course GPA calculator</div>
+      <p style="margin:0;font-size:14px;color:var(--grey);">Tag each class with its subject. Electives still count toward the school-style number on the right, but the NCAA leaves them out.</p>
+
+      <table>
+        <thead>
+          <tr><th style="width:42%">Class (optional)</th><th style="width:30%">Subject</th><th style="width:20%">Grade</th><th></th></tr>
+        </thead>
+        <tbody id="mgCalcRows"></tbody>
+      </table>
+
+      <button type="button" class="mg-calc-add" id="mgCalcAdd">+ Add a class</button>
+
+      <div class="mg-calc-out">
+        <div class="mg-calc-box core">
+          <div class="mg-calc-lab">NCAA core GPA</div>
+          <div class="mg-calc-num core" id="mgCalcCore">&mdash;</div>
+          <div class="mg-calc-sub" id="mgCalcCoreSub">Core classes only, unweighted</div>
+        </div>
+        <div class="mg-calc-box">
+          <div class="mg-calc-lab">School-style GPA</div>
+          <div class="mg-calc-num" id="mgCalcAll">&mdash;</div>
+          <div class="mg-calc-sub" id="mgCalcAllSub">Every class, unweighted</div>
+        </div>
+      </div>
+
+      <div class="mg-calc-gap" id="mgCalcGap"></div>
+      <div class="mg-calc-status" id="mgCalcStatus"></div>
+
+      <div class="mg-calc-note">
+        This is an estimate to show you where your player stands, not an official ruling. The NCAA calculates from your high school's approved course list, so a class only counts as core if your school filed it that way. Confirm the real list with your counselor and the NCAA Eligibility Center. Nothing you type here is saved or sent anywhere.
+      </div>
+    </div>
+
+    <script>
+    (function(){
+      /* Mirrors softball.html: MG_GRADE_PTS + mgCoreGPA. Keep in sync. */
+      var PTS  = { A:4, B:3, C:2, D:1, F:0 };
+      var CORE = { english:1, math:1, science:1, social:1, language:1 };
+      var SUBJECTS = [
+        ['english','English'], ['math','Math'], ['science','Science'],
+        ['social','Social studies'], ['language','Foreign language'],
+        ['elective','Elective / PE']
+      ];
+      var START = ['english','math','science','social','elective','elective'];
+      var rowsEl = document.getElementById('mgCalcRows');
+      var logged = false;
+
+      function addRow(cat){
+        var tr = document.createElement('tr');
+        var opts = SUBJECTS.map(function(s){
+          return '<option value="'+s[0]+'"'+(s[0]===cat?' selected':'')+'>'+s[1]+'</option>';
+        }).join('');
+        tr.innerHTML =
+          '<td><input type="text" placeholder="e.g. Algebra 2" aria-label="Class name"></td>' +
+          '<td><select aria-label="Subject">'+opts+'</select></td>' +
+          '<td><select aria-label="Grade"><option value="">&mdash;</option>' +
+            '<option>A</option><option>B</option><option>C</option><option>D</option><option>F</option>' +
+          '</select></td>' +
+          '<td><button type="button" class="mg-calc-drop" aria-label="Remove class">&times;</button></td>';
+        tr.querySelector('.mg-calc-drop').addEventListener('click', function(){ tr.remove(); calc(); });
+        tr.addEventListener('change', calc);
+        rowsEl.appendChild(tr);
+      }
+
+      function calc(){
+        var coreSum=0, coreN=0, allSum=0, allN=0;
+        [].forEach.call(rowsEl.querySelectorAll('tr'), function(tr){
+          var sels = tr.querySelectorAll('select');
+          var cat = sels[0].value, g = sels[1].value;
+          if (!(g in PTS)) return;
+          var p = PTS[g];
+          allSum += p; allN++;
+          if (CORE[cat]) { coreSum += p; coreN++; }
+        });
+
+        var core = coreN ? coreSum/coreN : null;
+        var all  = allN  ? allSum/allN   : null;
+
+        document.getElementById('mgCalcCore').innerHTML = core===null ? '&mdash;' : core.toFixed(2);
+        document.getElementById('mgCalcAll').innerHTML  = all===null  ? '&mdash;' : all.toFixed(2);
+        document.getElementById('mgCalcCoreSub').textContent =
+          coreN ? (coreN + (coreN===1?' core class':' core classes') + ' counted') : 'Core classes only, unweighted';
+        document.getElementById('mgCalcAllSub').textContent =
+          allN ? (allN + (allN===1?' class':' classes') + ' counted') : 'Every class, unweighted';
+
+        var gapEl = document.getElementById('mgCalcGap');
+        var stEl  = document.getElementById('mgCalcStatus');
+
+        if (core===null){
+          gapEl.textContent = 'Add a grade to at least one core class to see the number the NCAA would use.';
+          stEl.innerHTML = '';
+          return;
+        }
+
+        var gap = all - core;
+        if (gap >= 0.05) {
+          gapEl.innerHTML = 'The school-style average is <strong>' + gap.toFixed(2) +
+            '</strong> higher than the number the NCAA actually reads. That gap is the electives coming out.';
+        } else if (gap <= -0.05) {
+          gapEl.innerHTML = 'The core GPA is running <strong>' + Math.abs(gap).toFixed(2) +
+            '</strong> above the all-class average, so the academic classes are carrying the load. That is the right direction.';
+        } else {
+          gapEl.textContent = 'The core and all-class numbers are close, so electives are not masking anything here.';
+        }
+
+        function chip(label, min){
+          var ok = core >= min;
+          return '<span class="mg-calc-chip ' + (ok?'ok':'under') + '">' + label + ' ' + min.toFixed(1) +
+                 (ok ? ' · met' : ' · ' + (min-core).toFixed(2) + ' short') + '</span>';
+        }
+        stEl.innerHTML = chip('Division I', 2.3) + chip('Division II', 2.2);
+
+        if (!logged && coreN >= 2) {
+          logged = true;
+          try { if (typeof gtag === 'function') gtag('event','ncaa_gpa_calculated',{core_classes:coreN}); } catch(e){}
+        }
+      }
+
+      START.forEach(addRow);
+      document.getElementById('mgCalcAdd').addEventListener('click', function(){ addRow('english'); });
+      calc();
+    })();
+    </script>
+
+    <p>If that core number came back lower than the report card led you to believe, you are not alone. It is the most common surprise in this whole process, and the earlier you see it, the more school years are left to move it.</p>
+
     <h2>The 10/7 rule: ten grades lock before senior year</h2>
     <p>This is the timing rule that turns a fixable problem into a permanent one, and most families have never heard of it.</p>
     <p>For Division I, an athlete must complete 10 of the 16 core courses before the start of senior year, and 7 of those 10 must be in English, math, or natural or physical science. Here is the part that matters: once senior year begins, those 10 grades are locked for eligibility. Your athlete cannot raise them by retaking the class senior year.</p>
