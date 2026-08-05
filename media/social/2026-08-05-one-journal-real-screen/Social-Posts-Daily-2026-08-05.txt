@@ -1,0 +1,41 @@
+MyGrind Daily Social — Wednesday 2026-08-05
+Theme: Recruiting / academics (Wednesday) + Back To School
+Lead audience: SOFTBALL (day 217 % 3 = 1)
+Format: static card, REAL APP SCREEN (no generated imagery — Coach's call 8/5
+after Instagram comments flagged the AI look; screens captured from the live
+app via scripts/shoot-light-dashboard.html, card built with
+scripts/build_social_appscreen_card.py)
+
+=== CAPTION (Instagram / Facebook) ===
+
+School starts soon. So does the season that follows it.
+
+MyGrind is one journal for all of it. Your player logs practice, games, and daily check-ins, and the same journal tracks their classes with real NCAA core GPA math. When grades slip, playing time follows, so grades are part of the daily work.
+
+This is the actual app, today's date and all. Not a mockup.
+
+Tonight, one line.
+
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+=== X POST ===
+
+One journal for practice, games, and grades. Real NCAA core GPA tracking, included with every plan. This is the actual app, today.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+MyGrind app dashboard dated Wednesday August 5, 2026, showing a completed daily check-in, a 6 day streak, 490 reps logged, and an academic standing card, below the headline Practice. Games. Grades. One journal.
+
+=== NOTES ===
+
+- "Made with AI" label: OFF on X and Meta. Nothing on this card is generated.
+- Baseball variants in this folder for @youngsbaseball IG + TikTok (phone).
+- Export sizes: 4x5 FEED 1080x1350, 9x16 STORY 1080x1920, 1x1 SQUARE 1080x1080, Pinterest 2x3 1000x1500.
