@@ -1,0 +1,41 @@
+MyGrind Daily Social — Friday 2026-08-07
+Theme: Parent real-talk (Friday)
+Lead audience: BASEBALL (day 219 % 3 = 0)
+Format: static card, REAL APP SCREEN (journal tab, varied from 8/5 dashboard),
+captured via scripts/shoot-light-dashboard.html rig at #journal, card built
+with scripts/build_social_appscreen_card.py. No generated imagery (week rule
+through 8/12).
+
+=== CAPTION (Instagram / Facebook) ===
+
+Fall ball season is coming. So is the car ride home.
+
+35 years of watching the parking lot taught me this: the ride home turns into a film session, and your player stops hearing all of it. Let the journal hold the review. They log the game in their own words (what worked, what did not, what is next) and you get to hand them a burger and just be the parent.
+
+This is the actual app, today's date and all. Not a mockup.
+
+Tonight, one line.
+
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+=== X POST ===
+
+The car ride home isn't the review. Your player logs the game in their own words. You get to just be the parent.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+MyGrind app journal screen dated Friday August 7, 2026, showing entry options for game, practice, workout, instructor lesson, reflection, and off day, below the headline The car ride home isn't the review.
+
+=== NOTES ===
+
+- "Made with AI" label: OFF on X and Meta. Nothing on this card is generated.
+- Softball variants in this folder for @youngsbaseball IG + TikTok (phone).
+- 8/6 had NO post (Claude update killed the browser extension; gap found and fixed 8/7).
