@@ -79,6 +79,21 @@ CAPTION (Reel/TikTok): use the Meta caption above, plus #reels as the 8th tag.
 2:3  = 1000x1500 (Pinterest)
 
 
+=== POSTING OUTCOME 2026-08-09 ===
+X @MyGrindapp: POSTED ~3:10 PM, text + link. Verified live on the profile,
+branded OG card rendering. No "Made with AI" (correct, no media attached).
+Meta: NOT scheduled. Chrome's accessibility tree was genuinely dead all run
+(1 to 2 windows reported, AX window count 0) through four activates and a new
+window, so the native file picker could not be opened and the card could not
+be attached. Meta rejects every synthetic attach path.
+Fallback taken: the full caption is SAVED AS A FACEBOOK DRAFT (Business Suite
+Home > Draft posts, created Aug 9 2026 3:13 PM), destinations already set to
+the FB page + mygrindapp. Coach opens it, attaches the 4x5 FEED card, sets
+7:30 PM on the Facebook AND Instagram rows, leaves the Story toggle ON, and
+clicks Schedule.
+Fix for the AX tree: reboot the Mac.
+
+
 === GROWTH ACTIONS (Coach) ===
 1. Reply to ALL comments and DMs on @youngsbaseball, @mygrindapp, TikTok, FB.
 2. Leave 5 genuine comments on bigger youth baseball / softball accounts.
