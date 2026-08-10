@@ -63,6 +63,9 @@ CARDS = [
     {"slug": "youth-bat-sizing-guide",
      "eyebrow": "The Playbook · Gear",
      "title": "What size bat your player actually needs"},
+    {"slug": "reggie-smith-legends-of-dodger-baseball",
+     "eyebrow": "The Grind · Legends",
+     "title": "The man behind the legend: 25 years with Reggie Smith"},
 ]
 
 
