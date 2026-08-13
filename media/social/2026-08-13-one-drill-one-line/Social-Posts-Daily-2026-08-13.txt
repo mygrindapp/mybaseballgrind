@@ -12,6 +12,19 @@ anyway for this run. The reason Coach set the rule (IG comments calling the
 cards AI on 8/4 and 8/5) has not changed, and a real screen carries zero
 callout risk. Flagged for Coach to confirm or lift.
 
+POSTING OUTCOME 2026-08-13
+- X @MyGrindapp: POSTED LIVE 7:2x AM. Text + link fallback. The branded OG
+  card rendered correctly on the profile. No media attached, so "Made with
+  AI" correctly stayed OFF.
+- META (FB + IG + Story): NOT SCHEDULED. macOS accessibility tree for Chrome
+  is corrupt this run (duplicate AXApplication, System Events reports 0
+  windows while Chrome reports a real visible window at normal bounds).
+  Tried the full ladder: activate x2, make new window, re-bounds the window
+  onscreen. None revived it. Without AX the native file picker cannot be
+  opened OR verified, and typing a path into an unverified sheet is banned.
+  FIX: Coach reboots the Mac, then Meta can be scheduled from the blocks
+  below (or the next day's run picks it back up).
+
 === META CAPTION (FB page + IG @mygrindapp, scheduled 7:30 PM) ===
 
 Thursday drill tip, and it has nothing to do with a bat.
