@@ -1,0 +1,68 @@
+MyGrind Daily Social — Monday 2026-09-07 (Labor Day)
+Theme: Mindset / Today's Grind (Monday) — fall ball is a new year, not a tryout
+Lead audience: SOFTBALL (day 250 % 3 = 1)
+Format: Real-app-screen card pair (builder #3 build_social_appscreen_card.py)
+Screen: JOURNAL (#journal), the "START TODAY" entry picker — Game, Practice,
+Workout, Instructor, Reflection, Off Day. "What are you logging today? Pick
+one to begin." Real date on screen reads MONDAY, SEPTEMBER 7, 2026. Captured
+today via the shoot-light-dashboard rig, headless Chrome 540x720 @2x.
+Screen rotation: 8/12 dashboard, 8/13 journal, 8/22 stats, 8/27 journal,
+9/6 dashboard, 9/7 journal (11 days since the last journal, and the
+composition is the entry picker rather than a filled entry).
+Pair axis: sport toggle in the app header (BASEBALL gold / SOFTBALL berry).
+Seasonal anchor: September, fall ball underway, first full school week.
+Belief shift: fall ball is a fresh start to build on, not an audition to
+survive. The record of the work is the separator, not the innings.
+Anti-later CTA: "Tonight, one line."
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+Export sizes: 4x5 FEED 1080x1350 (FB + IG feed) / 9x16 STORY 1080x1920
+(FB + IG Story) / 1x1 SQUARE 1080x1080 (X) / 2x3 PIN 1000x1500 (Pinterest).
+
+=== META CAPTION (FB page + IG @mygrindapp, schedule 7:30 PM) ===
+
+Fall ball is not a tryout. It is a new year.
+
+Somewhere in the next few weeks your player is going to decide that these games do not really count. That the real season is in the spring. That they will get serious when it matters.
+
+Thirty five years of watching who actually improved says the opposite. The players who separated were the ones who treated the quiet stretch like it counted, and who could tell you what they worked on last Tuesday because they wrote it down.
+
+That is all MyGrind is. Practice, games, reps, lessons, rest, grades, in one place, in your player's own words. Open it and it asks one question: what are you logging today?
+
+It does not have to be a big commitment tonight. One line about today, and the page is started.
+
+Tonight, one line.
+
+Coach
+
+Start free at mygrindapp.com
+
+#youthsoftballparent #travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #playerdevelopment #softballrecruit #journal #accountability
+
+=== ALT TEXT ===
+A cream MyGrind card reading "Fall ball is a new year. Not a tryout." above a
+real screenshot of the MyGrind app's journal screen, showing the Start Today
+entry picker with Game, Practice, Workout, Instructor, Reflection and Off Day
+options, dated Monday, September 7, 2026.
+
+=== X POST (@MyGrindapp, post now, attach the 1x1 SQUARE card) ===
+
+Fall ball is not a tryout. It is a new year.
+
+More innings do not develop your player. What they do between them, written down, is the separator.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== PINTEREST (2x3 1000x1500, @MyGrindAppOfficial) ===
+Title: Fall Ball Is a New Year, Not a Tryout
+Description: Fall ball is a fresh start, not an audition. MyGrind is the
+training journal where your player logs practices, games, reps, lessons and
+grades in their own words. Tonight, one line. Start free at mygrindapp.com
+
+=== COACH'S PHONE (@youngsbaseball IG + TikTok) ===
+Card is in Drive 03 — Marketing & Social. 4x5 for the feed, 9x16 for stories.
+Same caption as Meta.
