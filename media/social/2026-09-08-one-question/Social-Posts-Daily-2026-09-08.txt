@@ -78,3 +78,28 @@ Cream MyGrind card reading "One question beats one text." Below it, a real
 screenshot of the MyGrind app's Stats tab dated Tuesday, September 8, 2026,
 showing the baseball and softball toggle, a player named Jordan, and the
 season progress card.
+
+=== POSTING OUTCOME 2026-09-08 ===
+META: already covered before this run. FB (MYGrind - Baseball/Softball
+Journal) + IG (mygrindapp) both scheduled Tue Sep 8, 7:30 PM with the
+"FALL BALL IS A NEW YEAR. NOT A TRYOUT." real-screen card (yesterday's
+9/7 build, pushed to today because Mon 9/7's 7:30 PM slot was already
+taken by the manually scheduled NCAA Core GPA Calculator post). Facebook
+Story fires with it at 7:30 PM off the composer toggle. NO second Meta
+post created, per the today-already-covered rule.
+
+X: POSTED 7:22 AM as text + link. Verified live on the profile (post
+count 53 -> 54), the branded OG card for "What Coaches Look For at
+Tryouts: A Head Coach's Honest Answer" renders correctly. "Made with AI"
+correctly OFF (no attached media, real branded OG card).
+
+WHY NO CARD ATTACHED ON X: the macOS accessibility tree was dead for the
+whole run. Chrome reported 1 window and was frontmost, but System Events
+returned only "AXApplication, AXMenuBar" with an AX window count of 0,
+across three activate attempts plus a make-new-window (Chrome had
+reported 0 windows at the start, so step 1 of the ladder was tried
+first). With no AX tree the native file picker cannot be opened OR
+verified, so the 1x1 SQUARE card could not be attached. Combined with the
+known 8/7 X Media-button regression, the documented text + link fallback
+was taken rather than burning the run. The cards are built, committed and
+in Drive for reuse.
