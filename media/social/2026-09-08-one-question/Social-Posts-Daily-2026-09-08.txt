@@ -1,0 +1,80 @@
+MyGrind Daily Social — Tuesday 2026-09-08
+Theme: Newsletter day (Tuesday) — drive to MyGrind Weekly "The Conversation
+Issue" + the blog cluster. Tip = the one question that gets a real answer
+from any coach.
+Lead audience: GIRLS WHO PLAY BASEBALL (day 251 % 3 = 2)
+Format: Real-app-screen card pair (builder #3 build_social_appscreen_card.py)
+Screen: STATS (#stats) — MYSTATS header, Jordan, Your Progress AVG/OBP/SLG/ERA,
+490 reps this week. Real date on screen reads TUESDAY, SEPTEMBER 8, 2026.
+Captured today via the shoot-light-dashboard rig, headless Chrome 540x720 @2x.
+Screen rotation: 8/12 dashboard, 8/13 journal, 8/22 stats, 8/27 journal,
+9/6 dashboard, 9/7 journal, 9/8 STATS (17 days since the last stats screen).
+Pair axis: sport toggle in the app header (BASEBALL gold / SOFTBALL berry).
+Seasonal anchor: September, rosters settled, playing-time texts landing.
+Belief shift: the parents who change a coach's mind are not the ones with the
+best argument. They are the ones whose player came back with the thing fixed.
+Anti-later CTA: "Tonight, one line."
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+STEP ZERO RESULT: Meta was ALREADY COVERED for today before this run —
+FB + IG both scheduled 7:30 PM with the "FALL BALL IS A NEW YEAR. NOT A
+TRYOUT." card (verified in Planner, Tue 8 column). X had nothing dated today
+(latest was 19h old). Per the today-already-covered rule, this run filled the
+X gap only and did NOT create a second Meta post.
+
+Export sizes: 4x5 FEED 1080x1350 (FB + IG feed) / 9x16 STORY 1080x1920
+(FB + IG Story) / 1x1 SQUARE 1080x1080 (X) / 2x3 PIN 1000x1500 (Pinterest).
+
+=== X POST (@MyGrindapp, posted immediately, 1x1 card attached) ===
+
+Girls who play baseball. Softball players. Every kid on a roster.
+
+The 9:47 PM text never lands. One question does: what should my player be working on that they are not?
+
+Ask it. Log the answer.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/blog/what-coaches-look-for-at-tryouts.html?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== INSTAGRAM CAPTION (@youngsbaseball, Coach's phone, 4x5 card) ===
+
+Rosters are settled. Playing time is uneven. Right about now the 9:47 PM text
+starts getting typed.
+
+I have read hundreds of them over 35 years. Here is what happens on my end: I
+stop reading at the comparison. Not because I do not care. Because the message
+is not answerable, and a coach who just ran a four hour game has nothing good
+left at that hour. Neither do you.
+
+There is one question that gets a real answer from every coach I have ever
+known. "What should my player be working on that they are not?"
+
+That question cannot offend anybody. It hands the coach the job they actually
+signed up for.
+
+Then comes the part that changes anything. Your player writes the answer down
+in their exact words, and logs what they did about it. Youth, high school,
+girls who play baseball, softball, all of it. Same move.
+
+The parents who change a coach's mind are never the ones with the best
+argument. They are the ones whose player showed up two weeks later with the
+thing fixed. Not feelings. Receipts.
+
+Tonight, one line.
+
+Full breakdown in this week's MyGrind Weekly. Link in bio.
+
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent
+#baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+=== ALT TEXT ===
+
+Cream MyGrind card reading "One question beats one text." Below it, a real
+screenshot of the MyGrind app's Stats tab dated Tuesday, September 8, 2026,
+showing the baseball and softball toggle, a player named Jordan, and the
+season progress card.
