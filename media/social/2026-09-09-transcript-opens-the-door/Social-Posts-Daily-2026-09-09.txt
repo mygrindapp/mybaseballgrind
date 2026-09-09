@@ -82,4 +82,57 @@ Wednesday, September 9, 2026, showing the baseball and softball toggle, the
 "No grades, no game" header, a 3.83 GPA for this year and a 3.75 cumulative.
 
 === POSTING OUTCOME 2026-09-09 ===
-(filled in after posting)
+X: POSTED 7:31 AM as text + link. Verified live on the profile (post count
+54 -> 55, post shows "16s" ago). The branded OG card for "NCAA CORE GPA
+CALCULATOR: YOUR..." renders correctly in the timeline. "Made with AI"
+correctly OFF (no attached media, real branded OG card). Linked the
+calculator shipped 9/8 rather than the homepage because the day's theme is
+recruiting/academics and that page has its own OG card.
+
+META: NOT SCHEDULED. A DRAFT was saved instead, "Created on September 9,
+2026, 7:25 AM", carrying the full FB+IG caption and the 9 hashtags, verified
+in Business Suite > Draft posts. Coach needs 3 clicks to finish it:
+open the draft, Add photo/video -> the 4x5 FEED card below, set BOTH the
+Facebook and Instagram times to 07:30 PM, leave "Share to Facebook story"
+ON, Schedule. The Story fires with the feed post at 7:30 PM off that toggle.
+
+WHY NO MEDIA COULD BE ATTACHED: the macOS accessibility tree was dead for
+the whole run and could not be revived. Chrome reported 2-3 real windows and
+System Events returned only "AXMenuBar" with an AX window count of 0, and
+Chrome could never become the frontmost app (System Events reported
+frontmost=Claude after every activate). The full documented recovery ladder
+was run: window-count check, activate x4 (including a single-process
+activate+check with no shell round trip), "make new window", and explicitly
+fronting the composer tab's window with active-tab-index + index-of-window.
+None recovered the tree. With no AX tree the native file picker cannot be
+opened OR verified.
+
+The extension-side upload paths were also checked and are dead ends: Meta's
+"Add photo/video" was clicked (synthetic click, real coordinates on the
+button) and NO input[type=file] ever mounts in the DOM, so file_upload has no
+ref to target; upload_image only accepts a prior screenshot id, and a
+screenshot of the card would ship at ~752x940 JPEG instead of 1080x1350 PNG,
+which is below Coach's spec, so it was not used.
+
+The X media attach was deliberately NOT attempted: with a dead AX tree the
+picker can be neither opened nor verified, and a half-opened invisible native
+dialog would have risked blocking the post itself. Documented text + link
+fallback taken instead.
+
+TWO SETUP FACTS FOUND THIS RUN (worth keeping):
+1. The Chrome window that was open at task-fire time was the hartdistrict.org
+   profile (Profile 22), NOT "Youngs Baseball - YBG" (Profile 1). That is why
+   the extension showed zero connected browsers AND why Business Suite
+   redirected to a login page. The fix was to open a Profile 1 window with
+   `open -na "Google Chrome" --args --profile-directory="Profile 1"`, after
+   which the extension connected immediately and Business Suite was logged in.
+   The district tab was put back on chrome://newtab/ afterwards. Check the
+   PROFILE before concluding Coach is logged out of anything.
+2. The composer's "Finish later" save shows a browser "Leave page?" dialog
+   mid-save. Click "Continue editing", NOT "Discard changes" - the save then
+   completes behind it. The on-page "Saving your post" spinner never clears
+   even after the draft has actually saved, so verify in Draft posts rather
+   than waiting on the spinner.
+
+ALSO NOTED: Business Suite's to-do list shows 1 new unread Instagram comment.
+Not opened or replied to on this run - it is on Coach's checklist below.
