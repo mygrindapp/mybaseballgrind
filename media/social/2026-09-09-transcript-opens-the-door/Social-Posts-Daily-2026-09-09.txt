@@ -1,0 +1,85 @@
+MyGrind Daily Social — Wednesday 2026-09-09
+Theme: Recruiting / academics (Wednesday). Leans on the blog cluster and the
+NCAA Core GPA Calculator shipped 9/8.
+Lead audience: BASEBALL (day 252 % 3 = 0)
+Format: Real-app-screen card pair (builder #3 build_social_appscreen_card.py)
+Screen: ACADEMICS (#academics) — MYACADEMICS header, "No grades, no game",
+Priority #1 card, THIS YEAR 3.83 / CUMULATIVE 3.75, Quarter 1 GPA 3.83. Real
+date on screen reads WEDNESDAY, SEPTEMBER 9, 2026. Captured today via the
+shoot-light-dashboard rig, headless Chrome 540x720 @2x, with the seeded year
+advanced to 2026-27 Q1 so the September state is the one a real player sees
+(last year archived to the transcript, this year's first grades entered).
+Screen rotation: 8/12 dashboard, 8/13 journal, 8/22 stats, 8/27 journal,
+9/6 dashboard, 9/7 journal, 9/8 stats, 9/9 ACADEMICS (31 days since the last
+academics screen, 8/9).
+Pair axis: sport toggle in the app header (BASEBALL gold / SOFTBALL berry).
+Seasonal anchor: September, Quarter 1 progress grades landing.
+Belief shift: more showcases do not open the door, the transcript does.
+Anti-later CTA: "Tonight, one line."
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+STEP ZERO RESULT: nothing covered today before this run. Business Suite
+Planner > Scheduled read "No scheduled posts" (FB + IG both empty for
+Wed Sep 9), and x.com/MyGrindapp's newest post was dated Sep 8. Both
+channels needed today's post.
+
+Export sizes: 4x5 FEED 1080x1350 (FB + IG feed) / 9x16 STORY 1080x1920
+(FB + IG Story) / 1x1 SQUARE 1080x1080 (X) / 2x3 PIN 1000x1500 (Pinterest).
+
+=== X POST (@MyGrindapp, posted immediately, 1x1 card) ===
+
+More showcases don't open the door. The transcript does.
+
+Quarter 1 grades are landing. The NCAA core GPA updates as your player logs them.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== FACEBOOK + INSTAGRAM CAPTION (scheduled 7:30 PM, 4x5 card) ===
+
+Quarter 1 grades are landing this month.
+
+Here is what 35 years has shown me. The families chasing one more showcase, one
+more travel weekend, one more exposure event all believe the door opens with a
+swing or a radar gun number. It does not. The first thing a college coach asks
+for is a transcript, and the first thing an admissions office does is count
+core courses.
+
+More showcases do not open the door. The transcript does.
+
+The good news is that none of it is out of your player's hands. It is six
+classes and a quarter that just started. Every grade from ninth grade forward
+sits on the NCAA core GPA, so the line being written this month is the same
+line a coach reads three years from now.
+
+In MyGrind, academics live in the same place as the reps. Your player enters
+the class, enters the grade, and the core GPA updates on its own. No
+spreadsheet. No guessing in June whether they qualify.
+
+Pull the grades up tonight. If something is slipping, handle it this week, not
+next month.
+
+Tonight, one line.
+
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife
+#baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+=== INSTAGRAM CAPTION (@youngsbaseball, Coach's phone, 4x5 card) ===
+
+Same caption as above. Post the BASEBALL 4x5 card today (baseball is the lead
+audience); the SOFTBALL 4x5 is built and in Drive if he'd rather lead there.
+
+=== ALT TEXT ===
+
+Cream MyGrind card reading "More showcases don't open the door. The transcript
+does." Below it, a real screenshot of the MyGrind app's Academics screen dated
+Wednesday, September 9, 2026, showing the baseball and softball toggle, the
+"No grades, no game" header, a 3.83 GPA for this year and a 3.75 cumulative.
+
+=== POSTING OUTCOME 2026-09-09 ===
+(filled in after posting)
