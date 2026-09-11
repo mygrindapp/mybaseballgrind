@@ -81,3 +81,12 @@ Infield-dirt brown MyGrind card with chalk-white lettering and a chalk baseline.
 [ ] Leave 5 genuine comments on bigger youth baseball / softball / girls baseball accounts
 [ ] Capture 1 photo or clip for the content bank (fall practice, gear, a real journal entry on a phone)
 [ ] Film or pull today's Reel clip and upload to IG Reels + TikTok + YouTube Shorts from the phone
+
+=== POSTING OUTCOME (7:08 AM task run) ===
+
+X (@MyGrindapp): POSTED 7:19 AM PT as text + link (OG card rendered). https://x.com/MyGrindapp/status/2098416263483855268
+Meta (FB + IG): NOT scheduled. Full caption + hashtags saved as a DRAFT (Content > Drafts, "A question parents of girls who play baseball...", Fri Sep 11 7:18am).
+  To finish: open the draft, Add photo/video = Work-Speaks-BASEBALL-4x5-FEED-1080x1350-2026-09-11.png (this folder, or Drive Social Content),
+  confirm Post to = FB page + mygrindapp, Schedule 7:30 PM for both rows, Story toggle ON, Boost OFF.
+Why: the Mac screen was LOCKED at run time (CGSSessionScreenIsLocked = true), so no native file picker could open.
+  Probably the same cause behind the 9/9 and 9/10 "dead AX tree" runs. The 9/9 and 9/10 drafts are also still unposted in Drafts.
