@@ -1,0 +1,83 @@
+MYGRIND DAILY SOCIAL — Friday, 2026-09-11
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 254 % 3 = 2)
+Theme: Friday = parent real-talk (playing time, a fair look)
+Format: VIDEO DAY (Reel/TikTok/Short script below, phone upload) + companion static card pair auto-posted to Meta + X
+Card: build_social_field_card.py, chalk-on-field type card. BASEBALL half = infield dirt, SOFTBALL half = outfield grass.
+      Pure CSS type, no photo, no generated pixels. Picked to break a six-day run of the same cream app-screen layout
+      (9/5 to 9/10), per the creative-variety rule. First use of this builder in the daily post.
+
+=== INSTAGRAM / FACEBOOK CAPTION ===
+
+A question parents of girls who play baseball ask me every fall: how do I make sure my player gets a fair look?
+
+Here is the honest answer from 35 years in dugouts. The fairest look a player gets usually comes from a conversation they start themselves.
+
+Not a parent email. Not a talk in the parking lot after a loss. Your player walking up to the coach and asking: "Here is what I have been working on. What do I need to do to earn more innings?"
+
+That question lands differently with a record behind it. Six weeks of entries. The ground balls, the bullpens, what the coach said last time and what they did about it.
+
+A journal does not guarantee innings. Nothing does. It does make sure the work is seen, and it teaches your player to own the conversation. That lasts longer than any lineup card.
+
+More games will not start that talk. What your player writes down between them will.
+
+Tonight, one line.
+
+Coach
+
+=== HASHTAGS ===
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+(Reel version: add #reels as the 8th tag, before #journal #accountability)
+
+=== SOFTBALL-HALF CAPTION SWAP (for @youngsbaseball or a second post) ===
+
+Same caption, first line swapped:
+Fall ball question I hear from softball parents every year: how do I make sure my player gets a fair look?
+Hashtags: #travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+=== REEL / TIKTOK / SHORT SCRIPT (~12 seconds, 9:16 1080x1920, phone upload) ===
+
+Footage: REAL only. Coach's own clip of a player at fall practice (granddaughters folder in Drive Social Content works),
+or a phone screen recording of the real MyGrind journal screen scrolling through a week of entries. No AI footage.
+
+0.0-1.5s  HOOK (on-screen text, big): "Want your player to get a fair look?"
+1.5-4s    Text: "Skip the parent email."
+4-7s      Text: "Have them bring the record." (cut to the real journal screen recording, entries scrolling)
+7-10s     Text: "Here's what I worked on. What do I need to earn more innings?"
+10-12s    End card: the 9:16 STORY card from this folder. "Tonight, one line. mygrindapp.com"
+
+Audio: calm acoustic or lo-fi, low volume, no voiceover needed. If Coach wants voice: read the 7-10s line himself.
+Reel caption: use the IG caption above, trimmed to the first two paragraphs + "Tonight, one line." + "Coach", plus the 8 tags.
+
+=== X / TWITTER (under 280) ===
+
+Parents of girls who play baseball ask how to get their player a fair look.
+
+Let the work speak first. A written record lets your player start their own playing time talk. Facts, not frustration.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+Infield-dirt brown MyGrind card with chalk-white lettering and a chalk baseline. Eyebrow reads "Girls who play baseball" beside the gold MyGrind compass mark. Headline: "Let the work speak first." Subline: "A written record lets your player start their own playing time talk. Facts, not frustration." Footer: "Tonight, one line." and mygrindapp.com.
+
+(Softball half: same card on outfield-grass green, eyebrow "Fall ball · Real talk".)
+
+=== EXPORT SIZES ===
+
+9:16 STORY   1080x1920   (Reel end card, IG/FB Story, TikTok, Short)
+4:5  FEED    1080x1350   (IG + FB feed; BASEBALL feed card goes to Meta today)
+1:1  SQUARE  1080x1080   (X; BASEBALL square goes to X today)
+2:3  PIN     1000x1500   (Pinterest)
+
+=== GROWTH ACTIONS (today) ===
+
+[ ] Reply to ALL comments and DMs (IG @youngsbaseball + @mygrindapp, FB page, TikTok)
+[ ] Leave 5 genuine comments on bigger youth baseball / softball / girls baseball accounts
+[ ] Capture 1 photo or clip for the content bank (fall practice, gear, a real journal entry on a phone)
+[ ] Film or pull today's Reel clip and upload to IG Reels + TikTok + YouTube Shorts from the phone
