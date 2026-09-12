@@ -53,3 +53,32 @@ Cream MyGrind card reading "In three games, today is a blur." above a real scree
 4:5  FEED    1080x1350
 1:1  SQUARE  1080x1080
 2:3  PIN     1000x1500
+
+=== POSTING OUTCOME (2026-09-12) ===
+
+X (@MyGrindapp): POSTED ~7:22 AM PT, text + link. Verified live on the profile
+  (post count 56 -> 57). The mygrindapp.com OG card rendered correctly, so the
+  post is not visual-less. "Made with AI" correctly OFF (no media attached).
+  No ToS modal this run.
+
+META (FB + IG + Story): NOT SCHEDULED. Saved as a DRAFT instead, carrying the
+  full caption + hashtags. Confirmed in Content > Drafts, "Sat Sep 12, 7:19am".
+  Coach only needs to attach the card and set 7:30 PM on both rows.
+
+WHY: the macOS accessibility tree was dead for Chrome the whole run, so the
+  native file picker could be neither opened nor driven.
+  Signature (new variant, worth recording): Chrome reported 1 real window with
+  correct bounds (0,88,2240,1260 — NOT the 540x720 headless-poison tell),
+  frontmost was genuinely "Google Chrome" (NOT the 9/9 "Claude steals focus"
+  case), the screen was NOT locked (CGSSessionScreenIsLocked absent), and there
+  were zero leftover headless chrome-shoot processes. Yet System Events
+  returned `AXApplication, AXApplication, AXApplication, AXMenuBar` with an AX
+  window count of 0. Three activates did not recover it. `make new window`
+  added a FOURTH AXApplication entry and still 0 windows — i.e. every Chrome
+  window is being registered as an AXApplication instead of an AXWindow. That
+  is a genuinely corrupted tree, not a focus problem.
+  No blind keystrokes were sent (nothing to verify them against).
+  Fix is a reboot.
+
+NOTE FOR COACH: Drafts has now backed up. Unposted drafts sitting in Meta:
+  Sat Sep 12 (today), Fri Sep 11, Thu Sep 10, Wed Sep 9.
