@@ -1,0 +1,107 @@
+MYGRIND DAILY SOCIAL — Sunday, September 13, 2026
+Lead audience: SOFTBALL (day-of-year 256 % 3 = 1)
+Theme: Sunday = Story / credibility (35 years coaching, the app's why)
+Format: real-app-screen card pair (Stats tab). Zero generated pixels.
+
+=== INSTAGRAM / FACEBOOK CAPTION ===
+
+35 years on a field, and the same thing kept showing up.
+
+The players who made a real jump could always tell me what they were working on. Not what team they made. Not how many tournaments were on the calendar. They could name the thing: the front side, the first step, the change up that kept flattening out.
+
+The players who stalled had a schedule. A full one. Games every weekend, showcases, travel. Busy is not the same as better.
+
+That gap is the whole reason MyGrind exists. Your player writes down what they worked on and how it went, and a few weeks later they have an answer ready when a coach asks. The work was already there. The journal just makes it something they can see.
+
+September is early enough in fall ball that this compounds.
+
+Tonight, one line. What did you work on today, and how did it go.
+
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+=== X / TWITTER (under 280) ===
+
+35 years on a field, one thing kept repeating.
+
+The players who made a jump could tell you what they were working on. The ones who stalled had a schedule.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== REEL / TIKTOK SCRIPT (Sunday is a video day, phone-only upload) ===
+
+HOOK (0.0 to 1.5s, talking to camera, no intro):
+"In 35 years I never met a player who improved and couldn't tell me what they were working on."
+
+BODY (1.5 to 9s):
+"Not the team they made. Not the tournament schedule. They could name the thing.
+The front side. The first step. The change up that kept flattening out.
+The players who stalled? They had a full calendar and no answer."
+
+CTA CLOSE (9 to 12s):
+"Tonight, ask your player one question. What did you work on today, and how did it go.
+Write the answer down. That's it."
+
+ON-SCREEN TEXT:
+0.0s  "35 years. One pattern."
+3.0s  "They could name the thing."
+6.5s  "Busy is not the same as better."
+10.0s "Tonight, one line."
+
+AUDIO: quiet, no trending sound. Coach's voice only, natural field ambience.
+Reel hashtags: same 9 as above, plus #reels
+
+=== ALT TEXT ===
+
+Cream MyGrind card reading "They could always tell me what they were working
+on." Below it, a real screenshot of the MyGrind app's Stats tab dated Sunday,
+September 13, 2026, showing the baseball and softball toggle set to softball,
+a player named Jordan, the season progress card, and 490 reps logged this week.
+
+=== EXPORT SIZES ===
+9:16 STORY / REEL   1080x1920
+4:5  IG FEED        1080x1350
+1:1  SQUARE         1080x1080
+2:3  PINTEREST      1000x1500
+
+=== POSTING OUTCOME 2026-09-13 ===
+
+STEP ZERO: neither channel was covered. Meta content calendar Sun 13 column
+was empty; x.com/MyGrindapp's newest post was 9/12. Proceeded.
+
+BLOCKER: the Mac was LOCKED at task-fire time (CGSSessionScreenIsLocked =
+true, confirmed twice) and stayed locked for the whole run. Per the 9/11
+rule, ZERO System Events keystrokes were sent, so the native file picker was
+never attempted and NO CARD COULD BE ATTACHED on either channel.
+
+META: caption SAVED AS A DRAFT (verified in Content > Draft posts: the full
+979-character caption including all 9 hashtags is there). Coach only has to
+attach the 4x5 FEED card and set both times to 7:30 PM. Nothing is scheduled,
+so NO Facebook Story will fire tonight unless Coach schedules the draft.
+
+X: NOT POSTED. X's editor refused every programmatic input path while the tab
+was hidden. Four distinct mechanisms tried and verified failing, box stayed on
+the "What's happening?" placeholder and the Post button stayed disabled:
+  1. CDP synthetic typing after a ref click
+  2. CDP synthetic typing after an explicit JS .focus()
+  3. document.execCommand('insertText') with an explicit range
+  4. ClipboardEvent('paste') with a DataTransfer payload
+No Terms-of-Service modal was present (checked, [role=dialog] was empty), so
+this is NOT the 9/10 ToS block. It is the locked-screen/hidden-tab condition.
+
+NOTE FOR THE RULE FILE: the same ClipboardEvent('paste') + DataTransfer that
+X rejected is what finally WORKED on Meta's composer, after CDP typing failed
+there too. So while locked: Meta text = paste event (works), X text = nothing
+works. Also, the first Meta "Finish later" click via ref silently did NOT save
+(drafts list still showed only 9/12). What worked on attempt 2 was nulling
+window.onbeforeunload first, then dispatching the full
+pointerdown/mousedown/pointerup/mouseup/click sequence on the button, which
+saved and auto-navigated to the Draft posts page.
+
+FIX: leave the Mac unlocked at 7:08 AM (or push the lock/screen-saver delay
+past it) and the card attaches automatically on both channels.
