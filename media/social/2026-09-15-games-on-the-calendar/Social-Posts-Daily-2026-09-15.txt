@@ -60,3 +60,52 @@ Cream MyGrind card reading "The games are on the calendar. The growth is not." a
 4:5  FEED    1080x1350
 1:1  SQUARE  1080x1080
 2:3  PIN     1000x1500
+
+=== POSTING OUTCOME 2026-09-15 ===
+
+STEP ZERO: neither channel was covered. Business Suite > Scheduled read "No
+scheduled posts" for FB + IG, and x.com/MyGrindapp's newest post was Sep 11.
+Both channels needed today's post.
+
+BLOCKER (7th straight day): the Mac was LOCKED at task-fire time
+(CGSSessionScreenIsLocked = true, re-checked at 07:08, 07:11, 07:13 and
+07:16, true every time). Per the 9/11 rule, ZERO System Events keystrokes
+were sent, so the native file picker was never attempted and NO CARD COULD
+BE ATTACHED on either channel.
+
+META: caption SAVED AS A DRAFT, verified in Content > Draft posts, timestamped
+Sep 15, 7:16am, carrying the full 959-character caption including all 9
+hashtags. "Post to" confirmed BOTH "MYGrind - Baseball/Softball Journal and
+mygrindapp" before saving. Coach only has to attach the 4x5 FEED card and set
+both times to 7:30 PM. Nothing is scheduled, so NO Facebook Story fires
+tonight unless Coach schedules the draft.
+
+The clipboard-paste path (ClipboardEvent + DataTransfer) worked on Meta again,
+and "Finish later" saved on the FIRST try this time using the 9/13 recipe:
+null window.onbeforeunload, then dispatch the full
+pointerover/pointerenter/pointerdown/mousedown/pointerup/mouseup/click
+sequence. It auto-navigated to /latest/posts/draft_posts/, which is the
+success signal. No "Leave page?" dialog appeared.
+
+X: NOT POSTED. No Terms-of-Service modal was present (checked, [role=dialog]
+was empty), so this is NOT the 9/10 ToS block. Two distinct mechanisms tried,
+both refused, editor stayed on the "What's happening?" placeholder:
+  1. ClipboardEvent('paste') + DataTransfer (the one that works on Meta)
+  2. InputEvent beforeinput + input with inputType insertText and an explicit
+     collapsed Range (a mechanism NOT tried on 9/13)
+document.visibilityState was "hidden" throughout. Same locked-screen result
+as 9/13. Confirms: while locked, Meta text = paste event works, X = nothing
+works, no mechanism found in two runs.
+
+*** THE REAL FINDING: META HAS BEEN DARK FOR A WEEK. ***
+Content > Published shows the last published post as Tue Sep 8, 7:30pm
+(FB + IG pair). Content > Drafts now holds unscheduled drafts dated Sep 10,
+11, 12, 13, 14 and 15. Every one of those days the task built the card and
+saved the caption, and every one of them died at the same locked-screen step.
+Nothing has actually reached the feed since 9/8, and no Facebook Story has
+fired since then either. X last posted 9/11.
+
+FIX (unchanged, and now a week overdue): leave the Mac unlocked at 7:08 AM,
+or push the lock / screen-saver delay past it, and the card attaches
+automatically on both channels. Until that changes this task can only ever
+produce drafts.
