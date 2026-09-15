@@ -1,0 +1,62 @@
+MYGRIND DAILY SOCIAL — Tuesday, September 15, 2026
+Lead audience: BASEBALL (day-of-year 258 % 3 = 0)
+Theme: Tuesday = newsletter/blog day, drive to the blog (tip + link)
+Format: static real-app-screen card pair (JOURNAL screen). Zero generated pixels.
+
+Screen: JOURNAL (#journal) — MYJOURNAL header, "START TODAY" with the six
+logging choices (game, practice, workout, instructor, reflection, off day).
+Real date on screen reads TUESDAY, SEPTEMBER 15, 2026. Captured today via the
+shoot-light-dashboard rig, headless Chrome 540x720 @2x.
+Screen rotation: 9/6 dashboard, 9/7 journal, 9/8 stats, 9/9 academics,
+9/10 dashboard, 9/11 pure-CSS type card, 9/13 stats, 9/15 JOURNAL
+(8 days since the last journal screen).
+Pair axis: sport toggle in the app header (BASEBALL gold / SOFTBALL berry).
+Seasonal anchor: mid-September, fall ball schedules already filled in.
+Belief shift: fall ball adds games, not growth. The between-games work is the
+separator. (Belief-shift post #1 of the week.)
+Anti-later CTA: "Tonight, one line."
+Blog drive: https://www.mygrindapp.com/blog/is-fall-ball-worth-it.html
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+=== INSTAGRAM / FACEBOOK CAPTION ===
+
+Fall ball is here, and the calendar filled up fast.
+
+Here is the part that gets missed. The games are already scheduled. The growth is not. Another weekend of baseball does not automatically make your player better. What they do between those games, written down, is the separator. In 35 years I have watched that one gap decide who jumped and who stayed the same.
+
+It does not take much either. After the game or the practice, one line. What did you work on, and how did it go. Six weeks of that and your player can tell a coach exactly what they have been fixing, instead of guessing at it.
+
+I wrote the full breakdown on whether fall ball is worth it, and what your player should actually be getting out of it:
+
+https://www.mygrindapp.com/blog/is-fall-ball-worth-it.html
+
+Tonight, one line.
+
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+=== X / TWITTER (under 280) ===
+
+Fall ball is here and the calendar filled up fast.
+
+The games are already scheduled. The growth is not.
+
+What your player does between them, written down, is the separator.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+Cream MyGrind card reading "The games are on the calendar. The growth is not." above a real screenshot of the MyGrind app journal screen, showing the baseball toggle active and the six logging choices: game, practice, workout, instructor, reflection and off day.
+
+=== EXPORT SIZES ===
+
+9:16 STORY   1080x1920
+4:5  FEED    1080x1350
+1:1  SQUARE  1080x1080
+2:3  PIN     1000x1500
