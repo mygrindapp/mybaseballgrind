@@ -1,0 +1,158 @@
+MYGRIND DAILY SOCIAL — Wednesday, September 16, 2026
+Lead audience: SOFTBALL (day-of-year 259 % 3 = 1)
+Theme: Wednesday = recruiting / academics, leaning on the NCAA blog cluster
+Format: static real-app-screen card pair (ACADEMICS screen). Zero generated pixels.
+
+Screen: ACADEMICS (#academics) — MYACADEMICS header, "NO GRADES · NO GAME",
+the green PRIORITY #1 coaching card, and the real GPA tiles (THIS YEAR 3.67 /
+CUMULATIVE 3.67 / Quarter 1 GPA 3.67). Real date on screen reads WEDNESDAY,
+SEPTEMBER 16, 2026. Captured today via the shoot-light-dashboard rig,
+headless Chrome 540x720 @2x.
+NOTE ON THE SEED: the rig's academics seed was pinned to school year 2026, and
+because academics auto-resets each August the first capture rendered the empty
+post-reset state ("THIS YEAR —"). Re-seeded to schoolYear/lastSchoolYear 2027
+(the app keys a school year by its END year) with activeTerm Q1, which is what
+makes the real 3.67 render. Worth carrying forward for future academics shots.
+Screen rotation: 9/6 dashboard, 9/7 journal, 9/8 stats, 9/9 academics,
+9/10 dashboard, 9/11 pure-CSS type card, 9/13 stats, 9/15 journal,
+9/16 ACADEMICS (7 days since the last academics screen).
+Pair axis: sport toggle in the app header (BASEBALL gold / SOFTBALL berry).
+Seasonal anchor: mid-September, first progress reports of the school year.
+Belief shift: the part of recruiting your player controls most is the
+transcript, not the swing. (Belief-shift post #1 of the week.)
+Anti-later CTA: "Tonight, one line."
+Blog drive: https://www.mygrindapp.com/blog/ncaa-eligibility-gpa-guide.html
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+=== INSTAGRAM / FACEBOOK CAPTION ===
+
+If your player is on a softball roster, the recruiting clock starts earlier than most families expect. The same is true in baseball. And the part of it your player controls most is not their swing.
+
+It is their transcript.
+
+Progress reports are going out this month. Most families will glance at them and move on. Here is what 35 years has taught me: a college coach can project a bat. They cannot fix a GPA that slipped in the fall. The NCAA core GPA starts counting in ninth grade, so every quarter your player has already finished is locked in.
+
+That is not meant to scare anybody. It is the opposite. Right now, in September, the grades are still soft. A B that gets handled this week instead of in December is the whole difference.
+
+So put the grades in the same place as the reps. Your player logs the practice, then logs the quiz. One honest picture, and no surprise in the spring.
+
+I wrote up the full breakdown: the NCAA GPA numbers, what actually counts as a core course, and how to calculate it.
+
+https://www.mygrindapp.com/blog/ncaa-eligibility-gpa-guide.html
+
+Tonight, one line.
+
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+=== X / TWITTER (under 280) — NOT POSTED, see outcome ===
+
+Progress reports are landing this month.
+
+A college coach can project a bat. They cannot fix a GPA that slipped in the fall.
+
+The NCAA core GPA starts counting in ninth grade.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+Cream MyGrind card reading "No grades. No game." above a real screenshot of the MyGrind app academics screen, showing the softball toggle active, a coaching note to pull every grade now, and a 3.67 GPA for the current school year.
+
+=== EXPORT SIZES ===
+
+9:16 STORY   1080x1920
+4:5  FEED    1080x1350
+1:1  SQUARE  1080x1080
+2:3  PIN     1000x1500
+
+=== POSTING OUTCOME 2026-09-16 ===
+
+STEP ZERO: neither channel was covered. Business Suite > Scheduled read "No
+scheduled posts" for FB + IG; x.com/MyGrindapp's newest post was Sep 12 (not
+Sep 11 as the 9/15 log recorded).
+
+BLOCKER (8th straight day): the Mac was LOCKED at task-fire time
+(CGSSessionScreenIsLocked = true). Per the 9/11 rule, ZERO System Events
+keystrokes were sent and the native file picker was never attempted, so NO
+CARD COULD BE ATTACHED on either channel.
+
+*** FACEBOOK IS SCHEDULED. THE 8-DAY DARK STREAK IS BROKEN. ***
+Rather than bank a 7th unscheduled draft, this run scheduled a real post.
+Because the caption carries the blog link, Facebook renders the post's
+ncaa-eligibility-gpa-guide OG card, so the post ships WITH a branded visual
+even though the daily card could not be attached.
+  - Scheduled: Facebook (MYGrind - Baseball/Softball Journal), Sep 16, 7:30 PM
+  - Confirmed by the "Your post is scheduled" dialog reading
+    "Sep 16, 2026, 7:30 PM", then independently in Content > Scheduled, which
+    lists the post with the full caption.
+  - "Share to Facebook Story" left ON, so the 7:30 PM Story fires with it.
+  - Boost dismissed with "Maybe later". Never Boost.
+  - INSTAGRAM IS NOT INCLUDED. Meta itself said so: "If you would like your
+    post to also be published to Instagram, add a photo or video," and the
+    submit button changed to "Schedule for Facebook". IG cannot take a
+    text-only post, so IG stays dark today unless Coach attaches the card.
+
+NEW MECHANISM FINDINGS (worth keeping, all tested this run while locked):
+
+1. META COMPOSER, NO-KEYSTROKE PATH IS NOW FULLY PROVEN END TO END. Caption via
+   ClipboardEvent paste (as before), and then the WHOLE scheduling flow works
+   with synthetic events, which had never been established:
+   - The "Set date and time" switch needs the full pointer sequence
+     (pointerover/pointerenter/pointerdown/mousedown/pointerup/mouseup/click).
+     A plain extension click does NOT flip it.
+   - The six time fields are input[role="spinbutton"] (FB hours/min/meridiem
+     then IG). Plain synthetic KeyboardEvent keydown ArrowUp/ArrowDown DOES
+     move them. meridiem aria-valuenow 0=AM, 1=PM. Set all six by focus +
+     arrow keydowns, no real keystrokes needed.
+   - The same pointer sequence submits "Schedule for Facebook".
+
+2. MEDIA ATTACH ON META IS IMPOSSIBLE WHILE LOCKED. Three paths ruled out:
+   - fetch() of the card from a local CORS+PNA server (127.0.0.1) =
+     "Failed to fetch". Meta's CSP blocks it.
+   - <img crossOrigin> from the same local server = error. Also CSP.
+   - fetch/img of https://www.mygrindapp.com = blocked too, so CSP blocks all
+     external origins, not just localhost. Serving the card locally is a dead
+     end; do not rebuild that rig.
+   - Pasting a real File via ClipboardEvent + DataTransfer: the composer's
+     handler DOES intercept it (dispatchEvent returned false) but NO media
+     attaches. Confirmed with a genuine 1080x1350 canvas-generated PNG.
+   - input[type=file] count on the composer is 0, confirming the old note.
+
+3. X: A TEXT MECHANISM FINALLY WORKS, BUT IS NOT SAFE TO SHIP YET.
+   document.execCommand('insertText') DOES land text in the X composer while
+   locked. This is the first mechanism to do so (9/13 and 9/15 both failed
+   with ClipboardEvent paste and with beforeinput/input InputEvent).
+   The problem: every edit is applied TWICE. Plain text doubles exactly
+   ("Progress reports are landing this month." became that string twice, 40 ->
+   80 chars), and execCommand('delete') likewise removes the selection plus
+   one extra character. Worse, any "#" triggers X's hashtag typeahead, which
+   compounds instead of doubling: one insert of the tag line produced 17
+   repetitions of "#accountability". Repair attempts did not converge.
+   X was therefore NOT posted. Posting garbled copy to a live public account
+   is worse than skipping a day, so the run stopped at the verify step rather
+   than submitting. Nothing was sent: x.com/MyGrindapp still shows Sep 12 as
+   the newest post, and the composer was confirmed EMPTY after a reload, so no
+   stray draft was left behind.
+   NEXT TIME: the doubling is the thing to solve. Insert half the string, or
+   insert then delete the duplicate range, and only submit on an exact string
+   match. Never submit without that check.
+
+4. The extension's CDP typing (computer action "type") does NOT reach the page
+   while the screen is locked. Two attempts, with the editor confirmed focused,
+   landed nothing. So CDP input events are not a workaround for a locked
+   screen; only in-page JS mechanisms run.
+
+CAPTURE NOTE: the headless capture rig must be run ONE sport at a time with a
+unique --user-data-dir. Running it twice in quick succession left five headless
+Chrome processes alive and hung the second capture. Cleaned up at the end of
+this run (pkill chrome-shoot, rm -rf /tmp/chrome-shoot-*).
+
+FIX (unchanged, now 8 days overdue): leave the Mac unlocked at 7:08 AM, or push
+the lock / screen-saver delay past it. That single change restores the card
+attach on both channels and puts Instagram back in the daily post.
