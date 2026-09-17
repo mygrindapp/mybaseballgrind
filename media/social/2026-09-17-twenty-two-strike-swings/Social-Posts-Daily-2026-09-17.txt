@@ -1,0 +1,99 @@
+MYGRIND DAILY SOCIAL: Thursday, September 17, 2026
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 260 % 3 = 2)
+Theme: Thursday = drill / training tip
+Format: static real-app-screen card pair (DASHBOARD screen) + a Reel script
+Coach can shoot on his own phone. Zero generated pixels.
+
+Screen: DASHBOARD (#dashboard): real MYGRIND header, DAILY CHECK-IN
+("Fresh, go compete 4.2"), the 6 DAY STREAK card and the real week tiles
+(6/7 DAYS LOGGED / 6 ENTRIES / 490 REPS LOGGED). On-screen date reads
+THURSDAY, SEPTEMBER 17, 2026. Captured today via the shoot-light-dashboard
+rig, headless Chrome 540x720 @2x.
+NOTE: the headless capture rig works fine on a LOCKED Mac. Only
+record_app_demo.sh (screencapture video) needs the screen unlocked. Worth
+carrying forward, it saved the card today.
+Screen rotation: 9/6 dashboard, 9/7 journal, 9/8 stats, 9/9 academics,
+9/10 dashboard, 9/11 pure-CSS type card, 9/13 stats, 9/15 journal,
+9/16 academics, 9/17 DASHBOARD (7 days since the last dashboard).
+Pair axis: sport toggle in the app header (BASEBALL gold / SOFTBALL berry).
+Seasonal anchor: mid-September, fall ball in full swing, fewer at-bats.
+Belief shift: what your player does between games is the separator. The
+reps tile on the real screen carries it (490 logged).
+Anti-later CTA: "Tonight, one line."
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+BLOCKER (posting did not run): the Mac was LOCKED at task-fire time
+(CGSSessionScreenIsLocked = true) AND list_connected_browsers returned []
+on three separate attempts. Locked screen rules out the native file picker
+and forbids any System Events keystroke; no connected browser rules out the
+extension/CDP fallback that saved 9/11 (Meta draft + X text-and-link). So
+nothing was scheduled or posted by the task today. Chrome Profile 1 (YBG)
+did have a fresh session at 05:51, so this is NOT the wrong-profile case
+from 9/9. Copy-paste blocks below.
+
+=== INSTAGRAM / FACEBOOK CAPTION ===
+
+Fall ball is in full swing, and here is the part nobody warns you about: your player is getting fewer at-bats than they did all summer. Bigger rosters, shorter games, more kids who need innings.
+
+So the at-bats they do get matter more. And most of those are going to end up in a tough count.
+
+Here is the drill. Twenty swings at home tonight, and every single one is a two-strike swing.
+
+That means: choke up a half inch. Widen the stance a little. Shorten the load. Think line drive back up the middle, not over the fence. Twenty in a row, and no sneaking a big one in the middle of the round.
+
+Ten minutes off a tee or with soft toss. It trains the exact at-bat fall ball keeps handing them.
+
+This is for every player on a fall roster. Baseball, softball, and the girls who play baseball, who are in the same rotation as everybody else and need the same twenty swings.
+
+Then log it. Not a paragraph. One line: "20 two-strike swings, felt short and quick by the last five."
+
+Three weeks from now your player can look back and see they took 300 of them. That is what a coach means when they say somebody got better over the fall. It was never the games. It was the reps nobody watched.
+
+Tonight, one line.
+
+Coach
+
+=== HASHTAGS (paste under the caption) ===
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+=== X / TWITTER (@MyGrindapp) ===
+
+Fall ball means fewer at-bats. So the ones your player gets have to count.
+
+Twenty swings tonight. Every one a two-strike swing. Choke up, shorten, back up the middle.
+
+Then log it. Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+Cream MyGrind card reading "Twenty swings. Every one two strikes." above a real screenshot of the MyGrind app dashboard dated Thursday, September 17, 2026, showing a six day logging streak and 490 reps logged.
+
+=== REEL / TIKTOK SCRIPT (12 seconds, Coach's real phone footage) ===
+
+HOOK (0 to 1.5s). Coach to camera, close, no intro:
+"Your player is getting fewer at-bats right now than they did all summer."
+ON-SCREEN: FALL BALL = FEWER AT-BATS
+
+BODY (1.5 to 9s). cut to a real tee or soft-toss clip:
+"So here is tonight. Twenty swings. Every one of them a two-strike swing.
+Choke up. Shorten it up. Back up the middle. No big ones mixed in."
+ON-SCREEN, one line at a time: CHOKE UP / SHORTEN THE LOAD / UP THE MIDDLE
+
+CLOSE (9 to 12s). cut to the phone showing the real app journal screen:
+"Then write one line about it. That is the whole thing."
+ON-SCREEN: TONIGHT, ONE LINE. + mygrindapp.com
+
+AUDIO: Coach's own voice, no music bed, or a low ambient field track.
+Hook must land before anyone can scroll, so no logo intro card.
+HASHTAGS: same 9 as above plus #reels.
+
+=== EXPORT SIZES ===
+9:16 = 1080x1920 (Reel / Story)
+4:5 = 1080x1350 (IG feed)
+1:1 = 1080x1080
+Pinterest 2:3 = 1000x1500
