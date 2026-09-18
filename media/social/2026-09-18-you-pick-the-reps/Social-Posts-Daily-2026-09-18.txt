@@ -88,3 +88,48 @@ HASHTAGS: same 9 as above plus #reels.
 4:5 = 1080x1350 (IG feed)
 1:1 = 1080x1080
 Pinterest 2:3 = 1000x1500
+
+=== POSTING OUTCOME (2026-09-18) ===
+
+FACEBOOK: SCHEDULED for today 7:30 PM. Verified on the content calendar
+(a 7:30 PM entry now sits in the Fri 18 column). "Share to Facebook story"
+left ON, so the Story fires at 7:30 PM with the feed post. Boost declined
+via "Maybe later".
+INSTAGRAM: NOT scheduled. With no media attached, the composer auto-drops
+Instagram ("If you would like your post to also be published to Instagram,
+add a photo or video") and the button becomes "Publish to Facebook". This
+is expected, not a failure. Coach posts IG from his phone with the card.
+X: BLOCKED. The "Updates to our Terms of Service" modal is up again with a
+single "Got it" button. Only Coach can accept terms, so the run did not
+click it. Text did land in the composer, but the modal overlays the Post
+button. Nothing was posted; the stray composer text was cleared and
+verified empty, and the profile confirms no post today (last is Sep 12).
+
+MECHANICS LEARNED ON A LOCKED MAC (carry these forward):
+1. LOCKED + 0 Chrome windows is NOT fatal. `open -na "Google Chrome"
+   --args --profile-directory="Profile 1"` (the YBG profile) brought a
+   window up and the extension reconnected, restoring the whole CDP path.
+   This is the fix for the 9/17 dead end. Try it BEFORE giving up.
+2. Keystrokes never land while locked: the extension's `type` action AND
+   `key` action both silently do nothing in the page. Do not use them.
+3. execCommand('insertText') DOES write into the Meta composer. But each
+   newline makes Lexical reconcile and reset the caret, so a multi-paragraph
+   insert collapses to THE LAST PARAGRAPH ONLY. Verified with a three-word
+   test: inserting "ALPHA\n\nBETA\n\nGAMMA" leaves only GAMMA.
+   => On a locked Mac the Facebook body must be ONE single block with no
+   newlines. That is why today's FB copy is a condensed one-block version.
+   The full paragraphed caption above is the one Coach posts to IG.
+4. Hashtags CRASH the Meta composer. Inserting a "#tag" string opens the
+   hashtag autocomplete and blanks the whole page (reproduced 3 times).
+   Today's FB post therefore ships with NO hashtag line. Do not retry this
+   on a locked run; it costs a full composer rebuild each time.
+5. The time fields cannot be arrow-walked with real keys while locked, but
+   they DO respond to a dispatched KeyboardEvent('keydown', ArrowUp/Down)
+   on the input[role="spinbutton"]. Loop until aria-valuenow hits the
+   target. All 6 spinbuttons drove cleanly to 7:30 PM this way.
+6. Read the PREVIEW pane, never the editor's innerText. innerText includes
+   a mirror node and autocomplete dropdown text, so it reports doubled or
+   inflated lengths that are not in the actual post. On X, the character
+   counter (role="progressbar" aria-valuenow, percent of 280) is the
+   honest read: it showed 77% = ~216 chars, exactly the expected length,
+   proving the "doubling" seen on 9/16 was a reading artifact, not real.
