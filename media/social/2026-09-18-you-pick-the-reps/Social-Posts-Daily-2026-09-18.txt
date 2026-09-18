@@ -1,0 +1,90 @@
+MYGRIND DAILY SOCIAL: Friday, September 18, 2026
+Lead audience: BASEBALL (day-of-year 261 % 3 = 0)
+Theme: Friday = parent real-talk (playing time)
+Format: static real-app-screen card pair (STATS screen) + a Reel script
+Coach can shoot on his own phone. Zero generated pixels.
+
+Screen: STATS (#stats): real MYGRIND header with the sport toggle, MY STATS,
+the READ-ONLY note, YOUR PROGRESS (AVG/OBP/SLG/ERA) and the real TRAINING
+VOLUME tile reading 490 REPS THIS WEEK. On-screen date reads FRIDAY,
+SEPTEMBER 18, 2026. Captured today via the shoot-light-dashboard rig,
+headless Chrome 540x720 @2x, hash route #stats.
+NOTE (confirmed again today): the headless capture rig works fine on a
+LOCKED Mac. Only record_app_demo.sh (screencapture video) needs it unlocked.
+Screen rotation: 9/6 dashboard, 9/7 journal, 9/8 stats, 9/9 academics,
+9/10 dashboard, 9/11 pure-CSS type card, 9/13 stats, 9/15 journal,
+9/16 academics, 9/17 dashboard, 9/18 STATS (5 days since the last stats).
+Pair axis: sport toggle in the app header (BASEBALL gold / SOFTBALL berry).
+Seasonal anchor: fall ball three weeks in, playing time is the Friday ache.
+Belief shift: the lineup card is the coach's, the reps are the player's.
+The 490 reps tile on the real screen carries it.
+Anti-later CTA: "Tonight, one line."
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+=== INSTAGRAM / FACEBOOK CAPTION ===
+
+Fall ball is three weeks in, and some of you are watching your player sit more than you expected.
+
+I want to say the honest thing about that.
+
+You are not going to fix playing time from the bleachers. Not with a conversation in the parking lot, not by switching teams in October, not by being louder than the other parents. Coaches see what they see, and the lineup card is theirs.
+
+Here is what is actually yours.
+
+Between last Saturday and this one, your player has a stack of hours nobody assigned them. The tee in the garage. The long toss. The ten minutes of glove work before practice starts. Nobody is writing that down. Nobody is counting it.
+
+Start counting it.
+
+In 35 years I have watched a lot of players get passed over in the fall and start in the spring. It was never the parent who complained the most. It was the player who kept a record of their own work and showed up in February looking like somebody who never stopped.
+
+Your player does not control the innings. They control the reps. And the reps are the part that carries into next season.
+
+Tonight, one line. What they did, and one thing they would do differently.
+
+Coach
+
+=== HASHTAGS (paste under the caption) ===
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+=== X / TWITTER (@MyGrindapp) ===
+
+You are not going to fix playing time from the bleachers.
+
+The lineup card belongs to the coach. The reps between games belong to your player.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+Cream MyGrind card reading "You don't pick the lineup. You pick the reps." above a real screenshot of the MyGrind app stats screen dated Friday, September 18, 2026, showing 490 reps logged this week.
+
+=== REEL / TIKTOK SCRIPT (12 seconds, Coach's real phone footage) ===
+
+HOOK (0 to 1.5s). Coach to camera, close, no intro:
+"If your player is sitting more this fall than you expected, listen."
+ON-SCREEN: THE LINEUP CARD IS NOT YOURS
+
+BODY (1.5 to 9s). cut to a real tee or garage-net clip:
+"You are not fixing playing time from the bleachers. Parking lot talks
+don't do it. Switching teams in October doesn't do it.
+What your player does between games, that part is theirs."
+ON-SCREEN, one line at a time: NOT THE INNINGS / THE REPS / WRITE THEM DOWN
+
+CLOSE (9 to 12s). cut to the phone showing the real app stats screen:
+"Count the reps. One line a night. February is where it shows up."
+ON-SCREEN: TONIGHT, ONE LINE. + mygrindapp.com
+
+AUDIO: Coach's own voice, no music bed, or a low ambient field track.
+Hook must land before anyone can scroll, so no logo intro card.
+HASHTAGS: same 9 as above plus #reels.
+
+=== EXPORT SIZES ===
+9:16 = 1080x1920 (Reel / Story)
+4:5 = 1080x1350 (IG feed)
+1:1 = 1080x1080
+Pinterest 2:3 = 1000x1500
