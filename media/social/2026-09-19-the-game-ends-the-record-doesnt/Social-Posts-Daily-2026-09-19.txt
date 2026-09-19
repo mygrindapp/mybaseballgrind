@@ -1,0 +1,68 @@
+MYGRIND DAILY SOCIAL: Saturday, September 19, 2026
+Lead audience: SOFTBALL (day-of-year 262 % 3 = 1)
+Theme: Saturday = game day / log it after the game
+Format: static real-app-screen card pair (JOURNAL screen). Zero generated pixels.
+
+Screen: JOURNAL (#journal): real MYGRIND header with the sport toggle, MY JOURNAL,
+and the live START TODAY picker (GAME / PRACTICE / WORKOUT / INSTRUCTOR /
+REFLECTION / OFF DAY). On-screen date reads SATURDAY, SEPTEMBER 19, 2026 and
+GAME is the first card, which is exactly the Saturday message. Captured today
+via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, hash route
+#journal.
+CONFIRMED AGAIN: the headless capture rig works fine on a LOCKED Mac.
+Screen rotation: 9/13 stats, 9/15 journal, 9/16 academics, 9/17 dashboard,
+9/18 stats, 9/19 JOURNAL (4 days since the last journal, and the only screen
+where GAME is the first thing you see on a game day).
+Pair axis: sport toggle in the app header (SOFTBALL berry / BASEBALL gold).
+Seasonal anchor: September Saturdays, fall ball games.
+Belief shift: more games do not make your player better, what they notice
+between games does.
+Anti-later CTA: "Tonight, one line."
+NO-AI NOTE: real screen, zero generated pixels, "Made with AI" stays OFF.
+
+=== INSTAGRAM / FACEBOOK CAPTION ===
+
+The game ends and everybody scatters. Gear in the trunk, snack bar, drive home, phone.
+
+Here is the part most families lose.
+
+Your player just spent two hours learning something about themselves. How they handled the first at bat after the error. Whether they sat back on the change-up. What the circle felt like in the fourth when their legs started to go. That information is sharpest in the twenty minutes after the last out, and most of it is gone by Sunday morning.
+
+Ask any coach what separates the player who is better in October from the one who looks the same in March. It is almost never talent, and it is almost never how many games they played.
+
+It is whether anybody wrote anything down.
+
+More games do not make your player better. What they notice between games does.
+
+So before the gear comes off tonight. One line. What happened, and one thing they would do differently next Saturday.
+
+That is the whole habit. Five minutes on the bench, in the car, on the back porch. By November they have a record of a season instead of a blur.
+
+Coach
+
+=== HASHTAGS (softball set + standing rule) ===
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+=== X / TWITTER (under 280) ===
+
+The game ends and everybody scatters. Gear in the trunk, snack bar, drive home.
+
+What your player learned out there is gone by Sunday unless somebody writes it down.
+
+Tonight, one line.
+
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+
+#journal #accountability
+
+=== ALT TEXT ===
+
+MyGrind card on cream. Headline reads THE GAME ENDS. THE RECORD DOESN'T. above
+a real screenshot of the MyGrind app Journal screen with the softball toggle
+active, showing the Start Today picker (Game, Practice, Workout, Instructor,
+Reflection, Off Day) dated Saturday, September 19, 2026.
+
+=== EXPORT SIZES ===
+9:16 = 1080x1920 (Reel/Story)  |  4:5 = 1080x1350 (IG feed)
+1:1 = 1080x1080 (X/square)     |  Pinterest 2:3 = 1000x1500
