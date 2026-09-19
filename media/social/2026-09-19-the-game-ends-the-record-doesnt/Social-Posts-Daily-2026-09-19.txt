@@ -66,3 +66,41 @@ Reflection, Off Day) dated Saturday, September 19, 2026.
 === EXPORT SIZES ===
 9:16 = 1080x1920 (Reel/Story)  |  4:5 = 1080x1350 (IG feed)
 1:1 = 1080x1080 (X/square)     |  Pinterest 2:3 = 1000x1500
+
+=== POSTING OUTCOME (2026-09-19) ===
+X (@MyGrindapp): POSTED ~9:30 AM PT, text + link, branded OG card rendered
+correctly on the timeline. "Made with AI" left OFF (no generated media, link
+card only). The Terms-of-Service modal that blocked 9/10 and 9/18 is GONE.
+META: SCHEDULED Sat Sep 19, 7:30 PM PT, Facebook feed + Facebook Story
+(toggle left ON). Instagram was auto-dropped by Meta because no media could
+be attached ("add a photo or video" notice); the button itself changed to
+"Schedule for Facebook". Verified on the content calendar: Sat 19 column now
+carries a 7:30 PM entry.
+
+*** THE FIX THAT MADE A LOCKED MAC POSTABLE (new, 2026-09-19) ***
+The Mac was LOCKED all run (CGSSessionScreenIsLocked true, visibilityState
+"hidden"). The old conclusion was "locked = no posting, save a draft." WRONG.
+The real blocker was the BACKGROUND-TAB TRAP, not the lock.
+  - While the composer tab was a BACKGROUND tab, the extension's type/click
+    actions silently did nothing: text never appeared, React never registered
+    it, and Publish / Finish later stayed aria-disabled="true".
+  - Injecting text with document.execCommand('insertText') DID put text in the
+    DOM, but React/Lexical/Draft.js never saw it, so every submit button
+    stayed disabled. It also multiplied and scrambled the text whenever
+    hashtags were present (hashtag autocomplete). DO NOT use execCommand to
+    fill these composers.
+  - FIX: front the tab with a Chrome-level AppleScript command
+    (set active tab index / set index of window to 1). This is NOT a System
+    Events keystroke, so it is SAFE while the screen is locked.
+    After fronting, the extension's real click/type/key actions worked
+    normally on BOTH x.com and Business Suite, React registered everything,
+    and the full schedule flow (7:30 PM segmented time fields, arrow-walk
+    method) completed end to end.
+So: a locked Mac blocks only the NATIVE FILE PICKER (media attach). Caption,
+scheduling, and posting are all fine once the tab is fronted.
+
+REMAINS COACH'S:
+- @youngsbaseball IG + TikTok from the phone, with the 4x5 card from Drive.
+- Instagram @mygrindapp did NOT get today's post (no media attach possible).
+  The card is in Drive if he wants to put it up from the phone.
+- Comment/DM replies, 5 genuine comments, 1 capture for the content bank.
