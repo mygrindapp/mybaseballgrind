@@ -42,3 +42,30 @@ A cream MyGrind card. The headline reads Nobody claps on a Monday. Below it, a r
 4:5  IG FEED 1080x1350
 1:1  SQUARE  1080x1080
 2:3  PINTEREST 1000x1500
+
+=== POSTING OUTCOME (2026-09-21, automated run) ===
+Step Zero: Planner Mon 21 column EMPTY, X last post Sun 20 2:58 PM PT. Day was uncovered. Proceeded.
+Environment: Mac LOCKED at fire time (CGSSessionScreenIsLocked=true) for the whole run.
+  - Live Chrome window was Profile 22 (hartdistrict) = the 2026-09-09 wrong-profile signature
+    (list_connected_browsers returned []). Fixed by launching Profile 1 (Youngs Baseball - YBG).
+  - Extension typing initially landed NOTHING in the Meta composer (contenteditable len 1).
+    Fronting the composer tab with the Chrome AppleScript block fixed it immediately
+    (visibilityState visible + hasFocus true). This is the 2026-09-19 background-tab fix,
+    and it is safe while locked. Same fix applied before the X composer.
+  - Native file picker NOT attempted: locked screen blocks it, and ZERO System Events
+    keystrokes were sent (2026-09-11 rule: blind keystrokes hit the lock-screen password field).
+
+FACEBOOK: feed post SCHEDULED Mon Sep 21, 7:30 PM. TEXT ONLY (no card attached).
+  Story toggle left ON, so the Facebook Story fires at 7:30 PM with the feed post. Boost declined.
+  Verified in Planner: Mon 21 column shows the 7:30 PM entry with today's copy.
+INSTAGRAM: NOT posted. IG requires media and no media could be attached on a locked screen,
+  so mygrindapp was deselected in "Post to" rather than letting the whole schedule fail.
+  "Save preference" was deliberately NOT clicked, so future runs still default to FB + IG.
+X: POSTED LIVE 7:17 AM PT (2026-09-21T14:17:31Z), text + link. OG link card rendered with an image.
+  "Made with AI" correctly left OFF (no media attached). Hashtags appear once each, no doubling.
+
+CARD: built and committed but NOT attached to any channel this run. Coach can attach the
+  4x5 FEED png to the scheduled FB post by editing it in Planner before 7:30 PM.
+
+NOTE FOR A FUTURE RUN: the Sun 9/20 X post shows "#accountability #accountability #a..." repeated
+  on the profile. Today's post was checked and is clean, but the 9/20 hashtag doubling is worth a look.
