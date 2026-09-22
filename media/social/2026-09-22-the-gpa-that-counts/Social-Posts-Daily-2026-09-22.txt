@@ -46,3 +46,22 @@ A cream MyGrind card. The headline reads The GPA that counts isn't the report ca
 4:5  IG FEED 1080x1350
 1:1  SQUARE  1080x1080 (X)
 2:3  PINTEREST 1000x1500
+
+=== POSTING OUTCOME (2026-09-22, automated run) ===
+Step Zero: Planner Tue 22 column EMPTY, X last post Mon 21 7:17 AM PT. Day was uncovered. Proceeded.
+Environment: Mac LOCKED at fire time (CGSSessionScreenIsLocked=true). Extension connected on the first try
+  (right profile). ZERO System Events keystrokes sent; native file picker not attempted.
+  - X gotcha: /compose/post shows the compose DIALOG over the timeline box, and both are
+    [data-testid=tweetTextarea_0]. find() returned the timeline box first and typing into it landed
+    nothing. Target the textbox inside [role=dialog] and it types fine, even with visibilityState hidden.
+  - Meta gotcha: typing the hashtag line dropped the final #accountability (hashtag autocomplete ate it).
+    Re-typed " #accountability " at the end; verified exactly one occurrence before scheduling.
+
+FACEBOOK: feed post SCHEDULED Tue Sep 22, 7:30 PM ("Your post is scheduled" dialog seen, Boost declined via
+  Maybe later). No card attached, but the calculator link renders its branded OG preview in the post.
+  Story toggle ON, so the Facebook Story fires at 7:30 PM. Planner Tue 22 shows the 7:30 PM entry.
+INSTAGRAM: NOT posted (needs media; locked screen). mygrindapp deselected in Post to; Save preference NOT clicked.
+X: POSTED LIVE 7:29 AM PT (2026-09-22T14:29:14Z), text + calculator link, link card present.
+  Made with AI OFF (no media). Hashtags #journal #accountability once each.
+
+CARD: built, committed, mirrored to Drive Social Content. Not attached to any channel this run.
