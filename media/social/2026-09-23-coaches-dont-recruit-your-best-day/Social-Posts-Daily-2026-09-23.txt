@@ -58,3 +58,20 @@ the Daily Check-In, 5 Tools, Resources, and 12-Month Calendar rows.
 4:5 IG feed     = 1080x1350
 1:1 square      = 1080x1080
 Pinterest 2:3   = 1000x1500
+
+--- POSTING OUTCOME 2026-09-23 ---
+NOTHING AUTO-POSTED. Mac was locked at task fire (CGSSessionScreenIsLocked=true)
+AND a second Chrome window (Gmail) held frontmost. While locked the window
+server is frozen: `set index of w to 1` and `set minimized of window 1 to true`
+both returned success and did nothing, so the extension's window could not be
+brought forward. With the composer in a non-front window no keyboard input
+reaches any composer.
+  X:    editor refused focus outright; ref click, coordinate click, ed.focus()
+        and a Selection-API range + real type all produced zero characters.
+  Meta: composer DID accept ed.focus() (activeElement === editor) but a real
+        type still produced zero characters. Verified by reading the field back.
+No ToS modal on X, no login problem, no headless-Chrome hijack (window bounds
+read 2240x1260), Business Suite logged in fine. Step Zero was clean: Meta had
+"No scheduled posts" and X's last post was 2026-09-22.
+Card pair built and committed normally (the headless capture rig works locked).
+Browser left as found: Gmail window intact, stray tabs closed.
