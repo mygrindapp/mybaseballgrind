@@ -1,0 +1,60 @@
+MYGRIND DAILY SOCIAL — Wednesday, 2026-09-23
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 266 % 3 = 2)
+Theme: Wednesday = Recruiting / academics
+Format: static card (real app screen, DEVELOP, captured 2026-09-23). Zero generated pixels.
+Screen: DEVELOP (#develop): real MYGRIND header with the sport toggle and the
+on-screen date WEDNESDAY, SEPTEMBER 23, 2026, the DEVELOP intro card, DAILY
+CHECK-IN, THE 5 TOOLS, RESOURCES (Recruiting, eligibility, and the links
+coaches ask about), 12-MONTH CALENDAR. Captured via the shoot-light-dashboard
+rig, headless Chrome 540x720 @2x, hash route #develop.
+Screen variety check: 9/18 stats, 9/19 journal, 9/20 stats, 9/21 dashboard,
+9/22 academics, 9/23 DEVELOP (first use).
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Coaches don't recruit your best day.
+
+They recruit the week. The ordinary one. The Tuesday nobody watched.
+
+When a college coach finally sits across from your player, the question is
+almost never about the highlight. It is: what does a normal week look like for
+you? The players who can answer that clearly, with something written down,
+sound completely different than the ones guessing.
+
+That is true for every player, including the girls on baseball rosters. Same
+question, same answer, same record.
+
+September is the right time to start. Not because anything gets decided this
+month, but because a season of normal weeks is the one thing you cannot go
+back and create in June.
+
+Tonight, one line. What they worked on, how it felt. That is it.
+
+Log it. Own it.
+Coach
+
+mygrindapp.com
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+--- X / TWITTER (under 280) ---
+
+Coaches don't recruit your best day.
+They ask what a normal week looks like.
+More games will not make your player better. What they do between games will.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- ALT TEXT ---
+
+A cream MyGrind card. The headline reads Coaches don't recruit your best day.
+Below it, a real screenshot of the MyGrind app's Develop screen dated
+Wednesday, September 23, 2026, showing the baseball and softball toggle and
+the Daily Check-In, 5 Tools, Resources, and 12-Month Calendar rows.
+
+--- EXPORT SIZES ---
+9:16 Reel/Story = 1080x1920
+4:5 IG feed     = 1080x1350
+1:1 square      = 1080x1080
+Pinterest 2:3   = 1000x1500
