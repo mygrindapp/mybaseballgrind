@@ -1,0 +1,61 @@
+MYGRIND DAILY SOCIAL — Thursday, 2026-09-24
+Lead audience: BASEBALL (day-of-year 267 % 3 = 0)
+Theme: Thursday = Drill / training tip (post-practice arm care + one line)
+Format: static card pair (real app screen, JOURNAL > PRACTICE entry, captured 2026-09-24). Zero generated pixels.
+  Video day per the growth plan: Reel/TikTok script below for Coach's phone.
+Screen: JOURNAL with a Practice entry opened: on-screen date THURSDAY, SEPTEMBER 24, 2026,
+the "WAS THIS WITH THE TEAM OR ON YOUR OWN?" toggle, and the ARM CARE 0/10 checklist row.
+Captured via the shoot-light-dashboard rig (seeded demo player), headless Chrome 540x720 @2x,
+#journal then chooseEntryType('practice').
+Screen variety check: 9/19 journal start picker, 9/20 stats, 9/21 dashboard, 9/22 academics,
+9/23 develop, 9/24 PRACTICE ENTRY FORM (first use).
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Practice ends. Arm care doesn't.
+
+Fall ball is a new year. Arms are fresh, schedules are loose, and this is exactly when habits get set for spring.
+
+Here is the Thursday tip. After practice, before the car ride turns into phone time, give it ten minutes: bands, wrist and forearm work, a slow stretch. Then open the journal and write one line. Was it with the team or on their own? What did they work on? How did the arm feel?
+
+In 35 years, the players I watched keep improving were not the ones with the most games. They were the ones who took care of the small stuff between games, and could tell you about it.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+mygrindapp.com
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (under 280) ---
+
+Practice ends. Arm care doesn't.
+More games won't make your player better. What they do between games will.
+Ten minutes of arm care, then tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (~12s, 9:16 1080x1920, Coach's phone) ---
+0.0-1.5s HOOK (on screen): "Practice ends. Arm care doesn't."
+  Visual: real clip of your player walking off the field, bag on shoulder (content bank).
+1.5-6s: bands / wrist work in the driveway, 2-3 quick real shots.
+  On screen: "10 minutes. Every practice."
+6-10s: screen recording of the MyGrind Practice entry: tap ARM CARE, write one line.
+  On screen: "Then one line."
+10-12s CTA: "Log it. Own it. mygrindapp.com"
+Audio: calm acoustic or lo-fi trending track, low volume. No voiceover needed.
+Hashtags (Reel): the baseball set above + #reels
+
+--- ALT TEXT ---
+
+A cream MyGrind card. The headline reads Practice ends. Arm care doesn't. Below it, a real
+screenshot of the MyGrind app's journal with a Practice entry open, dated Thursday, September 24,
+2026, showing the With Team or On My Own choice and an Arm Care checklist.
+
+--- EXPORT SIZES ---
+9:16 Reel/Story = 1080x1920
+4:5 IG feed     = 1080x1350
+1:1 square      = 1080x1080
+Pinterest 2:3   = 1000x1500
