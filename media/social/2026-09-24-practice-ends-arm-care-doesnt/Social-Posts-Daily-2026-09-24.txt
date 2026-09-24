@@ -59,3 +59,22 @@ screenshot of the MyGrind app's journal with a Practice entry open, dated Thursd
 4:5 IG feed     = 1080x1350
 1:1 square      = 1080x1080
 Pinterest 2:3   = 1000x1500
+
+--- POSTING OUTCOME 2026-09-24 ---
+Step Zero: Planner Thu 24 column EMPTY, X last post Tue 9/22. Day uncovered, proceeded.
+Environment: Mac LOCKED (CGSSessionScreenIsLocked=true). The only live Chrome window at fire time was
+  Profile 22 (hartdistrict.org), so list_connected_browsers returned []. Fixed with
+  `open -na "Google Chrome" --args --profile-directory="Profile 1"`: the new YBG window came up as
+  window 1 even while locked, the extension connected, and its tab group landed in that front window.
+  Activated the MCP tab via `set active tab index` (safe while locked). ZERO System Events keystrokes.
+X: POSTED LIVE 7:17 AM PT (2026-09-24T14:17:51Z), text + UTM link, Made with AI OFF (no media).
+  The profile timeline did not show it until a reload; do not re-post off a stale timeline.
+FACEBOOK: feed post SCHEDULED Thu Sep 24, 7:30 PM ("Your post is scheduled" seen, Boost declined via
+  Maybe later), Story toggle ON so the FB Story fires at 7:30 PM. Planner Thu 24 shows the entry.
+  NO LINK in the post: NEW META LIMIT. Pages without Meta One get 2 link posts per month; the September
+  allowance was used ("0 links remaining"), resets October 1. The "mygrindapp.com" line in the caption
+  alone triggers it, and Schedule AND Finish later stay aria-disabled with no visible error (only a
+  screenshot shows the "Post more links with Meta One" popover). Clicked "Delete link" (NOT Get Meta One),
+  which also stripped the URL text from the caption. Card not attached (locked screen, no picker).
+INSTAGRAM: NOT posted (needs media, locked screen). mygrindapp deselected in Post to, Save preference NOT clicked.
+CARD: built, committed, mirrored to Drive Social Content.
