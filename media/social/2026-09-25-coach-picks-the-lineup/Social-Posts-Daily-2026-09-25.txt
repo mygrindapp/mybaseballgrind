@@ -1,0 +1,71 @@
+MYGRIND DAILY SOCIAL — Friday, 2026-09-25
+Lead audience: SOFTBALL (day-of-year 268 % 3 = 1)
+Theme: Friday = Parent real-talk (playing time vs. what your player owns)
+Format: static card pair (real app screen, JOURNAL > GAME entry, captured 2026-09-25). Zero generated pixels.
+  Video day per the growth plan: Reel/TikTok script below for Coach's phone.
+Screen: JOURNAL with a Game entry open: entry type Game, date 09/25/2026, Arm Care row, Opponent field.
+Captured via the shoot-light-dashboard rig (seeded demo player), headless Chrome 540x720 @2x,
+#journal then chooseEntryType('game').
+Screen variety check: 9/20 stats, 9/21 dashboard, 9/22 academics, 9/23 develop, 9/24 practice entry,
+9/25 GAME ENTRY FORM (first use).
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Lineup: coach's call. The work: theirs.
+
+Fall ball is a new year, and some Fridays your player will play seven innings. Some Fridays, one. Or none.
+
+Here is the real talk. The lineup card is the coach's call, and chasing it from the stands rarely helps. What is fully in your player's hands is what happens between games: the reps they choose, the arm care, and the one honest line they write about today.
+
+In 35 years, the players I watched keep getting better were not always the ones playing the most. They were the ones who owned their work and could tell you about it.
+
+So tonight, whatever the box score said, one line. What went well. What they will work on next.
+
+Log it. Own it.
+Coach
+
+Link in bio.
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280) ---
+
+The coach picks the lineup. Your player picks the work.
+Playing time is one coach's call. What your player does between games is all theirs.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (~12s, 9:16 1080x1920, Coach's phone) ---
+0.0-1.5s HOOK (on screen): "Lineup: coach's call."
+  Visual: real clip of the dugout or the lineup card on the fence (content bank, no faces of minors).
+1.5-5s: On screen: "The work: theirs." Real shot of your player doing tee work or bands after a game.
+5-10s: screen recording of the MyGrind Game entry: pick Game, write one line.
+  On screen: "Seven innings or one. One line."
+10-12s CTA: "Log it. Own it. Link in bio."
+Audio: calm acoustic or lo-fi trending track, low volume. No voiceover needed.
+Hashtags (Reel): the softball set above + #reels
+
+--- ALT TEXT ---
+
+A cream MyGrind card. The headline reads Lineup: coach's call. The work: theirs. Below it, a real
+screenshot of the MyGrind app's journal with a Game entry open for September 25, 2026, showing the
+Arm Care checklist and an Opponent field.
+
+--- EXPORT SIZES ---
+9:16 Reel/Story = 1080x1920
+4:5 IG feed     = 1080x1350
+1:1 square      = 1080x1080
+Pinterest 2:3   = 1000x1500
+
+--- POSTING OUTCOME 2026-09-25 ---
+Step Zero: Planner Fri 25 column EMPTY, X last post Thu 9/24. Day uncovered, proceeded.
+Environment: Mac LOCKED. The YBG window (Business Suite) was already window 1 and the extension's tab group
+  landed in it; the composer was made the active tab via `set active tab index` (verified with URL of active
+  tab of window 1). ZERO System Events keystrokes.
+X: POSTED LIVE 7:19 AM PT (2026-09-25T14:19:20Z), text + UTM link, no media, Made with AI OFF.
+FACEBOOK: feed post SCHEDULED Fri Sep 25, 7:30 PM ("Your post is scheduled" seen, Boost declined via Maybe
+  later). Share to Facebook Story ON, so the FB Story fires at 7:30 PM. Planner shows the entry.
+  No link in the caption (Meta 2-link/month cap, resets Oct 1): "Link in bio" instead.
+INSTAGRAM: NOT posted (needs media, locked screen blocks the picker). mygrindapp deselected, Save preference NOT clicked.
+CARD: built, committed, mirrored to Drive Social Content.
