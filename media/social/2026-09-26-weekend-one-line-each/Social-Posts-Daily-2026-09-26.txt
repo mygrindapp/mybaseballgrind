@@ -1,0 +1,60 @@
+MYGRIND DAILY SOCIAL — Saturday, 2026-09-26
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 269 % 3 = 2)
+Theme: Saturday = Game day / "log it after the game" (fall ball tournament weekends)
+Format: static card pair (real app screen, MYCALENDAR with the "Missed an entry?" backfill card, captured 2026-09-26). Zero generated pixels.
+  Video day per the growth plan: Reel/TikTok script below for Coach's phone.
+Captured via the shoot-light-dashboard rig (seeded demo player), headless Chrome 540x720 @2x, #calendar.
+Screen variety check: 9/20 stats, 9/21 dashboard, 9/22 academics, 9/23 develop, 9/24 practice entry,
+9/25 game entry form, 9/26 MYCALENDAR (first use).
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Three games this weekend. One line each.
+
+Fall ball weekends stack up fast. A Saturday doubleheader, a Sunday morning game, a long drive home, and homework waiting.
+
+For the girls who play baseball, and every player on the roster, here is the small habit that holds a season together: after each game, one honest line. What went well. What they will work on next.
+
+Missed a night? That is fine. Open the journal, pick the date, and log it like it was today. The season stays whole.
+
+In 35 years, the players I watched keep improving were the ones who could tell you what happened in game two last Saturday. More games don't make your player better. What they do with each one does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+Link in bio.
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+--- X / TWITTER (under 280) ---
+
+Three games this weekend. One line each.
+More games don't make your player better. What they do with each one does.
+Missed a night? Pick the date and log it anyway.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (~12s, 9:16 1080x1920, Coach's phone) ---
+0.0-1.5s HOOK (on screen): "Three games this weekend."
+  Visual: real clip of a player (girl in baseball gear, no face of a minor, or from behind) walking off the field with her bag.
+1.5-5s: On screen: "One line each." Real shot of the car ride home, phone in hand (hands only).
+5-10s: screen recording of MyGrind: Journal, pick yesterday's date, type one line.
+  On screen: "Missed a night? Pick the date. Log it anyway."
+10-12s CTA: "Log it. Own it. Link in bio."
+Audio: calm acoustic or lo-fi trending track, low volume. No voiceover needed.
+Hashtags (Reel): the girls-who-play-baseball set above + #reels
+
+--- ALT TEXT ---
+
+A cream MyGrind card. The headline reads Three games this weekend. One line each. Below it, a real
+screenshot of the MyGrind app's MyCalendar screen with a card that reads Missed an entry? Open the Daily
+Journal, pick the past date in the date picker, and log it like you would today.
+
+--- EXPORT SIZES ---
+9:16 Reel/Story = 1080x1920
+4:5 IG feed     = 1080x1350
+1:1 square      = 1080x1080
+Pinterest 2:3   = 1000x1500
