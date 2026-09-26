@@ -58,3 +58,15 @@ Journal, pick the past date in the date picker, and log it like you would today.
 4:5 IG feed     = 1080x1350
 1:1 square      = 1080x1080
 Pinterest 2:3   = 1000x1500
+
+--- POSTING OUTCOME 2026-09-26 ---
+Step Zero: Planner Sat 26 column EMPTY, X last post Fri 9/25. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window (Gmail); the extension's tab landed in it and was made the active
+  tab via `set active tab index` (verified with URL of active tab of window 1). ZERO System Events keystrokes.
+FACEBOOK: feed post SCHEDULED Sat Sep 26, 7:30 PM ("Your post is scheduled" seen, Boost declined via Maybe
+  later). Share to Facebook Story ON, so the FB Story fires at 7:30 PM. Planner shows the entry.
+  No link in the caption (Meta 2-link/month cap, resets Oct 1): "Link in bio" instead.
+INSTAGRAM: NOT posted (needs media, locked screen blocks the picker). mygrindapp deselected, Save preference NOT clicked.
+X: NOT POSTED. The "Updates to our Terms of Service" modal is up again on x.com and blocks the composer.
+  Got it NOT clicked (accepting terms is Coach's call). Coach: click Got it once, then post the X block above.
+CARD: built, committed, mirrored to Drive Social Content.
