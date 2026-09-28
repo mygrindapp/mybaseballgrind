@@ -1,0 +1,45 @@
+MYGRIND DAILY SOCIAL — Monday, 2026-09-28
+Lead audience: SOFTBALL (day-of-year 271 % 3 = 1)
+Theme: Monday = Mindset / Today's Grind QOTD card
+Format: static card, Today's Grind editorial QOTD (Playfair italic on near-black + gold compass).
+  Rendered from HTML by scripts/build_todays_grind_card.py. Zero generated pixels.
+  Variety: breaks a 7-day run of cream app-screen cards (new layout, type, palette axis).
+  Sport-neutral text card, so one card serves both sports (the softball lead lives in the caption).
+Master: media/qotd/todays-grind/rough-weekend-is-a-page/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+One rough weekend is a page, not the whole book.
+
+Fall ball weekends can be long. Maybe your player went 0 for 8. Maybe the circle felt a mile wide and the walks piled up. Maybe they sat more than they wanted to.
+
+In 35 years I have watched a lot of softball players have a weekend like that. The ones who kept improving did one simple thing on Monday: they wrote it down, found one thing that went right, and picked one thing to work on this week. That's it.
+
+More games don't make your player better. What they do between games does.
+
+Tonight, one line. One thing that went right, one thing to work on.
+
+Log it. Own it.
+Coach
+
+Link in bio.
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A dark card with the gold MyGrind compass logo and the words "Today's Grind" above an italic quote: "One rough weekend is a page, not the whole book. Monday is a fresh line."
+
+--- X / TWITTER (under 280) ---
+
+One rough weekend is a page, not the whole book.
+More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (not built today)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts
+[ ] Capture 1 photo/clip for the content bank
