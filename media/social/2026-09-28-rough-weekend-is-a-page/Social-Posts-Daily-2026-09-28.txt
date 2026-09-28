@@ -43,3 +43,12 @@ https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
 [ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
 [ ] Leave 5 genuine comments on bigger youth baseball/softball accounts
 [ ] Capture 1 photo/clip for the content bank
+
+--- POSTING OUTCOME 2026-09-28 ---
+Step Zero: Planner Mon 28 column EMPTY, X last post Sun 9/27. Day uncovered, proceeded.
+Environment: Mac LOCKED, Chrome had ZERO windows at fire time; opened a Profile 1 window, extension connected. ZERO System Events keystrokes.
+X: POSTED 7:17 AM PT, text + link (OG card preview). No native media (locked screen blocks the picker). No ToS modal.
+FACEBOOK: SCHEDULED 7:30 PM today, text-only, Story toggle ON, Boost OFF ("Maybe later"). Verified in Planner Mon 28 column.
+  Time segments only took input after JS .focus() on each spinbutton, then typing (coordinate/ref clicks did not register).
+INSTAGRAM: NOT scheduled (IG requires media; deselected in Post to). Coach: post the 4x5 FEED card to IG with the caption above.
+CARD: built, committed (4e12230), mirrored to Drive Social Content/2026-09-28-rough-weekend-is-a-page.
