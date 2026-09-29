@@ -1,0 +1,44 @@
+MYGRIND DAILY SOCIAL — Tuesday, 2026-09-29
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 272 % 3 = 2)
+Theme: Tuesday = drive to the blog (no newsletter issue this week; blog = Can Girls Play Baseball?)
+Format: static card, chalk-on-GRASS field card (scripts/build_social_field_card.py). Zero generated pixels.
+  Variety: breaks yesterday's near-black Today's Grind card and last week's cream app-screen run (new surface, palette, type axis).
+  Sport-neutral type card serves both sports; the girls-who-play-baseball lead lives in the eyebrow + caption.
+Folder: media/social/2026-09-29-same-diamond-same-journal/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Same diamond. Same reps. Same journal.
+
+Late September, fall ball is rolling, and there is a girl on a lot of baseball rosters right now. Not softball. Baseball. Same 90 feet, same white ball, same bullpen, same long bus rides home.
+
+Parents of girls who play baseball tell me the same thing: most of what they read is written for someone else. So here it is plainly. The work is the same, and so is what makes it count.
+
+In 35 years the players who kept getting better, boys and girls, did one simple thing: after practice or a game, they wrote down one thing that went right and one thing to work on. More games don't make your player better. What they do between games does.
+
+I wrote a full guide on every level a girl can play baseball, from Little League to high school to college and beyond. It's on the blog (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A green outfield-grass card with the gold MyGrind compass logo and the eyebrow "Girls who play baseball." Large chalk-white letters read "Same diamond. Same reps. Same journal." Below: "Fall ball is where the work gets written down." Footer: "Tonight, one line." and mygrindapp.com.
+
+--- X / TWITTER (under 280) ---
+
+Same diamond. Same reps. Same journal.
+Girls who play baseball: more games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/blog/can-girls-play-baseball.html?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (include 1-2 girls-baseball accounts today)
+[ ] Capture 1 photo/clip for the content bank
