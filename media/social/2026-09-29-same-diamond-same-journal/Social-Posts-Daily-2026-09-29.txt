@@ -42,3 +42,12 @@ https://www.mygrindapp.com/blog/can-girls-play-baseball.html?utm_source=x&utm_me
 [ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
 [ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (include 1-2 girls-baseball accounts today)
 [ ] Capture 1 photo/clip for the content bank
+
+--- POSTING OUTCOME 2026-09-29 ---
+Step Zero: Planner Tue 29 column EMPTY, X last post Mon 9/28. Day uncovered, proceeded.
+Environment: Mac LOCKED (CGSSessionScreenIsLocked=true), one Chrome window, extension tab fronted via Chrome AppleScript. ZERO System Events keystrokes.
+X: POSTED 7:17 AM PT, text + blog link (Can Girls Play Baseball? preview card rendered). No native media (locked screen blocks the picker).
+FACEBOOK: SCHEDULED 7:30 PM today, text-only (no URL: Sept link cap), Story toggle ON, Boost OFF ("Maybe later"). Verified in Planner Tue 29 column.
+  Time segments: JS .focus() on each spinbutton, then real type (07 / 30 / P). Worked first try.
+INSTAGRAM: NOT scheduled (IG requires media; deselected in Post to, Save preference NOT clicked). Coach: post the 4x5 FEED card to IG with the caption above.
+CARD: built, committed (a99c3c0), mirrored to Drive Social Content/2026-09-29-same-diamond-same-journal.
