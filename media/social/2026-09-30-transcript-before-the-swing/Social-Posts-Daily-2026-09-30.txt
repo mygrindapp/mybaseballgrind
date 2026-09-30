@@ -39,3 +39,11 @@ https://www.mygrindapp.com/blog/ncaa-eligibility-gpa-guide.html?utm_source=x&utm
 [ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
 [ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (HS baseball / recruiting accounts fit today)
 [ ] Capture 1 photo/clip for the content bank
+
+--- POSTING OUTCOME 2026-09-30 ---
+Step Zero: Planner Wed 30 column EMPTY, X last post Tue 9/29. Day uncovered, proceeded.
+Environment: Mac LOCKED (CGSSessionScreenIsLocked=true), extension tab fronted via Chrome AppleScript. ZERO System Events keystrokes.
+X: POSTED 7:18 AM PT, text + NCAA eligibility GPA guide link. No native media (locked screen blocks the picker). First type attempt landed nothing (composer still loading); second landed once, verified single copy.
+FACEBOOK: SCHEDULED 7:30 PM today, text-only (no URL: Sept link cap, resets Oct 1), Story toggle ON, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Wed 30 column.
+INSTAGRAM: NOT scheduled (IG requires media; deselected in Post to, Save preference NOT clicked). Coach: post the 4x5 FEED BASEBALL card to IG with the caption above.
+CARD: built, committed (70be5da), mirrored to Drive Social Content/2026-09-30-transcript-before-the-swing.
