@@ -1,0 +1,50 @@
+MYGRIND DAILY SOCIAL — Saturday, 2026-10-03
+Lead audience: BASEBALL (day-of-year 276 % 3 = 0)
+Theme: Saturday = Game day / log it after the game. October fall ball doubleheader anchor, belief shift, anti-"later".
+Format: static card pair (real app screen, MYSTATS with the AVG/OBP/SLG/ERA progress card and 490 reps training volume, captured 2026-10-03; last stats card was 9/20). Zero generated pixels.
+  Screen variety: 9/29 field card, 9/30 academics, 10/1 journal practice, 10/2 dashboard, 10/3 stats.
+  Video day per the growth plan: Reel/TikTok script below for Coach's phone.
+  Captured via the shoot-light-dashboard rig (seeded demo player "Jordan"), headless Chrome 540x720 @2x, #stats, both sport modes.
+Folder: media/social/2026-10-03-two-games-two-lines/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Two games today. Two lines tonight.
+
+October fall ball Saturdays usually mean a doubleheader, a long day, and a tired player in the back seat. By Monday, most of it is a blur.
+
+So keep it small. After each game, your player logs the at-bats and one line about what they saw. That's it. MyStats does the math, and after two games the average starts showing up on its own.
+
+More games don't make your player better. What they do between games does. In 35 years, the players I watched improve were the ones who could tell me what happened in game one before game two started.
+
+Don't wait for spring to start. Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · Fall Ball." The headline reads "Two games today. Two lines tonight." Below: "Your player logs each game's at-bats after the final out. MyStats does the math." A real screenshot of the MyGrind MyStats screen in baseball mode: season stats with AVG, OBP, SLG and ERA tabs, a note that the average starts climbing after two logged games, and a training volume card showing 490 reps this week.
+
+--- X / TWITTER (under 280) ---
+
+Two games today. Two lines tonight.
+More games don't make your player better. What they do between games does.
+Log the at-bats after each game. The stats do the math.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (~12s, Coach's phone) ---
+HOOK (0-1.5s, on-screen text over a real dugout or scoreboard shot between games): "Game one is over. Quick."
+BODY (1.5-8s): text beats: "What did you see?" / "3 at-bats. 1 line." / "Before game two starts."
+CLOSE (8-12s): screen recording of the journal Game entry, then the MyStats screen. Text: "Two games today. Two lines tonight. Log it. Own it."
+AUDIO: calm acoustic or lo-fi, nothing hype.
+CAPTION: use the IG caption above + #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (fall ball tournament pages fit today)
+[ ] Capture 1 photo/clip for the content bank (a between-games dugout or scoreboard shot would feed the Reel above)
