@@ -1,0 +1,51 @@
+MYGRIND DAILY SOCIAL — Sunday, 2026-10-04
+Lead audience: SOFTBALL (day-of-year 277 % 3 = 1)
+Theme: Sunday = Story / credibility. October off-season anchor (peak strength month, wood bat swings), belief shift, anti-"later".
+Format: static card pair (real app screen, MYCALENDAR October guidance "Seasonal training guide, built from 35 years of player development", open to Week 1 with the line "These October swings become March batting averages." Captured 2026-10-04). Zero generated pixels.
+  Screen variety: 9/30 academics, 10/1 journal practice, 10/2 dashboard, 10/3 stats, 10/4 calendar (first calendar card).
+  Video day per the growth plan: Reel/TikTok script below for Coach's phone.
+  Captured via the shoot-light-dashboard rig (seeded demo player "Jordan"), headless Chrome 540x720 @2x, #calendar with the October month opened, both sport modes.
+  App note for Coach: on the light theme the month names in MyCalendar's closed list render cream on cream (barely visible). Worth a small CSS fix in the repo.
+Folder: media/social/2026-10-04-october-swings-march-averages/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+October swings become March averages.
+
+Most softball families treat October like a pause. High school season is months away, fall ball is winding down, and "we'll get serious in January" sounds reasonable.
+
+After 35 years, here's what I've seen. The players who show up in March looking different did the quiet work in October. Heavy lifts while there's time to recover. 100 swings a day. One real rest day. Nobody was watching, so they wrote it down.
+
+More games don't make your player better. What they do between games does, and October is all between.
+
+That's why MyCalendar lays out every month, and why the journal is where your player logs what they actually did. Not a big commitment. Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · The off-season." The headline reads "October swings become March averages." Below: "MyCalendar lays out the month, built from 35 years of watching who improved. Your player logs what they actually did." A real screenshot of the MyGrind MyCalendar October guidance in softball mode: October is the peak strength month, Week 1 weight room work, 100 wood bat swings a day with the line "These October swings become March batting averages," mobility on Wednesday, and one full rest day.
+
+--- X / TWITTER (under 280) ---
+
+October swings become March averages.
+More games don't make your player better. What they do between games does, and October is all between.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (~12s, Coach's phone) ---
+HOOK (0-1.5s, on-screen text over a real shot of a bat bag or tee in a garage at dusk): "It's October. Nobody's watching."
+BODY (1.5-8s): text beats: "100 swings." / "Heavy lifts." / "One rest day." / "Written down."
+CLOSE (8-12s): screen recording scrolling MyCalendar October, then the journal. Text: "October swings become March averages. Log it. Own it."
+AUDIO: calm acoustic or lo-fi, nothing hype.
+CAPTION: use the IG caption above + #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (travel softball and fastpitch training pages fit today)
+[ ] Capture 1 photo/clip for the content bank (a tee or bat bag at dusk would feed the Reel above)
