@@ -132,3 +132,28 @@ The "locked spec" referenced in `api/send-invite.js` headers is in Notion ("🛠
 - **Single-file SPAs by design.** Don't extract shared JS into modules across HTML files unless asked — the project deliberately keeps each page standalone for hosting simplicity.
 - **`localStorage` is the source of truth client-side.** There is no auth/session backend yet. `getDeviceFingerprint`, `validateSession`, and `flagTampered` in `softball.html` are the closest thing to an integrity check.
 - **Two domain names coexist** (`mygrindapp.com` and `youngsbaseball.github.io/mybaseballgrind`). When changing URLs, grep both — `softball.html` still has hardcoded github.io URLs that `mg-config.js` overrides at runtime.
+
+## Daily social: attaching the card when the Mac is locked (added 2026-10-05)
+
+This applies to the 7:08 daily social run and to any manual posting session. A locked screen is NOT a reason to post text-only or to skip Instagram. Never drive the native file picker and never send System Events keystrokes to attach media. Use the Chrome extension's `file_upload` tool, which needs no picker. Proven 2026-10-05: the 4x5 feed card went to Instagram @mygrindapp through Meta Business Suite this way.
+
+Meta Business Suite (`business.facebook.com/latest/composer`) has no file input in the page until "Add photo/video" is clicked, and that click normally opens the native picker. Recipe:
+
+1. Before clicking, run this once in the composer tab with the extension's JavaScript tool. It stops the picker from opening and parks the file input on the page:
+   ```js
+   (() => { if (window.__mgPatched) return; const o = HTMLInputElement.prototype.click;
+     HTMLInputElement.prototype.click = function () {
+       if (this.type === 'file') { window.__mgFileInput = this;
+         if (!this.isConnected) { this.style.cssText = 'position:fixed;top:4px;left:300px;z-index:99999;display:block';
+           this.setAttribute('aria-label', 'mg captured file input'); document.body.appendChild(this); }
+         return; }
+       return o.apply(this, arguments); };
+     window.__mgPatched = true; })()
+   ```
+2. Click "Add photo/video". No picker opens; a "Choose Files" input appears at the top of the page.
+3. Use `find` for the input labeled "mg captured file input", then call `file_upload` with that ref and the absolute path of the card PNG in today's `media/social/<date>-<slug>/` folder (4x5 FEED card for Facebook + Instagram).
+4. Wait for the "1080 x 1350" thumbnail and the feed preview, then add the caption and schedule or publish as usual. Confirm Boost is OFF.
+
+Use the same approach on X (1x1 SQUARE card): locate the composer's file input, or capture it with the snippet above, then `file_upload`.
+
+Only fall back to text-only and skip Instagram if `file_upload` itself returns an error. Log the exact error text in the POSTING OUTCOME block so it can be fixed.

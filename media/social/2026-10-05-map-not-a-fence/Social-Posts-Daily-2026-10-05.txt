@@ -51,3 +51,4 @@ X: POSTED 7:18 AM, text + UTM link (no ToS modal today). Verified at the top of 
 FACEBOOK: SCHEDULED 7:30 PM today, text-only (no URL), Story toggle ON, Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Mon 5 column.
 INSTAGRAM: NOT scheduled (IG requires media; deselected in Post to, Save preference NOT clicked). Coach: post the 4x5 FEED BASEBALL card to IG with the caption above.
 CARD: both sports, committed, mirrored to Drive Social Content/2026-10-05-map-not-a-fence.
+INSTAGRAM (follow-up, 9:51 AM): PUBLISHED to @mygrindapp via Meta Business Suite, 4x5 FEED BASEBALL card + caption above, Instagram only (Facebook deselected, its 7:30 PM text-only post left as scheduled), Boost OFF. "Post published to Instagram" seen; verified in Planner Mon 5 column. Card attached with file_upload, no native picker (recipe now in CLAUDE.md).
