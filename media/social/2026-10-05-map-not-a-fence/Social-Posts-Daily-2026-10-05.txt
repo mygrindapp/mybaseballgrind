@@ -1,0 +1,45 @@
+MYGRIND DAILY SOCIAL — Monday, 2026-10-05
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 278 % 3 = 2)
+Theme: Monday = Mindset. October off-season anchor (fall ball winding down, the quiet months start now), belief shift, anti-"later".
+Format: static card pair (real app screen, THE 5 TOOLS page under Develop: "Same five for baseball and softball, boys and girls... The numbers on these pages are a map for the dream, never a fence around it." Captured 2026-10-05). Zero generated pixels.
+  Screen variety: 10/1 journal, 10/2 dashboard, 10/3 stats, 10/4 calendar, 10/5 5 Tools (first 5 Tools card).
+  Captured via the shoot-light-dashboard rig (seeded demo player "Jordan"), headless Chrome 540x720 @2x, #tools, both sport modes.
+  App note for Coach: checkin.html (Daily Check-In) still renders Warm Dark only and its verdict line uses an em-dash ("FRESH — GO COMPETE") plus "Attack today." Worth a copy pass; skipped it as today's screen for that reason.
+Folder: media/social/2026-10-05-map-not-a-fence/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+A map for the dream. Never a fence.
+
+If your daughter plays baseball, you already know the feeling. Most of what you read was written for somebody else's kid.
+
+Here's what 35 years of coaching taught me. The game describes a complete player with five tools: hit, power, run, arm, field. Same five for baseball and softball, boys and girls. The benchmarks are a map. Where your player stands today is just the starting point on it.
+
+More games don't make your player better. What they do between games does. October is the month that work starts, while fall ball winds down and nobody else is counting.
+
+So start the count. Tonight, one line in the journal: what they worked on and how it felt.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "Monday Mindset · October." The headline reads "A map for the dream. Never a fence." Below: "Same five tools for baseball and softball, boys and girls. Your player writes down where they are today." A real screenshot of the MyGrind app's The 5 Tools page in baseball mode, which says the five tools (hit, power, run, arm, and field) are the same for baseball and softball, boys and girls, and that the numbers are a map for the dream, never a fence around it.
+
+--- X / TWITTER (under 280) ---
+
+A map for the dream. Never a fence.
+Five tools. Same five for baseball and softball, boys and girls.
+More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+Lead card today = BASEBALL set (girls-who-play-baseball day); SOFTBALL set ships as the pair.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (girls baseball pages and USA Baseball Women's National Team posts fit today)
+[ ] Capture 1 photo/clip for the content bank (a glove and bat bag by the door, fall ball wrap-up)
