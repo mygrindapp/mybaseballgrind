@@ -205,7 +205,7 @@ async function sendTrialReminderEmail({ email, trialEndUnix, plan }) {
     '',
     "If MyGrind is earning its place in your player's routine, you don't need to do anything.",
     '',
-    "Not the right time? Cancel before your trial ends and you pay nothing. Open the app, go to Settings, and tap Manage Subscription. One tap, no questions. Your player's entries, stats, and goals stay safe for 90 days in case you come back.",
+    "Not the right time? Cancel before your trial ends and you pay nothing. Manage or cancel here: https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00 (enter the email you signed up with and Stripe sends you a one-time code). No questions asked. Your player's entries, stats, and goals stay safe for 90 days in case you come back.",
     '',
     'Questions? Just reply to this email.',
     '',
@@ -231,7 +231,7 @@ async function sendTrialReminderEmail({ email, trialEndUnix, plan }) {
     </p>
 
     <p style="font-size:16px; line-height:1.6; color:#F2EAD9; margin:0 0 24px;">
-      Not the right time? Cancel before your trial ends and you pay nothing. Open the app, go to <strong style="color:#E8C97A;">Settings &rarr; Manage Subscription</strong>. One tap, no questions. Your player's entries, stats, and goals stay safe for <strong style="color:#E8C97A;">90 days</strong> in case you come back.
+      Not the right time? Cancel before your trial ends and you pay nothing. <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" style="color:#E8C97A; font-weight:bold;">Manage or cancel your subscription here</a>. Enter the email you signed up with and Stripe sends you a one-time code. No questions asked. Your player's entries, stats, and goals stay safe for <strong style="color:#E8C97A;">90 days</strong> in case you come back.
     </p>
 
     <div style="background:rgba(184,154,75,0.06); border:1px solid #B89A4B; border-radius:6px; padding:14px 16px; margin-bottom:24px;">

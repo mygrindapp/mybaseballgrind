@@ -6661,6 +6661,19 @@ input[type="number"] {
            whose parent pays) so they still see the card with their account
            info but don't see any billing CTAs they can't act on. Adults
            (payers + creators) see the full content. Coach Young 2026-05-17. -->
+      <!-- Parent note for dependents, 2026-10-05. Billing controls are hidden
+           on a player's device, which left a parent holding that phone with
+           no way to find cancel (support email from a parent charged after a
+           gifted trial). This note shows ONLY for dependents and sends the
+           parent to the Stripe portal login, which verifies by billing email
+           so it works from any device. Toggled in updateSubscriptionCard. -->
+      <div id="sub-dependent-note" style="display:none; background:rgba(var(--accent-rgb), 0.06); border:1px solid var(--gold-dark); border-radius:8px; padding:14px 16px; margin-bottom:16px;">
+        <div style="font-family:'Barlow Condensed'; font-size:13px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--gold); margin-bottom:6px;">Parents: Manage or Cancel Here</div>
+        <div style="font-family:'Barlow'; font-size:14px; color:var(--light); line-height:1.6; margin-bottom:12px;">This plan is billed to a parent. To update the card, change the plan, or cancel, tap below and enter the email used at signup. Stripe sends a one-time code to that email.</div>
+        <a href="https://billing.stripe.com/p/login/aFa6oJ7LY2Vv0umeDn4gg00" id="stripe-portal-parent-link" target="_blank" rel="noopener" style="display:flex; align-items:center; justify-content:center; gap:10px; background:var(--gold); color:#0C0A08; font-family:'Barlow Condensed'; font-size:13px; font-weight:800; letter-spacing:1.5px; text-transform:uppercase; padding:14px 16px; border-radius:8px; text-decoration:none;">Manage Subscription</a>
+        <div style="font-family:'Barlow'; font-size:12px; color:var(--grey); text-align:center; margin-top:10px; line-height:1.5;">Need help? <a href="mailto:support@mygrindapp.com?subject=Subscription%20Help" style="color:var(--gold); text-decoration:none;">Email support</a>.</div>
+      </div>
+
       <div id="sub-billing-controls">
 
       <!-- Trial status — shown during trial -->
@@ -14248,13 +14261,16 @@ function updateSubscriptionCard() {
     // account-info surface in Settings, which was the bug).
     if (card) card.style.display = '';
     const billingControls = document.getElementById('sub-billing-controls');
+    const dependentNote = document.getElementById('sub-dependent-note');
     if (getBillingRole().role === 'dependent') {
       if (billingControls) billingControls.style.display = 'none';
+      if (dependentNote) dependentNote.style.display = 'block';
       if (planEl) planEl.textContent = 'Family Plan · managed by parent';
       if (emailEl) emailEl.textContent = acc.email || '—';
       return;
     }
     if (billingControls) billingControls.style.display = '';
+    if (dependentNote) dependentNote.style.display = 'none';
 
     if (emailEl) emailEl.textContent = acc.email || '—';
 
