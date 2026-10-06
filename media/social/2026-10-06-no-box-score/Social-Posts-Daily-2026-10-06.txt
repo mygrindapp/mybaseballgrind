@@ -1,0 +1,51 @@
+MYGRIND DAILY SOCIAL — Tuesday, 2026-10-06
+Lead audience: BASEBALL (day-of-year 279 % 3 = 0)
+Theme: Tuesday = drive to the blog. Post: "The Youth Baseball and Softball Training Calendar" (October = peak strength month; "the off-season has no box score"). First social push for this post. October build-months anchor, belief shift, anti-"later".
+Format: static card pair, chalk-on-DIRT field card (scripts/build_social_field_card.py). Zero generated pixels.
+  Variety: breaks a six-day run of cream real-app-screen cards (10/1 to 10/5); new surface, palette, and type axis. Dirt surface (grass was 9/29).
+  Both sports: BASEBALL set leads, SOFTBALL set (eyebrow swap) ships as the pair.
+Folder: media/social/2026-10-06-no-box-score/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+The off-season has no box score.
+
+October is quiet. No standings, no stat sheet, nobody in the stands. It is also the heaviest strength month of your player's year: the lifting peaks, the bat stays busy with tee work and front toss, and the arm gets its plan.
+
+Here's what 35 years of coaching taught me. More games don't make your player better. What they do between games does. And in these months, almost all of it happens where nobody is watching.
+
+So the journal becomes the box score. A few lines a day: what they lifted, how many swings, how the arm felt. By February that is four months of proof in their own words, not a story about working hard all winter.
+
+I laid out the whole year month by month, in season to the February ramp, on the blog (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: An infield-dirt brown card with the gold MyGrind compass logo and the eyebrow "Baseball · October build months." Large chalk-white letters read "The off-season has no box score." Below: "So the journal becomes the box score." Footer: "Tonight, one line." and mygrindapp.com.
+
+--- X / TWITTER (under 280) ---
+
+The off-season has no box score.
+October is the heaviest strength month of the year, and nobody is watching. More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/blog/youth-baseball-softball-training-calendar.html?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (strength and off-season training pages fit today)
+[ ] Capture 1 photo/clip for the content bank (a wood bat and tee in the cage, October light)
+
+--- POSTING OUTCOME 2026-10-06 ---
+Step Zero: Planner Tue 6 column EMPTY, X last post Mon 10/5. Day uncovered, proceeded.
+Environment: Mac LOCKED (CGSSessionScreenIsLocked=true). Extension connected. ZERO System Events keystrokes; cards attached with file_upload (no native picker), per the CLAUDE.md recipe.
+X: POSTED 7:17 AM with the 1x1 SQUARE BASEBALL card attached + blog UTM link. "Made with AI" OFF (real type card, no generated pixels). Verified at the top of x.com/MyGrindapp with 1 image. Note: x.com/compose/post opened a modal plus the inline home composer; file_upload landed in the inline composer and typing into the modal went nowhere, so the post went out from the inline home composer.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED BASEBALL card (1080 x 1350) + caption above, Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Tue 6 column (7:30 PM Facebook + 7:30 PM Instagram, both with the card).
+CARD: both sports, committed, mirrored to Drive Social Content/2026-10-06-no-box-score.
