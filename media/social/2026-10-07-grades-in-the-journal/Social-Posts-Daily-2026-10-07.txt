@@ -1,0 +1,52 @@
+MYGRIND DAILY SOCIAL — Wednesday, 2026-10-07
+Lead audience: SOFTBALL (day-of-year 280 % 3 = 1)
+Theme: Wednesday = Recruiting / academics. October first progress reports, NCAA core GPA starts freshman year, partial softball scholarships + academic aid. Belief shift ("That includes study hall"), anti-"later" CTA.
+Format: static card pair, JOURNAL-ARTIFACT card (scripts/build_social_journal_card.py): the card is a journal entry using the app's real field labels and grade chips. Zero generated pixels.
+  Variety: breaks from yesterday's chalk-on-dirt type card and the 9/30 MyAcademics app screen; new layout axis (journal page artifact, cream light theme). Journal builder not used in the recent run.
+  Both sports: SOFTBALL set leads (front toss), BASEBALL set (tee swings, eyebrow swap) ships as the pair.
+Folder: media/social/2026-10-07-grades-in-the-journal/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Grades count too.
+
+October is when the first progress reports land. For a lot of softball families, it is the first time anyone has looked at a grade since August.
+
+Here's what 35 years of coaching taught me. College softball coaches look at the transcript before they look at the swing. Most college softball money comes as partial scholarships, and academic aid is often what closes the gap. And the NCAA core GPA starts counting freshman year, not senior year.
+
+More games don't make your player better. What they do between games does. That includes study hall.
+
+So the journal holds both. One line about the chem lab, one line about the 40 swings. MyAcademics keeps the grades and the core GPA right next to the reps, included with every plan.
+
+Not a big commitment. Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream card with the gold MyGrind compass logo and the eyebrow "Softball. Grades count too." A journal entry dated Wed, Oct 7 reads: What did I work on today? "Finished the chem lab in study hall. Then 40 front toss swings, stayed through the zone." What am I taking into the next practice or game? "Ask about the quiz retake Friday. Keep my hands inside." How did I perform today? B, Good is selected. Footer: "Tonight, one line." and mygrindapp.com.
+
+--- X / TWITTER (under 280) ---
+
+Grades count too.
+College softball coaches see the transcript before the swing, and the NCAA core GPA starts freshman year. More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/blog/ncaa-core-gpa-calculator.html?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (softball recruiting and academic pages fit today)
+[ ] Capture 1 photo/clip for the content bank (a backpack and a glove on the same bench after school)
+
+--- POSTING OUTCOME 2026-10-07 ---
+Step Zero: Planner Wed 7 column EMPTY, X last post Tue 10/6. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, but Gmail was its active tab; made the extension tab active with a Chrome app command (safe while locked). ZERO System Events keystrokes; cards attached with file_upload, per the CLAUDE.md recipe.
+X: POSTED 7:17 AM with the 1x1 SQUARE SOFTBALL card + NCAA core GPA calculator UTM link. "Made with AI" OFF (real card, no generated pixels). ⚠️ DUPLICATE: a second identical post went out at 7:18 AM. The Post click had worked, but the composer still showed the text 5 seconds later, so I sent cmd+Return and posted it twice. Both are live (status 2107837723969311079 at 7:17 and 2107837976990613647 at 7:18). Left for Coach to delete the 7:18 copy. Lesson: after clicking Post, check x.com/MyGrindapp before you retry. The composer can still show the text after the post has gone out.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED SOFTBALL card (1080 x 1350) + caption, Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Wed 7 column (7:30 PM Facebook + 7:30 PM Instagram, both with the card).
+  Meta gotcha: clicking the text box and the schedule toggle by ref did nothing on the locked Mac (typed text never landed). Clicking by screenshot coordinate worked for both. Use coordinate clicks on the composer.
+CARD: both sports, committed, mirrored to Drive Social Content/2026-10-07-grades-in-the-journal.
