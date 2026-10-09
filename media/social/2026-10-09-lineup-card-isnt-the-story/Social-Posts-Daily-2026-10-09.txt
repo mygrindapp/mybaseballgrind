@@ -1,0 +1,51 @@
+MYGRIND DAILY SOCIAL — Friday, 2026-10-09
+Lead audience: BASEBALL (day-of-year 282 % 3 = 0)
+Theme: Friday = Parent real-talk (fall ball playing time, the drive home after a bench night). October fall ball anchor, belief shift, anti-"later" CTA.
+Format: static card pair (real app screen, JOURNAL > REFLECTION entry: "Take a breath. Get honest with yourself." plus the mood chips, captured 2026-10-09; first Reflection-entry card). Zero generated pixels.
+  Variety: 10/6 chalk-on-dirt, 10/7 journal artifact, 10/8 workout Speed/Plyo, 10/9 Reflection entry (new subject: the emotional side, not training).
+  Captured via the shoot-light-dashboard rig (seeded demo player "Jordan"), headless Chrome 540x720 @2x, #journal > chooseEntryType('reflection'), both sport modes.
+  Video day: Reel/TikTok script below for Coach's phone; the static card auto-posts so the day is not dark.
+Folder: media/social/2026-10-09-lineup-card-isnt-the-story/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+The lineup card isn't the story.
+
+Fall ball lineups move around. Your player starts one game, sits the next, plays a new spot on Sunday. Parents feel every one of those calls on the drive home.
+
+Here's what 35 years of coaching taught me. The players starting in the spring were rarely the ones who started every October game. They were the ones who treated a bench night like information: two good at bats off the bench, one thing to work on Tuesday, written down.
+
+More games don't make your player better. What they do between games does.
+
+MyGrind has a Reflection entry for exactly this. Your player picks how they feel (frustrated counts) and writes it honestly. No speech from the front seat required.
+
+Not a big commitment. Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A cream card with the gold MyGrind compass logo and the eyebrow "October. Fall ball." Headline: "The lineup card isn't the story." Subline: "Your player can't pick who starts. They can own the next rep, and what they write tonight." Below, a real screenshot of the MyGrind journal with the Reflection entry open, dated Friday, October 9, 2026. The app reads: "Take a breath. Get honest with yourself. This journal doesn't lie. Neither should you." Mood options: Fired up, Calm, Grateful, Neutral, Frustrated, Down.
+
+--- X / TWITTER (under 280) ---
+
+The lineup card isn't the story.
+Your player can't pick who starts. They can own the next rep. More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (phone upload, 9:16 1080x1920, ~15s) ---
+HOOK (0-1.5s, on-screen text): "Sat the bench tonight?"
+BODY (1.5-10s): real clip of the dugout or the drive home (Coach's own footage only, no faces of minors). On-screen text in beats: "Fall ball lineups move." / "Your player can't pick who starts." / "They can own the next rep."
+CLOSE (10-15s): screen recording of the MyGrind Reflection entry, a mood chip tapped, one line typed. On-screen text: "One honest line. Tonight."
+AUDIO: calm, warm instrumental (no hype track). Caption = the IG caption above, add #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (travel ball parent pages and fall ball tournament pages fit today)
+[ ] Capture 1 photo/clip for the content bank (an empty dugout bench after a fall game)
