@@ -49,3 +49,11 @@ AUDIO: calm, warm instrumental (no hype track). Caption = the IG caption above, 
 [ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
 [ ] Leave 5 genuine comments on bigger youth baseball/softball accounts (travel ball parent pages and fall ball tournament pages fit today)
 [ ] Capture 1 photo/clip for the content bank (an empty dugout bench after a fall game)
+
+--- POSTING OUTCOME 2026-10-09 ---
+Step Zero: Planner Fri 9 column EMPTY, X last post Thu 10/8. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window (6 tabs, Business Suite planner active), so the extension tab was made active with a Chrome app command (safe while locked). ZERO System Events keystrokes; cards attached with file_upload per the CLAUDE.md recipe.
+X: POSTED ~7:29 AM with the 1x1 SQUARE BASEBALL card + homepage UTM link. "Made with AI" OFF (real app screen). One post only (profile count 76 -> 77, top post "39s"). First type by ref did not land (document.hasFocus false); a coordinate click on the inline composer fixed focus, then the Post button by find ref sent it.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED BASEBALL card (1080 x 1350) + caption, Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Fri 9 column (7:30 PM Facebook + 7:30 PM Instagram, both with the card). Coordinate clicks on the composer worked again; no WhatsApp banner today.
+CARD: both sports, committed, mirrored to Drive Social Content/2026-10-09-lineup-card-isnt-the-story.
+Capture note: headless --screenshot occasionally hangs; wrap each capture in a ~40s watchdog and pkill -f chrome-shoot on timeout.
