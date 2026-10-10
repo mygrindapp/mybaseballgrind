@@ -1,0 +1,51 @@
+MYGRIND DAILY SOCIAL — Saturday, 2026-10-10
+Lead audience: SOFTBALL (day-of-year 283 % 3 = 1)
+Theme: Saturday = Game day / "log it after the game" (fall ball doubleheader Saturdays). October fall ball anchor, belief shift, anti-"later" CTA.
+Format: static card pair (real app screen, JOURNAL > GAME entry: "What happened? What did I do for my team?" filled with a game-1 recap, plus "What's the goal for next game?" = "Get one bunt down in game 2." Captured 2026-10-10; first Game-entry recap card). Zero generated pixels.
+  Variety: 10/7 journal artifact, 10/8 workout Speed/Plyo, 10/9 Reflection entry, 10/10 Game entry recap + next-game goal.
+  Captured via the shoot-light-dashboard rig (seeded demo player), headless Chrome 540x720 @2x, #journal > chooseEntryType('game'), both sport modes. Scroll tip: window.scrollTo/scrollBy do nothing in this view; element.scrollIntoView({behavior:'instant'}) works.
+  Video day: Reel/TikTok script below for Coach's phone; the static card auto-posts so the day is not dark.
+Folder: media/social/2026-10-10-log-game-one-before-game-two/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Log game 1 before game 2.
+
+Fall ball Saturdays are doubleheaders, and the hour between games is the most wasted hour in softball. Snacks, sunscreen, phones, then right back out.
+
+Here's what 35 years of coaching taught me. The players who got better over a fall didn't play more games than anyone else. They used that hour. Two minutes in the dugout: what happened, and one thing to do next game. By game 2 they had a plan instead of a feeling.
+
+More games don't make your player better. What they do between games does. Sometimes "between games" is 45 minutes.
+
+MyGrind's Game entry asks exactly two questions: what happened, and what's the goal for next game. Your player answers both before the car ride home turns it into a story.
+
+Not a big commitment. Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream card with the gold MyGrind compass logo and the eyebrow "October. Fall ball Saturday." Headline: "Log game 1 before game 2." Subline: "What happened, and one goal for the next game. Written in the dugout, it's a plan." Below, a real screenshot of the MyGrind journal Game entry in softball mode, dated Saturday, October 10, 2026. "What happened? What did I do for my team?" reads: "2 for 3 with a double. Saw the changeup the second time up and stayed back on it. Bunt needs work, that is Tuesday." "What's the goal for next game?" reads: "Get one bunt down in game 2."
+
+--- X / TWITTER (under 280) ---
+
+Log game 1 before game 2.
+Two minutes in the dugout: what happened, one goal for the next game. More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (phone upload, 9:16 1080x1920, ~15s) ---
+HOOK (0-1.5s, on-screen text): "45 minutes between games. Use 2."
+BODY (1.5-10s): real clip of a dugout or a bag on the bench between games (Coach's own footage only, no faces of minors). On-screen text in beats: "What happened?" / "One goal for game 2." / "Written down, it's a plan."
+CLOSE (10-15s): screen recording of the MyGrind Game entry, typing one line in "What's the goal for next game?" On-screen text: "Log game 1 before game 2."
+AUDIO: calm, warm instrumental (no hype track). Caption = the IG caption above, add #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth softball/baseball accounts (fall ball tournament pages and travel softball parent pages fit today)
+[ ] Capture 1 photo/clip for the content bank (a dugout between games of a doubleheader, no minors' faces)
