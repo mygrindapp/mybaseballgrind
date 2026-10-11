@@ -1,0 +1,51 @@
+MYGRIND DAILY SOCIAL — Sunday, 2026-10-11
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 284 % 3 = 2)
+Theme: Sunday = Story / credibility (35 years of giving lessons and watching who kept what they learned). October anchor: MyCalendar's October Week 3 says "Book a lesson with your instructor this week." Belief shift, anti-"later" CTA.
+Format: static card pair (real app screen, JOURNAL > INSTRUCTOR entry: Instructor Name, Focus Area = Hitting, "What we worked on", "What I need to work on". First Instructor-entry card). Zero generated pixels.
+  Variety: 10/8 workout Speed/Plyo, 10/9 Reflection entry, 10/10 Game entry recap, 10/11 Instructor entry.
+  Captured via the shoot-light-dashboard rig (seeded demo player "Jordan"), headless Chrome 540x720 @2x, #journal > chooseEntryType('instructor'), fields filled by an injected driver, both sport modes. Posted = BASEBALL card (girls-who-play-baseball lead); SOFTBALL card built for the pair.
+  Video day: Reel/TikTok script below for Coach's phone; the static card auto-posts so the day is not dark.
+Folder: media/social/2026-10-11-the-week-is-the-lesson/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+The lesson is one hour. The week is the lesson.
+
+October is lesson month. Fall ball is winding down, and plenty of girls who play baseball are booking a hitting lesson this week to carry the work into the off-season.
+
+I've given lessons for 35 years. Here's what I've watched happen. The players who got better weren't the ones who took the most lessons. They were the ones who walked out knowing exactly what they owed before the next one, and then did it on Tuesday when nobody was watching.
+
+More lessons don't make your player better. What they do between lessons does.
+
+MyGrind's Instructor entry asks two things: what we worked on, and what I need to work on. Your player writes it in the car before the details fade, and the next six days have a plan.
+
+Not a big commitment. Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · Lesson week." Headline: "The lesson is one hour. The week is the lesson." Subline: "Your player writes down what the instructor said, and what they owe before the next session." Below, a real screenshot of the MyGrind journal Instructor entry in baseball mode, dated Sunday, October 11, 2026: Instructor Name "Coach Rivera, Sunday hitting lesson," Focus Area "Hitting," What we worked on "Load earlier so I am on time. Hands back, front side firm. Tee work, then front toss," What I need to work on "50 tee swings a day, load on time. Film Wednesday. Bring the video next Sunday."
+
+--- X / TWITTER (under 280) ---
+
+The lesson is one hour. The week is the lesson.
+More lessons don't make your player better. What they do between lessons does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (phone upload, 9:16 1080x1920, ~15s) ---
+HOOK (0-1.5s, on-screen text): "The lesson ends. The work starts."
+BODY (1.5-10s): real clip of a bag going into the car after a lesson, or a garage tee (Coach's own footage only, no faces of minors). On-screen text in beats: "What did we work on?" / "What do I owe before next Sunday?" / "Written in the car, it sticks."
+CLOSE (10-15s): screen recording of the MyGrind Instructor entry, typing one line in "What I need to work on." On-screen text: "The week is the lesson."
+AUDIO: calm, warm instrumental (no hype track). Caption = the IG caption above, add #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (girls baseball pages, Baseball For All, hitting instructors' accounts fit today)
+[ ] Capture 1 photo/clip for the content bank (a lesson bag, a tee in the garage, no minors' faces)
