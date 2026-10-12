@@ -1,0 +1,54 @@
+MYGRIND DAILY SOCIAL — Monday, 2026-10-12
+Lead audience: BASEBALL (day-of-year 285 % 3 = 0)
+Theme: Monday = Mindset / Today's Grind QOTD card. October anchor (fall ball winding down, the quiet months start now), belief shift, anti-"later".
+Format: static card, Today's Grind editorial QOTD (Playfair italic on near-black + gold compass), rendered from HTML by scripts/build_todays_grind_card.py. Zero generated pixels.
+  Variety: breaks a 13-day run of cream real-app-screen cards (9/29 to 10/11): new layout, type, and palette axis.
+  Sport-neutral text card, so one card serves both sports (the baseball lead lives in the caption). Builder has no 2:3 PIN size; Pinterest stays root domain and uses the 4x5 if pinned.
+  Card day (Monday), not a video day. Optional Reel note below.
+Master: media/qotd/todays-grind/october-builds-the-player/
+Folder: media/social/2026-10-12-october-builds-the-player/
+
+--- INSTAGRAM / FACEBOOK CAPTION ---
+
+Spring gets the crowd. October builds the player.
+
+Fall ball is winding down. The bleachers empty out, the schedule goes quiet, and a lot of families hear "off-season" and think "later."
+
+In 35 years, here's what I've watched. The players who showed up in March a step ahead didn't play the most games in the fall. They used the quiet months on purpose: arm care, tee work, one honest note about what still needs work.
+
+More games don't make your player better. What they do between games does, written down.
+
+Not a big plan. Tonight, one line: one thing fall ball taught them, and one thing they'll work on this week.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A near-black MyGrind card with the gold compass logo and the eyebrow "Today's Grind." The quote, in cream italic serif: "Spring gets the crowd. October builds the player. One line tonight is how it starts." A short gold rule and "MyGrind" below.
+
+--- X / TWITTER (under 280) ---
+
+Spring gets the crowd. October builds the player.
+More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+Use the 9x16 STORY card as a still with a slow push-in. On-screen text beat 1 (0-1.5s): "Spring gets the crowd." Beat 2: "October builds the player." Close: "Tonight, one line." Calm, warm instrumental. Caption = the IG caption, add #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (not built for QOTD cards)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (youth baseball parent pages, travel ball orgs wrapping fall ball, HS baseball programs)
+[ ] Capture 1 photo/clip for the content bank (an empty fall field at dusk, a bucket of balls, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-12 ---
+Step Zero: Planner Mon 12 column EMPTY (only Meta suggestions), X last post Sun 10/11. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, Gmail was the active tab; fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes.
+X: SKIPPED. x.com/home showed the "Updates to our Terms of Service" modal with a single "Got it" button (blocks the composer). Accepting terms is Coach's click, not mine. X copy block above is ready to paste once Coach clears it.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED QOTD card (1080 x 1350, attached via file_upload) + caption, Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Mon 12 column (7:30 PM Facebook + 7:30 PM Instagram, both with the card). WhatsApp banner dismissed before setting times.
+CARD: sport-neutral QOTD, committed (master media/qotd/todays-grind/october-builds-the-player/), mirrored to Drive Social Content/2026-10-12-october-builds-the-player.
