@@ -1,0 +1,69 @@
+MYGRIND DAILY SOCIAL — Tuesday, 2026-10-13
+Lead audience: SOFTBALL (day-of-year 286 % 3 = 1)
+Theme: Tuesday = drive to the blog. Post: "Youth Pitcher Arm Care: A Coach's Guide to Protecting Growing Arms" (softball section: no universal pitch count rules; the windmill-is-safe myth). October anchor = fall ball winding down, the arm plan starts now. Belief shift + anti-"later".
+Format: static card pair, chalk-on-GRASS field card (scripts/build_social_field_card.py). Zero generated pixels.
+  Variety: yesterday was the dark Today's Grind QOTD, before that 13 days of cream app screens; grass surface last used 9/29 (dirt 10/6).
+  Both sports: SOFTBALL set leads; BASEBALL set ("The pitch count stops at the game. The arm doesn't.") ships as the pair.
+Folder: media/social/2026-10-13-arm-keeps-its-own-count/
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead) ---
+
+Softball has no pitch count rule. Your player can keep one.
+
+There is a myth in softball that the windmill is "free" and a pitcher can throw all weekend. The motion is easier on the elbow ligament than overhand pitching. The forces are still real, and most of softball has no universal pitch count rules to step in for your player.
+
+And don't forget their other arm motion. Every overhand throw from the field runs on the same growing elbow and shoulder as a baseball player's.
+
+Fall ball is winding down, which makes October the right month to start the arm's own record. A few lines a day: pitches, innings, lessons, how the arm felt. In 35 years, the arms I've watched stay healthy belonged to players who knew their own numbers.
+
+The full arm care guide is on the blog (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A dark outfield-grass green card with the gold MyGrind compass logo and the eyebrow "Softball · October arm plan." Large chalk-white letters read "Softball has no pitch count rule. Your player can keep one." Below: "A few lines a day: pitches, innings, how the arm felt." Footer: "Tonight, one line." and mygrindapp.com.
+
+--- BASEBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+The pitch count stops at the game. The arm doesn't.
+
+Baseball has pitch counts on game day. Nobody counts the bullpen, the lesson, the long toss, or the extra throws at practice. Your player's arm counts all of it.
+
+October is when the arm plan starts. A few lines a day: pitches, innings, how the arm felt. The full arm care guide is on the blog (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (under 280) ---
+
+Softball has no pitch count rule. Your player can keep one.
+Pitches, innings, how the arm felt. Written down.
+Tonight, one line.
+https://www.mygrindapp.com/blog/youth-pitcher-arm-care.html?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+Use the SOFTBALL 9x16 STORY card as a still with a slow push-in. Beat 1 (0-1.5s): "Softball has no pitch count rule." Beat 2: "Your player can keep one." Close: "Tonight, one line." Calm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (fastpitch pitching coaches, travel softball orgs wrapping fall ball, HS softball programs)
+[ ] Capture 1 photo/clip for the content bank (a ball bucket and pitching mat, a bullpen at dusk, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-13 ---
+Step Zero: Planner Tue 13 column EMPTY; X last post Sun 10/11. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, Gmail was the active tab; fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes. X ToS modal from 10/12 was GONE (Coach cleared it).
+X: POSTED ~7:25 AM with the SOFTBALL 1x1 SQUARE card (file_upload into the home inline composer) + blog UTM link. First type by ref did not land; coordinate click + type did. Posted via tweetButtonInline ref; verified on x.com/MyGrindapp (one copy, card renders, post count 79 -> 80). Made with AI OFF (real typographic card, no generated pixels).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the SOFTBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio", preserves the 2/month FB link cap). Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Tue 13 (7:30 PM Facebook + 7:30 PM Instagram, both with the card).
+CARDS: softball + baseball grass field-card pair committed here, mirrored to Drive Social Content/2026-10-13-arm-keeps-its-own-count.
