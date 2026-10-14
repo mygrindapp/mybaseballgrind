@@ -1,0 +1,70 @@
+MYGRIND DAILY SOCIAL — Wednesday, 2026-10-14
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 287 % 3 = 2)
+Theme: Wednesday = Recruiting / academics. October anchor = fall ball wrapping up, first grades in, winter workouts next. Belief shift ("More showcases don't build a recruiting profile"), anti-"later" CTA.
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): the Develop hub ("Recruiting, eligibility, and the links coaches ask about"), captured 2026-10-14 via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #develop, both sport modes. Zero generated pixels.
+  Variety: new screen subject (Develop hub never used on a card); breaks from yesterday's chalk-on-grass type card and Monday's dark QOTD; last cream app-screen was 10/11 (Instructor entry).
+  Both sports: BASEBALL card posts (girls-who-play-baseball lead); SOFTBALL card (softball toggle, berry accent) ships as the pair.
+  Capture note: first build of the BASEBALL set rendered before web fonts loaded (fallback Impact/Arial); rebuilt, verified Bebas/Barlow on all files.
+Folder: media/social/2026-10-14-recruiting-starts-with-a-record/
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls-who-play-baseball lead) ---
+
+Recruiting starts with a record.
+
+For girls who play baseball, the road after high school is not one well-worn path. College baseball, women's national team programs, club teams, showcases. Fewer people are watching by default, so the record has to come from your player.
+
+October is a good month to start it. Fall ball is wrapping up, the first grades of the year are in, and winter workouts are next. Coaches will ask about reps, grades, and what your player has been working on. A record answers before they ask.
+
+More showcases don't build a recruiting profile. What your player writes down between them does. In 35 years, the players who got a real look could tell a coach exactly what they had been working on.
+
+MyGrind keeps it in one place: the daily reps, the grades and core GPA, and the recruiting and eligibility links coaches ask about.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · Recruiting." Headline: "Recruiting starts with a record." Subline: "Your player's reps, grades, and the links coaches ask about, kept in one place." Below, a real screenshot of the MyGrind app's Develop screen in baseball mode, dated Wednesday, October 14, 2026, listing Daily Check-In, The 5 Tools, and Resources: "Recruiting, eligibility, and the links coaches ask about."
+
+--- SOFTBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+Recruiting starts with a record.
+
+College softball coaches will ask what your player has been working on, what the grades look like, and whether the core GPA is on track. October is the month to start the answer: fall ball is wrapping up and the first grades of the year are in.
+
+More showcases don't build a recruiting profile. What your player writes down between them does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280) ---
+
+Recruiting starts with a record.
+For girls who play baseball, nobody hands your player the path. The record has to come from them.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+Use the BASEBALL 9x16 STORY card as a still with a slow push-in toward the Resources row. Beat 1 (0-1.5s): "Recruiting starts with a record." Beat 2: "Reps. Grades. The links coaches ask about." Close: "Tonight, one line." Calm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (Baseball For All, girls' baseball clubs and showcases, HS programs with girls on the roster, recruiting educators)
+[ ] Capture 1 photo/clip for the content bank (a recruiting folder or laptop next to a glove, a showcase wristband, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-14 ---
+Step Zero: Planner Wed 14 column EMPTY; X last post Tue 10/13. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, FreeTaxUSA was the active tab; fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes.
+X: NOT POSTED. The BASEBALL 1x1 card attached fine (file_upload into the home inline composer), but X raised a "Review your email" account modal ("Yes, that's correct" / "No, update email") over the composer. Escape did not dismiss it. Confirming account info is Coach's call, so X skipped. Coach: open x.com, answer that prompt, then paste the X block above with the 1x1 BASEBALL card.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the BASEBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, preserves the FB link cap). Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; verified in Planner Wed 14 (7:30 PM Facebook + 7:30 PM Instagram, both with the card).
+CARDS: baseball + softball Develop-screen pair committed here, mirrored to Drive Social Content/2026-10-14-recruiting-starts-with-a-record.
