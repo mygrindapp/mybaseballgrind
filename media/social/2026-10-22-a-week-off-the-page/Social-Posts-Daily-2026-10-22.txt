@@ -1,0 +1,67 @@
+MYGRIND DAILY SOCIAL — Thursday, 2026-10-22
+Lead audience: SOFTBALL (day-of-year 295 % 3 = 1)
+Theme: Thursday = training habit. Late-October anchor from the week file: "a week off the page is the easiest week to lose." Belief shift ("More games don't make your player better. What they do between games, written down, does."), anti-"later" CTA. First daily since 10/14 (10/15-10/21 dark).
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL tab, "Your Last 7 Days" strip (6/7 days logged, 6 entries, 490 reps, 6 day streak) over the 7 DAYS filter and the dated log. Captured 2026-10-22 via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #journal, with a driver that calls renderJournalWeekStrip() and scrolls <main> to the strip. Zero generated pixels.
+  Variety: new screen subject (journal week strip never used on a card); last cream app-screen card was 10/14 (Develop hub).
+  Both sports: SOFTBALL card posts (softball lead); BASEBALL card (baseball toggle, gold accent) ships as the pair.
+Folder: media/social/2026-10-22-a-week-off-the-page/
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead) ---
+
+A week off the page is easy to lose.
+
+Late October fall ball goes fast. A doubleheader on Saturday, two practices, some cage work on a Tuesday night. By the next weekend most of it is a blur. Ask your player what they worked on last Wednesday and the honest answer is usually "I don't know."
+
+More games don't make your player better. What they do between games, written down, does. In 35 years, the softball players who kept getting better could always tell you what last week looked like.
+
+MyGrind shows your player their last 7 days in one place: days logged, entries, reps, and every practice and game by date.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "Late October." Headline: "A week off the page is easy to lose." Subline: "One line a night keeps the whole fall week in view." Below, a real screenshot of the MyGrind app's Journal screen in softball mode, dated Thursday, October 22, 2026: a "Your Last 7 Days" card showing 6 of 7 days logged, 6 entries, 490 reps, and a 6 day streak, the 7 Days filter selected, and the log starting with a team practice on 2026-10-22 and a game on 2026-10-21.
+
+--- BASEBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+A week off the page is easy to lose.
+
+Fall ball weekends run together. By Friday, last Tuesday's cage work is gone unless your player wrote it down.
+
+More games don't make your player better. What they do between games, written down, does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (under 280, attach the SOFTBALL 1x1 SQUARE) ---
+
+A week off the page is easy to lose.
+More games don't make your player better. What they do between games, written down, does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+Use the SOFTBALL 9x16 STORY card as a still with a slow push-in on the "6/7 DAYS LOGGED" strip. Beat 1 (0-1.5s): "A week off the page is easy to lose." Beat 2: "One line a night. The whole week in view." Close: "Tonight, one line." Calm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (travel softball orgs, fastpitch coaches, HS softball programs, softball recruiting educators)
+[ ] Capture 1 photo/clip for the content bank (a fall-ball schedule on the fridge, a bat bag by the door, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-22 ---
+Step Zero: Planner Thu 22 column EMPTY; X last post 10/13. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, a VA sign-in error page was the active tab; fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes.
+X: NOT POSTED. The "Updates to our Terms of Service" modal (one "Got it" button) is back over x.com/home. Accepting terms is Coach's call, so X skipped. Coach: open x.com, clear that modal, then paste the X block above with the SOFTBALL 1x1 card.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the SOFTBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, preserves the FB link cap). Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 22, 2026, 7:30 PM); Planner Thu 22 shows two 7:30 PM entries.
+CARDS: softball + baseball journal-week-strip pair committed here, mirrored to Drive Social Content/2026-10-22-a-week-off-the-page.
