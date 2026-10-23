@@ -1,0 +1,73 @@
+MYGRIND DAILY SOCIAL — Friday, 2026-10-23
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 296 % 3 = 2)
+Theme: Friday = parent real-talk. Late-October fall-ball fatigue: "I'm fine" isn't a check-in. Belief shift ("More games don't make your player better. What they do between games does, and that includes knowing when to rest."), anti-"later" CTA ("Tonight, 20 seconds.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): the Daily Check-In page (checkin.html), readiness 3.2 "Manage it" (sleep 3, energy 3, body 3, arm 4). Captured 2026-10-23 via the shoot-light-dashboard rig redirected to /checkin.html with a seeded mg_readiness_log, headless Chrome 540x720 @2x. Zero generated pixels. Raw capture saved as RealScreen-Checkin-CAPTURE-2026-10-23.png.
+  Variety: new screen subject (Daily Check-In never used on a card) and the first DARK app screen on the cream field; yesterday was the Journal week strip.
+  Both sports: BASEBALL card (eyebrow "GIRLS WHO PLAY BASEBALL") posts; SOFTBALL card (eyebrow "LATE OCTOBER") ships as the pair. checkin.html renders identically for both sports, so the pair axis is the eyebrow.
+Folder: media/social/2026-10-23-im-fine-isnt-a-checkin/
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls-who-play-baseball lead) ---
+
+"I'm fine" isn't a check-in.
+
+Late October, and a lot of players are running on fumes. Fall ball weekends, school, practice, maybe a second team. Ask how they feel and the answer is almost always "fine." That goes for the girls who play baseball on fall rosters, their teammates, and every player in the dugout.
+
+More games don't make your player better. What they do between games does, and that includes knowing when to rest. In 35 years, the players who kept improving learned to read their own body early.
+
+MyGrind's Daily Check-In takes 20 seconds: sleep, energy, body feel, arm feel, head. It tells your player when to push and when to back off, and it gives you something better than "fine" to talk about at dinner.
+
+Tonight, 20 seconds.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "Girls who play baseball." Headline: "'I'm fine' isn't a check-in." Subline: "20 seconds a day tells your player when to push and when to rest." Below, a real screenshot of the MyGrind app's Daily Readiness Check-In for Friday, October 23: a readiness score of 3.2 with the status "Manage it: Decent, but listen to your body. Quality over volume today," and 1 to 5 ratings for sleep, energy, body feel, and arm feel.
+
+--- SOFTBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+"I'm fine" isn't a check-in.
+
+Late October fall ball stacks up fast: Saturday doubleheaders, pitching lessons, school. Your player says "fine" because it is the easy answer.
+
+More games don't make your player better. What they do between games does, and that includes knowing when to rest.
+
+Twenty seconds a day in MyGrind: sleep, energy, body, arm, head. Now you both know when to push and when to back off.
+
+Tonight, 20 seconds.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, attach the BASEBALL 1x1 SQUARE) ---
+
+"I'm fine" isn't a check-in.
+More games don't make your player better. What they do between games does, including knowing when to rest.
+Tonight, 20 seconds.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- FRIDAY REEL / TIKTOK (phone, 9:16 1080x1920, ~10s) ---
+Hook (0-1.5s), on-screen text over the BASEBALL 9x16 STORY card: "Ask your player how they feel."
+Beat 2 (1.5-4s): text "They'll say 'fine.'" Slow push-in toward the 3.2 "Manage it" score.
+Beat 3 (4-8s): text "20 seconds. Sleep. Energy. Body. Arm. Head." Push continues down the rating rows.
+Close (8-10s): text "Tonight, 20 seconds." + "Log it. Own it."
+Audio: calm acoustic or lo-fi instrumental, nothing hype. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (girls baseball orgs and leagues, Baseball For All, HS baseball programs, youth baseball parent accounts)
+[ ] Capture 1 photo/clip for the content bank (an ice pack on a shoulder, a muddy fall-ball uniform in the laundry, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-23 ---
+Step Zero: Planner Fri 23 column EMPTY; X last post 10/13. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window (2 tabs, iCloud Find active); fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes.
+X: NOT POSTED. x.com/home shows the "Review your email" modal ("Yes, that's correct" / "No, update email"). Confirming account info is Coach's call, so X skipped. Coach: open x.com, answer that modal, then paste the X block above with the BASEBALL 1x1 card.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the BASEBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, preserves the FB link cap). All 9 tags verified in the text. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 23, 2026, 7:30 PM); Planner Fri 23 shows two 7:30 PM entries (Facebook + Instagram).
+CARDS: baseball + softball check-in pair committed here, mirrored to Drive Social Content/2026-10-23-im-fine-isnt-a-checkin.
