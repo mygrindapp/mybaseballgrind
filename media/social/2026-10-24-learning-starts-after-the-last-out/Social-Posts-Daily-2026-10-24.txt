@@ -1,0 +1,73 @@
+MYGRIND DAILY SOCIAL — Saturday, 2026-10-24
+Lead audience: BASEBALL (day-of-year 297 % 3 = 0)
+Theme: Saturday = game day / log it after the game. Late-October fall ball weekend. Belief shift ("More games don't make your player better. What they do between games does."), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, chalk-on-DIRT field card (scripts/build_social_field_card.py). Zero generated pixels.
+  Variety: the last two days were cream real-app-screen cards; dirt surface last used 10/6 (grass 10/13).
+  Both sports: BASEBALL card (eyebrow "SATURDAY · FALL BALL") posts; SOFTBALL card (eyebrow "SATURDAY DOUBLEHEADER", subline "Game one gets a line before game two. Both get one before bed.") ships as the pair.
+Folder: media/social/2026-10-24-learning-starts-after-the-last-out/
+
+--- INSTAGRAM / FACEBOOK CAPTION (baseball lead) ---
+
+The learning starts after the last out.
+
+Late October, fall ball Saturday. Two games, maybe three, and by the drive home most of it has already blurred together. The at-bat in the third. The ground ball that ate them up. The pitch they finally laid off.
+
+More games don't make your player better. What they do between games does. In 35 years, the players who kept improving were the ones who wrote down one thing that worked and one thing to fix, before it faded.
+
+That is all a MyGrind game entry asks: what happened, what you did for your team, and the goal for next game.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A warm infield-dirt brown MyGrind card with the gold compass logo and the eyebrow "Saturday · Fall ball." Chalk-white headline: "The learning starts after the last out." Subline: "One thing that worked. One thing to fix. Written down before it fades." A chalk baseline runs across the bottom with "Tonight, one line." and mygrindapp.com.
+
+--- SOFTBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+The learning starts after the last out.
+
+Saturday doubleheader. Game one ends, there is twenty minutes, and game two starts. By bedtime, both games are a blur.
+
+More games don't make your player better. What they do between games does.
+
+One line on game one before game two. One line on game two before bed. What worked, what to fix. That is the whole habit.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, BASEBALL 1x1 SQUARE attached) ---
+
+The learning starts after the last out.
+More games don't make your player better. What they do between games does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- SATURDAY REEL / TIKTOK (phone, 9:16 1080x1920, ~10s) ---
+Hook (0-1.5s), on-screen text over a real clip of an empty field or the dugout after a game (Coach's footage, no minors' faces): "The game's over."
+Beat 2 (1.5-4s): text "The learning isn't."
+Beat 3 (4-8s): cut to the BASEBALL 9x16 STORY card, slow push-in. Text "One thing that worked. One thing to fix."
+Close (8-10s): text "Tonight, one line." + "Log it. Own it."
+Audio: calm acoustic or lo-fi instrumental, nothing hype. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (travel ball orgs posting fall tournament results, HS baseball programs, youth baseball parent accounts)
+[ ] Capture 1 photo/clip for the content bank (a fall-ball scorebook, an empty dugout after the last game, cleats on the car floor; no minors' faces)
+
+--- POSTING OUTCOME 2026-10-24 ---
+Step Zero: Planner Sat 24 column EMPTY; X last post 10/13. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, extension tab already active. ZERO System Events keystrokes. Attach via file_upload (no picker).
+X: POSTED ~7:23 AM with the BASEBALL 1x1 card (no ToS / email modal today). Confirmed on x.com/MyGrindapp as the top non-pinned post ("38s"). Made with AI not applied (card has zero generated pixels).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the BASEBALL 4x5 FEED card (1080 x 1350) + caption (no URL). All 9 tags verified. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 24, 2026, 7:30 PM); Planner Sat 24 shows 7:30 PM Facebook + 7:30 PM Instagram.
+CARDS: baseball + softball dirt pair committed here, mirrored to Drive Social Content/2026-10-24-learning-starts-after-the-last-out.
