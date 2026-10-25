@@ -1,0 +1,68 @@
+MYGRIND DAILY SOCIAL — Sunday, 2026-10-25
+Lead audience: SOFTBALL (day-of-year 298 % 3 = 1)
+Theme: Sunday = story / credibility (35 years of watching who improved). Late-October fall ball anchor, belief shift (games vs. what's written down between them), anti-"later" CTA.
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): MYSTATS tab ("Season stats · averages calculate automatically", the AVG/OBP/SLG/ERA progress card, 490 reps training volume). Captured 2026-10-25 via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #stats. Zero generated pixels.
+  Variety: Stats screen last used 10/3; yesterday was a chalk-on-dirt field card, 10/23 the dark Check-In screen.
+  Both sports: SOFTBALL card posts (softball lead); BASEBALL card (baseball toggle) ships as the pair.
+Folder: media/social/2026-10-25-season-adds-itself-up/
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead) ---
+
+The season adds itself up.
+
+Ask a softball parent in late October how fall ball is going and you usually get a feeling. "Pretty good." "They're hitting better, I think." Feelings are fine. They just don't tell your player what to work on next.
+
+In 35 years of coaching, the players who kept getting better were not the ones who played the most games. They were the ones who wrote down what happened in them. More games don't make your player better. What they do between games, written down, does.
+
+MyGrind keeps it simple: your player logs the game in the journal, and MyStats does the math. Average, on-base, slugging, ERA for pitchers, plus the reps behind them. By the end of fall, the season is right there in their own numbers.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "Late October · Fall Ball." Headline: "The season adds itself up." Subline: "Your player logs the games. MyStats does the math, all fall." Below, a real screenshot of the MyGrind app's MyStats screen in softball mode, dated Sunday, October 25, 2026: "Season stats, averages calculate automatically," a Your Progress card with AVG, OBP, SLG and ERA buttons, and a training volume card showing 490 reps this week.
+
+--- BASEBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+The season adds itself up.
+
+Fall ball parents usually know how it feels. Fewer know what actually happened. Your player logs each game in the journal and MyStats does the math: average, on-base, slugging, ERA, plus the reps behind it.
+
+In 35 years, the players who kept improving could show you their season. More games don't make your player better. What they do between games, written down, does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (under 280, attach the SOFTBALL 1x1 SQUARE) ---
+
+The season adds itself up.
+More games don't make your player better. What they do between games, written down, does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+SOFTBALL 9x16 STORY card as a still, slow push-in on the MyStats header. Beat 1 (0-1.5s): "How's fall ball going? 'Pretty good' isn't a stat." Beat 2: "Log the game. MyStats does the math." Close: "Tonight, one line." Calm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (travel softball orgs, fastpitch coaches, HS softball programs, softball recruiting educators)
+[ ] Capture 1 photo/clip for the content bank (a fall-ball scorebook or bat bag after a Sunday doubleheader, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-25 ---
+Step Zero: Planner Sun 25 column EMPTY; X last post 10/24. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window; fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes. No X modal today.
+X: POSTED ~7:19 AM with the SOFTBALL 1x1 card (file_upload into the inline home composer). First Post click only closed the hashtag dropdown; profile check showed nothing, second click by ref posted ("Your post was sent."). Profile confirms one post, no duplicate. "Made with AI" OFF (real app screen).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the SOFTBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL). Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 25, 2026, 7:30 PM); Planner Sun 25 shows two 7:30 PM entries.
+Copy fix: a quoted parent line typed as "She's hitting better" was corrected in the composer to "They're hitting better" before scheduling (your player / they rule).
+CARDS: softball + baseball MyStats pair committed here, mirrored to Drive Social Content/2026-10-25-season-adds-itself-up.
