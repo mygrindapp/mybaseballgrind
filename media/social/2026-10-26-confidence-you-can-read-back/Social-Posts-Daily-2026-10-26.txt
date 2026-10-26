@@ -1,0 +1,70 @@
+MYGRIND DAILY SOCIAL — Monday, 2026-10-26
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 299 % 3 = 2)
+Theme: Monday = Mindset / Today's Grind QOTD card. Late-October anchor (fall ball wrapping up, winter work starts now), belief shift (games vs. what's written down between them), anti-"later" CTA.
+Format: static card, Today's Grind editorial QOTD (Playfair italic on near-black + gold compass), rendered from HTML by scripts/build_todays_grind_card.py. Zero generated pixels.
+  Variety: breaks the cream real-app-screen run (10/22 Journal, 10/23 Check-In, 10/25 MyStats) and yesterday's softball lead; new palette, layout, and type axis. Last QOTD was 10/12.
+  Sport-neutral text card, one card serves both sports (the girls-who-play-baseball lead lives in the caption). Builder has no 2:3 PIN size.
+  Card day (Monday), not a video day. Optional Reel note below.
+Master: media/qotd/todays-grind/confidence-you-can-read-back/
+Folder: media/social/2026-10-26-confidence-you-can-read-back/
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls who play baseball lead) ---
+
+Confidence isn't a feeling you wait for. It's a page of work you can read back.
+
+To the parents of girls who play baseball: fall ball is wrapping up, and the winter months are where a lot of confidence quietly gets built or lost. Not in games. In the reps nobody watches.
+
+In 35 years of coaching, the players who walked into spring sure of themselves didn't get there by playing more games. They could open a notebook and see it: the bullpens they threw, the tee work they put in, the at-bat they figured out. More games don't make your player better. What they do between games, written down, does.
+
+That's what MyGrind is for. A place your player writes it down, so on the days the doubt shows up, the proof is already there.
+
+Not a big plan. Tonight, one line: one thing fall ball taught them.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A near-black MyGrind card with the gold compass logo and the eyebrow "Today's Grind." The quote, in cream italic serif: "Confidence isn't a feeling you wait for. It's a page of work you can read back." A short gold rule and "MyGrind" below.
+
+--- SOFTBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+Confidence isn't a feeling you wait for. It's a page of work you can read back.
+
+Fall ball is done or close to it. Winter is where your player builds the confidence they'll carry into spring, one rep at a time. Write it down and it stops being a feeling. It becomes a record they can open on a hard day.
+
+More games don't make your player better. What they do between games, written down, does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, attach the 1x1 SQUARE) ---
+
+Confidence isn't a feeling you wait for. It's a page of work you can read back.
+More games don't make your player better. What they do between games, written down, does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+9x16 STORY card as a still, slow push-in on the quote. Beat 1 (0-1.5s): "Confidence isn't a feeling you wait for." Beat 2: "It's a page of work you can read back." Close: "Tonight, one line." Calm, warm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (not built for QOTD cards)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (girls baseball programs and leagues, Baseball For All style orgs, youth baseball parent pages)
+[ ] Capture 1 photo/clip for the content bank (a glove and journal on a dugout bench after the last fall game, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-26 ---
+Step Zero: Planner Mon 26 column EMPTY (only a Meta suggestion); X last post 10/25. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, mygrindapp.com was the active tab; fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes. No X modal.
+X: POSTED ~7:17 AM with the 1x1 SQUARE card (file_upload into the inline home composer). "Made with AI" OFF (HTML-rendered card, no generated pixels).
+  ⚠️ DUPLICATE at ~7:18 AM: the profile did not show the 7:17 post for over a minute, so it looked like the click had failed and the post was redone. Both posts are live with the card. Deleting is permanent, so it was left for Coach: delete the 7:18 AM copy on x.com/MyGrindapp.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL). Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 26, 2026, 7:30 PM); Planner Mon 26 shows 7:30 PM Facebook + 7:30 PM Instagram, both with the card.
+CARD: sport-neutral QOTD, committed (master media/qotd/todays-grind/confidence-you-can-read-back/), mirrored to Drive Social Content/2026-10-26-confidence-you-can-read-back.
