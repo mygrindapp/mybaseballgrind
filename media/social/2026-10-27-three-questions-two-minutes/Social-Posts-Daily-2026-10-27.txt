@@ -1,0 +1,74 @@
+MYGRIND DAILY SOCIAL — Tuesday, 2026-10-27
+Lead audience: BASEBALL (day-of-year 300 % 3 = 0)
+Theme: Tuesday = newsletter/blog day. Push to "How to Keep a Baseball Training Journal That Sticks" (blog/how-to-keep-a-training-journal.html). Late-October anchor (fall ball, "I'll start when the season starts" = the later objection), belief shift (games vs. what's written between them), anti-"later" CTA.
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL tab, Practice entry (team mode) filled in: "What did the team work on today?", "What was my role? Where did I stand out or struggle?", "What am I taking into the next practice or game?". Captured 2026-10-27 via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #journal, driver calls mgTab('journal') + chooseEntryType('practice') and fills j-what / j-team-role-text / j-tomorrow. Zero generated pixels.
+  Variety: Practice entry form not used this month (10/25 Stats, 10/26 QOTD, 10/23 Check-In, 10/22 week strip).
+  Both sports: BASEBALL card posts (baseball lead); SOFTBALL card (softball toggle) ships as the pair.
+Folder: media/social/2026-10-27-three-questions-two-minutes/
+
+--- INSTAGRAM / FACEBOOK CAPTION (baseball lead) ---
+
+Three questions. Two minutes.
+
+Late October is when a lot of baseball families say they will start a journal "once the season starts." A good entry is not a diary, though. It is three questions.
+
+What did I work on today?
+Where did I stand out or struggle?
+What am I taking into the next practice or game?
+
+That is the whole entry in MyGrind. Two minutes after practice, in your player's own words.
+
+In 35 years of coaching, the players who kept improving were not the ones with the most games on the schedule. They were the ones who could tell you what they worked on Tuesday and what they were fixing by Thursday. More games don't make your player better. What they do between games, written down, does.
+
+The full how-to is on the blog this week (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "The Journal Habit." Headline: "Three questions. Two minutes." Subline: "What they worked on, where they stood out, what they take into next time." Below, a real screenshot of the MyGrind app's Practice journal entry in baseball mode, dated Tuesday, October 27, 2026, with three filled-in prompts: what the team worked on (first-and-third defense, front toss), the player's role (8 reps at short, one rushed throw), and what they are taking into the next practice (keep the hands inside on the inner half).
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+Three questions. Two minutes.
+
+What did I work on today? Where did I stand out or struggle? What am I taking into the next practice or game? That is a full MyGrind entry, written by your player in two minutes after practice.
+
+More games don't make your player better. What they do between games, written down, does. The how-to is on the blog (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, attach the BASEBALL 1x1 SQUARE) ---
+
+Three questions. Two minutes.
+What did I work on? Where did I stand out or struggle? What am I taking into next time?
+More games don't make your player better. What they do between games, written down, does.
+https://www.mygrindapp.com/blog/how-to-keep-a-training-journal.html?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+BASEBALL 9x16 STORY card as a still, slow scroll down the three prompts. Beat 1 (0-1.5s): "A journal entry is three questions." Beat 2: one prompt per beat. Close: "Tonight, one line." Calm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (travel ball orgs, HS baseball programs, hitting/pitching instructors, youth baseball parent accounts)
+[ ] Capture 1 photo/clip for the content bank (a fall-ball practice bag or a phone on the dugout bench after practice, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-27 ---
+Step Zero: Planner Tue 27 column EMPTY; X last post 10/26. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window; fronted the extension tab with a Chrome app command (set active tab index). ZERO System Events keystrokes. No X modal today.
+X: POSTED ~7:17 AM with the BASEBALL 1x1 card (file_upload into the inline home composer), link = blog how-to with UTM. "Your post was sent." toast, composer emptied; profile check 2+ min later shows exactly one post with image. "Made with AI" OFF (real app screen).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the BASEBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio"). All 9 tags verified present. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 27, 2026, 7:30 PM); Planner Tue 27 shows the Facebook and Instagram entries.
+Note: grade chip in the capture did not select (cosmetic; the three written prompts are the subject).
+CARDS: baseball + softball Practice-entry pair committed here, mirrored to Drive Social Content/2026-10-27-three-questions-two-minutes.
