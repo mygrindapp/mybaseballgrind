@@ -1,0 +1,70 @@
+MYGRIND DAILY SOCIAL — Wednesday, 2026-10-28
+Lead audience: SOFTBALL (day-of-year 301 % 3 = 1)
+Theme: Wednesday = Recruiting / academics. Late-October anchor = first-quarter grades landing while fall ball is still on. Belief shift (more showcases don't build a recruiting profile, numbers written down do), anti-"later" CTA ("enter one Q1 grade").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): Academics tab, College Eligibility Status grid (NCAA Core GPA 3.75, D1/D2/D3/NAIA/JUCO all green, Q1 grading period selected). Captured 2026-10-28 via the shoot-light-dashboard rig (seeded demo player), headless Chrome 540x720 @2x, #academics, driver scrolls #elig-grid's header under the sticky bar. Zero generated pixels.
+  Variety: eligibility grid never used on a card (9/30 was the MyAcademics GPA top; 10/14 Develop hub; this week = Stats, QOTD, Practice entry).
+  Both sports: SOFTBALL card posts (softball lead); BASEBALL card (baseball toggle) ships as the pair.
+  Capture note: first 4x5 render used fallback fonts; rebuilt, Bebas/Barlow verified on all 8 files.
+Folder: media/social/2026-10-28-the-gpa-colleges-see/
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead) ---
+
+The GPA colleges see is the core GPA.
+
+Late October. First-quarter grades are landing this week or next, and fall ball is still on the calendar. It is an easy month for the report card to slide.
+
+Here is what a lot of softball families find out late: the NCAA does not use the overall GPA. It uses core courses only. English, math, science, social studies, foreign language. Electives and weight training do not count toward it.
+
+The Academics tab in MyGrind tags each class as core or elective, figures the NCAA core GPA, and shows where your player stands for D1, D2, D3, NAIA, and JUCO. It is included with every plan.
+
+In 35 years of coaching, the recruiting conversations that went smoothly started with a player who already knew their numbers. More showcases don't build that. A few minutes each quarter, written down, does.
+
+Tonight, one line: enter one Q1 grade. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · First Quarter Grades." Headline: "The GPA colleges see is the core GPA." Subline: "MyGrind sorts your player's classes into NCAA core and shows where they stand, D1 through JUCO." Below, a real screenshot of the MyGrind app's Academics tab in softball mode, dated Wednesday, October 28, 2026: College Eligibility Status with an NCAA Core GPA of 3.75 and green checks for NCAA D1, D2, D3, NAIA, and JUCO, with the Q1 grading period selected.
+
+--- BASEBALL PAIR CAPTION (for a second slot) ---
+
+The GPA colleges see is the core GPA.
+
+First-quarter grades are landing. The NCAA only counts core classes (English, math, science, social studies, foreign language), not electives. MyGrind tags each class and shows where your player stands, D1 through JUCO.
+
+More showcases don't build a recruiting profile. Numbers your player keeps, written down, do.
+
+Tonight, one line: enter one Q1 grade. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (under 280, attach the SOFTBALL 1x1 SQUARE) ---
+
+The GPA colleges see is the core GPA. Electives don't count.
+First-quarter grades are landing. MyGrind tags each class and shows where your player stands, D1 through JUCO.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+SOFTBALL 9x16 STORY card as a still, slow push into the eligibility grid. Beat 1 (0-1.5s): "Colleges don't see the overall GPA." Beat 2: "They see the core GPA." Beat 3: the five green checks. Close: "Tonight, one line." Calm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (travel softball orgs, HS softball programs, recruiting/education accounts, fastpitch parent accounts)
+[ ] Capture 1 photo/clip for the content bank (a report card next to a glove, or a phone on a desk with the Academics tab open, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-28 ---
+Step Zero: Content > Scheduled EMPTY; X last post 10/27. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window, the extension tab was the only tab. ZERO System Events keystrokes. No X modal today.
+X: POSTED ~7:18 AM with the SOFTBALL 1x1 card (file_upload into the inline home composer), link = homepage with daily UTM. "Your post was sent." toast, composer emptied; profile shows exactly one 10/28 post with image. "Made with AI" OFF (real app screen).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the SOFTBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio"). Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 28, 2026, 7:30 PM); Content > Scheduled lists both MYGrind (FB) and mygrindapp (IG) at Wed Oct 28, 7:30pm.
+CARDS: softball + baseball eligibility-screen pair committed here, mirrored to Drive Social Content/2026-10-28-the-gpa-colleges-see.
