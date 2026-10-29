@@ -1,0 +1,76 @@
+MYGRIND DAILY SOCIAL — Thursday, 2026-10-29
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 302 % 3 = 2)
+Theme: Thursday = Drill / training tip. Late-October anchor = last week of the app's training calendar "Peak Strength Month" (October Week 4: "What did you build in October? Write it down."). Belief shift (more games don't build strength, the work between them does), anti-"later" CTA ("log today's top set").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL > WORKOUT entry, LOWER POWER focus selected, the app's own "Why this matters" tip ("The legs go first. Everything else is downstream."), Suggested Lifts with Trap Bar Deadlift 3x5 checked. Captured 2026-10-29 via the shoot-light-dashboard rig (seeded demo player), headless Chrome 540x720 @2x, #journal, driver calls mgTab('journal') + chooseEntryType('workout') + selectWoIntensity('max-day') + selectWoFocus('lower-power'), fills j-wo-lifts + top set. Zero generated pixels.
+  Variety: first Lower Power workout card (10/8 was Speed/Plyo; this week = Eligibility, Practice entry, QOTD, Stats, field card).
+  Both sports: BASEBALL card posts (girls-who-play-baseball lead, baseball toggle); SOFTBALL card ships as the pair.
+  Capture note: the softball capture's Lower Power chip did not render selected (re-render timing in softball mode, two attempts). Cosmetic; the tip and checked lift show the focus. Baseball card is the one posted.
+Folder: media/social/2026-10-29-the-legs-go-first/
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls who play baseball lead) ---
+
+The legs go first.
+
+Last week of October. On the MyGrind training calendar this is peak strength month, the heaviest lifting of the off-season before November shifts gears.
+
+For girls who play baseball, the off-season weight room works the same as it does for everyone else on the roster. Lower body power is where bat speed, throwing velocity, and first-step quickness start.
+
+The part that gets skipped is writing it down. The Workout entry in MyGrind sets the focus, suggests the lifts, and saves one top set per session. That is how a personal best becomes something your player can see, not just remember.
+
+In 35 years of coaching, more games never made a player stronger. The work between them did, and the players who kept a record of it showed up in March knowing exactly what they had built.
+
+Tonight, one line: log today's top set. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · Peak Strength Month." Headline: "The legs go first. Write down the lift." Subline: "Your player logs the lift, the sets, and the top set. Strength they can read back in March." Below, a real screenshot of the MyGrind app's Workout entry in baseball mode, dated Thursday, October 29, 2026: "What kind of workout?" with Lower Power selected, the tip "Lower body explosiveness is the engine for bat speed, throwing velocity, and first-step quickness. The legs go first. Everything else is downstream," and Suggested Lifts with Trap Bar Deadlift 3x5 checked.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+The legs go first.
+
+Last week of October is peak strength month on the MyGrind training calendar. Lower body power drives bat speed, throwing velocity, and the first step out of the box. The Workout entry sets the focus, suggests the lifts, and saves one top set per session.
+
+More games don't make your player stronger. The work between them does, written down.
+
+Tonight, one line: log today's top set. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, attach the BASEBALL 1x1 SQUARE) ---
+
+The legs go first. Write down the lift.
+Peak strength month. More games don't build strength. The work between them does, and tonight's top set is the one your player chases in March.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK (Thursday video day, phone, 9:16 1080x1920, ~10s) ---
+Use the BASEBALL 9x16 STORY card as the still, or Coach's own clip of a trap bar or a garage squat rack (no minors' faces).
+Hook (0-1.5s, on-screen): "The legs go first."
+Beat 2 (1.5-4s): slow push into the Lower Power tip. On-screen: "Bat speed. Throwing velocity. First step."
+Beat 3 (4-7s): the checked Trap Bar Deadlift chip. On-screen: "Write down the top set."
+Close (7-10s): "Tonight, one line." + MyGrind mark.
+Audio: calm instrumental with a steady beat, no hype track.
+Caption = IG caption, hashtags with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (girls baseball orgs and leagues, Baseball For All, youth strength coaches, HS baseball programs)
+[ ] Capture 1 photo/clip for the content bank (a trap bar or plates in a garage gym, hands chalking up, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-29 ---
+Step Zero: Content > Scheduled EMPTY; X last post 10/28. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window (10 tabs); the extension's X tab fronted with `set active tab index` (Chrome app command). ZERO System Events keystrokes.
+X: SKIPPED. The "Updates to our Terms of Service" modal (Got it) is back on x.com/home. Not accepted on Coach's behalf. X block above is ready to paste with the BASEBALL 1x1 card once Coach clicks Got it.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the BASEBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio"). All 9 tags verified present. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Oct 29, 2026, 7:30 PM); Content > Scheduled lists both MYGrind (FB) and mygrindapp (IG) at Thu Oct 29, 7:30pm.
+CARDS: baseball + softball Lower Power workout-screen pair committed here, mirrored to Drive Social Content/2026-10-29-the-legs-go-first.
