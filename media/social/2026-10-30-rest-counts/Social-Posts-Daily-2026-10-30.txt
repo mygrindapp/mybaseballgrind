@@ -1,0 +1,75 @@
+MYGRIND DAILY SOCIAL — Friday, 2026-10-30
+Lead audience: BASEBALL (day-of-year 303 % 3 = 0)
+Theme: Friday = Parent real-talk. Late-October anchor = fall ball wrapping up, the first real rest window before November work starts. Belief shift (more games don't make your player better; the rest and the work between them do), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL > OFF DAY entry, the app's own banner "OFF DAY = FULL REST. No practice. No game. No instructor. No gym... Off Day still counts toward your streak." Title "Rest day after fall ball", affirmation "My work is paying off. I trust my preparation." Captured 2026-10-30 via the shoot-light-dashboard rig (seeded demo player, 6-day streak), headless Chrome 540x720 @2x, #journal, driver calls mgTab('journal') + chooseEntryType('offday'), fills j-title/j-what/j-tomorrow/j-prepare, scrollIntoView(#j-date). Zero generated pixels.
+  Variety: FIRST Off Day screen ever used (this week = Lower Power workout, Eligibility, Practice entry, QOTD, Stats, field card). Blue rest banner is a new color note in the feed.
+  Both sports: BASEBALL card posts (baseball lead); SOFTBALL card ships as the pair.
+Folder: media/social/2026-10-30-rest-counts/
+
+--- INSTAGRAM / FACEBOOK CAPTION (baseball lead) ---
+
+Rest counts. Log the off day.
+
+Fall ball is wrapping up. For a lot of players this is the first week since February with nothing on the calendar, and that can feel like falling behind.
+
+It isn't. In 35 years of coaching, the players who burned out were rarely the ones who rested. They were the ones who never stopped long enough to notice they were tired.
+
+More games don't make your player better. What they do between games does, and rest is part of that work.
+
+MyGrind has an Off Day entry for exactly this. No practice, no game, no gym. Your player writes one affirmation, how they took care of their body, and who was in their corner today. It still counts toward the streak, because showing up for recovery is still showing up.
+
+Tonight, one line: log the off day. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · Rest Week." Headline: "Rest counts. Log the off day." Subline: "No practice, no game, no gym. Your player still keeps the streak." Below, a real screenshot of the MyGrind app's Off Day journal entry in baseball mode, dated Friday, October 30, 2026: a blue banner reading "Off Day = Full Rest. No practice. No game. No instructor. No gym. Today is for rest, recovery, family, and the people in your corner. Off Day still counts toward your streak," the title "Rest day after fall ball," and a prompt noting a 6-day streak.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+Rest counts. Log the off day.
+
+Fall ball is wrapping up, and a week with nothing on the calendar can feel like falling behind. It isn't. More games don't make your player better. What they do between games does, and rest is part of that work.
+
+The Off Day entry in MyGrind asks three things: one affirmation, how they took care of their body, and who was in their corner. It still counts toward the streak.
+
+Tonight, one line: log the off day. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, attach the BASEBALL 1x1 SQUARE) ---
+
+Rest counts. Log the off day.
+More games don't make your player better. What they do between games does, and rest is part of that work.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK (Friday video day, phone, 9:16 1080x1920, ~10-12s) ---
+Use the BASEBALL 9x16 STORY card as the still, or Coach's own clip of a cleats-off, bag-zipped, couch-or-backyard moment (no minors' faces).
+Hook (0-1.5s, on-screen): "Fall ball's over. Now what?"
+Beat 2 (1.5-5s): slow push into the blue banner. On-screen: "No practice. No game. No gym."
+Beat 3 (5-8s): hold on "Off Day still counts toward your streak." On-screen: "Rest counts."
+Close (8-11s): "Tonight, one line." + MyGrind mark.
+Audio: calm acoustic or lo-fi, low energy on purpose, no hype track.
+Caption = IG caption, hashtags with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (youth baseball parent pages, HS baseball programs, arm-care / recovery coaches)
+[ ] Capture 1 photo/clip for the content bank (cleats by the door after the last fall game, an ice pack, a bag set down for the week, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-30 ---
+Step Zero: Content > Scheduled EMPTY; X last post 10/28. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window; tabs fronted with a Chrome app command (set active tab index). ZERO System Events keystrokes.
+X: SKIPPED. x.com/home shows the "Review your email" modal ("Yes, that's correct" / "No, update email") again. Confirming account info is Coach's call. X block above is ready to paste with the BASEBALL 1x1 card once Coach answers it.
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the BASEBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio"). All 9 tags verified, no dashes. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; Content > Scheduled lists MYGrind (FB) and mygrindapp (IG) at Fri Oct 30, 7:30pm.
+CARDS: baseball + softball Off Day screen pair committed here, mirrored to Drive Social Content/2026-10-30-rest-counts.
