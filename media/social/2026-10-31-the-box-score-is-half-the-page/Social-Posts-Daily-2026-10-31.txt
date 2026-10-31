@@ -1,0 +1,75 @@
+MYGRIND DAILY SOCIAL — Saturday, 2026-10-31
+Lead audience: SOFTBALL (day-of-year 304 % 3 = 1)
+Theme: Saturday = Game day / "log it after the game." Late-October anchor = last fall ball weekend. Belief shift (more games don't make your player better; what they do between games does), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL > GAME entry, the GAME STATS grid (Batting AB 3, H 1, 2B 1, RBI 1, R 1, BB 1, K 1, SB 1) with the app's own live GAME AVG .333 / OBP .500 / SLG .667. Captured via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #journal, driver chooseEntryType('game') + fills gs-* fields + calcGameStats() + scrollIntoView(#game-stats-section). Zero generated pixels.
+  Variety: FIRST stat-grid card (earlier Game cards 9/25 + 10/10 showed recap text). This week = Off Day, Lower Power workout, Eligibility, Practice entry, QOTD, Stats.
+  Both sports: SOFTBALL card posts (softball lead); BASEBALL card ships as the pair.
+Folder: media/social/2026-10-31-the-box-score-is-half-the-page/
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead) ---
+
+The box score is half the page.
+
+For a lot of softball families this is the last fall ball weekend. Your player will come home with a line: 1 for 3, a double, a walk, a stolen base. Log it. The app does the math (AVG, OBP, SLG update on their own).
+
+Then write the other half. One sentence on what they learned. "Sat back on the changeup in the 4th." "Got the bunt down when it mattered." "Struck out looking, chasing nothing next time."
+
+In 35 years of coaching, the players who improved over the winter were not the ones with the best October stat lines. They were the ones who could tell you why.
+
+More games don't make your player better. What they do between games does, and it starts with writing tonight down while it's fresh.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "October · Game Day." Headline: "The box score is half the page." Subline: "Log the line. Then one sentence on what your player learned." Below, a real screenshot of the MyGrind app's Game journal entry in softball mode, dated Saturday, October 31, 2026: the Batting grid filled in (3 at-bats, 1 hit, 1 double, 1 RBI, 1 run, 1 walk, 1 strikeout, 1 stolen base) with the app's calculated game average .333, on-base .500, slugging .667.
+
+--- BASEBALL PAIR CAPTION (for a second slot) ---
+
+The box score is half the page.
+
+Last fall ball weekend. Log the line (the app figures AVG, OBP, SLG for you). Then write the other half: one sentence on what your player learned. That sentence is the part that carries into spring.
+
+More games don't make your player better. What they do between games does.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (posted, SOFTBALL 1x1 SQUARE attached, Made with AI OFF: real screen) ---
+
+The box score is half the page.
+Last fall weekend. The line tells you what happened. One sentence tells you what your player learned, and that's the part that carries into spring.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK (Saturday video day, phone, 9:16 1080x1920, ~10-12s) ---
+Use the SOFTBALL 9x16 STORY card as the still, or Coach's own clip of a scorebook / dugout bag after the last game (no minors' faces).
+Hook (0-1.5s, on-screen): "1 for 3. Now what?"
+Beat 2 (1.5-5s): slow push into the stat grid. On-screen: "Log the line."
+Beat 3 (5-8s): hold on .333 / .500 / .667. On-screen: "Then one sentence on what they learned."
+Close (8-11s): "Tonight, one line." + MyGrind mark.
+Audio: calm acoustic or lo-fi, no hype track.
+Caption = IG caption, hashtags with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (travel softball orgs, fastpitch parent pages, HS softball programs)
+[ ] Capture 1 photo/clip for the content bank (a scorebook page, cleats after the last fall game, no minors' faces)
+
+--- POSTING OUTCOME 2026-10-31 ---
+Step Zero: Content > Scheduled EMPTY; X last post 10/28. Day uncovered, proceeded.
+Environment: Mac LOCKED. One Chrome window (13 tabs); extension tab fronted with a Chrome app command (set active tab index). ZERO System Events keystrokes.
+X: LIVE ~7:17 AM with the SOFTBALL 1x1 card (file_upload into the inline home composer). No modal this run. "Your post was sent." toast, composer emptied, profile shows one 10/31 post with image. Made with AI OFF (real screen).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the SOFTBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio"). 9 tags verified, no dashes. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; Content > Scheduled lists MYGrind (FB) and mygrindapp (IG) at Sat Oct 31, 7:30pm.
+CARDS: softball + baseball Game stat-grid pair committed here, mirrored to Drive Social Content/2026-10-31-the-box-score-is-half-the-page.
