@@ -1,0 +1,81 @@
+MYGRIND DAILY SOCIAL — Sunday, 2026-11-01
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 305 % 3 = 2)
+Theme: Sunday = Story / credibility (35 years of watching who improved over the winter). November anchor = winter goals, the off-season starts today. Belief shift (it takes what your player does between games, not more games), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): HOME > SEASON GOALS card with three real goal rows (Strength, Hitting, Academics). Captured via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #dashboard, driver sets state.goals + renderGoals() + scrollIntoView on the goals card. Goal text is demo data, typed through the app's own render. Zero generated pixels.
+  Variety: FIRST Season Goals card. This week = Game stat grid, Off Day, Lower Power workout, Eligibility, Practice entry, QOTD.
+  Both sports: BASEBALL card posts (girls-who-play-baseball lead, baseball toggle on screen); SOFTBALL card ships as the pair.
+Folder: media/social/2026-11-01-the-winter-plan-is-three-lines/
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls who play baseball lead) ---
+
+The winter plan is three lines.
+
+It's November 1. Fall ball is wrapping up and spring feels a long way off, which is exactly when "we'll start later" costs the most.
+
+In 35 years of coaching, the players who came back in February ahead of where they left were not the ones with the biggest plans. They were the ones who wrote down a few things they could measure, then kept looking at them.
+
+So keep it small. Three lines your player can finish:
+
+One for the body. "Long toss 150 feet by February."
+One for the game. "Cut called strikeouts in half this spring."
+One for school. "Hold a 3.5 GPA through the winter."
+
+Girls who play baseball: same long toss, same at-bats, same report card, same three lines.
+
+None of this takes more games. It takes what your player does between them.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Season Goals." Headline: "The winter plan is three lines." Subline: "Three goals your player can measure. Written down today, checked off by spring." Below, a real screenshot of the MyGrind app's Season Goals card in baseball mode, dated Sunday, November 1, 2026, listing three goals: Long toss 150 feet by February (Strength), Cut called strikeouts in half this spring (Hitting), Hold a 3.5 GPA through the winter (Academics), with an Add a Goal button below.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+The winter plan is three lines.
+
+November 1. Fall ball is wrapping up and "we'll start later" is about to get loud. Keep it small: one goal for the body, one for the game, one for school. Written down today, checked off by spring.
+
+None of this takes more games. It takes what your player does between them.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (posted, BASEBALL 1x1 SQUARE attached, Made with AI OFF: real screen) ---
+
+The winter plan is three lines.
+Three goals your player can measure, written down on November 1. Same work for girls who play baseball as anyone else. More games won't do it. What they do between games will.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK (Sunday video day, phone, 9:16 1080x1920, ~10-12s) ---
+Use the BASEBALL 9x16 STORY card as the still, or Coach's own clip of a glove and a phone on the kitchen table (no minors' faces).
+Hook (0-1.5s, on-screen): "Your player's whole winter plan."
+Beat 2 (1.5-5s): slow push into the first goal. On-screen: "One for the body."
+Beat 3 (5-8s): move to goals two and three. On-screen: "One for the game. One for school."
+Close (8-11s): "Tonight, one line." + MyGrind mark.
+Audio: calm acoustic or lo-fi, no hype track.
+Caption = IG caption, girls-who-play-baseball hashtags with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (girls baseball orgs, youth baseball parent pages, HS programs)
+[ ] Capture 1 photo/clip for the content bank (a winter goal written down, gear put away for the season, no minors' faces)
+
+--- POSTING OUTCOME 2026-11-01 ---
+Step Zero: Content > Scheduled EMPTY; X last post 10/31. Day uncovered, proceeded.
+Environment: Mac LOCKED. Two Chrome windows; extension tabs in window 1, fronted with a Chrome app command (set active tab index). ZERO System Events keystrokes.
+X: LIVE 7:17 AM PST with the BASEBALL 1x1 card (file_upload into the inline home composer). No modal this run. "Your post was sent." toast; profile shows one 11/1 post with image. Made with AI OFF (real screen).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the BASEBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio"). 9 tags, no dashes. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen; Content > Scheduled lists MYGrind (FB) and mygrindapp (IG) at Sun Nov 1, 7:30pm.
+CARDS: baseball + softball Season Goals pair committed here, mirrored to Drive Social Content/2026-11-01-the-winter-plan-is-three-lines.
