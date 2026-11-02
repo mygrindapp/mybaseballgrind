@@ -1,0 +1,69 @@
+MYGRIND DAILY SOCIAL — Monday, 2026-11-02
+Lead audience: BASEBALL (day-of-year 306 % 3 = 0)
+Theme: Monday = Mindset / Today's Grind QOTD card. November anchor (clocks went back 11/1, early dark, winter work starts), belief shift (games vs. what's written down between them), anti-"later" CTA.
+Format: static card, Today's Grind editorial QOTD (Playfair italic on near-black + gold compass), rendered from HTML by scripts/build_todays_grind_card.py. Zero generated pixels.
+  Variety: breaks the cream real-app-screen run (10/27 Practice, 10/28 Academics, 10/29 Workout, 10/30 Off Day, 10/31 Game stats, 11/1 Season Goals); new palette, layout, and type axis. Last QOTD was 10/26.
+  Sport-neutral text card, one card serves both sports (the baseball lead lives in the caption, softball caption below). Builder has no 2:3 PIN size.
+  Card day (Monday), not a video day. Optional Reel note below.
+Master: media/qotd/todays-grind/dark-by-five-garage/
+Folder: media/social/2026-11-02-dark-by-five-garage/
+
+--- INSTAGRAM / FACEBOOK CAPTION (baseball lead) ---
+
+Dark by 5 doesn't end the work. It moves it to the garage.
+
+The clocks went back this weekend. Fields go dark early, practice thins out, and November is when a lot of players quietly stop.
+
+In 35 years of coaching, the ones who showed up different in spring didn't play more games over the winter. They found a tee, a net, a wall, and they wrote down what they did. More games don't make your player better. What they do between games, written down, does.
+
+Your player doesn't need a facility or a big plan. Ten swings in the garage count if they make it onto the page.
+
+Tonight, one line: what your player worked on after the sun went down.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A near-black MyGrind card with the gold compass logo and the eyebrow "Today's Grind." The quote, in cream italic serif: "Dark by 5 doesn't end the work. It moves it to the garage." A short gold rule and "MyGrind" below.
+
+--- SOFTBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+Dark by 5 doesn't end the work. It moves it to the garage.
+
+The clocks went back and the fields go dark early now. Your player doesn't need daylight for a tee, a net, or a wall. Ten swings or ten spins count if they make it onto the page.
+
+More games don't make your player better. What they do between games, written down, does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, attach the 1x1 SQUARE) ---
+
+Dark by 5 doesn't end the work. It moves it to the garage.
+More games don't make your player better. What they do between games, written down, does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+Real clip of a tee or net in a garage at night (Coach's footage, no minors' faces), or the 9x16 STORY card as a still with a slow push-in. Beat 1 (0-1.5s): "Dark by 5." Beat 2: "It doesn't end the work." Beat 3: "It moves it to the garage." Close: "Tonight, one line." Calm, warm instrumental. Caption = IG caption with #reels added as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (not built for QOTD cards)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth baseball/softball accounts
+[ ] Capture 1 photo/clip for the content bank (a tee and net in a garage under the work light, no minors' faces)
+
+--- POSTING OUTCOME 2026-11-02 ---
+Step Zero: Planner Mon 2 column EMPTY (only a Meta suggestion); X last post 11/1. Day uncovered, proceeded.
+Environment: Mac LOCKED. Two Chrome windows, extension tab was tab 8 of window 1; fronted with a Chrome app command (set active tab index). ZERO System Events keystrokes. No X modal.
+X: POSTED ~7:17 AM with the 1x1 SQUARE card (file_upload into the inline home composer). "Your post was sent." toast seen, composer emptied, profile shows it with the image. "Made with AI" OFF (HTML-rendered card, no generated pixels).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL). Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Nov 2, 2026, 7:30 PM); Planner Mon 2 shows 7:30 PM Facebook + 7:30 PM Instagram, both with the card.
+CARD: sport-neutral QOTD, committed (master media/qotd/todays-grind/dark-by-five-garage/), mirrored to Drive Social Content/2026-11-02-dark-by-five-garage.
