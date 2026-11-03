@@ -1,0 +1,69 @@
+MYGRIND DAILY SOCIAL — Tuesday, 2026-11-03
+Lead audience: SOFTBALL (day-of-year 307 % 3 = 1)
+Theme: Tuesday = newsletter/blog day. Push to the training calendar post (blog/youth-baseball-softball-training-calendar.html). November anchor (last full month of the strength build, early dark), belief shift, anti-"later" CTA.
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): MyCalendar, November open, intro + Week 1. Captured 2026-11-03 via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, mgTab('calendar') + month-card open, scrolled to .month-body. Zero generated pixels.
+  Variety: last calendar card was 10/4. Recent: 10/30 Off Day, 10/31 Game stats, 11/1 Season Goals, 11/2 QOTD.
+  Both sports: SOFTBALL card posts (softball lead); BASEBALL card ships as the pair.
+Folder: media/social/2026-11-03-november-has-a-job/
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead) ---
+
+November has a job.
+
+Fall ball is wrapping up, the clocks went back, and a lot of softball families figure the next real date on the calendar is February. In the MyGrind training plan, November is the last full month of the strength build, and the week already has a shape: lifting days, daily swings, a Wednesday for mobility and arm care, and one full rest day. If your player pitches, that arm care day is not optional.
+
+In 35 years of coaching, the players who came back different in the spring weren't the ones with the most games on the schedule. They knew what today's job was, and they wrote it down. More games don't make your player better. What they do between games, written down, does.
+
+The whole year, month by month, is on the blog (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November, The Plan." Headline: "November has a job." Subline: "Swings, lifts, arm care, one rest day. The month is already in their pocket." Below, a real screenshot of the MyGrind app in softball mode, dated Tuesday, November 3, 2026, showing the November training plan: the month's intro and Week 1, with lifting days, 100 daily swings, and a Wednesday for mobility and arm care.
+
+--- BASEBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+November has a job.
+
+Fall ball is wrapping up and the fields go dark early. In the MyGrind training plan, November is the last full month of the strength build: lifting days, daily swings, a Wednesday for mobility and arm care, one full rest day.
+
+More games don't make your player better. What they do between games, written down, does. The whole year, month by month, is on the blog (link in bio).
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (posted, SOFTBALL 1x1 SQUARE attached) ---
+
+November has a job.
+Last full month of the strength build. Swings, lifts, arm care, one full rest day.
+More games don't make your player better. What they do between games, written down, does.
+Tonight, one line.
+https://www.mygrindapp.com/blog/youth-baseball-softball-training-calendar.html?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+SOFTBALL 9x16 STORY card as a still, slow scroll down the November plan. Beat 1 (0-1.5s): "November has a job." Beat 2: "Swings. Lifts. Arm care. One rest day." Close: "Tonight, one line." Calm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (built, both sports)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger accounts (travel softball orgs, HS softball programs, pitching instructors, softball parent accounts)
+[ ] Capture 1 photo/clip for the content bank (a bucket and tee in the garage after dark, no minors' faces)
+
+--- POSTING OUTCOME 2026-11-03 ---
+Step Zero: Planner Tue 3 column EMPTY; X last post 11/2. Day uncovered, proceeded.
+Environment: Mac LOCKED. Two Chrome windows; extension tab was not active in window 1, fixed with a Chrome app command (set active tab index). ZERO System Events keystrokes. No X modal today.
+X: POSTED ~7:18 AM with the SOFTBALL 1x1 card (file_upload into the inline home composer), link = training calendar post with UTM. "Your post was sent." toast, composer emptied. "Made with AI" OFF (real app screen).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the SOFTBALL 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL, "link in bio"). All 9 tags verified present. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Nov 3, 2026, 7:30 PM); Planner Tue 3 shows the Facebook and Instagram entries.
+Note: first card build rendered the 4x5 in fallback fonts (web font race in the builder); caught by eye, rebuilt, all 8 cards checked before posting.
+App notes for Coach: on the light theme the month name in MyCalendar renders cream on white (NOVEMBER is barely visible; framed out of the card). Softball mode's calendar still says "Wood Bat" and "Wood only".
