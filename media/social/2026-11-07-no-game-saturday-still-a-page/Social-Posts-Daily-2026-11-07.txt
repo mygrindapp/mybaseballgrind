@@ -1,0 +1,63 @@
+MYGRIND DAILY SOCIAL — Saturday, 2026-11-07
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 311 % 3 = 2)
+Theme: Saturday = game day / log it after. November anchor = fall ball is over, so the first Saturday with no game is the test. Solo work counts and gets a page. Belief shift (between games, not more games), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL > PRACTICE entry set to "ON MY OWN" with TEE WORK + FIELDING chips selected and "What did I work on today?" filled in. Captured via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, driver runs chooseEntryType('practice') + setPracticeMode('solo') + clicks the two solo-work chips + fills j-what/j-tomorrow + scrolls to #practice-mode-row. Zero generated pixels.
+  Variety: solo-practice screen is new for the daily card; this week = Season Goals, QOTD, MyCalendar, Academic History, Arm Care, Game entry.
+  Both sports: BASEBALL card posts (girls-who-play-baseball lead); SOFTBALL card ships as the pair.
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls-who-play-baseball lead, scheduled 7:30 PM) ---
+
+No game this Saturday. That doesn't mean no page.
+
+Fall ball is done, and for a lot of girls who play baseball the next team practice is weeks away. This is where the gap opens. Not on game day. On the quiet Saturdays.
+
+Fifty tee swings in the garage. Ten minutes of footwork for the backhand. Your player taps "On my own," picks what they worked on, and writes two lines. That's the whole thing.
+
+In 35 years of coaching, the players who kept getting better had one thing in common: they did the work nobody scheduled for them, and they wrote it down. More games won't build that for your player. What they do between games will.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · On My Own." Headline: "No game Saturday. Still a page." Subline: "Fall ball is done. The work your player does on their own counts now." Below, a real screenshot of the MyGrind app's Practice journal entry in baseball mode, dated Saturday, November 7, 2026. "Was this with the team or on your own?" is set to "On My Own," and under "What kind of work?" the Tee Work and Fielding chips are selected.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+No game this Saturday. That doesn't mean no page.
+
+Fall ball is done. The quiet Saturdays are where the gap opens. Fifty tee swings, a few minutes of footwork, and two lines in the journal: "On my own," what they worked on, what's next.
+
+More games won't build that for your player. What they do between games will.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (BASEBALL 1x1 SQUARE card, Made with AI OFF: real screen) ---
+
+No game this Saturday. Still a page.
+Fall ball is done. The quiet Saturdays are where the gap opens. More games won't build your player. What they do between games will.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK (Saturday video day, phone, 9:16 1080x1920, ~10-12s, add #reels as the 8th tag) ---
+End frame: BASEBALL 9x16 STORY card, or Coach's own clip of a tee and a bucket of balls in a garage (no minors' faces).
+HOOK (0-1.5s), on-screen: "First Saturday with no game."
+BODY, one line per beat: "Tee in the garage." / "Footwork for the backhand." / "Tap: On my own." / "Two lines."
+CLOSE: "Tonight, one line." + MyGrind mark.
+AUDIO: soft acoustic bed or garage ambience (ball off the tee). No hype track.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Reel/Story), 4:5 = 1080x1350 (IG feed), 1:1 = 1080x1080, Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball and softball accounts
+[ ] Capture 1 photo or clip for the content bank
