@@ -1,0 +1,65 @@
+MYGRIND DAILY SOCIAL — Sunday, 2026-11-08
+Lead audience: BASEBALL (day-of-year 312 % 3 = 0)
+Theme: Sunday = story / credibility. Coach's 35 years: the players who improved were not the ones with the most games or the best team, they were the ones who wrote down the work between games. November anchor = fall ball is over, winter is where it shows. Belief shift + anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, chalk-on-GRASS field card (scripts/build_social_field_card.py). Zero generated pixels.
+  Variety: breaks a six-day run of cream real-app-screen cards; grass surface last used 10/13 (dirt 10/24).
+  Both sports: BASEBALL card (eyebrow "35 YEARS · NOVEMBER") posts; SOFTBALL card (eyebrow "SUNDAY · NOVEMBER", subline "Fall ball is over. The ones who keep a page through winter are the ones who show up different in spring.") ships as the pair.
+  Note: the first baseball build lost the web-font race on the 4x5 (fallback headline font); rebuilt and verified on a contact sheet.
+
+--- INSTAGRAM / FACEBOOK CAPTION (baseball lead, scheduled 7:30 PM) ---
+
+35 years of coaching, and here is the pattern I keep seeing.
+
+The players who got better were not always the ones who played the most games. They were not always on the best team. They were the ones who wrote down what they did between games: the swings, the throwing, what went wrong Saturday and what they would fix by Tuesday.
+
+Fall ball is over now. The winter months are quiet, and that is exactly when the gap opens. One player waits for spring. Another keeps a page.
+
+More games don't make your player better. What they do between games does.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A green, outfield-grass colored MyGrind card with the gold compass logo and the eyebrow "35 Years · November." Chalk-white headline: "The players who got better wrote it down." Subline: "Not the most games. Not the best team. The ones who kept a page on the work between games." Footer: "Tonight, one line." and mygrindapp.com.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+The players who got better wrote it down.
+
+Not the most games. Not the best team. In 35 years, the ones who kept improving kept a page: what they worked on, what went wrong, what's next.
+
+Fall ball is over. The ones who keep that page through winter are the ones who show up different in spring.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (BASEBALL 1x1 SQUARE card, Made with AI OFF: no generated pixels) ---
+
+The players who got better wrote it down.
+35 years of coaching: not the most games, not the best team. The ones who kept a page on the work between games.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK (Sunday video day, phone, 9:16 1080x1920, ~10-12s, add #reels as the 8th tag) ---
+End frame: BASEBALL 9x16 STORY card.
+HOOK (0-1.5s), on-screen: "35 years. One pattern."
+BODY, one line per beat: "Not the most games." / "Not the best team." / "The ones who wrote it down."
+CLOSE: "Tonight, one line." + MyGrind mark.
+B-ROLL: Coach's own clip of an empty field or dugout at dusk (no minors' faces).
+AUDIO: soft acoustic bed or field ambience. No hype track.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Reel/Story), 4:5 = 1080x1350 (IG feed), 1:1 = 1080x1080, Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball and softball accounts
+[ ] Capture 1 photo or clip for the content bank
