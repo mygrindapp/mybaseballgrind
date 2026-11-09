@@ -1,0 +1,68 @@
+MYGRIND DAILY SOCIAL — Monday, 2026-11-09
+Lead audience: SOFTBALL (day-of-year 313 % 3 = 1)
+Theme: Monday = Mindset / Today's Grind QOTD card. November anchor (fall ball done, quiet season starts), belief shift (between-games work, written down), anti-"later" CTA.
+Format: static card, Today's Grind editorial QOTD (Playfair italic on near-black + gold compass), scripts/build_todays_grind_card.py. Zero generated pixels.
+  Variety: breaks the run since the last QOTD (11/2): 11/3 MyCalendar, 11/4 Academic History, 11/5 Arm Care, 11/6 Game entry, 11/7 Practice entry, 11/8 grass field card. New palette/layout/type axis.
+  Sport-neutral text card serves both sports (softball lead lives in the caption; baseball caption below). Builder has no 2:3 PIN size.
+Master: media/qotd/todays-grind/nobody-claps-november/
+Folder: media/social/2026-11-09-nobody-claps-november/
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead) ---
+
+Nobody claps for a November rep. Spring does.
+
+Fall ball is wrapping up. No bleachers, no scoreboard, no team chat buzzing after the game. This is the stretch where a lot of players quietly set the bat bag down until February.
+
+In 35 years of coaching, the players who showed up different in spring didn't play more games over the winter. They spun a few balls against the garage wall, hit off a tee under the porch light, and wrote down what they did. More games don't make your player better. What they do between games, written down, does.
+
+No one is watching those reps. That's exactly why they count. And when your player reads the page back in March, they'll see the work nobody else did.
+
+Tonight, one line: one thing your player worked on today, even if it was ten minutes.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A near-black MyGrind card with the gold compass logo and the eyebrow "Today's Grind." The quote, in cream italic serif: "Nobody claps for a November rep. Spring does." A short gold rule and "MyGrind" below.
+
+--- BASEBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+Nobody claps for a November rep. Spring does.
+
+Fall is done and the fields go quiet. Your player doesn't need a crowd for a tee, a net, or a long-toss partner. Ten minutes count if they make it onto the page.
+
+More games don't make your player better. What they do between games, written down, does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+--- X / TWITTER (under 280, attach the 1x1 SQUARE) ---
+
+Nobody claps for a November rep. Spring does.
+More games don't make your player better. What they do between games, written down, does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+Real clip of a softball player's spins against a garage wall at dusk, or empty bleachers after the last fall game (Coach's footage, no minors' faces), or the 9x16 STORY card with a slow push-in. Beat 1 (0-1.5s): "Nobody claps for November." Beat 2: "No crowd. No scoreboard." Beat 3: "Spring does." Close: "Tonight, one line." Calm, warm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (not built for QOTD cards)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger youth softball/baseball accounts
+[ ] Capture 1 photo/clip for the content bank (a bucket of balls by the garage wall at dusk, no minors' faces)
+
+--- POSTING OUTCOME 2026-11-09 ---
+Step Zero: Planner Mon 9 column EMPTY (only a Wed Meta suggestion); X last post 11/8. Day uncovered, proceeded.
+Environment: Mac LOCKED. Two Chrome windows, extension tab was tab 6 of 6 in window 1 (front); fronted with a Chrome app command (set active tab index). ZERO System Events keystrokes. No X modal.
+X: POSTED ~7:20 AM with the 1x1 SQUARE card (file_upload into the inline home composer, Post clicked by ref). "Your post was sent." toast seen, composer emptied. "Made with AI" OFF (HTML-rendered card, no generated pixels).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL). WhatsApp banner closed before times. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF ("Maybe later"). "Your post is scheduled" seen (Nov 9, 2026, 7:30 PM); Planner Mon 9 shows 7:30 PM Facebook + 7:30 PM Instagram, both with the card.
+CARD: sport-neutral QOTD, committed (master media/qotd/todays-grind/nobody-claps-november/), mirrored to Drive Social Content/2026-11-09-nobody-claps-november.
