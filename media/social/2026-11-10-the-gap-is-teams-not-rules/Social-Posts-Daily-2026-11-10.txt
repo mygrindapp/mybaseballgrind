@@ -1,0 +1,67 @@
+MYGRIND DAILY SOCIAL — Tuesday, 2026-11-10
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 314 % 3 = 2)
+Theme: Tuesday = blog push. Drives to "Can Girls Play Baseball? A Coach's Guide to Every Level" (last pushed 9/29). November anchor = fall ball is done, spring rosters are next, so this is the month to find the next team. Anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): HOME DASHBOARD (Daily Check-in + 6 day streak + Your Week 6/7 days, 6 entries, 490 reps). Captured via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #dashboard, per-sport mg_sport. Zero generated pixels.
+  Variety: dashboard not used in the last 7 days (this week = Solo Practice, grass field, QOTD, Game entry, Arm Care, Academic History, MyCalendar).
+  Both sports: BASEBALL card posts (girls-who-play-baseball lead); SOFTBALL card ("The offseason is a plan.") ships as the pair.
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls-who-play-baseball lead, scheduled 7:30 PM) ---
+(No URL in the Meta caption: the FB Page 2-link/month cap disables Schedule.)
+
+The gap is teams. Not rules.
+
+Every season a parent asks me some version of the same question, usually quietly, after practice: my player loves baseball, how long do they get to play it?
+
+The honest answer: girls play baseball at every level. Little League, high school, college club ball, a national team, and a pro league that started this summer. Nothing requires your player to switch to softball.
+
+What shows up around age 12 is a gap in available teams, not a rule. November is the month to work on it. Fall ball is done and spring teams are next, so this is when you look.
+
+I wrote the full map, every level and where to find girls baseball teams near you. It's on the MyGrind blog: "Can Girls Play Baseball?" (Link in bio.)
+
+While your player looks for the next team, the work keeps going. One line tonight about what they did today. That page is theirs no matter which roster they land on.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "Girls Who Play Baseball." Headline: "The gap is teams. Not rules." Subline: "Girls play baseball at every level. The offseason is when your player finds the next team." Below, a real screenshot of the MyGrind app home dashboard in baseball mode, dated Tuesday, November 10, 2026, showing a completed Daily Check-in and a 6 day streak with 6 of 7 days logged, 6 entries and 490 reps logged this week.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+The offseason is a plan.
+
+No games on the calendar in November. That's when the gap between players opens, quietly. The ones who keep showing up, a few reps and two lines a day, walk into spring a step ahead.
+
+More games won't build that for your player. What they do between games will. The week keeps count so you don't have to.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT (softball): A cream MyGrind card, eyebrow "November · Offseason," headline "The offseason is a plan." Subline: "No games on the calendar. Your player still shows up, and the week keeps count." Below, a real screenshot of the MyGrind app home dashboard in softball mode showing a 6 day streak and 6 of 7 days logged.
+
+--- X / TWITTER (1x1 SQUARE BASEBALL card attached, Made with AI OFF: real screen) ---
+
+The gap is teams. Not rules.
+Girls play baseball at every level. Around 12 the teams thin out, not the rules. November is when your player finds the next one. The full map:
+https://www.mygrindapp.com/blog/can-girls-play-baseball.html?utm_source=x&utm_medium=social&utm_campaign=daily
+Tonight, one line.
+#journal #accountability
+
+--- PINTEREST (2:3 1000x1500 BASEBALL PIN) ---
+Title: Can Girls Play Baseball? Every Level, and Where to Find Teams
+Link: https://www.mygrindapp.com/blog/can-girls-play-baseball.html?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball and softball accounts (girls baseball clubs are a good fit today)
+[ ] Capture 1 photo or clip for the content bank
