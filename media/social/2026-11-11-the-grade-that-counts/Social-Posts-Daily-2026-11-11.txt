@@ -1,0 +1,71 @@
+MYGRIND DAILY SOCIAL — Wednesday, 2026-11-11
+Lead audience: BASEBALL (day-of-year 315 % 3 = 0)
+Theme: Wednesday = Recruiting / academics. Mid-November anchor = Q1 grades are posted, the semester grade (the one the app saves and counts toward NCAA core GPA) is being written right now. Belief shift (showcases don't move a transcript, the work between them does), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): Academics tab, "YOUR CLASSES" grid (English 11 A, Algebra II B, US History A, Chemistry B, each tagged by NCAA core subject), Q1 grading period. Captured via the shoot-light-dashboard rig with the academics seed replaced by a current 2026-27 (schoolYear 2027) Q1-only schedule, headless Chrome 540x720 @2x, #academics, driver mgTab('academics') + setAcademicTerm('Q1') + scrollIntoView(#acad-section-title). Zero generated pixels.
+  Variety: class grid never used as a card subject (10/28 = eligibility grid, 11/4 = Academic History, 11/10 = dashboard).
+  Both sports: BASEBALL card posts (baseball lead); SOFTBALL card ("Q1 was the check. The semester is the grade.") ships as the pair.
+  Build note: first pass had the 9x16 subline running under the phone; sublines shortened and rebuilt, all 8 files checked on a contact sheet (fonts OK).
+
+--- INSTAGRAM / FACEBOOK CAPTION (baseball lead, scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+The semester grade is the one that counts.
+
+Mid-November. First-quarter grades are posted, and a lot of families read Q1 like a final. It isn't. Q1 is the progress check. The semester grade is the one that goes on the transcript and into the NCAA core GPA, and it is being written right now, one class at a time.
+
+That means a B in chemistry today is still a conversation, not a verdict. There are weeks left to move it.
+
+In 35 years of coaching, I've watched a lot of players chase one more showcase while a core class slipped. More showcases don't fix a transcript. What your player does between them does: knowing where every class stands, and doing something about the one that's light.
+
+The Academics tab in MyGrind lists each class, tags it core or elective, and shows the grade next to it. It is included with every plan.
+
+Tonight, one line: the class that needs the most attention, and one thing your player will do about it this week. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Grades." Headline: "The semester grade is the one that counts." Subline: "Q1 was the progress check. The semester grade is being written now." Below, a real screenshot of the MyGrind app's Academics tab in baseball mode, dated Wednesday, November 11, 2026, showing the Your Classes list: English 11 (English, A), Algebra II (Math, B), US History (Social Studies, A), and Chemistry (Science, B).
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+Q1 was the check. The semester is the grade.
+
+First-quarter grades are in. The grade colleges actually see is the semester grade, and it is being written right now.
+
+More tournaments won't move it. What your player does on a Tuesday night will. Know where every core class stands, and pick the one that needs work.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT (softball): A cream MyGrind card, eyebrow "November · Grades," headline "Q1 was the check. The semester is the grade." Subline: "The grade colleges see is being written right now." Below, a real screenshot of the MyGrind app's Academics tab in softball mode showing the Your Classes list with English 11, Algebra II, US History, and Chemistry and their Q1 grades.
+
+--- X / TWITTER (POSTED 7:18 AM with BASEBALL 1x1 SQUARE card, Made with AI OFF: real screen. FB+IG+Story scheduled 7:30 PM with the BASEBALL 4x5 FEED card, verified in Content > Scheduled) ---
+
+The semester grade is the one that counts.
+Q1 was the progress check. The grade colleges see is being written right now. More showcases won't move it. What your player does between them will.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- PINTEREST (2:3 1000x1500 BASEBALL PIN) ---
+Title: Q1 Grades Are a Progress Check. The Semester Grade Is the One That Counts.
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball and softball accounts (HS recruiting / academic accounts fit today)
+[ ] Capture 1 photo or clip for the content bank
+
+--- POSTING OUTCOME ---
+Locked Mac; extension file_upload path, no native picker. Step Zero: nothing scheduled on Meta, newest X post 11/10, so not covered.
+X: posted 7:18 AM with the 1x1 card, no modal, "Your post was sent." toast, confirmed on x.com/MyGrindapp with image.
+Meta: FB + IG scheduled Wed Nov 11 7:30 PM with the 4x5 card (both rows in Content > Scheduled), Story toggle ON, Boost OFF, upsell declined (Maybe later).
