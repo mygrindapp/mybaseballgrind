@@ -1,0 +1,78 @@
+MYGRIND DAILY SOCIAL — Thursday, 2026-11-12
+Lead audience: SOFTBALL (day-of-year 316 % 3 = 1)
+Theme: Thursday = Drill / training tip. November anchor = fall ball is done, the strength build is on, core work is the 10-minute piece most players skip. Belief shift (more games don't build bat speed, the work between them does), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL > WORKOUT entry, CORE / ANTI-ROTATION focus selected, the app's own "Why this matters" tip ("A stable core transfers force from legs to arms. Without it the kinetic chain leaks power before it reaches the ball."), Suggested Lifts with Pallof Press 3x10/side, Dead Bug 3x10, Side Plank 3x30s/side checked. Captured via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #journal, driver: mgTab('journal') + chooseEntryType('workout') + selectWoIntensity('maintenance') + fill j-wo-lifts + selectWoFocus('core') + scrollIntoView(focus label). Zero generated pixels.
+  Variety: first Core / Anti-Rotation card (10/8 Speed/Plyo, 10/29 Lower Power, 11/5 Arm Care). This week = QOTD, field card, Dashboard, Academics class grid. Skipped Rotational focus because its in-app tip uses "elite."
+  Both sports: SOFTBALL card posts (softball lead); BASEBALL card ("The power leaks in the middle.") ships as the pair.
+Video day note: Thursday is a Reel day. Script below for Coach's phone; the static card auto-posts so the day is never dark.
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead, scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+Bat speed starts in the middle.
+
+Mid-November. Fall ball is over and most players think the work is too. This is the month the swing gets built, and the piece almost everyone skips is the core.
+
+A stable core is what carries the power from the legs to the barrel. When it is weak, the hips fire and the energy leaks out before it ever reaches the ball. It looks like an arms swing. It is usually a middle problem.
+
+The fix is not glamorous. Pallof press, dead bugs, side planks. Ten minutes, three days a week, all winter.
+
+In 35 years of coaching, the hitters who showed up in February with a faster bat were not the ones who played the most games in the fall. They were the ones who did the boring work between them, and could show you on paper that they did it.
+
+Tonight, one line: the three exercises your player did and how many sets. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Core Work." Headline: "Bat speed starts in the middle." Subline: "A stable core carries the power from the legs to the ball. Three exercises, ten minutes." Below, a real screenshot of the MyGrind app's Workout entry in softball mode, dated Thursday, November 12, 2026, with Core / Anti-Rotation selected, the tip "A stable core transfers force from legs to arms," and Pallof Press, Dead Bug, and Side Plank checked in the suggested lifts.
+
+--- BASEBALL PAIR CAPTION (for a second slot) ---
+
+The power leaks in the middle.
+
+Fall ball is done. The bat speed your player shows up with in spring gets built right now, and a lot of it lives in the core.
+
+More games won't fix a leak between the hips and the hands. Ten minutes of Pallof press, dead bugs, and side planks, three nights a week, will.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT (baseball): A cream MyGrind card, eyebrow "November · Core Work," headline "The power leaks in the middle." Below, a real screenshot of the MyGrind app's Workout entry in baseball mode with Core / Anti-Rotation selected and three core exercises checked.
+
+--- REEL / TIKTOK SCRIPT (9:16 1080x1920, ~12-15 sec, phone upload) ---
+HOOK (0-1.5s, on-screen text over your player's swing from real footage): "Weak middle = slow bat."
+BODY (1.5-10s): cut to your player doing 3 quick reps each: Pallof press, dead bug, side plank. On-screen: "Pallof press 3x10" / "Dead bug 3x10" / "Side plank 3x30s". Then a 2-second screen recording of logging it in the MyGrind Workout entry (Core / Anti-Rotation).
+CTA (10-13s): on-screen "10 minutes. Tonight, one line." End card: MyGrind gold logo + mygrindapp.com.
+AUDIO: steady low-key instrumental, gym-tempo, no hype track. Label AI content only if anything generated is used (nothing should be).
+Caption: use the softball caption above, hashtags + #reels as the 8th tag before #journal #accountability.
+
+--- X / TWITTER ---
+
+Bat speed starts in the middle.
+A weak core leaks the power from the legs before it reaches the ball. More games won't fix that. Ten minutes of core work between them will.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- PINTEREST (2:3 1000x1500 SOFTBALL PIN) ---
+Title: Bat Speed Starts in the Middle: 3 Core Exercises for Softball Hitters This Winter
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth softball and baseball accounts (strength / hitting-coach accounts fit today)
+[ ] Capture 1 photo or clip for the content bank (a real core-work rep is perfect for today's Reel)
+
+--- POSTING OUTCOME ---
+Locked Mac; extension file_upload path, no native picker. Step Zero: nothing on Meta for Thu 11/12, newest X post 11/11, so not covered.
+X: posted 7:17 AM with the SOFTBALL 1x1 card (Made with AI OFF, real screen), "Your post was sent." toast, composer emptied, confirmed on x.com/MyGrindapp with image. No modal.
+Meta: FB + IG scheduled Thu Nov 12 7:30 PM with the SOFTBALL 4x5 card ("Your post is scheduled" dialog, both 7:30 PM rows in the Planner Thu 12 column), Story toggle ON, Boost OFF, upsell declined (Maybe later).
