@@ -1,0 +1,82 @@
+MYGRIND DAILY SOCIAL — Friday, 2026-11-13
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 317 % 3 = 2)
+Theme: Friday = Parent real-talk. November anchor = fall ball just ended and the car-ride season review is coming. Belief shift (the players who improved were not the ones with the most games, they could tell you what happened between them), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL > REFLECTION entry, fresh (no text typed): "Take a breath. Get honest with yourself." + mood chips with CALM selected + the "Need a spark?" prompt. Captured via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #journal, driver: mgTab('journal') + chooseEntryType('reflection') + selectMindset('calm') + scrollIntoView(#j-reflection-intro). Zero generated pixels.
+  Variety: Reflection last used 10/9. This week = QOTD, Dashboard, Academics class grid, Workout Core. Fields left empty on purpose: in light mode the Reflection inputs render dark text on #14100C (known app bug, see memory 11/6), so typed text is invisible.
+  Both sports: BASEBALL card posts (girls-who-play-baseball lead, "The car ride home can wait."); SOFTBALL card ("Let them tell it first.") ships as the pair.
+Video day note: Friday is a Reel day. Script below for Coach's phone; the static card auto-posted so the day is not dark.
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls-who-play-baseball lead, scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+The car ride home can wait.
+
+Fall ball is done, and a lot of us have the season review ready before the seatbelt clicks. Playing time, at-bats, that one inning. We mean well. It usually lands as one more grade.
+
+Try it the other way this year. Before you say anything, let your player write the recap first. One page: what got better, what still bugs them, what they want to work on this winter.
+
+For girls who play baseball, this matters even more. They hear plenty of opinions from the stands. Their own words about their own season are the ones worth keeping.
+
+In 35 years of coaching, the players who kept improving were not the ones who played the most games. They were the ones who could tell you, in their own words, what happened between them.
+
+Then read it together. You will learn more from their page than from any lineup card.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Real Talk." Headline: "The car ride home can wait." Subline: "Let your player write the season recap first. Then read it together." Below, a real screenshot of the MyGrind app's Reflection entry in baseball mode, dated Friday, November 13, 2026, with the prompt "Take a breath. Get honest with yourself," mood chips with Calm selected, and a "Need a spark?" writing prompt.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+Let them tell it first.
+
+Fall is over. Before you give your player the season review, read theirs. Ten minutes, one page: what got better, what still bugs them, what winter is for.
+
+More games did not make the difference this fall. What they noticed between them did. Let them write it down.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT (softball): A cream MyGrind card, eyebrow "November · Real Talk," headline "Let them tell it first." Below, a real screenshot of the MyGrind app's Reflection entry in softball mode with mood chips and a writing prompt.
+
+--- REEL / TIKTOK SCRIPT (9:16 1080x1920, ~12-15 sec, phone upload) ---
+HOOK (0-1.5s, on-screen text over a real clip of the parking lot / car door closing after a game): "Don't say it yet."
+BODY (1.5-10s): on-screen lines, one at a time: "Fall ball is over." / "Let your player write the recap first." / "What got better. What still bugs them. What winter is for." Cut to a 2-second screen recording of the MyGrind Reflection entry (mood chip tap).
+CTA (10-13s): on-screen "Then read it together. Tonight, one line." End card: MyGrind gold logo + mygrindapp.com.
+AUDIO: calm acoustic or lo-fi, no hype track. Nothing generated, no AI label needed.
+Caption: the lead caption above; hashtags + #reels as the 8th tag before #journal #accountability.
+
+--- X / TWITTER (NOT POSTED: ToS modal, see outcome) ---
+
+The car ride home can wait.
+Let your player write the fall recap first. Then read it together. Their words about their season beat any lineup card.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+Attach: CarRide-BASEBALL-1x1-SQUARE-1080x1080-2026-11-13.png (Made with AI OFF, real screen)
+
+--- PINTEREST (2:3 1000x1500 BASEBALL PIN) ---
+Title: The Car Ride Home Can Wait: Let Your Player Write the Season Recap First
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball / girls baseball accounts (parent-perspective accounts fit today)
+[ ] Capture 1 photo or clip for the content bank (a post-game car/parking-lot moment is perfect for today's Reel)
+
+--- POSTING OUTCOME ---
+Locked Mac; extension file_upload path, no native picker. Step Zero: nothing on Meta for Fri 11/13, newest X post 11/12, so not covered.
+Meta: FB + IG scheduled Fri Nov 13 7:30 PM with the BASEBALL 4x5 card ("Your post is scheduled" dialog, both 7:30 PM rows in the Planner Fri 13 column), Story toggle ON, Boost OFF, upsell declined (Maybe later).
+X: SKIPPED. x.com showed the "Updates to our Terms of Service" modal with a single "Got it" button, which blocks the composer. Not accepted on Coach's behalf. Coach: click "Got it" on x.com, then post the X block above with the 1x1 card.
