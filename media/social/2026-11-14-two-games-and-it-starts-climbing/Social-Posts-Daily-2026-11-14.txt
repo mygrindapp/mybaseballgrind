@@ -1,0 +1,82 @@
+MYGRIND DAILY SOCIAL — Saturday, 2026-11-14
+Lead audience: BASEBALL (day-of-year 318 % 3 = 0)
+Theme: Saturday = Game day / "log it after the game." November anchor = the last showcases and fall tournaments before winter. Belief shift (more games don't make your player better, knowing what happened in them does), anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): MYSTATS tab, empty-state progress card ("Log 2 or more games (with at-bats) in your Journal and your average will start climbing here"), AVG/OBP/SLG/ERA chips, 490 reps training volume. Captured via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #stats, no driver. Zero generated pixels.
+  Variety: MyStats last used 10/25 (different angle: filled season). This week = QOTD, Dashboard, Academics class grid, Workout Core, Reflection.
+  Both sports: BASEBALL card posts ("Log tonight's game. Let the math start."); SOFTBALL card ("Two games in. Now it adds up.") ships as the pair.
+Video day note: Saturday is a Reel day. Script below for Coach's phone; the static card auto-posts so the day is not dark.
+
+--- INSTAGRAM / FACEBOOK CAPTION (baseball lead, scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+Log tonight's game. Let the math start.
+
+A lot of families still have weekend games this month. Showcases, scout days, the last fall tournament before winter.
+
+Here is the part most players skip. The game ends, the bag goes in the trunk, and by Monday nobody remembers the at-bats.
+
+In MyGrind, your player logs the game in the journal tonight: at-bats, hits, walks, and what they saw. After two games, MyStats starts doing the math on its own. Average, on-base, slugging, and ERA for pitchers.
+
+More games don't make your player better. Knowing what happened in them does. In 35 years of coaching, the players who improved could tell you their numbers and the story behind them.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Game Day." Headline: "Log tonight's game. Let the math start." Subline: "Two games in the journal and their average starts climbing." Below, a real screenshot of the MyGrind app's MyStats tab in baseball mode, dated Saturday, November 14, 2026: "Season stats, averages calculate automatically," a Your Progress card with AVG, OBP, SLG and ERA buttons and the note "Log 2 or more games (with at-bats) in your Journal and your average will start climbing here," and a training volume card showing 490 reps this week.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+Two games in. Now it adds up.
+
+Weekend game tonight? Before the drive home turns into a review, have your player log it. At-bats, hits, walks, one thing they noticed.
+
+Two games in the journal and MyStats does the averages for them. No scorebook math, no guessing in December.
+
+More games won't make the difference. What they write down about them will.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT (softball): A cream MyGrind card, eyebrow "November · Game Day," headline "Two games in. Now it adds up." Below, a real screenshot of the MyGrind app's MyStats tab in softball mode with AVG, OBP, SLG and ERA buttons and a training volume card.
+
+--- REEL / TIKTOK SCRIPT (9:16 1080x1920, ~12-15 sec, phone upload) ---
+HOOK (0-1.5s, on-screen text over a real clip of a bat bag going into a trunk after a game): "Don't zip the bag yet."
+BODY (1.5-10s): on-screen lines, one at a time: "Log the game first." / "At-bats. Hits. What they saw." / "Two games in, the average does itself." Cut to a 2-second screen recording of the MyGrind MyStats tab.
+CTA (10-13s): on-screen "Tonight, one line." End card: MyGrind gold logo + mygrindapp.com.
+AUDIO: calm acoustic or lo-fi, no hype track. Nothing generated, no AI label needed.
+Caption: the lead caption above; hashtags + #reels as the 8th tag before #journal #accountability.
+
+--- X / TWITTER ---
+
+Log tonight's game. Let the math start.
+More games don't make your player better. Knowing what happened in them does. Two games in the MyGrind journal and the average starts climbing on its own.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+Attach: Climbing-BASEBALL-1x1-SQUARE-1080x1080-2026-11-14.png (Made with AI OFF, real screen)
+
+--- PINTEREST (2:3 1000x1500 BASEBALL PIN) ---
+Title: Log Tonight's Game: Two Games In and Your Player's Average Starts Climbing
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball / travel ball parent accounts (weekend tournament posts fit today)
+[ ] Capture 1 photo or clip for the content bank (a bat bag going in the trunk after a game is perfect for today's Reel, no minors' faces)
+
+--- POSTING OUTCOME ---
+Locked Mac; extension file_upload path, no native picker. Step Zero: nothing on Meta for Sat 11/14, newest X post 11/12, so not covered.
+Meta: FB + IG scheduled Sat Nov 14 7:30 PM with the BASEBALL 4x5 card ("Your post is scheduled" dialog, both 7:30 PM rows in the Planner Sat 14 column), Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF, upsell declined (Maybe later).
+X: SKIPPED. x.com/home showed the "Review your email" modal ("Yes, that's correct" / "No, update email"), which blocks the composer. Account info is Coach's to confirm. (The ToS modal from 11/13 is gone.) Coach: answer the email prompt on x.com, then post the X block above with the 1x1 card.
