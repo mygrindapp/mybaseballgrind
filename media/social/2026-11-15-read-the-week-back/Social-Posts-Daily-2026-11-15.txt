@@ -1,0 +1,80 @@
+MYGRIND DAILY SOCIAL — Sunday, 2026-11-15
+Lead audience: SOFTBALL (day-of-year 319 % 3 = 1)
+Theme: Sunday = story / credibility. Coach's 35 years: the players who improved could show you their week. November anchor = fall is winding down, Sunday night is the weekly read-back. Belief shift (what happens between games, written down) + anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL tab, "Your Last 7 Days" strip (6/7 days logged, 6 entries, 490 reps, 6 day streak) over the 7 DAYS filter and dated entries. Captured 2026-11-15 via the shoot-light-dashboard rig, headless Chrome 540x720 @2x, #journal, driver = renderJournalWeekStrip() + scrollIntoView with stylesheet scroll-margin-top. Zero generated pixels.
+  Variety: week strip last used 10/22. This week = QOTD, Dashboard, Academics, Workout Core, Reflection, MyStats.
+  Both sports: SOFTBALL card ("Sunday night. Read the week back.") posts; BASEBALL card ("The whole week. One page.") ships as the pair.
+  Note: first softball build lost the web-font race on the 4x5; rebuilt and verified.
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead, scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+Sunday night. Read the week back.
+
+35 years of coaching, and the players who got better all had one thing in common. Ask them about their week and they could show you. Not tell you. Show you.
+
+Practice Tuesday. A game Saturday. What they worked on, how many reps, what they want to fix next.
+
+In MyGrind, your player's journal keeps the last 7 days on one strip: days logged, entries, reps, streak. Sunday night takes two minutes. Read it back, pick one thing for Monday.
+
+More games won't make your player better. What they do between them, written down, will.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "Sunday · November." Headline: "Sunday night. Read the week back." Subline: "35 years in, the players who improved could show me their week." Below, a real screenshot of the MyGrind app's Journal tab in softball mode, dated Sunday, November 15, 2026: a "Your Last 7 Days" strip showing 6 of 7 days logged, 6 entries, 490 reps and a 6 day streak, the 7 Days filter selected, and dated practice and game entries.
+
+--- BASEBALL PAIR CAPTION (for a second slot) ---
+
+The whole week. One page.
+
+Sunday night is the best two minutes of the week. Your player opens the journal and the last 7 days are right there: days logged, entries, reps, streak.
+
+In 35 years, the players who improved could show me their week. The ones who stalled could only tell me their stats.
+
+Tonight, one line. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT (baseball): A cream MyGrind card, eyebrow "Sunday · November," headline "The whole week. One page." Below, a real screenshot of the MyGrind Journal tab in baseball mode with the "Your Last 7 Days" strip: 6/7 days logged, 6 entries, 490 reps.
+
+--- REEL / TIKTOK SCRIPT (9:16 1080x1920, ~12-15 sec, phone upload) ---
+HOOK (0-1.5s, on-screen text over a real clip of a kitchen table, phone face-up, Sunday evening light): "Sunday night. Two minutes."
+BODY (1.5-10s): on-screen lines, one at a time: "Read the week back." / "6 days. 490 reps." / "Pick one thing for Monday." Cut to a 2-second screen recording of the MyGrind Journal "Your Last 7 Days" strip.
+CTA (10-13s): on-screen "Tonight, one line." End card: MyGrind gold logo + mygrindapp.com.
+AUDIO: calm acoustic or lo-fi, no hype track. Nothing generated, no AI label needed.
+Caption: the lead caption above; hashtags + #reels as the 8th tag before #journal #accountability.
+
+--- X / TWITTER ---
+
+Sunday night. Read the week back.
+More games won't make your player better. What they do between them, written down, will. MyGrind keeps the last 7 days on one page.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+Attach: Week-Back-SOFTBALL-1x1-SQUARE-1080x1080-2026-11-15.png (Made with AI OFF, real screen)
+
+--- PINTEREST (2:3 1000x1500 SOFTBALL PIN) ---
+Title: Sunday Night Read-Back: Your Softball Player's Whole Week on One Page
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth softball / travel ball parent accounts (weekend tournament recap posts fit today)
+[ ] Capture 1 photo or clip for the content bank (phone on a kitchen table Sunday evening for today's Reel, no minors' faces)
+
+--- POSTING OUTCOME ---
+Locked Mac; extension file_upload path, no native picker. Step Zero: nothing on Meta for Sun 11/15, newest X post 11/12, so not covered. Extension tab was tab 8 of 8 in front window 1; `set active tab index` was enough.
+X: POSTED 7:18 AM with the SOFTBALL 1x1 card (no modal today). Verified on x.com/MyGrindapp, one post with image, no duplicate.
+Meta: FB + IG scheduled Sun Nov 15 7:30 PM with the SOFTBALL 4x5 card ("Your post is scheduled" dialog, two 7:30 PM entries in the Planner Sun 15 column), Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF, upsell declined (Maybe later).
