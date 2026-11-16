@@ -1,0 +1,67 @@
+MYGRIND DAILY SOCIAL — Monday, 2026-11-16
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 320 % 3 = 2)
+Theme: Monday = Mindset / Today's Grind QOTD card. Mid-November anchor (fall ball done, quiet off-season), belief shift (between-games work, written down), anti-"later" CTA.
+Format: static card, Today's Grind editorial QOTD (Playfair italic on near-black + gold compass), scripts/build_todays_grind_card.py. Zero generated pixels.
+  Variety: last QOTD was 11/9; since then Dashboard, Academics grid, Workout Core, Reflection, MyStats, Journal 7-Days. Sport-neutral text card; the lead lives in the caption.
+Master: media/qotd/todays-grind/offseason-who-kept-going/
+Folder: media/social/2026-11-16-offseason-who-kept-going/
+
+--- INSTAGRAM / FACEBOOK CAPTION (girls-who-play-baseball lead) ---
+
+The off-season doesn't ask who belongs. It asks who kept going.
+
+Mid-November. Fall ball is done, the fields are quiet, and nobody is checking rosters right now. For girls who play baseball, that quiet can actually be a gift. There's no dugout to prove anything to. There's just the work: a tee in the garage, a bucket of balls, a long-toss partner on Saturday morning.
+
+In 35 years of coaching, the players who showed up different in the spring weren't the ones who played the most games. They were the ones who kept going when no one was keeping score, and wrote down what they did. More games don't make your player better. What they do between games, written down, does.
+
+When spring comes and someone wonders whether your player belongs, the page already has the answer.
+
+Tonight, one line: one thing your player worked on today, even if it was ten minutes.
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A near-black MyGrind card with the gold compass logo and the eyebrow "Today's Grind." The quote, in cream italic serif: "The off-season doesn't ask who belongs. It asks who kept going." A short gold rule and "MyGrind" below.
+
+--- SOFTBALL PAIR CAPTION (for @youngsbaseball or a second slot) ---
+
+The off-season doesn't ask who belongs. It asks who kept going.
+
+Fall ball is wrapping up and the travel calendar goes quiet. Your player doesn't need a tournament for spins off a tee, a few dry-swing sets, or ten minutes of arm care. Those count if they make it onto the page.
+
+More games don't make your player better. What they do between games, written down, does.
+
+Tonight, one line.
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+--- X / TWITTER (under 280, 1x1 SQUARE attached) ---
+
+The off-season doesn't ask who belongs. It asks who kept going.
+More games don't make your player better. What they do between games, written down, does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- OPTIONAL REEL / TIKTOK (phone, 9:16 1080x1920, ~8s) ---
+Real clip (Coach's footage, no minors' faces): a bucket of balls and a tee in a garage at dusk, or empty bleachers. Beat 1 (0-1.5s): "Nobody's checking rosters in November." Beat 2: "The off-season asks one thing." Beat 3: "Who kept going?" Close: "Tonight, one line." Calm warm instrumental. Caption = IG caption with #reels as the 8th tag before #journal #accountability. Or use the 9x16 STORY card with a slow push-in.
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel)  |  4:5 = 1080x1350 (IG/FB feed)  |  1:1 = 1080x1080 (X)  |  Pinterest 2:3 = 1000x1500 (not built for QOTD cards)
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments/DMs (FB, IG @youngsbaseball + @mygrindapp, TikTok, X)
+[ ] Leave 5 genuine comments on bigger girls-baseball / youth baseball accounts
+[ ] Capture 1 photo/clip for the content bank (tee + bucket in the garage under a work light, no minors' faces)
+
+--- POSTING OUTCOME 2026-11-16 ---
+Step Zero: Planner Mon 16 column EMPTY (only a Wed Meta suggestion); X last post 11/15. Day uncovered, proceeded.
+Environment: Mac LOCKED. Extension tab was tab 9 of 9 in window 1 (front); fronted with a Chrome app command (set active tab index). ZERO System Events keystrokes. No X modal.
+X: POSTED ~7:17 AM with the 1x1 SQUARE card (file_upload into the inline home composer, Post clicked by ref). "Your post was sent." toast seen, composer emptied. "Made with AI" OFF (HTML-rendered card, no generated pixels).
+FACEBOOK + INSTAGRAM: SCHEDULED 7:30 PM today with the 4x5 FEED card (1080 x 1350, file_upload capture recipe) + caption (no URL). Both time rows zoom-verified 07:30 PM. Story toggle ON (FB Story fires 7:30 PM), Public, Boost OFF. Composer redirected to Planner; Mon 16 shows 7:30 PM Facebook + 7:30 PM Instagram, both with the card.
+CARD: sport-neutral QOTD, committed (master media/qotd/todays-grind/offseason-who-kept-going/), mirrored to Drive Social Content/2026-11-16-offseason-who-kept-going.
