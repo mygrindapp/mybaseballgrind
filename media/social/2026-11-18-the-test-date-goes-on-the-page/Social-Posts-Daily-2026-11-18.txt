@@ -1,0 +1,74 @@
+MYGRIND DAILY SOCIAL — Wednesday, 2026-11-18
+Lead audience: SOFTBALL (day-of-year 322 % 3 = 1)
+Theme: Wednesday = Recruiting / academics. November anchor = the December SAT is Sat Dec 5 and regular registration closes Fri Nov 20 (late registration through Nov 24); December ACT is Sat Dec 12 (dates checked against test-prep calendars 11/18; confirm on College Board / ACT before quoting further). Belief shift (more tournaments don't move a transcript, what your player does between them does). Anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): Academics > "Test Scores · SAT / ACT" tracker with the live countdown "SAT in 17 days · Dec 5, 2026", Best SAT 1140, "110 below your SAT target (1250)", Next Test Date SAT 12/05/2026. Captured via the shoot-light-dashboard rig + one-file headless driver (seed a.testPrep via loadAcademics/saveAcademics after load, mgTab('academics','tab-academics'), renderTestPrep(), scrollIntoView #acad-testprep-card with stylesheet scroll-margin-top:70px), headless Chrome 540x720 @2x. Zero generated pixels. Demo data.
+  Variety: SAT/ACT tracker never used as a card subject (last 7 days = Academics grid, Workout core, Reflection, MyStats, Journal Last 7 Days, QOTD, Solo practice).
+  Both sports: SOFTBALL card posts (softball lead); BASEBALL card ("A score is part of the record.") ships as the pair.
+  Build note: all 8 files checked on a contact sheet, fonts OK. The 9x16 eyebrow wraps to two lines (22 chars), still clean.
+
+--- INSTAGRAM / FACEBOOK CAPTION (softball lead, scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+The test date goes on the page.
+
+The December SAT is Saturday, Dec 5, and regular sign-up closes this Friday, Nov 20. The December ACT is Dec 12.
+
+Here is what I tell softball families every fall. The NCAA dropped the test score requirement for eligibility in 2023. A lot of colleges did not. Admissions offices and academic scholarships still ask for a score, and so do plenty of coaches. Fastpitch recruiting tends to start early, so the score matters sooner than most families expect.
+
+Your player does not need a perfect score. They need a date on the calendar and a plan to get there. In MyGrind, your player saves the next test date in Academics, and the countdown sits right next to their best score and their target. Seventeen days is enough time for a little work every night.
+
+More tournaments won't move a transcript. What your player does between them will.
+
+Tonight, one line: the test date, and one thing they will practice before it. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Test Season." Headline: "The test date goes on the page." Subline: "December SAT is Dec 5. Sign-up closes Friday." Below, a real screenshot of the MyGrind app in softball mode, dated Wednesday, November 18, 2026: the Test Scores SAT / ACT tracker showing "SAT in 17 days, Dec 5, 2026," a best SAT of 1140, and "110 below your SAT target (1250)."
+
+--- BASEBALL PAIR CAPTION (for a second slot) ---
+
+A score is part of the record.
+
+December test dates are close: SAT on Dec 5 (sign-up closes Friday, Nov 20) and ACT on Dec 12.
+
+The NCAA no longer requires a score for eligibility, but many colleges still use one for admissions and academic money, and coaches ask. A junior who sits for the test this winter has time to take it again in the spring. A senior who waits has fewer chances.
+
+In MyGrind, the test date and the countdown live in Academics with the grades, so your player sees the whole record in one place. More showcases won't raise a score. What your player does between them will.
+
+Tonight, one line: put the date in. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT (baseball): A cream MyGrind card, eyebrow "November · Test Season," headline "A score is part of the record." Subline: "SAT Dec 5. ACT Dec 12. Put the date in." Below, a real screenshot of the MyGrind app in baseball mode: the Test Scores SAT / ACT tracker with "SAT in 17 days, Dec 5, 2026," best SAT 1140, and the target gap line.
+
+--- X / TWITTER (SOFTBALL 1x1 SQUARE card, Made with AI OFF: real screen) ---
+
+The test date goes on the page.
+December SAT: Dec 5. Sign-up closes Friday, Nov 20.
+More tournaments won't move a transcript. What your player does between them will.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- PINTEREST (2:3 1000x1500 SOFTBALL PIN) ---
+Title: December SAT Is Dec 5: Put the Test Date on the Page
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball and softball accounts (softball recruiting and college-prep accounts fit today)
+[ ] Capture 1 photo or clip for the content bank (your player's test-prep book next to the glove works)
+
+--- POSTING OUTCOME (locked Mac, extension file_upload flow) ---
+X @MyGrindapp: POSTED ~7:3x AM with SOFTBALL 1x1 SQUARE card (toast "Your post was sent.", composer emptied, profile shows one post "1m" with card). Made with AI OFF (real screen).
+Meta: FB + IG @mygrindapp SCHEDULED Wed Nov 18, 7:30 PM with SOFTBALL 4x5 FEED card ("Your post is scheduled" dialog, Maybe later on boost, Planner Wed 18 column shows 7:30 PM FB + 7:30 PM IG). Facebook Story toggle ON (fires 7:30 PM). Boost OFF.
+Coach's: @youngsbaseball IG + TikTok from phone (cards in Drive), comment/DM replies, the day's capture.
