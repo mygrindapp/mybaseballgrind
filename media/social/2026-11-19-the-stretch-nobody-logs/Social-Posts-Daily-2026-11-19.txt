@@ -1,0 +1,80 @@
+MYGRIND DAILY SOCIAL — Thursday, 2026-11-19
+Lead audience: GIRLS WHO PLAY BASEBALL (day-of-year 323 % 3 = 2)
+Theme: Thursday = Drill / training tip. November anchor = fall ball is done, winter strength work starts, mobility is the 10-minute piece most players skip. Belief shift (more games don't build range, the work between them does). Anti-"later" CTA ("Tonight, one line.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): JOURNAL > WORKOUT entry, MOBILITY focus selected, the app's own tip ("Mobility work pays compound interest. Protects against pulls, opens up rotation, and lets your strength reach its full range."), Suggested Lifts with Hip flexor stretch 2x30s/side, T-spine rotations 2x10/side, 90/90 hip stretch 2x60s/side checked. Captured via the shoot-light-dashboard rig + one-file headless driver (chooseEntryType('workout'), then after 1.5s selectWoIntensity('maintenance') + selectWoFocus('mobility') + fill j-wo-lifts + _refreshWoLiftChips() + scrollIntoView on the focus label, stylesheet #j-wo-focus-row scroll-margin-top:70px). Zero generated pixels. Demo data.
+  Variety: first Mobility card (previous workout focuses: Speed/Plyo 10/8, Lower Power 10/29, Arm Care 11/5, Core 11/12).
+  Both sports: BASEBALL card posts (girls-who-play-baseball lead, copy names it); SOFTBALL card ("Range first. Then strength.") ships as the pair.
+  Build note: all 8 sizes checked on a contact sheet, fonts OK.
+Video day note: Thursday is a Reel day. Script below for Coach's phone; the static card auto-posted so the day is not dark.
+
+--- INSTAGRAM / FACEBOOK CAPTION (scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+The stretch nobody logs.
+
+It is late November. Fall ball is done and the winter strength work is starting. The piece almost every player skips is mobility.
+
+Tight hips and a stiff upper back cap a swing and a throw before strength ever gets a chance. Ten minutes covers it: hip flexor stretch, T-spine rotations, the 90/90 hip stretch. Three nights a week, all winter.
+
+I see this with the girls who play baseball on travel rosters every winter, and with every other player too. The ones who show up in February moving freely did not play more games in the fall. They did the quiet work between them, and they wrote it down.
+
+More games don't build range. What your player does between them does.
+
+Tonight, one line: the three stretches your player did and how long they held them. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#girlswhoplaybaseball #girlsbaseball #baseballforall #youthbaseballparent #baseballparents #playerdevelopment #travelballlife #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Mobility." Headline: "The stretch nobody logs." Subline: "Hips and T-spine. Ten minutes, three nights a week." Below, a real screenshot of the MyGrind app's Workout entry in baseball mode, dated Thursday, November 19, 2026, with Mobility selected, the tip "Mobility work pays compound interest," and Hip flexor stretch, T-spine rotations, and 90/90 hip stretch checked in the suggested list.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+Range first. Then strength.
+
+Winter is when the strength gets built, and mobility is what lets it reach the swing. Ten minutes: hip flexor stretch, T-spine rotations, 90/90 hips. Three nights a week.
+
+More tournaments don't open up a swing. What your player does between them does.
+
+Tonight, one line: the stretches and the hold times. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT (softball): A cream MyGrind card, eyebrow "November · Mobility," headline "Range first. Then strength." Subline: "Mobility lets the winter strength reach the swing." Below, a real screenshot of the MyGrind app's Workout entry in softball mode with Mobility selected and three stretches checked.
+
+--- X / TWITTER (BASEBALL 1x1 SQUARE card, Made with AI OFF: real screen) ---
+
+The stretch nobody logs.
+Hips and T-spine, ten minutes, three nights a week. It is the winter work most players skip.
+More games don't build range. What your player does between them does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (~12s, phone upload, 9:16 1080x1920) ---
+Hook (0-1.5s), on-screen text: "The stretch nobody logs."
+Body (1.5-9s): real footage of your player doing the 90/90 hip stretch in the living room, then a quick cut to the phone showing the Mobility entry in MyGrind with the three stretches checked. On-screen text: "Hips. T-spine. 10 minutes." then "Three nights a week, all winter."
+Close (9-12s): on-screen text "Tonight, one line." + MyGrind logo end card.
+Audio: calm acoustic or lo-fi, low volume.
+Caption: use the IG caption above, add #reels as the 8th tag.
+
+--- PINTEREST (2:3 1000x1500 BASEBALL PIN) ---
+Title: Winter Mobility for Baseball and Softball: The 10-Minute Routine Players Skip
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball and softball accounts (girls baseball and strength/mobility accounts fit today)
+[ ] Capture 1 photo or clip for the content bank (your player stretching after a workout works, and doubles as Reel footage)
+
+--- POSTING OUTCOME (locked Mac, extension file_upload flow) ---
+X @MyGrindapp: POSTED 7:18 AM with BASEBALL 1x1 SQUARE card ("Your post was sent.", composer emptied, profile shows one post "1m" with the image). Made with AI OFF (real screen). A Premium upsell overlay appeared on x.com/home first; closed with its X.
+Meta: FB + IG @mygrindapp SCHEDULED Thu Nov 19, 7:30 PM with BASEBALL 4x5 FEED card ("Your post is scheduled" dialog, Maybe later on boost, Planner Thu 19 column shows 7:30 PM FB + 7:30 PM IG). Facebook Story toggle ON (fires 7:30 PM). Boost OFF.
+Coach's: @youngsbaseball IG + TikTok from phone (cards in Drive), the Reel, comment/DM replies, the day's capture.
