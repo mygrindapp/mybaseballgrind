@@ -1,0 +1,85 @@
+MYGRIND DAILY SOCIAL — Friday, 2026-11-20
+Lead audience: BASEBALL (day-of-year 324 % 3 = 0)
+Theme: Friday = Parent real-talk. November anchor = Thanksgiving week, holiday tournaments and showcases stack up, and parents quietly wonder "is this too much for my player's arm?" Belief shift (more games don't make your player better, what they do between games and how they recover does). Anti-"later" CTA ("Tonight, one line: how many throws today.").
+Format: static card pair, REAL APP SCREEN (scripts/build_social_appscreen_card.py): Dashboard > TRAINING VOLUME card. ARM LOAD · LAST 7 DAYS = 115 throws + pitches, green "Normal training week" (age 14 profile), plus the Today / Last 7 / Last 30 / Season grid (swings 275, ground balls 100, throws 115, pitches 0), "Guidance, not medical advice. Based on Pitch Smart, ASMI, and Yang 2021 research." Captured via the shoot-light-dashboard rig (profile age '14' added, mg_skip_qotd_once, #dashboard) + driver mgTab('dashboard','tab-dashboard') + renderTrainingVolume() + scrollIntoView(#training-volume-card), stylesheet scroll-margin-top:70px. NOTE: #training-volume-card lives in panel-dashboard, NOT MyStats (MyStats only has the vol-trend chart). Zero generated pixels. Demo data.
+  Variety: first Training Volume / Arm Load card ever (previous Fridays: Reflection 11/13).
+  Both sports: BASEBALL card posts; SOFTBALL card ("The count, not the guess.", pink softball accent, softball arm-load bands) ships as the pair.
+  Build note: first baseball build lost the web-font race on the 4x5 (fallback fonts, eyebrow wrapped); rebuilt, all 8 sizes checked on a contact sheet, fonts OK.
+Video day note: Friday is a Reel day. Script below for Coach's phone; the static card auto-posted so the day is not dark.
+
+--- INSTAGRAM / FACEBOOK CAPTION (scheduled 7:30 PM) ---
+(No URL in the Meta caption: FB Page 2-link/month cap.)
+
+Too much? Stop guessing.
+
+Thanksgiving week is here, and so are the holiday tournaments. Three games Friday, two Saturday, a showcase Sunday. Every parent in the stands is asking the same quiet question: is this too much for my player's arm?
+
+Most families answer it with a feeling. "They said they're fine."
+
+In 35 years of coaching, the players who stayed healthy and kept improving were not the ones who played the most games. They were the ones whose week was written down, so the adults around them could see the load and call a rest day before the arm called it for them.
+
+More games don't make your player better. What they do between games, and how they recover, does.
+
+MyGrind totals the throws and pitches from your player's journal and reads the last 7 days against age-based guidance (Pitch Smart, ASMI). Guidance, not medical advice. But a number beats a guess.
+
+Tonight, one line: how many throws today. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelballparent #youthbaseballparent #highschoolbaseball #littleleaguelife #baseballparents #playerdevelopment #scvbaseball #journal #accountability
+
+ALT TEXT: A cream MyGrind card with the gold compass logo and the eyebrow "November · Arm Load." Headline: "Too much? Stop guessing." Subline: "Holiday tournaments stack up. The weekly count is on the screen." Below, a real screenshot of the MyGrind app's Training Volume card in baseball mode, dated Friday, November 20, 2026: Arm Load for the last 7 days reads 115 throws plus pitches with a green "Normal training week" check, above a table of swings, ground balls, throws, and pitches for today, the last 7 days, the last 30 days, and the season.
+
+--- SOFTBALL PAIR CAPTION (for a second slot) ---
+
+The count, not the guess.
+
+Holiday tournaments stack up fast: pool play Friday, bracket Saturday, a showcase Sunday. Pitchers and position players both feel it.
+
+MyGrind adds up the throws and pitches from your player's journal and reads the week against softball guidance, so the rest day is a decision, not a hunch. Guidance, not medical advice.
+
+More tournaments don't make your player better. What they do between them, and how they recover, does.
+
+Tonight, one line: how many throws today. (Link in bio.)
+
+Log it. Own it.
+Coach
+
+#travelsoftball #fastpitchfamily #softballparents #highschoolsoftball #softballrecruit #playerdevelopment #fastpitchsoftball #journal #accountability
+
+ALT TEXT (softball): A cream MyGrind card, eyebrow "November · Arm Load," headline "The count, not the guess." Subline: "Holiday tournaments stack up. The weekly load is right here." Below, a real screenshot of the MyGrind app's Training Volume card in softball mode showing 115 throws plus pitches in the last 7 days, "Normal training week," and the reps table.
+
+--- X / TWITTER (BASEBALL 1x1 SQUARE card, Made with AI OFF: real screen) ---
+
+Too much? Stop guessing.
+Holiday tournaments stack up. MyGrind counts your player's throws for the week, so the rest day is not a guess.
+More games don't make your player better. What they do between them does.
+Tonight, one line.
+https://www.mygrindapp.com/?utm_source=x&utm_medium=social&utm_campaign=daily
+#journal #accountability
+
+--- REEL / TIKTOK SCRIPT (~12s, phone upload, 9:16 1080x1920) ---
+Hook (0-1.5s), on-screen text: "Is this too much for their arm?"
+Body (1.5-9s): real footage of a tournament bracket sheet or a dugout bag on Thanksgiving weekend, then a cut to the phone showing the Training Volume card (115 throws, green "Normal training week"). On-screen text: "Three games Friday. Two Saturday." then "Stop guessing. Count it."
+Close (9-12s): on-screen text "Tonight, one line." + MyGrind logo end card.
+Audio: calm acoustic or lo-fi, low volume.
+Caption: use the IG caption above, add #reels as the 8th tag.
+
+--- PINTEREST (2:3 1000x1500 BASEBALL PIN) ---
+Title: How Many Throws Is Too Many? Tracking Your Player's Arm Load Over Tournament Weekends
+Link: https://www.mygrindapp.com/?utm_source=pinterest&utm_medium=social&utm_campaign=daily
+
+--- EXPORT SIZES ---
+9:16 = 1080x1920 (Story/Reel) | 4:5 = 1080x1350 (IG/FB feed) | 1:1 = 1080x1080 (X) | Pinterest 2:3 = 1000x1500. All built in this folder, both sports.
+
+--- GROWTH ACTIONS ---
+[ ] Reply to ALL comments and DMs
+[ ] Leave 5 genuine comments on bigger youth baseball and softball accounts (arm care, pitch count, and travel ball parent accounts fit today)
+[ ] Capture 1 photo or clip for the content bank (a Thanksgiving tournament moment, the bag, the bracket sheet; doubles as Reel footage)
+
+--- POSTING OUTCOME (locked Mac, extension file_upload flow) ---
+Step Zero: Planner Fri 20 column was empty and X had no post today before this run.
+X @MyGrindapp: POSTED 7:18 AM with BASEBALL 1x1 SQUARE card ("Your post was sent.", composer emptied, profile shows the post dated 2026-11-20 15:18 UTC with 1 image). Made with AI OFF (real screen).
+Meta: FB + IG @mygrindapp SCHEDULED Fri Nov 20, 7:30 PM with BASEBALL 4x5 FEED card ("Your post is scheduled" dialog, Maybe later on boost, Planner Fri 20 column shows 7:30 PM FB + 7:30 PM IG). Facebook Story toggle ON (fires 7:30 PM). Boost OFF.
+Coach's: @youngsbaseball IG + TikTok from phone (cards in Drive), the Reel, comment/DM replies, the day's capture.
